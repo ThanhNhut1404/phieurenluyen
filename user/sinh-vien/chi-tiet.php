@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHẤM ĐIỂM RÈN LUYỆN</title>
+    <link rel="icon" href="../../assets/img/favicon.ico" type="image/gif" sizes="16x16">
+    <meta name="description" content="CHẤM ĐIỂM RÈN LUYỆN">
+    <!-- CSS Files -->
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../../assets/theme/plugins/fontawesome-free/css/all.min.css">
+
+    <!-- Bootstrap4 Duallistbox -->
+    <link rel="stylesheet" href="../../assets/theme/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
+    <!-- Ekko Lightbox -->
+    <link rel="stylesheet" href="../../assets/theme/plugins/ekko-lightbox/ekko-lightbox.css">
+    <link rel="stylesheet" href="../../assets/theme/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../../assets/theme/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="../../assets/theme/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../assets/theme/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="../../assets/vendor/dropzone/dropzone.min.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+
+</head>
+
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <?php
+
+        require "../../models/getModel.php";
+
+        if (isset($_GET['id_lop_hoc'])) {
+            $id_lop_hoc = $_GET['id_lop_hoc'];
+        }
+
+        if (isset($_GET['id_dot'])) {
+            $id_dot = $_GET['id_dot'];
+        }
+        if (isset($_GET['id_sinh_vien'])) {
+            $id_sinh_vien = $_GET['id_sinh_vien'];
+        }
+        $phieuchamdiem__Get_By_Id_Sinh_Vien = $phieuchamdiem->phieuchamdiem__Get_By_Id_Sinh_Vien($id_sinh_vien, $id_dot);
+
+        if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
+            $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
+            $id_lop_ap_dung = isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung) ? $phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung : 0;
+            $lopapdung__Get_By_Id = $lopapdung->lopapdung__Get_By_Id($id_lop_ap_dung);
+            $dotchamdiem__Get_By_Id = $dotchamdiem->dotchamdiem__Get_By_Id($id_dot);
+            $id_hoc_ky = isset($dotchamdiem__Get_By_Id->id_hoc_ky) ? $dotchamdiem__Get_By_Id->id_hoc_ky : 0;
+            $hocky__Get_By_Id = $hocky->hocky__Get_By_Id($id_hoc_ky);
+            $id_nam_hoc = isset($hocky__Get_By_Id->id_nam_hoc) ? $hocky__Get_By_Id->id_nam_hoc : 0;
+
+            $namhoc__Get_By_Id = $namhoc->namhoc__Get_By_Id($id_nam_hoc);
+            $id_mau_phieu = isset($lopapdung__Get_By_Id->id_mau_phieu) ? $lopapdung__Get_By_Id->id_mau_phieu : 0;
+            $mauphieu__Get_By_Id = $mauphieu->mauphieu__Get_By_Id($id_mau_phieu);
+            $lophoc__Get_By_Id = $lophoc->lophoc__Get_By_Id($lopapdung__Get_By_Id->id_lop_hoc);
+            $id_khoa_hoc = isset($lophoc__Get_By_Id->id_khoa_hoc) ? $lophoc__Get_By_Id->id_khoa_hoc : 0;
+
+            $khoahoc__Get_By_Id = $khoahoc->khoahoc__Get_By_Id($id_khoa_hoc);
+            $bocauhoi__Get_By_Id_Mau_Phieu = $bocauhoi->bocauhoi__Get_By_Id_Mau_Phieu($id_mau_phieu);
+        }
+        $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_hoc, $id_dot, $id_sinh_vien);
+
+
+
+
+        ?>
+        <link rel="stylesheet" href="../../assets/css/user.css">
+        <?php if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) : ?>
+            <!-- Content Wrapper. Contains page content -->
+            <div class="ml-0 mr-3 content-wrapper">
+                <!-- Content Header (Page header) -->
+                <section class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                            </div>
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <div class="card-tools">
+
+                                    </div>
+                                </ol>
+                            </div>
+                        </div>
+                    </div><!-- /.container-fluid -->
+                </section>
+                <section class="content">
+                    <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
+                    <div class="card overflow-auto w-100">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h3 class="card-title text-center font-weight-bold w-100 mt-3 mb-3">
+                                        <?= $mauphieu__Get_By_Id->ten_mau_phieu ?></h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h3 class="card-title">Mã sinh viên: <?= $sinhvien__Get_By_Id->ma_sinh_vien ?></h3>
+                                </div>
+
+                                <div class="col text-right">
+                                    <p class="card-title w-100">Lớp: <?= $lophoc__Get_By_Id->ten_lop_hoc ?></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <h3 class="card-title">Tên sinh viên: <?= $sinhvien__Get_By_Id->ten_sinh_vien ?></h3>
+                                </div>
+                                <div class="col text-right">
+                                    <p class="card-title w-100">Học kỳ: <?= $hocky__Get_By_Id->ten_hoc_ky ?></p>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-title">Khóa học: <?= $khoahoc__Get_By_Id->ten_khoa_hoc ?></p>
+                                </div>
+
+                                <div class="col text-right">
+                                    <p class="card-title w-100">Năm học: <?= $namhoc__Get_By_Id->ten_nam_hoc ?></p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-title">Điểm rèn luyện: <?= $ketquaxeploai__Get_By_Id_Phieu->ket_qua ?></p>
+                                </div>
+
+                                <div class="col text-right">
+                                    <p class="card-title w-100">Ngày xếp loại:
+                                        <?= $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai ?></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-title w-100">Xếp loại: <?= $ketquaxeploai__Get_By_Id_Phieu->xep_loai ?></p>
+                                </div>
+
+                                <div class="col text-right">
+                                    <p class="card-title w-100">Ghi chú: <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="w-10  text-center vertical-align-middle">Điều</th>
+                                        <th class="w-90  text-center vertical-align-middle no-padding">
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="w-90 no-border full  h-0 ">
+                                                            <?= $dw ?>
+                                                        </td>
+                                                        <td class="w-10 h-0 no-border full  h-0">
+                                                            Sv tự chấm
+                                                            <br>
+                                                            Tự chấm
+                                                        </td>
+                                                        <td class="w-10 h-0 no-border full  h-0">
+                                                            Lớp trưởng <br />
+                                                            Bí thư
+                                                        </td>
+                                                        <td class="w-10 h-0 no-border full  h-0">
+                                                            BCH <br /> đoàn khoa
+                                                        </td>
+                                                        <td class="w-10 h-0 no-border full  h-0">
+                                                            Cố vấn học tập
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="w-90 no-border full vertical-align-middle">
+                                                            Nội dung chấm điểm
+                                                        </td>
+                                                        <td class="w-10 no-border full vertical-align-middle">
+                                                            Sinh viên
+                                                            <br>
+                                                            Tự chấm
+                                                        </td>
+                                                        <td class="w-10 no-border full vertical-align-middle">
+                                                            Lớp trưởng <br />
+                                                            Bí thư
+                                                        </td>
+                                                        <td class="w-10 no-border full vertical-align-middle">
+                                                            BCH <br /> đoàn khoa
+                                                        </td>
+                                                        <td class="w-10 no-border full vertical-align-middle">
+                                                            Cố vấn <br /> học tập
+                                                        </td>
+                                                </tbody>
+                                            </table>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $i = 0; ?>
+
+                                    <?php foreach ($bocauhoi__Get_By_Id_Mau_Phieu as $item_1) : ?>
+                                        <tr>
+                                            <td class="vertical-align-middle">
+                                                <table class="table no-border text-center">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th class="p-0">
+                                                                <?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ten_dieu ?>
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="p-2">
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="p-0">
+                                                                <?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ghi_chu ?>
+                                                            </th>
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+                                            </td>
+
+                                            <td class="no-padding">
+                                                <?php foreach ($khoan->khoan__Get_By_Id_Dieu($item_1->id_dieu) as $item_2) : ?>
+
+                                                    <table class="w-100 table-striped">
+                                                        <tbody>
+                                                            <tr>
+                                                                <th class="w-100 table table-border">
+                                                                    <?= $khoan->khoan__Get_By_Id($item_2->id_khoan)->ten_khoan ?>
+                                                                </th>
+
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <?php foreach ($muc->muc__Get_By_Id_Khoan($item_2->id_khoan) as $item_3) : ?>
+                                                        <?php $dw = $item_3->ten_muc ?>
+
+                                                        <table class="w-100">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="w-90 no-border full  h-0 ">
+                                                                        <?= $dw ?>
+                                                                    </td>
+                                                                    <td class="w-10 h-0 no-border full">
+                                                                        Sv tự chấm
+                                                                        <br>
+                                                                        Tự chấm
+                                                                    </td>
+                                                                    <td class="w-10 h-0 no-border full">
+                                                                        Lớp trưởng <br />
+                                                                        Bí thư
+                                                                    </td>
+                                                                    <td class="w-10 h-0 no-border full">
+                                                                        BCH <br /> đoàn khoa
+                                                                    </td>
+                                                                    <td class="w-10 h-0 no-border full">
+                                                                        Cố vấn học tập
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="border-bottom">
+                                                                    <td class="w-60 no-border full vertical-align-middle">
+                                                                        - <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
+                                                                    </td>
+
+                                                                    <td class="w-10 no-border full vertical-align-middle">
+                                                                        <input type="number" class="form-control kq_sv" name="kq_sv[]" pattern="[-+]?[0-9]{1-2}" title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0" max="<?= $item_2->can_tren ?>" required disabled value="<?= $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i] ?>">
+                                                                    </td>
+                                                                    <td class="w-10 no-border full vertical-align-middle">
+                                                                        <input type="number" class="form-control kq_lt_bt" name="kq_lt_bt[]" pattern="[-+]?[0-9]{1-2}" title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0" max="<?= $item_2->can_tren ?>" required disabled value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i] : 00 ?>">
+                                                                    </td>
+                                                                    <td class="w-10 no-border full vertical-align-middle">
+                                                                        <input type="number" class="form-control kq_btdk" name="kq_btdk[]" pattern="[-+]?[0-9]{1-2}" title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0" max="<?= $item_2->can_tren ?>" required disabled value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i] : 00 ?>">
+                                                                    </td>
+                                                                    <td class="w-10 no-border full vertical-align-middle">
+                                                                        <input type="number" class="form-control kq_gv" name="kq_gv[]" pattern="[-+]?[0-9]{1-2}" title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0" max="<?= $item_2->can_tren ?>" required disabled value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i] : 00 ?>">
+                                                                    </td>
+
+                                            </td>
+                                        </tr>
+
+                                </tbody>
+                            </table>
+                            <?php $i++ ?>
+                        <?php endforeach ?>
+
+                    <?php endforeach ?>
+
+                    </td>
+                    </tr>
+
+                <?php endforeach ?>
+
+                </tbody>
+                <footer>
+                    <tr>
+                        <th class="w-10  text-center vertical-align-middle">Điều</th>
+                        <th class="w-90  text-center vertical-align-middle no-padding">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td class="w-90 no-border full  h-0 ">
+                                            <?= $dw ?>
+                                        </td>
+                                        <td class="w-10 h-0 no-border full  h-0">
+                                            Sv tự chấm
+                                            <br>
+                                            Tự chấm
+                                        </td>
+                                        <td class="w-10 h-0 no-border full  h-0">
+                                            Lớp trưởng <br />
+                                            Bí thư
+                                        </td>
+                                        <td class="w-10 h-0 no-border full  h-0">
+                                            BCH <br /> đoàn khoa
+                                        </td>
+                                        <td class="w-10 h-0 no-border full  h-0">
+                                            Cố vấn học tập
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="w-60 no-border full vertical-align-middle h-0">
+                                            <?= $dw ?>
+                                            Tổng
+                                        </td>
+                                        <td class="w-10 no-border full vertical-align-middle">
+                                            <input type="number" class="form-control font-weight-bold" placeholder="0" id="sum_sv" min="0" pattern="[-+]?[0-9]{1-2}" title="max is 100" max="100" readonly required>
+                                        </td>
+                                        <td class="w-10 no-border full vertical-align-middle">
+                                            <input type="number" class="form-control font-weight-bold" placeholder="0" id="sum_lt_bt" min="0" pattern="[-+]?[0-9]{1-2}" title="max is 100" max="100" readonly required>
+                                        </td>
+                                        <td class="w-10 no-border full vertical-align-middle">
+                                            <input type="number" class="form-control font-weight-bold" placeholder="0" id="sum_btdk" min="0" pattern="[-+]?[0-9]{1-2}" title="max is 100" max="100" readonly required>
+                                        </td>
+                                        <td class="w-10 no-border full vertical-align-middle">
+                                            <input type="number" class="form-control font-weight-bold" placeholder="0" id="sum_gv" min="0" pattern="[-+]?[0-9]{1-2}" title="max is 100" max="100" readonly required>
+                                        </td>
+                                        </td>
+                                </tbody>
+                            </table>
+                        </th>
+                    </tr>
+                    <tr>
+
+                </footer>
+                </table>
+                        </div>
+                    </div>
+                    <!-- Main content -->
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h4 class="card-title">Minh chứng đã thêm</h4>
+                                </div>
+                                <div class="card-body">
+
+                                    <div>
+                                        <div class="filter-container p-0 row">
+                                            <?php foreach ($minhchung->minhchung__Get_By_Id_Phieu($phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu) as $item) : ?>
+                                                <div class="card">
+                                                    <div class="filtr-item no-flexed " data-category="1">
+                                                        <a href="image.php?id_minh_chung=<?= $item->id_minh_chung ?>" data-toggle="lightbox">
+                                                            <img src="<?= $item->hinh_anh ?>" class="img-fluid img-50" />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+
+
+            <div class="card-header">
+                <div class="row">
+                    <div class="col">
+                        <h3 class="card-title font-weight-bold">
+                            • Quy định:
+                        </h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="card-title">
+                            - Xếp loại kết quả rèn luyện: xuất sắc (90 - 100 điểm), tốt (90 - 89 điểm), khá (65 - 79
+                            điểm), trung bình (50 - 64 điểm), yếu (35 - 49 điểm), kém (dưới 35 điểm).
+                        </h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="card-title">
+                            - Kết quả rèn luyện năm học xuất sắc và tốt được nhà trường xét khen thưởng.
+                        </h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="card-title">
+                            - Kết quả rèn luyện yếu, kém 2 học kỳ liên tiếp phải tạm ngừng học ít nhất 1 học kỳ ở
+                            học kỳ
+                            tiếp theo.
+                        </h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3 class="card-title">
+                            - Sinh viên bị kỷ luật mức khiển trách trong học kỳ thì mức xếp loại không được vượt quá
+                            loại
+                            khá, bị kỷ luật mức cảnh cáo thì không được vượt quá loại trung bình.
+                        </h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="col">
+                            <h3 class="card-title">
+                                - Sinh viên không nộp phiếu đánh giá kết quả rèn luyện mà không có lý do chính
+                                đáng, cố
+                                vấn học
+                                tập và tập thể lớp đánh giá kết quả rèn luyện cho sinh viên không nộp phiếu và
+                                trừ điểm
+                                để hạ
+                                một bậc xếp loại (xuất sắc: trừ 10 điểm, tốt: trừ 10 điểm, khá: trừ 15 điểm,
+                                trung bình:
+                                trừ 15
+                                điểm, yếu: trừ 15 điểm).
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </section>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            var kq = 0;
+            var kq_sv = document.getElementsByClassName("kq_sv");
+            for (i = 0; i < kq_sv.length; i++) {
+                a = Number(kq_sv[i].value);
+                console.log(typeof a);
+                kq += a;
+            }
+            document.getElementById("sum_sv").value = kq;
+
+            var kq_lt_bt_load = 0;
+            var kq_lt_bt = document.getElementsByClassName("kq_lt_bt");
+            for (i = 0; i < kq_lt_bt.length; i++) {
+                a = Number(kq_lt_bt[i].value);
+                console.log(typeof a);
+                kq_lt_bt_load += a;
+            }
+            document.getElementById("sum_lt_bt").value = kq_lt_bt_load;
+
+
+            var kq_btdk_load = 0;
+            var kq_btdk = document.getElementsByClassName("kq_btdk");
+            for (i = 0; i < kq_btdk.length; i++) {
+                a = Number(kq_btdk[i].value);
+                console.log(typeof a);
+                kq_btdk_load += a;
+            }
+            document.getElementById("sum_btdk").value = kq_btdk_load;
+
+
+            var kq_gv_load = 0;
+            var kq_gv = document.getElementsByClassName("kq_gv");
+            for (i = 0; i < kq_gv.length; i++) {
+                a = Number(kq_gv[i].value);
+                console.log(typeof a);
+                kq_gv_load += a;
+            }
+            document.getElementById("sum_gv").value = kq_gv_load;
+
+        })
+    </script>
+
+<?php endif ?>
+</div>
+
+<!-- Js Files -->
+<script src="../../assets/vendor/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../assets/theme/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap4 Duallistbox -->
+<script src="../../assets/theme/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+
+
+
+<script src="../../assets/theme/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../../assets/theme/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="../../assets/theme/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="../../assets/theme/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="../../assets/theme/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="../../assets/theme/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="../../assets/theme/plugins/jszip/jszip.min.js"></script>
+<script src="../../assets/theme/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="../../assets/theme/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="../../assets/theme/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="../../assets/theme/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="../../assets/theme/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- Ekko Lightbox -->
+<script src="../../assets/theme/plugins/ekko-lightbox/ekko-lightbox.min.js"></script>
+<!-- Filterizr-->
+<script src="../../assets/theme/plugins/filterizr/jquery.filterizr.min.js"></script>
+<!-- sweetalert2  -->
+<script src="../../assets/vendor/sweetalert2@11.js"></script>
+<!-- dropzonejs -->
+<script src="../../assets/vendor/dropzone/dropzone.min.js"></script>
+
+<!-- AdminLTE App -->
+<script src="../../assets/theme/dist/js/adminlte.min.js"></script>
+
+
+<script>
+    //Bootstrap Duallistbox
+    $('.duallistbox').bootstrapDualListbox()
+    $('.duallistbox_sv').bootstrapDualListbox()
+
+
+    Dropzone.options.uploadForm = { // The camelized version of the ID of the form element
+
+        dictDefaultMessage: 'Kéo thả hình ảnh vào đây',
+        paramName: "hinh_anh",
+        acceptedFiles: "image/jpeg,image/png,image/gif",
+        autoProcessQueue: false,
+        thumbnailWidth: 400,
+        thumbnailHeight: 400,
+        addRemoveLinks: true,
+
+        init: function() {
+            var myDropzone = this;
+            document.getElementById("btn_upload").removeAttribute("disabled");
+            this.element.querySelector("button[type=submit]").addEventListener("click", function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                myDropzone.processQueue();
+            });
+        },
+        queuecomplete: function() {
+            this.removeAllFiles();
+            Swal.fire({
+                title: 'Đã thêm minh chứng thành công',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
+            })
+        },
+
+    }
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox({
+            alwaysShowClose: true
+        });
+    });
+
+    $('.filter-container').filterizr({
+        gutterPixels: 3
+    });
+    $('.btn[data-filter]').on('click', function() {
+        $('.btn[data-filter]').removeClass('active');
+        $(this).addClass('active');
+    });
+
+
+    function confirm_sweet(url) {
+        Swal.fire({
+            title: 'Xác nhận thao tác?',
+            text: "Bạn chắc chắn thực hiện thao tác này",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.href = url;
+            }
+        })
+    }
+</script>
+<?php
+if (isset($_GET['status'])) {
+    if ($_GET['status'] == "success") {
+        echo "<script>
+               Swal.fire(
+                   'Thành công!',
+                   'Thao tác thành công!',
+                   'success'
+                 )</script>";
+    }
+    if ($_GET['status'] == "failed") {
+        echo "<script>
+               Swal.fire(
+                   'Thất bại!',
+                   'Thao tác không thành công!',
+                   'error'
+                 )</script>";
+    }
+}
+?>
+</body>
+
+</html>
