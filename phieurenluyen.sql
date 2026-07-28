@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS `bithudoankhoa` (
   `dia_chi_thuong_tru` text DEFAULT NULL,
   `id_khoa` int(11) DEFAULT NULL,
   `trang_thai` tinyint(4) DEFAULT 1,
+  -- Nhựt sửa lỗi: thêm index cho id_khoa để tạo khóa ngoại chống dữ liệu mồ côi.
+  KEY `idx_bithudoankhoa_id_khoa` (`id_khoa`),
   PRIMARY KEY (`id_bi_thu`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
@@ -145,9 +147,11 @@ CREATE TABLE IF NOT EXISTS `ketquaxeploai` (
 -- Dumping structure for table phieurenluyen.khoa
 CREATE TABLE IF NOT EXISTS `khoa` (
   `id_khoa` int(11) NOT NULL AUTO_INCREMENT,
-  `ten_khoa` varchar(50) DEFAULT NULL,
+  -- Nhựt sửa lỗi: tên khoa bắt buộc nhập và giới hạn unique ở DB.
+  `ten_khoa` varchar(50) NOT NULL,
   `ghi_chu` text DEFAULT NULL,
-  PRIMARY KEY (`id_khoa`) USING BTREE
+  PRIMARY KEY (`id_khoa`) USING BTREE,
+  UNIQUE KEY `uk_khoa_ten_khoa` (`ten_khoa`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table phieurenluyen.khoa: ~1 rows (approximately)
@@ -300,6 +304,8 @@ CREATE TABLE IF NOT EXISTS `nganhhoc` (
   `ten_nganh_hoc` varchar(50) DEFAULT NULL,
   `ghi_chu` text DEFAULT NULL,
   `id_khoa` int(11) DEFAULT NULL,
+  -- Nhựt sửa lỗi: thêm index cho id_khoa để tạo khóa ngoại chống dữ liệu mồ côi.
+  KEY `idx_nganhhoc_id_khoa` (`id_khoa`),
   PRIMARY KEY (`id_nganh_hoc`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
@@ -1649,6 +1655,14 @@ INSERT INTO `xeploai` (`id_xep_loai`, `ten_xep_loai`, `can_tren`, `can_duoi`, `h
 	(5, 'Trung bình', 64, 50, 15, NULL),
 	(6, 'Yếu', 49, 35, 15, NULL),
 	(7, 'Kém', 34, 0, 0, NULL);
+
+-- Nhựt sửa lỗi: thêm khóa ngoại để không xóa được khoa khi còn ngành học hoặc bí thư đoàn khoa liên quan.
+ALTER TABLE `nganhhoc`
+  ADD CONSTRAINT `fk_nganhhoc_khoa` FOREIGN KEY (`id_khoa`) REFERENCES `khoa` (`id_khoa`) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+-- Nhựt sửa lỗi: thêm khóa ngoại để không tạo bí thư đoàn khoa trỏ tới khoa không tồn tại.
+ALTER TABLE `bithudoankhoa`
+  ADD CONSTRAINT `fk_bithudoankhoa_khoa` FOREIGN KEY (`id_khoa`) REFERENCES `khoa` (`id_khoa`) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
