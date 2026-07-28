@@ -57,13 +57,53 @@
                         </div>
                         <div class="col-6">
 
+                            <!-- quân sửa: Tách chuỗi địa chỉ để gán vào 4 ô nhập (Sửa) -->
+                            <?php
+                                $arr_dc_ll = explode(', ', $bithudoankhoa__Get_By_Id->dia_chi_lien_lac);
+                                $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
+                                $dc_ll_ap = $arr_dc_ll[1] ?? '';
+                                $dc_ll_xa = $arr_dc_ll[2] ?? '';
+                                $dc_ll_tinh = $arr_dc_ll[3] ?? '';
+
+                                $arr_dc_tt = explode(', ', $bithudoankhoa__Get_By_Id->dia_chi_thuong_tru);
+                                $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
+                                $dc_tt_ap = $arr_dc_tt[1] ?? '';
+                                $dc_tt_xa = $arr_dc_tt[2] ?? '';
+                                $dc_tt_tinh = $arr_dc_tt[3] ?? '';
+                            ?>
                             <div class="form-group">
                                 <label for="">Địa chỉ liên lạc <span class="color-crimson">(*)</span></label>
-                                <input type="dia_chi_lien_lac" id="dia_chi_lien_lac" name="dia_chi_lien_lac" class="form-control" required value="<?= $bithudoankhoa__Get_By_Id->dia_chi_lien_lac ?>" placeholder="Nhập địa chỉ liên lạc">
+                                <div class="row">
+                                    <div class="col-6 mb-2">
+                                        <input type="text" name="dc_ll_so_nha" class="form-control" required value="<?=$dc_ll_so_nha?>" placeholder="Số nhà, đường">
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <input type="text" name="dc_ll_ap" class="form-control" required value="<?=$dc_ll_ap?>" placeholder="Ấp / Khu phố">
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <input type="text" name="dc_ll_xa" class="form-control" required value="<?=$dc_ll_xa?>" placeholder="Xã / Phường">
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <input type="text" name="dc_ll_tinh" class="form-control" required value="<?=$dc_ll_tinh?>" placeholder="Tỉnh / Thành phố">
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="">Địa chỉ thường trú <span class="color-crimson">(*)</span></label>
-                                <input type="dia_chi_thuong_tru" id="dia_chi_thuong_tru" name="dia_chi_thuong_tru" class="form-control" required value="<?= $bithudoankhoa__Get_By_Id->dia_chi_thuong_tru ?>" placeholder="Nhập địa chỉ thường trú">
+                                <div class="row">
+                                    <div class="col-6 mb-2">
+                                        <input type="text" name="dc_tt_so_nha" class="form-control" required value="<?=$dc_tt_so_nha?>" placeholder="Số nhà, đường">
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <input type="text" name="dc_tt_ap" class="form-control" required value="<?=$dc_tt_ap?>" placeholder="Ấp / Khu phố">
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <input type="text" name="dc_tt_xa" class="form-control" required value="<?=$dc_tt_xa?>" placeholder="Xã / Phường">
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <input type="text" name="dc_tt_tinh" class="form-control" required value="<?=$dc_tt_tinh?>" placeholder="Tỉnh / Thành phố">
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-group">

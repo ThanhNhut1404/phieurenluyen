@@ -35,8 +35,12 @@
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Import from excel <a href="quan-ly-sinh-vien/action.php?req=export">Tải
-                                 mẫu</a></h3>
+                         <h3 class="card-title">
+                             Tải mẩu file excel  
+                             <a href="quan-ly-sinh-vien/action.php?req=export" class="btn btn-sm btn-warning ml-3 text-dark" style="font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                 <i class="fas fa-download"></i> Tải mẫu
+                             </a>
+                         </h3>
                          <div class="card-tools">
                              <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                                  <i class="fas fa-minus"></i>
@@ -132,11 +136,39 @@
                              <div class="col-6">
                                  <div class="form-group">
                                      <label for="">Địa chỉ liên lạc <span class="color-crimson">(*)</span></label>
-                                     <input type="dia_chi_lien_lac" id="dia_chi_lien_lac" name="dia_chi_lien_lac" class="form-control" required placeholder="Nhập địa chỉ liên lạc">
+                                     <!-- quân sửa: Chia nhỏ địa chỉ liên lạc thành 4 cấp -->
+                                     <div class="row">
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_xa" class="form-control" required placeholder="Xã / Phường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                         </div>
+                                     </div>
                                  </div>
                                  <div class="form-group">
                                      <label for="">Địa chỉ thường trú <span class="color-crimson">(*)</span></label>
-                                     <input type="dia_chi_thuong_tru" id="dia_chi_thuong_tru" name="dia_chi_thuong_tru" class="form-control" required placeholder="Nhập địa chỉ thường trú">
+                                     <!-- quân sửa: Chia nhỏ địa chỉ thường trú thành 4 cấp -->
+                                     <div class="row">
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_xa" class="form-control" required placeholder="Xã / Phường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                         </div>
+                                     </div>
                                  </div>
                                  <div class="form-group">
                                      <label for="">Chức vụ <span class="color-crimson">(*)</span></label>
@@ -199,8 +231,9 @@
                          </select>
                      </div>
                  </div>
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
-                     <thead>
+                 <div class="table-responsive">
+                     <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
+                         <thead>
                          <tr>
                              <th>#</th>
                              <th>Mã sinh viên</th>
@@ -214,23 +247,37 @@
                          </tr>
                      </thead>
                      <tbody>
-                         <?php $num = 0; ?>
+                         <?php 
+                         // TẠO MẢNG LƯU TRỮ LỚP HỌC ĐỂ TRÁNH N+1 QUERY (TỐI ƯU HIỆU SUẤT) Nguễn văn quân
+                         $arr_lop_hoc = [];
+                         foreach ($lophoc__Get_All as $lh) {
+                             $arr_lop_hoc[$lh->id_lop_hoc] = $lh->ten_lop_hoc;
+                         }
+                         $num = 0; 
+                         ?>
                          <?php foreach ($sinhvien__Get_All as $item) : ?>
                              <tr>
+                                 <!-- BỌC htmlspecialchars ĐỂ CHỐNG LỖI BẢO MẬT XSS Nguễn văn quân
+                         $arr_lop_hoc = [];-->
                                  <td><?= ++$num ?></td>
-                                 <td><?= $item->ma_sinh_vien ?></td>
-                                 <td><?= $item->ten_sinh_vien ?></td>
+                                 <td><?= htmlspecialchars($item->ma_sinh_vien ?? '') ?></td>
+                                 <td><?= htmlspecialchars($item->ten_sinh_vien ?? '') ?></td>
                                  <td><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
-                                 <td><?= $item->ngay_sinh ?></td>
-                                 <td><?= $item->so_dien_thoai_1 ?></td>
-                                 <td><?= $item->dia_chi_lien_lac ?></td>
-                                 <td><?= $lophoc->lophoc__Get_By_Id($item->id_lop_hoc)->ten_lop_hoc ?></td>
+                                 <td><?= htmlspecialchars($item->ngay_sinh ?? '') ?></td>
+                                 <td><?= htmlspecialchars($item->so_dien_thoai_1 ?? '') ?></td>
+                                 <!-- quân sửa: Rút gọn hiển thị địa chỉ để không làm mất cột thao tác -->
+                                 <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>">
+                                     <?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>
+                                 </td>
+                                 <!-- SỬ DỤNG MẢNG ÁNH XẠ THAY VÌ QUERY TRONG VÒNG LẶPNguễn văn quân
+                         $arr_lop_hoc = []; -->
+                                 <td><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
 
                                  <td>
-                                     <a href="#" type="button" class="btn  btn-warning m-2" onclick="update_obj(<?= $item->id_sinh_vien ?>)">
+                                     <a href="#" type="button" class="btn  btn-warning m-2" onclick="update_obj(<?= (int)$item->id_sinh_vien ?>)">
                                          <i class="fas fa-edit"></i>
                                      </a>
-                                     <a href="#" type="button" class="btn  btn-danger m-2" onclick="return confirm_sweet('quan-ly-sinh-vien/action.php?req=delete&id_sinh_vien=<?= $item->id_sinh_vien ?>')">
+                                     <a href="#" type="button" class="btn  btn-danger m-2" onclick="return confirm_sweet('quan-ly-sinh-vien/action.php?req=delete&id_sinh_vien=<?= (int)$item->id_sinh_vien ?>')">
                                          <i class="fas fa-trash"></i>
                                      </a>
                                  </td>
@@ -238,6 +285,7 @@
                          <?php endforeach ?>
                      </tbody>
                  </table>
+                 </div>
              </div>
              <!-- /.card-body -->
          </div>

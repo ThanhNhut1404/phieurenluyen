@@ -133,6 +133,8 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
                             <p>Phân công cố vấn</p>
                         </a>
                     </li>
+                    <!-- quân sửa: Ẩn menu Phân nhóm và Phân quyền để tránh xoá nhầm làm sập hệ thống phân quyền -->
+                    <!-- 
                     <li class="nav-item">
                         <a href="?page=quan-ly-phan-nhom" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>
@@ -145,6 +147,7 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
                             <p>Phân quyền</p>
                         </a>
                     </li>
+                    -->
                     <li class="nav-item">
                         <a href="?page=quan-ly-tai-khoan" class="nav-link">
                             <i class="far fa-circle nav-icon"></i>

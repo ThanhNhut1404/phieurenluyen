@@ -91,15 +91,40 @@
                              </div>
 
                              <div class="col-6">
+                                 <!-- quân sửa: Chia nhỏ phần nhập địa chỉ thành 4 ô (Thêm mới) -->
                                  <div class="form-group">
                                      <label for="">Địa chỉ liên lạc <span class="color-crimson">(*)</span></label>
-                                     <input type="dia_chi_lien_lac" id="dia_chi_lien_lac" name="dia_chi_lien_lac"
-                                         class="form-control" required placeholder="Nhập địa chỉ liên lạc">
+                                     <div class="row">
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_xa" class="form-control" required placeholder="Xã / Phường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                         </div>
+                                     </div>
                                  </div>
                                  <div class="form-group">
                                      <label for="">Địa chỉ thường trú <span class="color-crimson">(*)</span></label>
-                                     <input type="dia_chi_thuong_tru" id="dia_chi_thuong_tru" name="dia_chi_thuong_tru"
-                                         class="form-control" required placeholder="Nhập địa chỉ thường trú">
+                                     <div class="row">
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_xa" class="form-control" required placeholder="Xã / Phường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                         </div>
+                                     </div>
                                  </div>
                                  <div class="form-group">
                                      <label for="">Trình độ <span class="color-crimson">(*)</span></label>
@@ -138,8 +163,9 @@
              </div>
              <!-- /.card-header -->
              <div class="card-body">
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
-                     <thead>
+                 <div class="table-responsive">
+                     <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
+                         <thead>
                          <tr>
                              <th>#</th>
                              <th>Mã giảng viên</th>
@@ -153,17 +179,28 @@
                          </tr>
                      </thead>
                      <tbody>
-                         <?php $num = 0;?>
+                         <?php 
+                         // quân sửa: Tối ưu hiệu năng tránh N+1 Query cho Trình độ
+                         $arr_trinh_do = [];
+                         foreach($trinhdo__Get_All as $td) {
+                             $arr_trinh_do[$td->id_trinh_do] = $td->ten_trinh_do;
+                         }
+                         $num = 0;
+                         ?>
                          <?php foreach($giangvien__Get_All as $item):?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td><?=$item->ma_giang_vien?></td>
-                             <td><?=$item->ten_giang_vien?></td>
+                             <td><?= htmlspecialchars($item->ma_giang_vien ?? '') ?></td>
+                             <!-- quân sửa: Viết hoa chữ cái đầu cho tên riêng -->
+                             <td><?= htmlspecialchars(mb_convert_case($item->ten_giang_vien ?? '', MB_CASE_TITLE, "UTF-8")) ?></td>
                              <td><?=$item->gioi_tinh == 1 ? "Nam" : "Nữ"?></td>
-                             <td><?=$item->ngay_sinh?></td>
-                             <td><?=$item->so_dien_thoai_1?></td>
-                             <td><?=$item->dia_chi_lien_lac?></td>
-                             <td><?=$trinhdo->trinhdo__Get_By_Id($item->id_trinh_do)->ten_trinh_do?></td>
+                             <td><?= htmlspecialchars($item->ngay_sinh ?? '') ?></td>
+                             <td><?= htmlspecialchars($item->so_dien_thoai_1 ?? '') ?></td>
+                             <!-- quân sửa: Rút gọn hiển thị địa chỉ để không làm mất cột thao tác -->
+                             <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>">
+                                 <?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>
+                             </td>
+                             <td><?= isset($arr_trinh_do[$item->id_trinh_do]) ? htmlspecialchars($arr_trinh_do[$item->id_trinh_do]) : '' ?></td>
 
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
@@ -176,9 +213,10 @@
                                  </a>
                              </td>
                          </tr>
-                         <?php endforeach?>
+                         <?php endforeach ?>
                      </tbody>
                  </table>
+                 </div>
              </div>
              <!-- /.card-body -->
          </div>

@@ -40,7 +40,6 @@
             case "quan-ly-muc":
                 require "quan-ly-muc/index.php";
                 break; 
-
                 
             case "quan-ly-khoa":
                 require "quan-ly-khoa/index.php";
