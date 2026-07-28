@@ -162,11 +162,16 @@ INSERT INTO `khoa` (`id_khoa`, `ten_khoa`, `ghi_chu`) VALUES
 CREATE TABLE IF NOT EXISTS `khoahoc` (
   `id_khoa_hoc` int(11) NOT NULL AUTO_INCREMENT,
   `ten_khoa_hoc` varchar(50) DEFAULT NULL,
-  `nam_nhap_hoc` varchar(50) DEFAULT NULL,
+  `nam_nhap_hoc` int(11) NOT NULL,
   `he_dao_tao` float DEFAULT NULL,
   `ghi_chu` text DEFAULT NULL,
-  PRIMARY KEY (`id_khoa_hoc`) USING BTREE
+  PRIMARY KEY (`id_khoa_hoc`) USING BTREE,
+  -- Nhựt sửa lỗi: thêm unique key để database chặn trùng tên khóa học.
+  UNIQUE KEY `uk_khoahoc_ten_khoa_hoc` (`ten_khoa_hoc`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+
+ALTER TABLE `khoahoc`
+  MODIFY `nam_nhap_hoc` int(11) NOT NULL;
 
 -- Dumping data for table phieurenluyen.khoahoc: ~3 rows (approximately)
 INSERT INTO `khoahoc` (`id_khoa_hoc`, `ten_khoa_hoc`, `nam_nhap_hoc`, `he_dao_tao`, `ghi_chu`) VALUES
@@ -217,6 +222,10 @@ CREATE TABLE IF NOT EXISTS `lophoc` (
   `ghi_chu` text DEFAULT NULL,
   `id_khoa_hoc` int(11) DEFAULT NULL,
   `id_nganh_hoc` int(11) DEFAULT NULL,
+  -- Nhựt sửa lỗi: thêm index cho id_khoa_hoc và id_nganh_hoc để tạo khóa ngoại chống dữ liệu mồ côi.
+  KEY `idx_lophoc_id_khoa_hoc` (`id_khoa_hoc`),
+  -- Nhựt sửa lỗi: thêm index cho id_nganh_hoc để tạo khóa ngoại chống dữ liệu mồ côi khi xóa ngành học.
+  KEY `idx_lophoc_id_nganh_hoc` (`id_nganh_hoc`),
   PRIMARY KEY (`id_lop_hoc`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
@@ -301,12 +310,14 @@ INSERT INTO `namhoc` (`id_nam_hoc`, `ten_nam_hoc`, `ghi_chu`) VALUES
 -- Dumping structure for table phieurenluyen.nganhhoc
 CREATE TABLE IF NOT EXISTS `nganhhoc` (
   `id_nganh_hoc` int(11) NOT NULL AUTO_INCREMENT,
-  `ten_nganh_hoc` varchar(50) DEFAULT NULL,
+  -- Nhựt sửa lỗi: tên ngành học bắt buộc nhập và dùng collation không phân biệt hoa thường để unique theo khoa ở DB.
+  `ten_nganh_hoc` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `ghi_chu` text DEFAULT NULL,
-  `id_khoa` int(11) DEFAULT NULL,
+  `id_khoa` int(11) NOT NULL,
   -- Nhựt sửa lỗi: thêm index cho id_khoa để tạo khóa ngoại chống dữ liệu mồ côi.
   KEY `idx_nganhhoc_id_khoa` (`id_khoa`),
-  PRIMARY KEY (`id_nganh_hoc`) USING BTREE
+  PRIMARY KEY (`id_nganh_hoc`) USING BTREE,
+  UNIQUE KEY `uk_nganhhoc_khoa_ten_nganh_hoc` (`id_khoa`, `ten_nganh_hoc`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table phieurenluyen.nganhhoc: ~3 rows (approximately)
@@ -1663,6 +1674,14 @@ ALTER TABLE `nganhhoc`
 -- Nhựt sửa lỗi: thêm khóa ngoại để không tạo bí thư đoàn khoa trỏ tới khoa không tồn tại.
 ALTER TABLE `bithudoankhoa`
   ADD CONSTRAINT `fk_bithudoankhoa_khoa` FOREIGN KEY (`id_khoa`) REFERENCES `khoa` (`id_khoa`) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+-- Nhựt sửa lỗi: thêm khóa ngoại để không tạo lớp học trỏ tới khóa học không tồn tại.
+ALTER TABLE `lophoc`
+  ADD CONSTRAINT `fk_lophoc_khoahoc` FOREIGN KEY (`id_khoa_hoc`) REFERENCES `khoahoc` (`id_khoa_hoc`) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+-- Nhựt sửa lỗi: thêm khóa ngoại để không xóa được ngành học khi còn lớp học liên quan.
+ALTER TABLE `lophoc`
+  ADD CONSTRAINT `fk_lophoc_nganhhoc` FOREIGN KEY (`id_nganh_hoc`) REFERENCES `nganhhoc` (`id_nganh_hoc`) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

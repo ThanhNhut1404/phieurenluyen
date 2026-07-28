@@ -141,10 +141,15 @@
     if (isset($_GET['status'])) {
         // Nhựt sửa lỗi: bổ sung thông báo riêng cho lỗi validate, không tìm thấy, trùng dữ liệu, ràng buộc, CSRF và lỗi hệ thống.
         $alerts = array(
+            // Nhựt sửa lỗi: thông báo riêng cho lỗi trùng/xóa khóa học.
+            "duplicate-khoa-hoc" => array("Dữ liệu bị trùng!", "Tên khóa học đã tồn tại.", "error"),
+            "related-khoa-hoc" => array("Không thể xóa!", "Khóa học này đang được sử dụng bởi lớp học.", "error"),
             "invalid" => array("Dữ liệu không hợp lệ!", "Vui lòng kiểm tra lại thông tin nhập.", "error"),
             "not-found" => array("Không tìm thấy dữ liệu!", "Bản ghi cần thao tác không tồn tại.", "error"),
             "duplicate" => array("Dữ liệu bị trùng!", "Tên khoa đã tồn tại.", "error"),
             "related" => array("Không thể xóa!", "Khoa này đang được sử dụng bởi ngành học hoặc bí thư đoàn khoa.", "error"),
+            "duplicate-lop-hoc" => array("Dữ liệu bị trùng!", "Tên lớp học đã tồn tại trong khóa/ngành đã chọn.", "error"),
+            "related-lop-hoc" => array("Không thể xóa!", "Lớp học này đang được sử dụng bởi sinh viên hoặc các dữ liệu liên quan.", "error"),
             "csrf" => array("Phiên thao tác không hợp lệ!", "Vui lòng tải lại trang rồi thực hiện lại.", "error"),
             "system" => array("Lỗi hệ thống!", "Có lỗi phát sinh khi xử lý dữ liệu.", "error")
         );
@@ -152,6 +157,14 @@
         if (isset($alerts[$_GET['status']])) {
             $alert = $alerts[$_GET['status']];
             echo "<script>Swal.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
+        }
+
+        // Nhựt sửa lỗi: bổ sung thông báo riêng cho quản lý ngành học để không dùng nhầm nội dung của khoa.
+        if ($_GET['status'] == "duplicate-nganh-hoc") {
+            echo "<script>Swal.fire(" . json_encode("Dữ liệu bị trùng!") . ", " . json_encode("Tên ngành học đã tồn tại trong khoa đã chọn.") . ", " . json_encode("error") . ")</script>";
+        }
+        if ($_GET['status'] == "related-nganh-hoc") {
+            echo "<script>Swal.fire(" . json_encode("Không thể xóa!") . ", " . json_encode("Ngành học này đang được sử dụng bởi lớp học.") . ", " . json_encode("error") . ")</script>";
         }
 
         if ($_GET['status'] == "success") {

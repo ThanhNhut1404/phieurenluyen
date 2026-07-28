@@ -1,4 +1,4 @@
-﻿ <?php
+ <?php
     // require "../models/getModel.php";
     // Nhựt sửa lỗi: tạo CSRF token cho các thao tác thêm/sửa/xóa khoa.
     if (empty($_SESSION['csrf_token'])) {
@@ -11,6 +11,10 @@
 
     // Nhựt sửa lỗi: giữ lại dữ liệu nhập gần nhất khi validate lỗi để cải thiện UX.
     $khoa_old_input = isset($_SESSION['khoa_old_input']) && is_array($_SESSION['khoa_old_input']) ? $_SESSION['khoa_old_input'] : array();
+    // Nhựt sửa lỗi: chỉ giữ dữ liệu cũ cho form thêm đúng một lần rồi xóa để không bị dính lại khi quay trang.
+    if (isset($khoa_old_input['context']) && $khoa_old_input['context'] === 'add') {
+        unset($_SESSION['khoa_old_input']);
+    }
 
     // Nhựt sửa lỗi: escape dữ liệu trước khi hiển thị để tránh stored XSS.
     if (!function_exists('khoa_escape')) {
@@ -150,7 +154,8 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "Bfrtip",
+        // Nhựt sửa lỗi: đưa dropdown chọn số dòng lên hàng riêng phía trên các nút xuất dữ liệu.
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
