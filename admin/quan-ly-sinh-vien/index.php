@@ -35,8 +35,12 @@
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Import from excel <a href="quan-ly-sinh-vien/action.php?req=export">Tải
-                                 mẫu</a></h3>
+                         <h3 class="card-title">
+                             Import from excel 
+                             <a href="quan-ly-sinh-vien/action.php?req=export" class="btn btn-sm btn-warning ml-3 text-dark" style="font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                 <i class="fas fa-download"></i> Tải mẫu
+                             </a>
+                         </h3>
                          <div class="card-tools">
                              <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                                  <i class="fas fa-minus"></i>
@@ -214,23 +218,32 @@
                          </tr>
                      </thead>
                      <tbody>
-                         <?php $num = 0; ?>
+                         <?php 
+                         // TẠO MẢNG LƯU TRỮ LỚP HỌC ĐỂ TRÁNH N+1 QUERY (TỐI ƯU HIỆU SUẤT)
+                         $arr_lop_hoc = [];
+                         foreach ($lophoc__Get_All as $lh) {
+                             $arr_lop_hoc[$lh->id_lop_hoc] = $lh->ten_lop_hoc;
+                         }
+                         $num = 0; 
+                         ?>
                          <?php foreach ($sinhvien__Get_All as $item) : ?>
                              <tr>
+                                 <!-- BỌC htmlspecialchars ĐỂ CHỐNG LỖI BẢO MẬT XSS -->
                                  <td><?= ++$num ?></td>
-                                 <td><?= $item->ma_sinh_vien ?></td>
-                                 <td><?= $item->ten_sinh_vien ?></td>
+                                 <td><?= htmlspecialchars($item->ma_sinh_vien ?? '') ?></td>
+                                 <td><?= htmlspecialchars($item->ten_sinh_vien ?? '') ?></td>
                                  <td><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
-                                 <td><?= $item->ngay_sinh ?></td>
-                                 <td><?= $item->so_dien_thoai_1 ?></td>
-                                 <td><?= $item->dia_chi_lien_lac ?></td>
-                                 <td><?= $lophoc->lophoc__Get_By_Id($item->id_lop_hoc)->ten_lop_hoc ?></td>
+                                 <td><?= htmlspecialchars($item->ngay_sinh ?? '') ?></td>
+                                 <td><?= htmlspecialchars($item->so_dien_thoai_1 ?? '') ?></td>
+                                 <td><?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?></td>
+                                 <!-- SỬ DỤNG MẢNG ÁNH XẠ THAY VÌ QUERY TRONG VÒNG LẶP -->
+                                 <td><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
 
                                  <td>
-                                     <a href="#" type="button" class="btn  btn-warning m-2" onclick="update_obj(<?= $item->id_sinh_vien ?>)">
+                                     <a href="#" type="button" class="btn  btn-warning m-2" onclick="update_obj(<?= (int)$item->id_sinh_vien ?>)">
                                          <i class="fas fa-edit"></i>
                                      </a>
-                                     <a href="#" type="button" class="btn  btn-danger m-2" onclick="return confirm_sweet('quan-ly-sinh-vien/action.php?req=delete&id_sinh_vien=<?= $item->id_sinh_vien ?>')">
+                                     <a href="#" type="button" class="btn  btn-danger m-2" onclick="return confirm_sweet('quan-ly-sinh-vien/action.php?req=delete&id_sinh_vien=<?= (int)$item->id_sinh_vien ?>')">
                                          <i class="fas fa-trash"></i>
                                      </a>
                                  </td>

@@ -93,7 +93,7 @@ if (isset($_GET["req"])) {
                 $mat_khau = locDau($bithudoankhoa__Get_By_Id->ten_bi_thu) . date("@is");
                 $ghi_chu = date("Y-m-d H:i:s");
 
-                $status .= $taikhoan->taikhoan__Add($email, $$hashpassword->Encryption($mat_khau), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
+                $status .= $taikhoan->taikhoan__Add($email, $hashpassword->Encryption($mat_khau), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
             }
 
             if ($status != 0) {
