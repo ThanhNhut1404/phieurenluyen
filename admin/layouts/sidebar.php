@@ -6,6 +6,15 @@ if (!isset($_SESSION['admin'])) {
 }
 require "../models/getModel.php";
 
+// Nhựt sửa lỗi: tránh warning khi session admin thiếu phân quyền hoặc phân quyền không còn tồn tại.
+$ten_phan_quyen = 'Admin';
+if (isset($_SESSION['admin']->id_phan_quyen)) {
+    $phan_quyen_hien_tai = $phanquyen->phanquyen__Get_By_Id($_SESSION['admin']->id_phan_quyen);
+    if ($phan_quyen_hien_tai && isset($phan_quyen_hien_tai->ten_phan_quyen)) {
+        $ten_phan_quyen = $phan_quyen_hien_tai->ten_phan_quyen;
+    }
+}
+
 ?>
 
 <!-- sidebar -->
@@ -14,7 +23,7 @@ require "../models/getModel.php";
     <!-- Brand Logo -->
     <a href="?page=thong-ke" class="brand-link">
         <img src="../assets/img/logo.png" alt="Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light"><?= $phanquyen->phanquyen__Get_By_Id($_SESSION['admin']->id_phan_quyen)->ten_phan_quyen ?></span>
+        <span class="brand-text font-weight-light"><?= htmlspecialchars($ten_phan_quyen, ENT_QUOTES, 'UTF-8') ?></span>
     </a>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
