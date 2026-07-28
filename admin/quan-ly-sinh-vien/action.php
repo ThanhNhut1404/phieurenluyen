@@ -14,8 +14,9 @@ if (isset($_GET['req'])) {
             $email = $_POST['email'];
             $so_dien_thoai_1 = $_POST['so_dien_thoai_1'];
             $so_dien_thoai_2 = $_POST['so_dien_thoai_2'];
-            $dia_chi_lien_lac = $_POST['dia_chi_lien_lac'];
-            $dia_chi_thuong_tru = $_POST['dia_chi_thuong_tru'];
+            // quân sửa: Ghép 4 trường địa chỉ lại thành 1 chuỗi
+            $dia_chi_lien_lac = $_POST['dc_ll_so_nha'] . ', ' . $_POST['dc_ll_ap'] . ', ' . $_POST['dc_ll_xa'] . ', ' . $_POST['dc_ll_tinh'];
+            $dia_chi_thuong_tru = $_POST['dc_tt_so_nha'] . ', ' . $_POST['dc_tt_ap'] . ', ' . $_POST['dc_tt_xa'] . ', ' . $_POST['dc_tt_tinh'];
             $chuc_vu = $_POST['chuc_vu'];
             $id_lop_hoc = $_POST['id_lop_hoc'];
 
@@ -37,8 +38,9 @@ if (isset($_GET['req'])) {
             $email = $_POST['email'];
             $so_dien_thoai_1 = $_POST['so_dien_thoai_1'];
             $so_dien_thoai_2 = $_POST['so_dien_thoai_2'];
-            $dia_chi_lien_lac = $_POST['dia_chi_lien_lac'];
-            $dia_chi_thuong_tru = $_POST['dia_chi_thuong_tru'];
+            // quân sửa: Ghép 4 trường địa chỉ lại thành 1 chuỗi
+            $dia_chi_lien_lac = $_POST['dc_ll_so_nha'] . ', ' . $_POST['dc_ll_ap'] . ', ' . $_POST['dc_ll_xa'] . ', ' . $_POST['dc_ll_tinh'];
+            $dia_chi_thuong_tru = $_POST['dc_tt_so_nha'] . ', ' . $_POST['dc_tt_ap'] . ', ' . $_POST['dc_tt_xa'] . ', ' . $_POST['dc_tt_tinh'];
             $chuc_vu = $_POST['chuc_vu'];
             $id_lop_hoc = $_POST['id_lop_hoc'];
 
@@ -92,7 +94,8 @@ if (isset($_GET['req'])) {
             }
 
             if ($status == 0) {
-                header("location:../index.php?page=quan-ly-sinh-vien&status=fail");
+                // quân sửa: Đổi fail thành failed để khớp với index.php
+                header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
             } else {
                 header("location:../index.php?page=quan-ly-sinh-vien&status=success");
             }
@@ -110,8 +113,9 @@ if (isset($_GET['req'])) {
             $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Email');
             $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'Số điện thoại 1');
             $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'Số điện thoại 2');
-            $objPHPExcel->getActiveSheet()->SetCellValue('I1', 'Địa chỉ liên lạc');
-            $objPHPExcel->getActiveSheet()->SetCellValue('J1', 'Địa chỉ thường trú');
+            // quân sửa: Đổi tiêu đề cột địa chỉ để hướng dẫn nhập có dấu phẩy
+            $objPHPExcel->getActiveSheet()->SetCellValue('I1', 'Địa chỉ liên lạc (Số nhà, Ấp, Xã, Tỉnh phân cách bằng dấu phẩy)');
+            $objPHPExcel->getActiveSheet()->SetCellValue('J1', 'Địa chỉ thường trú (Số nhà, Ấp, Xã, Tỉnh phân cách bằng dấu phẩy)');
             $objPHPExcel->getActiveSheet()->SetCellValue('K1', 'Chức vụ (Sinh viên: 0, Lớp trưởng: 1, Bí thư chi đoàn: 2)');
 
             $objPHPExcel->getActiveSheet()->SetCellValue('A2', '1');
@@ -122,8 +126,9 @@ if (isset($_GET['req'])) {
             $objPHPExcel->getActiveSheet()->SetCellValue('F2', 'sv@tdu.edu.com');
             $objPHPExcel->getActiveSheet()->SetCellValue('G2', '0123456789');
             $objPHPExcel->getActiveSheet()->SetCellValue('H2', '0123456789');
-            $objPHPExcel->getActiveSheet()->SetCellValue('I2', 'Cần Thơ');
-            $objPHPExcel->getActiveSheet()->SetCellValue('J2', 'Cần Thơ');
+            // quân sửa: Đổi dữ liệu mẫu cho khớp 4 cấp
+            $objPHPExcel->getActiveSheet()->SetCellValue('I2', 'Số 1, Phường An Bình, Quận Ninh Kiều, Cần Thơ');
+            $objPHPExcel->getActiveSheet()->SetCellValue('J2', 'Số 1, Phường An Bình, Quận Ninh Kiều, Cần Thơ');
             $objPHPExcel->getActiveSheet()->SetCellValue('K2', '0');
 
             // lưu file 
@@ -147,7 +152,8 @@ if (isset($_GET['req'])) {
             $status .= unlink($file);
 
             if ($status == 0) {
-                header("location:../index.php?page=quan-ly-sinh-vien&status=fail");
+                // quân sửa: Đổi fail thành failed để khớp với index.php
+                header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
             } else {
                 header("location:../index.php?page=quan-ly-sinh-vien&status=success");
             }

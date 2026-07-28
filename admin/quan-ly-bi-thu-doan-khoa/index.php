@@ -90,15 +90,40 @@
                              </div>
 
                              <div class="col-6">
+                                 <!-- quân sửa: Chia nhỏ phần nhập địa chỉ thành 4 ô (Thêm mới) -->
                                  <div class="form-group">
                                      <label for="">Địa chỉ liên lạc <span class="color-crimson">(*)</span></label>
-                                     <input type="dia_chi_lien_lac" id="dia_chi_lien_lac" name="dia_chi_lien_lac"
-                                         class="form-control" required placeholder="Nhập địa chỉ liên lạc">
+                                     <div class="row">
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_xa" class="form-control" required placeholder="Xã / Phường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_ll_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                         </div>
+                                     </div>
                                  </div>
                                  <div class="form-group">
                                      <label for="">Địa chỉ thường trú <span class="color-crimson">(*)</span></label>
-                                     <input type="dia_chi_thuong_tru" id="dia_chi_thuong_tru" name="dia_chi_thuong_tru"
-                                         class="form-control" required placeholder="Nhập địa chỉ thường trú">
+                                     <div class="row">
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_xa" class="form-control" required placeholder="Xã / Phường">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                         </div>
+                                     </div>
                                  </div>
                                  <div class="form-group">
                                      <label for="">Khoa <span class="color-crimson">(*)</span></label>
@@ -150,8 +175,9 @@
                          </select>
                      </div>
                  </div>
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
-                     <thead>
+                 <div class="table-responsive">
+                     <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
+                         <thead>
                          <tr>
                              <th>#</th>
                              <th>Tên bí thư đoàn khoa</th>
@@ -168,11 +194,15 @@
                          <?php foreach ($bithudoankhoa__Get_All as $item) : ?>
                          <tr>
                              <td><?= ++$num ?></td>
-                             <td><?= $item->ten_bi_thu ?></td>
+                             <!-- quân sửa: Viết hoa chữ cái đầu của Tên riêng khi hiển thị ra danh sách -->
+                             <td><?= htmlspecialchars(mb_convert_case($item->ten_bi_thu ?? '', MB_CASE_TITLE, "UTF-8")) ?></td>
                              <td><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
                              <td><?= $item->ngay_sinh ?></td>
                              <td><?= $item->so_dien_thoai_1 ?></td>
-                             <td><?= $item->dia_chi_lien_lac ?></td>
+                             <!-- quân sửa: Rút gọn hiển thị địa chỉ để không làm mất cột thao tác -->
+                             <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>">
+                                 <?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>
+                             </td>
                              <td><?= $khoa->khoa__Get_By_Id($item->id_khoa)->ten_khoa ?></td>
 
                              <td>
@@ -189,6 +219,7 @@
                          <?php endforeach ?>
                      </tbody>
                  </table>
+                 </div>
              </div>
              <!-- /.card-body -->
          </div>

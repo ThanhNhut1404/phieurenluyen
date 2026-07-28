@@ -79,5 +79,16 @@ class bithudoankhoa extends Database {
         $obj->execute(array($trang_thai, $id_bi_thu));
         return $obj->rowCount();
     }
+    // quân sửa: Hàm kiểm tra trùng lặp Tên hoặc Email (Dùng cho cả Thêm và Sửa)
+    public function bithudoankhoa__Check_Duplicate($ten_bi_thu, $email, $id_bi_thu = 0) {
+        if ($id_bi_thu == 0) {
+            $obj = $this->connect->prepare("SELECT * FROM bithudoankhoa WHERE ten_bi_thu = ? OR email = ?");
+            $obj->execute(array($ten_bi_thu, $email));
+        } else {
+            $obj = $this->connect->prepare("SELECT * FROM bithudoankhoa WHERE (ten_bi_thu = ? OR email = ?) AND id_bi_thu != ?");
+            $obj->execute(array($ten_bi_thu, $email, $id_bi_thu));
+        }
+        return $obj->rowCount();
+    }
 }
 ?>

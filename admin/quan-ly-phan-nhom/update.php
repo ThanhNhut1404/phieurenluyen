@@ -22,10 +22,16 @@
                         <input type="text" id="ten_phan_nhom" name="ten_phan_nhom" class="form-control" required
                             placeholder="Nhập tên phân nhóm" value="<?=$phannhom__Get_By_Id->ten_phan_nhom?>">
                     </div>
+                    <!-- quân sửa: Đổi thành select để giới hạn quyền người dùng (Sửa) -->
                     <div class="form-group">
                         <label for="">Cấp bậc</label>
-                        <input type="number" id="cap_bac" name="cap_bac" class="form-control" placeholder="Nhập cấp bậc"
-                            value="<?=$phannhom__Get_By_Id->cap_bac?>">
+                        <select id="cap_bac" name="cap_bac" class="form-control">
+                            <option value="4" <?=$phannhom__Get_By_Id->cap_bac == 4 ? 'selected' : ''?>>Cố vấn học tập (Cấp 4)</option>
+                            <option value="3" <?=$phannhom__Get_By_Id->cap_bac == 3 ? 'selected' : ''?>>Bí thư đoàn khoa (Cấp 3)</option>
+                            <option value="2" <?=$phannhom__Get_By_Id->cap_bac == 2 ? 'selected' : ''?>>Sinh viên (Cấp 2)</option>
+                            <option value="1" <?=$phannhom__Get_By_Id->cap_bac == 1 ? 'selected' : ''?>>Manager (Cấp 1)</option>
+                            <option value="0" <?=$phannhom__Get_By_Id->cap_bac == 0 ? 'selected' : ''?>>Admin (Cấp 0)</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="">Ghi chú</label>

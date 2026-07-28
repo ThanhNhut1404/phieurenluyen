@@ -348,8 +348,10 @@ button.btn.removeall.btn-outline-secondary:before {
 
                                 ?>
 
-                 <form action="quan-ly-tai-khoan/action.php?req=add_sv" method="post" enctype="multipart/form-data">
+                 <!-- quân sửa: Trỏ form về đúng luồng add_gv và truyền thêm id_lop_hoc -->
+                 <form action="quan-ly-tai-khoan/action.php?req=add_gv" method="post" enctype="multipart/form-data">
                      <input type="hidden" name="id_phan_nhom" value="<?= $id_phan_nhom ?>">
+                     <input type="hidden" name="id_lop_hoc" value="<?= $id_lop_hoc ?>">
                      <input type="hidden" name="id_phan_quyen"
                          value="<?= $phanquyen->phanquyen__Get_By_Cap_Bac(2)->id_phan_quyen ?>">
                      <div class="card-body">
@@ -443,11 +445,13 @@ button.btn.removeall.btn-outline-secondary:before {
 
                  </div>
 
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
-                     <thead>
+                 <div class="table-responsive">
+                     <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
+                         <thead>
                          <tr>
                              <th>#</th>
                              <th>Email</th>
+                             <th>Họ và tên</th>
                              <th>Mật khẩu</th>
                              <th>Phân nhóm</th>
                              <th>Phân quyền</th>
@@ -463,9 +467,30 @@ button.btn.removeall.btn-outline-secondary:before {
                          <tr>
                              <td><?= ++$num ?></td>
                              <td><?= $item->email ?></td>
+                             <?php
+                                // quân sửa: Lấy họ tên dựa trên cấp bậc phân nhóm
+                                $ho_ten = '<span class="text-secondary">N/A</span>';
+                                $pn = $phannhom->phannhom__Get_By_Id($item->id_phan_nhom);
+                                if ($pn) {
+                                    if ($pn->cap_bac == 0) $ho_ten = "Admin";
+                                    elseif ($pn->cap_bac == 1) $ho_ten = "Manager";
+                                    elseif ($pn->cap_bac == 2) {
+                                        $sv = $sinhvien->sinhvien__Get_By_Id($item->id_nguoi_dung);
+                                        if ($sv) $ho_ten = htmlspecialchars($sv->ten_sinh_vien);
+                                    } elseif ($pn->cap_bac == 3) {
+                                        $bt = $bithudoankhoa->bithudoankhoa__Get_By_Id($item->id_nguoi_dung);
+                                        if ($bt) $ho_ten = htmlspecialchars($bt->ten_bi_thu);
+                                    } elseif ($pn->cap_bac == 4) {
+                                        $gv = $giangvien->giangvien__Get_By_Id($item->id_nguoi_dung);
+                                        if ($gv) $ho_ten = htmlspecialchars($gv->ten_giang_vien);
+                                    }
+                                }
+                             ?>
+                             <td><b><?= $ho_ten ?></b></td>
                              <td><?= $item->mat_khau ?></td>
-                             <td><?= $phannhom->phannhom__Get_By_Id($item->id_phan_nhom)->ten_phan_nhom ?></td>
-                             <td><?= $phanquyen->phanquyen__Get_By_Id($item->id_phan_quyen)->ten_phan_quyen ?></td>
+                             <!-- quân sửa: Bổ sung kiểm tra dữ liệu tồn tại để tránh lỗi báo Attempt to read property on bool -->
+                             <td><?= $pn ? $pn->ten_phan_nhom : '<span class="text-danger">Chưa xác định</span>' ?></td>
+                             <td><?= ($pq = $phanquyen->phanquyen__Get_By_Id($item->id_phan_quyen)) ? $pq->ten_phan_quyen : '<span class="text-danger">Chưa xác định</span>' ?></td>
                              <td
                                  onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=active&id_tai_khoan=<?= $item->id_tai_khoan ?>&trang_thai=<?= $item->trang_thai ?>')">
                                  <?= $item->trang_thai == 1 ? "<button class='btn btn-success'><i class='fas fa-user-check'></i></button>" : "<button class='btn btn-danger'><i class='fas fa-user-slash'></i></button>" ?>
@@ -497,6 +522,7 @@ button.btn.removeall.btn-outline-secondary:before {
                          <?php endforeach ?>
                      </tbody>
                  </table>
+                 </div>
              </div>
              <!-- /.card-body -->
          </div>

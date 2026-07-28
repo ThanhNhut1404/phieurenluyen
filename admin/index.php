@@ -144,6 +144,8 @@
             "invalid" => array("Dữ liệu không hợp lệ!", "Vui lòng kiểm tra lại thông tin nhập.", "error"),
             "not-found" => array("Không tìm thấy dữ liệu!", "Bản ghi cần thao tác không tồn tại.", "error"),
             "duplicate" => array("Dữ liệu bị trùng!", "Tên khoa đã tồn tại.", "error"),
+            "duplicate-bithu" => array("Dữ liệu bị trùng!", "Tên hoặc Email bí thư đoàn khoa đã tồn tại.", "error"),
+            "duplicate-giangvien" => array("Dữ liệu bị trùng!", "Mã số hoặc Email giảng viên đã tồn tại.", "error"),
             "related" => array("Không thể xóa!", "Khoa này đang được sử dụng bởi ngành học hoặc bí thư đoàn khoa.", "error"),
             "csrf" => array("Phiên thao tác không hợp lệ!", "Vui lòng tải lại trang rồi thực hiện lại.", "error"),
             "system" => array("Lỗi hệ thống!", "Có lỗi phát sinh khi xử lý dữ liệu.", "error")

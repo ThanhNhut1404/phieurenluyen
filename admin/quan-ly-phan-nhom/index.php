@@ -42,10 +42,16 @@
                              <input type="text" id="ten_phan_nhom" name="ten_phan_nhom" class="form-control" required
                                  placeholder="Nhập tên phân nhóm">
                          </div>
+                         <!-- quân sửa: Đổi thành select để giới hạn quyền người dùng -->
                          <div class="form-group">
                              <label for="">Cấp bậc</label>
-                             <input type="number" id="cap_bac" name="cap_bac" class="form-control"
-                                 placeholder="Nhập cấp bậc" />
+                             <select id="cap_bac" name="cap_bac" class="form-control">
+                                 <option value="4">Cố vấn học tập (Cấp 4)</option>
+                                 <option value="3">Bí thư đoàn khoa (Cấp 3)</option>
+                                 <option value="2">Sinh viên (Cấp 2)</option>
+                                 <option value="1">Manager (Cấp 1)</option>
+                                 <option value="0">Admin (Cấp 0)</option>
+                             </select>
                          </div>
                          <div class="form-group">
                              <label for="">Ghi chú</label>
