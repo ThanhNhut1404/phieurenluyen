@@ -150,9 +150,13 @@
             // Nhựt sửa lỗi: thông báo riêng cho lỗi trùng/xóa năm học.
             "duplicate-nam-hoc" => array("Dữ liệu bị trùng!", "Tên năm học đã tồn tại.", "error"),
             "related-nam-hoc" => array("Không thể xóa!", "Năm học này đang được sử dụng bởi học kỳ.", "error"),
+            "overlap-nam-hoc" => array("Khoảng thời gian bị trùng!", "Ngày bắt đầu và ngày kết thúc đang chồng lên năm học khác.", "error"),
             // Nhựt sửa lỗi: thông báo riêng cho lỗi trùng/xóa học kỳ.
             "duplicate-hoc-ky" => array("Dữ liệu bị trùng!", "Tên học kỳ đã tồn tại trong năm học đã chọn.", "error"),
             "related-hoc-ky" => array("Không thể xóa!", "Học kỳ này đang được sử dụng bởi đợt chấm điểm.", "error"),
+            "limit-hoc-ky" => array("Không thể thêm!", "Mỗi năm học chỉ được tối đa 2 học kỳ.", "error"),
+            "overlap-hoc-ky" => array("Khoảng thời gian bị trùng!", "Học kỳ này đang chồng lên học kỳ khác trong cùng năm học.", "error"),
+            "out-of-range-hoc-ky" => array("Ngày không hợp lệ!", "Ngày của học kỳ phải nằm trong khoảng năm học đã chọn.", "error"),
             "invalid" => array("Dữ liệu không hợp lệ!", "Vui lòng kiểm tra lại thông tin nhập.", "error"),
             "not-found" => array("Không tìm thấy dữ liệu!", "Bản ghi cần thao tác không tồn tại.", "error"),
             "duplicate" => array("Dữ liệu bị trùng!", "Tên khoa đã tồn tại.", "error"),

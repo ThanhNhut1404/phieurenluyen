@@ -117,18 +117,16 @@ INSERT INTO `giangvien` (`id_giang_vien`, `ma_giang_vien`, `ten_giang_vien`, `gi
 CREATE TABLE IF NOT EXISTS `hocky` (
   `id_hoc_ky` int(11) NOT NULL AUTO_INCREMENT,
   `ten_hoc_ky` varchar(50) NOT NULL,
+  `ngay_bat_dau` date NOT NULL,
+  `ngay_ket_thuc` date NOT NULL,
   `ghi_chu` varchar(2000) NOT NULL DEFAULT '',
-  `id_nam_hoc` int(11) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id_hoc_ky`) USING BTREE,
-  -- Nhựt sửa lỗi: thêm unique key để database chặn trùng học kỳ trong cùng năm học.
-  UNIQUE KEY `uk_hocky_namhoc_ten_hoc_ky` (`id_nam_hoc`, `ten_hoc_ky`),
-  -- Nhựt sửa lỗi: thêm index cho id_nam_hoc để khóa ngoại và join chạy ổn định.
-  KEY `idx_hocky_id_nam_hoc` (`id_nam_hoc`)
+  `id_nam_hoc` int(11) NOT NULL,
+  PRIMARY KEY (`id_hoc_ky`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table phieurenluyen.hocky: ~1 rows (approximately)
-INSERT INTO `hocky` (`id_hoc_ky`, `ten_hoc_ky`, `ghi_chu`, `id_nam_hoc`) VALUES
-	(1, 'Học kỳ 1', '', 1);
+INSERT INTO `hocky` (`id_hoc_ky`, `ten_hoc_ky`, `ngay_bat_dau`, `ngay_ket_thuc`, `ghi_chu`, `id_nam_hoc`) VALUES
+	(1, 'Học kỳ 1', '2023-09-01', '2024-01-31', '', 1);
 
 -- Dumping structure for table phieurenluyen.ketquaxeploai
 CREATE TABLE IF NOT EXISTS `ketquaxeploai` (
@@ -305,13 +303,15 @@ INSERT INTO `muc` (`id_muc`, `ten_muc`, `ghi_chu`, `thu_tu`, `id_khoan`) VALUES
 CREATE TABLE IF NOT EXISTS `namhoc` (
   `id_nam_hoc` int(11) NOT NULL AUTO_INCREMENT,
   `ten_nam_hoc` varchar(50) NOT NULL,
+  `ngay_bat_dau` date NOT NULL,
+  `ngay_ket_thuc` date NOT NULL,
   `ghi_chu` varchar(2000) NOT NULL DEFAULT '',
   PRIMARY KEY (`id_nam_hoc`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table phieurenluyen.namhoc: ~1 rows (approximately)
-INSERT INTO `namhoc` (`id_nam_hoc`, `ten_nam_hoc`, `ghi_chu`) VALUES
-	(1, '2023-2024', '');
+INSERT INTO `namhoc` (`id_nam_hoc`, `ten_nam_hoc`, `ngay_bat_dau`, `ngay_ket_thuc`, `ghi_chu`) VALUES
+	(1, '2023-2024', '2023-09-01', '2024-08-31', '');
 
 -- Dumping structure for table phieurenluyen.nganhhoc
 CREATE TABLE IF NOT EXISTS `nganhhoc` (
@@ -1695,13 +1695,34 @@ ALTER TABLE `lophoc`
 ALTER TABLE `namhoc`
   ADD UNIQUE KEY `uk_namhoc_ten_nam_hoc` (`ten_nam_hoc`);
 
+-- Nhựt sửa lỗi: thêm ngày bắt đầu/kết thúc cho DB hiện tại trước khi ép NOT NULL.
+ALTER TABLE `namhoc`
+  ADD COLUMN IF NOT EXISTS `ngay_bat_dau` date NULL AFTER `ten_nam_hoc`,
+  ADD COLUMN IF NOT EXISTS `ngay_ket_thuc` date NULL AFTER `ngay_bat_dau`;
+UPDATE `namhoc`
+  SET `ngay_bat_dau` = IFNULL(`ngay_bat_dau`, STR_TO_DATE(CONCAT(SUBSTRING(`ten_nam_hoc`, 1, 4), '-09-01'), '%Y-%m-%d')),
+      `ngay_ket_thuc` = IFNULL(`ngay_ket_thuc`, STR_TO_DATE(CONCAT(SUBSTRING(`ten_nam_hoc`, -4), '-08-31'), '%Y-%m-%d'));
+UPDATE `namhoc`
+  SET `ngay_bat_dau` = '2023-09-01',
+      `ngay_ket_thuc` = '2024-08-31'
+  WHERE `ngay_bat_dau` IS NULL OR `ngay_ket_thuc` IS NULL OR `ngay_ket_thuc` <= `ngay_bat_dau`;
+
 -- Nhựt sửa lỗi: thêm unique key để database chặn trùng học kỳ trong cùng năm học.
 ALTER TABLE `hocky`
   ADD UNIQUE KEY `uk_hocky_namhoc_ten_hoc_ky` (`id_nam_hoc`, `ten_hoc_ky`);
 
--- Nhựt sửa lỗi: thêm index cho id_nam_hoc để khóa ngoại học kỳ chạy ổn định.
+-- Nhựt sửa lỗi: thêm ngày bắt đầu/kết thúc cho học kỳ hiện tại trước khi ép NOT NULL.
 ALTER TABLE `hocky`
-  ADD KEY `idx_hocky_id_nam_hoc` (`id_nam_hoc`);
+  ADD COLUMN IF NOT EXISTS `ngay_bat_dau` date NULL AFTER `ten_hoc_ky`,
+  ADD COLUMN IF NOT EXISTS `ngay_ket_thuc` date NULL AFTER `ngay_bat_dau`;
+UPDATE `hocky`
+  INNER JOIN `namhoc` ON `hocky`.`id_nam_hoc` = `namhoc`.`id_nam_hoc`
+  SET `hocky`.`ngay_bat_dau` = IFNULL(`hocky`.`ngay_bat_dau`, `namhoc`.`ngay_bat_dau`),
+      `hocky`.`ngay_ket_thuc` = IFNULL(`hocky`.`ngay_ket_thuc`, DATE_SUB(DATE_ADD(`namhoc`.`ngay_bat_dau`, INTERVAL 5 MONTH), INTERVAL 1 DAY));
+UPDATE `hocky`
+  SET `ngay_bat_dau` = '2023-09-01',
+      `ngay_ket_thuc` = '2024-01-31'
+  WHERE `ngay_bat_dau` IS NULL OR `ngay_ket_thuc` IS NULL OR `ngay_ket_thuc` <= `ngay_bat_dau`;
 
 -- Nhựt sửa lỗi: thêm khóa ngoại để không tạo học kỳ trỏ tới năm học không tồn tại.
 ALTER TABLE `hocky`
@@ -1722,7 +1743,13 @@ UPDATE `hocky` SET `ghi_chu` = '' WHERE `ghi_chu` IS NULL;
 ALTER TABLE `namhoc`
   MODIFY `ten_nam_hoc` varchar(50) NOT NULL;
 ALTER TABLE `namhoc`
+  MODIFY `ngay_bat_dau` date NOT NULL;
+ALTER TABLE `namhoc`
+  MODIFY `ngay_ket_thuc` date NOT NULL;
+ALTER TABLE `namhoc`
   MODIFY `ghi_chu` varchar(2000) NOT NULL DEFAULT '';
+ALTER TABLE `namhoc`
+  ADD CONSTRAINT `chk_namhoc_ngay_hop_le` CHECK (`ngay_ket_thuc` > `ngay_bat_dau`);
 ALTER TABLE `trinhdo`
   MODIFY `ten_trinh_do` varchar(50) NOT NULL;
 ALTER TABLE `trinhdo`
@@ -1730,7 +1757,15 @@ ALTER TABLE `trinhdo`
 ALTER TABLE `hocky`
   MODIFY `ten_hoc_ky` varchar(50) NOT NULL;
 ALTER TABLE `hocky`
+  MODIFY `id_nam_hoc` int(11) NOT NULL;
+ALTER TABLE `hocky`
+  MODIFY `ngay_bat_dau` date NOT NULL;
+ALTER TABLE `hocky`
+  MODIFY `ngay_ket_thuc` date NOT NULL;
+ALTER TABLE `hocky`
   MODIFY `ghi_chu` varchar(2000) NOT NULL DEFAULT '';
+ALTER TABLE `hocky`
+  ADD CONSTRAINT `chk_hocky_ngay_hop_le` CHECK (`ngay_ket_thuc` > `ngay_bat_dau`);
 
 -- Nhựt sửa lỗi: thêm khóa ngoại để không xóa được trình độ khi còn giảng viên liên quan.
 ALTER TABLE `giangvien`

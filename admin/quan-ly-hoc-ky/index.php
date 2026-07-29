@@ -82,6 +82,16 @@
                                 value="<?=hocky_escape(hocky_old_value('ten_hoc_ky', 'add'))?>" placeholder="Nhập tên học kỳ">
                         </div>
                         <div class="form-group">
+                            <label for="">Ngày bắt đầu <span class="color-crimson">(*)</span></label>
+                            <input type="date" id="ngay_bat_dau" name="ngay_bat_dau" class="form-control" required
+                                value="<?=hocky_escape(hocky_old_value('ngay_bat_dau', 'add'))?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Ngày kết thúc <span class="color-crimson">(*)</span></label>
+                            <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control" required
+                                value="<?=hocky_escape(hocky_old_value('ngay_ket_thuc', 'add'))?>">
+                        </div>
+                        <div class="form-group">
                             <label for="">Ghi chú</label>
                             <textarea id="ghi_chu" name="ghi_chu" class="form-control" maxlength="2000"
                                 placeholder="Nhập ghi chú"><?=hocky_escape(hocky_old_value('ghi_chu', 'add'))?></textarea>
@@ -118,6 +128,8 @@
                             <th>#</th>
                             <th>Năm học</th>
                             <th>Tên học kỳ</th>
+                            <th>Ngày bắt đầu</th>
+                            <th>Ngày kết thúc</th>
                             <th>Ghi chú</th>
                             <th>Thao tác</th>
                         </tr>
@@ -129,6 +141,8 @@
                             <td><?=++$num?></td>
                             <td><?=hocky_escape($item->ten_nam_hoc ?? 'Năm học không tồn tại')?></td>
                             <td><?=hocky_escape($item->ten_hoc_ky)?></td>
+                            <td><?=hocky_escape($item->ngay_bat_dau)?></td>
+                            <td><?=hocky_escape($item->ngay_ket_thuc)?></td>
                             <td><?=hocky_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="#" type="button" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_hoc_ky?>)">

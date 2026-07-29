@@ -41,11 +41,25 @@
         return $length <= 2000;
     }
 
+    function namhoc_valid_date($date) {
+        $value = DateTime::createFromFormat('Y-m-d', (string)$date);
+        $errors = DateTime::getLastErrors();
+        return $value && $value->format('Y-m-d') === $date && (!$errors || ($errors['warning_count'] === 0 && $errors['error_count'] === 0));
+    }
+
+    function namhoc_valid_date_range($ngay_bat_dau, $ngay_ket_thuc) {
+        return namhoc_valid_date($ngay_bat_dau)
+            && namhoc_valid_date($ngay_ket_thuc)
+            && strtotime($ngay_ket_thuc) > strtotime($ngay_bat_dau);
+    }
+
     // Nhựt sửa lỗi: giữ dữ liệu vừa nhập khi validate hoặc CSRF lỗi.
-    function namhoc_store_old_input($context, $ten_nam_hoc, $ghi_chu, $id_nam_hoc = null) {
+    function namhoc_store_old_input($context, $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc = null) {
         $_SESSION['namhoc_old_input'] = array(
             'context' => $context,
             'ten_nam_hoc' => $ten_nam_hoc,
+            'ngay_bat_dau' => $ngay_bat_dau,
+            'ngay_ket_thuc' => $ngay_ket_thuc,
             'ghi_chu' => $ghi_chu,
             'id_nam_hoc' => $id_nam_hoc,
         );
@@ -69,10 +83,10 @@
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !namhoc_valid_csrf()) {
         if ($_GET['req'] === 'add') {
-            namhoc_store_old_input('add', namhoc_post_text('ten_nam_hoc'), namhoc_post_text('ghi_chu'));
+            namhoc_store_old_input('add', namhoc_post_text('ten_nam_hoc'), namhoc_post_text('ngay_bat_dau'), namhoc_post_text('ngay_ket_thuc'), namhoc_post_text('ghi_chu'));
         }
         if ($_GET['req'] === 'update') {
-            namhoc_store_old_input('update', namhoc_post_text('ten_nam_hoc'), namhoc_post_text('ghi_chu'), filter_input(INPUT_POST, 'id_nam_hoc', FILTER_VALIDATE_INT));
+            namhoc_store_old_input('update', namhoc_post_text('ten_nam_hoc'), namhoc_post_text('ngay_bat_dau'), namhoc_post_text('ngay_ket_thuc'), namhoc_post_text('ghi_chu'), filter_input(INPUT_POST, 'id_nam_hoc', FILTER_VALIDATE_INT));
         }
         namhoc_redirect('csrf');
     }
@@ -81,19 +95,27 @@
         switch ($_GET['req']) {
             case 'add':
                 $ten_nam_hoc = namhoc_normalize_ten_nam_hoc(namhoc_post_text('ten_nam_hoc'));
+                $ngay_bat_dau = namhoc_post_text('ngay_bat_dau');
+                $ngay_ket_thuc = namhoc_post_text('ngay_ket_thuc');
                 $ghi_chu = namhoc_post_text('ghi_chu');
 
-                if (!namhoc_valid_ten_nam_hoc($ten_nam_hoc) || !namhoc_valid_ghi_chu($ghi_chu)) {
-                    namhoc_store_old_input('add', $ten_nam_hoc, $ghi_chu);
+                if (!namhoc_valid_ten_nam_hoc($ten_nam_hoc) || !namhoc_valid_date_range($ngay_bat_dau, $ngay_ket_thuc) || !namhoc_valid_ghi_chu($ghi_chu)) {
+                    namhoc_store_old_input('add', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
                     namhoc_redirect('invalid');
                 }
 
                 if ($namhoc->namhoc__Name_Exists($ten_nam_hoc)) {
-                    namhoc_store_old_input('add', $ten_nam_hoc, $ghi_chu);
+                    namhoc_store_old_input('add', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
                     namhoc_redirect('duplicate-nam-hoc');
                 }
 
-                $status = $namhoc->namhoc__Add($ten_nam_hoc, $ghi_chu);
+                // Nhựt sửa lỗi: chặn thêm năm học có khoảng thời gian chồng lên năm học khác.
+                if ($namhoc->namhoc__Date_Range_Overlaps($ngay_bat_dau, $ngay_ket_thuc)) {
+                    namhoc_store_old_input('add', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
+                    namhoc_redirect('overlap-nam-hoc');
+                }
+
+                $status = $namhoc->namhoc__Add($ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
                 namhoc_clear_old_input();
                 namhoc_rotate_csrf_token();
                 namhoc_redirect($status != 0 ? 'success' : 'failed');
@@ -103,10 +125,12 @@
             case 'update':
                 $id_nam_hoc = filter_input(INPUT_POST, 'id_nam_hoc', FILTER_VALIDATE_INT);
                 $ten_nam_hoc = namhoc_normalize_ten_nam_hoc(namhoc_post_text('ten_nam_hoc'));
+                $ngay_bat_dau = namhoc_post_text('ngay_bat_dau');
+                $ngay_ket_thuc = namhoc_post_text('ngay_ket_thuc');
                 $ghi_chu = namhoc_post_text('ghi_chu');
 
-                if (!$id_nam_hoc || $id_nam_hoc < 1 || !namhoc_valid_ten_nam_hoc($ten_nam_hoc) || !namhoc_valid_ghi_chu($ghi_chu)) {
-                    namhoc_store_old_input('update', $ten_nam_hoc, $ghi_chu, $id_nam_hoc);
+                if (!$id_nam_hoc || $id_nam_hoc < 1 || !namhoc_valid_ten_nam_hoc($ten_nam_hoc) || !namhoc_valid_date_range($ngay_bat_dau, $ngay_ket_thuc) || !namhoc_valid_ghi_chu($ghi_chu)) {
+                    namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
                     namhoc_redirect('invalid');
                 }
 
@@ -118,11 +142,18 @@
 
                 if ($namhoc->namhoc__Name_Exists($ten_nam_hoc, $id_nam_hoc)) {
                     $namhoc->connect->rollBack();
-                    namhoc_store_old_input('update', $ten_nam_hoc, $ghi_chu, $id_nam_hoc);
+                    namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
                     namhoc_redirect('duplicate-nam-hoc');
                 }
 
-                $status = $namhoc->namhoc__Update($id_nam_hoc, $ten_nam_hoc, $ghi_chu);
+                // Nhựt sửa lỗi: chặn cập nhật làm chồng khoảng thời gian với năm học khác.
+                if ($namhoc->namhoc__Date_Range_Overlaps($ngay_bat_dau, $ngay_ket_thuc, $id_nam_hoc)) {
+                    $namhoc->connect->rollBack();
+                    namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    namhoc_redirect('overlap-nam-hoc');
+                }
+
+                $status = $namhoc->namhoc__Update($id_nam_hoc, $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
                 $namhoc->connect->commit();
                 namhoc_clear_old_input();
                 namhoc_rotate_csrf_token();

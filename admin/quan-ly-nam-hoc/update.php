@@ -74,6 +74,16 @@
                         placeholder="Nhập tên năm học" value="<?=namhoc_update_escape(namhoc_update_old_value('ten_nam_hoc', $namhoc__Get_By_Id->id_nam_hoc, $namhoc__Get_By_Id->ten_nam_hoc))?>">
                 </div>
                 <div class="form-group">
+                    <label for="">Ngày bắt đầu <span class="color-crimson">(*)</span></label>
+                    <input type="date" id="ngay_bat_dau" name="ngay_bat_dau" class="form-control" required
+                        value="<?=namhoc_update_escape(namhoc_update_old_value('ngay_bat_dau', $namhoc__Get_By_Id->id_nam_hoc, $namhoc__Get_By_Id->ngay_bat_dau))?>">
+                </div>
+                <div class="form-group">
+                    <label for="">Ngày kết thúc <span class="color-crimson">(*)</span></label>
+                    <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control" required
+                        value="<?=namhoc_update_escape(namhoc_update_old_value('ngay_ket_thuc', $namhoc__Get_By_Id->id_nam_hoc, $namhoc__Get_By_Id->ngay_ket_thuc))?>">
+                </div>
+                <div class="form-group">
                     <label for="">Ghi chú</label>
                     <textarea id="ghi_chu" name="ghi_chu" class="form-control" maxlength="2000"
                         placeholder="Nhập ghi chú"><?=namhoc_update_escape(namhoc_update_old_value('ghi_chu', $namhoc__Get_By_Id->id_nam_hoc, $namhoc__Get_By_Id->ghi_chu))?></textarea>

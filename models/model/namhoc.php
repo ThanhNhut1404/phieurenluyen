@@ -33,23 +33,23 @@ class namhoc extends Database {
     }
 
     public function namhoc__Get_All() {
-        // Nhựt sửa lỗi: bỏ SELECT * và thêm ORDER BY để danh sách ổn định.
-        $obj = $this->connect->prepare("SELECT id_nam_hoc, ten_nam_hoc, ghi_chu FROM namhoc ORDER BY id_nam_hoc DESC, ten_nam_hoc ASC");
+        // Nhựt sửa lỗi: bỏ SELECT * và thêm ngày bắt đầu/kết thúc để quản lý đúng khoảng năm học.
+        $obj = $this->connect->prepare("SELECT id_nam_hoc, ten_nam_hoc, ngay_bat_dau, ngay_ket_thuc, ghi_chu FROM namhoc ORDER BY ngay_bat_dau DESC, id_nam_hoc DESC");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         return $obj->fetchAll();
     }
 
-    public function namhoc__Add($ten_nam_hoc, $ghi_chu) {
-        $obj = $this->connect->prepare("INSERT INTO namhoc(ten_nam_hoc, ghi_chu) VALUES (?,?)");
-        $obj->execute(array($ten_nam_hoc, $ghi_chu));
+    public function namhoc__Add($ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu) {
+        $obj = $this->connect->prepare("INSERT INTO namhoc(ten_nam_hoc, ngay_bat_dau, ngay_ket_thuc, ghi_chu) VALUES (?,?,?,?)");
+        $obj->execute(array($ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu));
         return $obj->rowCount();
     }
 
-    public function namhoc__Update($id_nam_hoc, $ten_nam_hoc, $ghi_chu) {
-        $obj = $this->connect->prepare("UPDATE namhoc SET ten_nam_hoc=?, ghi_chu=? WHERE id_nam_hoc=?");
+    public function namhoc__Update($id_nam_hoc, $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu) {
+        $obj = $this->connect->prepare("UPDATE namhoc SET ten_nam_hoc=?, ngay_bat_dau=?, ngay_ket_thuc=?, ghi_chu=? WHERE id_nam_hoc=?");
         // Nhựt sửa lỗi: trả về execute để update không đổi dữ liệu vẫn là hợp lệ.
-        return $obj->execute(array($ten_nam_hoc, $ghi_chu, $id_nam_hoc));
+        return $obj->execute(array($ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc));
     }
 
     public function namhoc__Name_Exists($ten_nam_hoc, $exclude_id_nam_hoc = null) {
@@ -61,6 +61,18 @@ class namhoc extends Database {
         } else {
             $obj = $this->connect->prepare("SELECT COUNT(*) FROM namhoc WHERE ten_nam_hoc COLLATE utf8mb4_general_ci = ? AND id_nam_hoc != ?");
             $obj->execute(array($ten_nam_hoc, $exclude_id_nam_hoc));
+        }
+        return (int)$obj->fetchColumn() > 0;
+    }
+
+    public function namhoc__Date_Range_Overlaps($ngay_bat_dau, $ngay_ket_thuc, $exclude_id_nam_hoc = null) {
+        // Nhựt sửa lỗi: không cho khoảng thời gian năm học chồng lên năm học khác.
+        if ($exclude_id_nam_hoc === null) {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM namhoc WHERE ngay_bat_dau <= ? AND ngay_ket_thuc >= ?");
+            $obj->execute(array($ngay_ket_thuc, $ngay_bat_dau));
+        } else {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM namhoc WHERE ngay_bat_dau <= ? AND ngay_ket_thuc >= ? AND id_nam_hoc != ?");
+            $obj->execute(array($ngay_ket_thuc, $ngay_bat_dau, $exclude_id_nam_hoc));
         }
         return (int)$obj->fetchColumn() > 0;
     }
@@ -80,7 +92,7 @@ class namhoc extends Database {
 
     public function namhoc__Get_By_Id($id_nam_hoc) {
         // Nhựt sửa lỗi: bỏ SELECT * và chỉ lấy cột cần dùng.
-        $obj = $this->connect->prepare("SELECT id_nam_hoc, ten_nam_hoc, ghi_chu FROM namhoc WHERE id_nam_hoc = ?");
+        $obj = $this->connect->prepare("SELECT id_nam_hoc, ten_nam_hoc, ngay_bat_dau, ngay_ket_thuc, ghi_chu FROM namhoc WHERE id_nam_hoc = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_nam_hoc));
         return $obj->fetch();
