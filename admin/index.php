@@ -141,9 +141,18 @@
     if (isset($_GET['status'])) {
         // Nhựt sửa lỗi: bổ sung thông báo riêng cho lỗi validate, không tìm thấy, trùng dữ liệu, ràng buộc, CSRF và lỗi hệ thống.
         $alerts = array(
+            // Nhựt sửa lỗi: thông báo riêng cho lỗi trùng/xóa trình độ.
+            "duplicate-trinh-do" => array("Dữ liệu bị trùng!", "Tên trình độ đã tồn tại.", "error"),
+            "related-trinh-do" => array("Không thể xóa!", "Trình độ này đang được sử dụng bởi giảng viên.", "error"),
             // Nhựt sửa lỗi: thông báo riêng cho lỗi trùng/xóa khóa học.
             "duplicate-khoa-hoc" => array("Dữ liệu bị trùng!", "Tên khóa học đã tồn tại.", "error"),
             "related-khoa-hoc" => array("Không thể xóa!", "Khóa học này đang được sử dụng bởi lớp học.", "error"),
+            // Nhựt sửa lỗi: thông báo riêng cho lỗi trùng/xóa năm học.
+            "duplicate-nam-hoc" => array("Dữ liệu bị trùng!", "Tên năm học đã tồn tại.", "error"),
+            "related-nam-hoc" => array("Không thể xóa!", "Năm học này đang được sử dụng bởi học kỳ.", "error"),
+            // Nhựt sửa lỗi: thông báo riêng cho lỗi trùng/xóa học kỳ.
+            "duplicate-hoc-ky" => array("Dữ liệu bị trùng!", "Tên học kỳ đã tồn tại trong năm học đã chọn.", "error"),
+            "related-hoc-ky" => array("Không thể xóa!", "Học kỳ này đang được sử dụng bởi đợt chấm điểm.", "error"),
             "invalid" => array("Dữ liệu không hợp lệ!", "Vui lòng kiểm tra lại thông tin nhập.", "error"),
             "not-found" => array("Không tìm thấy dữ liệu!", "Bản ghi cần thao tác không tồn tại.", "error"),
             "duplicate" => array("Dữ liệu bị trùng!", "Tên khoa đã tồn tại.", "error"),

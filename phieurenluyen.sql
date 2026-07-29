@@ -104,7 +104,9 @@ CREATE TABLE IF NOT EXISTS `giangvien` (
   `dia_chi_thuong_tru` text DEFAULT NULL,
   `id_trinh_do` int(11) DEFAULT NULL,
   `trang_thai` tinyint(4) DEFAULT 1,
-  PRIMARY KEY (`id_giang_vien`) USING BTREE
+  PRIMARY KEY (`id_giang_vien`) USING BTREE,
+  -- Nhựt sửa lỗi: thêm index cho id_trinh_do để tạo khóa ngoại chống dữ liệu mồ côi.
+  KEY `idx_giangvien_id_trinh_do` (`id_trinh_do`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table phieurenluyen.giangvien: ~1 rows (approximately)
@@ -114,15 +116,19 @@ INSERT INTO `giangvien` (`id_giang_vien`, `ma_giang_vien`, `ten_giang_vien`, `gi
 -- Dumping structure for table phieurenluyen.hocky
 CREATE TABLE IF NOT EXISTS `hocky` (
   `id_hoc_ky` int(11) NOT NULL AUTO_INCREMENT,
-  `ten_hoc_ky` varchar(50) DEFAULT NULL,
-  `ghi_chu` text DEFAULT NULL,
+  `ten_hoc_ky` varchar(50) NOT NULL,
+  `ghi_chu` varchar(2000) NOT NULL DEFAULT '',
   `id_nam_hoc` int(11) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id_hoc_ky`) USING BTREE
+  PRIMARY KEY (`id_hoc_ky`) USING BTREE,
+  -- Nhựt sửa lỗi: thêm unique key để database chặn trùng học kỳ trong cùng năm học.
+  UNIQUE KEY `uk_hocky_namhoc_ten_hoc_ky` (`id_nam_hoc`, `ten_hoc_ky`),
+  -- Nhựt sửa lỗi: thêm index cho id_nam_hoc để khóa ngoại và join chạy ổn định.
+  KEY `idx_hocky_id_nam_hoc` (`id_nam_hoc`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table phieurenluyen.hocky: ~1 rows (approximately)
 INSERT INTO `hocky` (`id_hoc_ky`, `ten_hoc_ky`, `ghi_chu`, `id_nam_hoc`) VALUES
-	(1, 'Học kỳ 1', NULL, 1);
+	(1, 'Học kỳ 1', '', 1);
 
 -- Dumping structure for table phieurenluyen.ketquaxeploai
 CREATE TABLE IF NOT EXISTS `ketquaxeploai` (
@@ -298,14 +304,14 @@ INSERT INTO `muc` (`id_muc`, `ten_muc`, `ghi_chu`, `thu_tu`, `id_khoan`) VALUES
 -- Dumping structure for table phieurenluyen.namhoc
 CREATE TABLE IF NOT EXISTS `namhoc` (
   `id_nam_hoc` int(11) NOT NULL AUTO_INCREMENT,
-  `ten_nam_hoc` varchar(50) DEFAULT NULL,
-  `ghi_chu` text DEFAULT NULL,
+  `ten_nam_hoc` varchar(50) NOT NULL,
+  `ghi_chu` varchar(2000) NOT NULL DEFAULT '',
   PRIMARY KEY (`id_nam_hoc`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table phieurenluyen.namhoc: ~1 rows (approximately)
 INSERT INTO `namhoc` (`id_nam_hoc`, `ten_nam_hoc`, `ghi_chu`) VALUES
-	(1, '2023-2024', NULL);
+	(1, '2023-2024', '');
 
 -- Dumping structure for table phieurenluyen.nganhhoc
 CREATE TABLE IF NOT EXISTS `nganhhoc` (
@@ -1634,18 +1640,20 @@ INSERT INTO `taikhoan` (`id_tai_khoan`, `email`, `mat_khau`, `ghi_chu`, `id_phan
 -- Dumping structure for table phieurenluyen.trinhdo
 CREATE TABLE IF NOT EXISTS `trinhdo` (
   `id_trinh_do` int(11) NOT NULL AUTO_INCREMENT,
-  `ten_trinh_do` varchar(50) DEFAULT NULL,
-  `ghi_chu` text DEFAULT NULL,
-  PRIMARY KEY (`id_trinh_do`) USING BTREE
+  `ten_trinh_do` varchar(50) NOT NULL,
+  `ghi_chu` varchar(2000) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id_trinh_do`) USING BTREE,
+  -- Nhựt sửa lỗi: thêm unique key để database chặn trùng tên trình độ.
+  UNIQUE KEY `uk_trinhdo_ten_trinh_do` (`ten_trinh_do`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table phieurenluyen.trinhdo: ~5 rows (approximately)
 INSERT INTO `trinhdo` (`id_trinh_do`, `ten_trinh_do`, `ghi_chu`) VALUES
-	(1, 'Thạc sĩ', NULL),
-	(2, 'Tiến sĩ', NULL),
-	(3, 'Kỹ sư', NULL),
-	(4, 'PGS', NULL),
-	(5, 'GS', NULL);
+	(1, 'Thạc sĩ', ''),
+	(2, 'Tiến sĩ', ''),
+	(3, 'Kỹ sư', ''),
+	(4, 'PGS', ''),
+	(5, 'GS', '');
 
 -- Dumping structure for table phieurenluyen.xeploai
 CREATE TABLE IF NOT EXISTS `xeploai` (
@@ -1682,6 +1690,60 @@ ALTER TABLE `lophoc`
 -- Nhựt sửa lỗi: thêm khóa ngoại để không xóa được ngành học khi còn lớp học liên quan.
 ALTER TABLE `lophoc`
   ADD CONSTRAINT `fk_lophoc_nganhhoc` FOREIGN KEY (`id_nganh_hoc`) REFERENCES `nganhhoc` (`id_nganh_hoc`) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+-- Nhựt sửa lỗi: thêm unique key để database chặn trùng tên năm học.
+ALTER TABLE `namhoc`
+  ADD UNIQUE KEY `uk_namhoc_ten_nam_hoc` (`ten_nam_hoc`);
+
+-- Nhựt sửa lỗi: thêm unique key để database chặn trùng học kỳ trong cùng năm học.
+ALTER TABLE `hocky`
+  ADD UNIQUE KEY `uk_hocky_namhoc_ten_hoc_ky` (`id_nam_hoc`, `ten_hoc_ky`);
+
+-- Nhựt sửa lỗi: thêm index cho id_nam_hoc để khóa ngoại học kỳ chạy ổn định.
+ALTER TABLE `hocky`
+  ADD KEY `idx_hocky_id_nam_hoc` (`id_nam_hoc`);
+
+-- Nhựt sửa lỗi: thêm khóa ngoại để không tạo học kỳ trỏ tới năm học không tồn tại.
+ALTER TABLE `hocky`
+  ADD CONSTRAINT `fk_hocky_namhoc` FOREIGN KEY (`id_nam_hoc`) REFERENCES `namhoc` (`id_nam_hoc`) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+-- Nhựt sửa lỗi: thêm index cho dotchamdiem.id_hoc_ky để ràng buộc học kỳ chạy ổn định.
+ALTER TABLE `dotchamdiem`
+  ADD KEY `idx_dotchamdiem_id_hoc_ky` (`id_hoc_ky`);
+
+-- Nhựt sửa lỗi: không cho xóa học kỳ khi còn đợt chấm điểm tham chiếu.
+ALTER TABLE `dotchamdiem`
+  ADD CONSTRAINT `fk_dotchamdiem_hocky` FOREIGN KEY (`id_hoc_ky`) REFERENCES `hocky` (`id_hoc_ky`) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+-- Nhựt sửa lỗi: ép tên năm học/trình độ không được rỗng ở schema cho cả DB hiện tại.
+UPDATE `namhoc` SET `ghi_chu` = '' WHERE `ghi_chu` IS NULL;
+UPDATE `trinhdo` SET `ghi_chu` = '' WHERE `ghi_chu` IS NULL;
+UPDATE `hocky` SET `ghi_chu` = '' WHERE `ghi_chu` IS NULL;
+ALTER TABLE `namhoc`
+  MODIFY `ten_nam_hoc` varchar(50) NOT NULL;
+ALTER TABLE `namhoc`
+  MODIFY `ghi_chu` varchar(2000) NOT NULL DEFAULT '';
+ALTER TABLE `trinhdo`
+  MODIFY `ten_trinh_do` varchar(50) NOT NULL;
+ALTER TABLE `trinhdo`
+  MODIFY `ghi_chu` varchar(2000) NOT NULL DEFAULT '';
+ALTER TABLE `hocky`
+  MODIFY `ten_hoc_ky` varchar(50) NOT NULL;
+ALTER TABLE `hocky`
+  MODIFY `ghi_chu` varchar(2000) NOT NULL DEFAULT '';
+
+-- Nhựt sửa lỗi: thêm khóa ngoại để không xóa được trình độ khi còn giảng viên liên quan.
+ALTER TABLE `giangvien`
+  ADD CONSTRAINT `fk_giangvien_trinhdo_legacy` FOREIGN KEY (`id_trinh_do`) REFERENCES `trinhdo` (`id_trinh_do`) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+-- Nhựt sửa lỗi: gán trình độ mặc định cho giảng viên bị rỗng trước khi ép NOT NULL.
+UPDATE `giangvien` SET `id_trinh_do` = 1 WHERE `id_trinh_do` IS NULL;
+
+-- Nhựt sửa lỗi: ép giảng viên phải có trình độ hợp lệ trước khi gắn khóa ngoại.
+ALTER TABLE `giangvien`
+  MODIFY `id_trinh_do` int(11) NOT NULL;
+ALTER TABLE `giangvien`
+  ADD CONSTRAINT `fk_giangvien_trinhdo` FOREIGN KEY (`id_trinh_do`) REFERENCES `trinhdo` (`id_trinh_do`) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

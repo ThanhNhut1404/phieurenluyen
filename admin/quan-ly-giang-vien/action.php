@@ -1,6 +1,11 @@
 <?php
 
     require '../../models/getModel.php';
+
+    // Nhựt sửa lỗi: kiểm tra trình độ có tồn tại trước khi gán cho giảng viên.
+    function giangvien_trinhdo_exists($trinhdo, $id_trinh_do) {
+        return $id_trinh_do && $id_trinh_do > 0 && $trinhdo->trinhdo__Get_By_Id($id_trinh_do);
+    }
     
     if (isset($_GET['req'])){
         switch($_GET['req']){
@@ -17,6 +22,11 @@
                 $dia_chi_lien_lac = $_POST['dc_ll_so_nha'] . ', ' . $_POST['dc_ll_ap'] . ', ' . $_POST['dc_ll_xa'] . ', ' . $_POST['dc_ll_tinh'];
                 $dia_chi_thuong_tru = $_POST['dc_tt_so_nha'] . ', ' . $_POST['dc_tt_ap'] . ', ' . $_POST['dc_tt_xa'] . ', ' . $_POST['dc_tt_tinh'];
                 $id_trinh_do = $_POST['id_trinh_do'];
+
+                if (!giangvien_trinhdo_exists($trinhdo, $id_trinh_do)) {
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=invalid');
+                    break;
+                }
                 
                 // quân sửa: Kiểm tra trùng Mã HOẶC Email trước khi thêm
                 if ($giangvien->giangvien__Check_Duplicate($ma_giang_vien, $email) > 0) {
@@ -46,6 +56,11 @@
                 $dia_chi_lien_lac = $_POST['dc_ll_so_nha'] . ', ' . $_POST['dc_ll_ap'] . ', ' . $_POST['dc_ll_xa'] . ', ' . $_POST['dc_ll_tinh'];
                 $dia_chi_thuong_tru = $_POST['dc_tt_so_nha'] . ', ' . $_POST['dc_tt_ap'] . ', ' . $_POST['dc_tt_xa'] . ', ' . $_POST['dc_tt_tinh'];
                 $id_trinh_do = $_POST['id_trinh_do'];
+
+                if (!giangvien_trinhdo_exists($trinhdo, $id_trinh_do)) {
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=invalid');
+                    break;
+                }
 
                 // quân sửa: Kiểm tra trùng Mã HOẶC Email trước khi cập nhật
                 if ($giangvien->giangvien__Check_Duplicate($ma_giang_vien, $email, $id_giang_vien) > 0) {
