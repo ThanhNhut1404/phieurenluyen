@@ -1,11 +1,15 @@
  <?php
     // require "../models/getModel.php";
-    $muc__Get_All = $muc->muc__Get_All();
+    $id_khoan_filter = isset($_GET['id_khoan']) ? $_GET['id_khoan'] : '';
+    if ($id_khoan_filter != '') {
+        $muc__Get_All = $muc->muc__Get_By_Id_Khoan($id_khoan_filter);
+    } else {
+        $muc__Get_All = $muc->muc__Get_All();
+    }
     $khoan__Get_All = $khoan->khoan__Get_All();
  ?>
 
 
- <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
      <section class="content-header">
@@ -21,6 +25,15 @@
                      </ol>
                  </div>
              </div>
+             
+             <!-- quân sửa: Bắt lỗi nếu vượt quỹ điểm Khoản -->
+             <?php if(isset($_GET['status']) && $_GET['status'] == 'failed_over_limit'): ?>
+                 <div class="alert alert-danger alert-dismissible mt-2">
+                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                     <h5><i class="icon fas fa-ban"></i> Lỗi!</h5>
+                     Tổng điểm của các Mục đã vượt quá Điểm tối đa của Khoản. Vui lòng kiểm tra lại.
+                 </div>
+             <?php endif; ?>
          </div><!-- /.container-fluid -->
      </section>
 
@@ -39,8 +52,8 @@
                      <div class="card-body">
                          <div class="form-group">
                              <label for="">Khoản <span class="color-crimson">(*)</span></label>
-                             <select class="form-control" name="id_khoan" required>
-                                 <option value="">Chọn Khoản</option>
+                             <select class="form-control" name="id_khoan" id="id_khoan_add" required onchange="loadThuTu(this.value)">
+                                 <option value="">-- Chọn Khoản --</option>
                                  <?php foreach ($khoan__Get_All as $item):?>
                                  <option value="<?=$item->id_khoan?>"><?=$item->ten_khoan?> -
                                      <?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?></option>
@@ -58,9 +71,46 @@
                                  placeholder="Nhập nội dung chi tiết"></textarea>
                          </div>
                          <div class="form-group">
-                             <label for="">Thứ tự</label>
-                             <input type="number" id="thu_tu" name="thu_tu" class="form-control"
-                                 placeholder="Nhập thứ tự"></textarea>
+                             <!-- quân sửa: Đổi thành thẻ select để chọn thứ tự linh động thông qua AJAX -->
+                             <label for="">Thứ tự <span class="color-crimson">(*)</span></label>
+                             <select id="thu_tu" name="thu_tu" class="form-control" required>
+                                 <option value="">-- Vui lòng chọn Khoản trước --</option>
+                             </select>
+                         </div>
+                         <!-- quân sửa: Thêm ô nhập Điểm tối đa cho Mục -->
+                         <div class="form-group">
+                             <label for="">Điểm tối đa <span class="color-crimson">(*)</span></label>
+                             <input type="number" id="diem_toi_da" name="diem_toi_da" class="form-control" required
+                                 placeholder="Nhập điểm tối đa của mục" min="0">
+                         </div>
+                         <div class="form-group">
+                             <label for="">Quyền chấm điểm</label>
+                             <div class="row">
+                                 <div class="col-md-3">
+                                     <div class="icheck-primary d-inline">
+                                         <input type="checkbox" id="quyen_sv" name="quyen_sv" value="1" checked>
+                                         <label for="quyen_sv">Sinh viên</label>
+                                     </div>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <div class="icheck-primary d-inline">
+                                         <input type="checkbox" id="quyen_lt" name="quyen_lt" value="1" checked>
+                                         <label for="quyen_lt">Lớp trưởng/BCS</label>
+                                     </div>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <div class="icheck-primary d-inline">
+                                         <input type="checkbox" id="quyen_btdk" name="quyen_btdk" value="1" checked>
+                                         <label for="quyen_btdk">Bí thư đoàn khoa</label>
+                                     </div>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <div class="icheck-primary d-inline">
+                                         <input type="checkbox" id="quyen_gv" name="quyen_gv" value="1" checked>
+                                         <label for="quyen_gv">Giảng viên/CVHT</label>
+                                     </div>
+                                 </div>
+                             </div>
                          </div>
                         
                      </div>
@@ -89,12 +139,28 @@
              </div>
              <!-- /.card-header -->
              <div class="card-body">
+                 <form action="" method="GET" class="mb-4">
+                     <input type="hidden" name="page" value="quan-ly-muc">
+                     <div class="row">
+                         <div class="col-md-4">
+                             <select name="id_khoan" class="form-control" onchange="this.form.submit()">
+                                 <option value="">-- Xem tất cả các khoản --</option>
+                                 <?php foreach ($khoan__Get_All as $item): ?>
+                                     <option value="<?=$item->id_khoan?>" <?=($id_khoan_filter == $item->id_khoan) ? 'selected' : ''?>>
+                                         <?=$item->ten_khoan?>
+                                     </option>
+                                 <?php endforeach; ?>
+                             </select>
+                         </div>
+                     </div>
+                 </form>
                  <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                      <thead>
                          <tr>
                              <th>#</th>
-                             <th>Khoản</th>
+                             <th>Điều - Khoản</th>
                              <th>Tên mục</th>
+                             <th>Điểm tối đa</th>
                              <th>Ghi chú</th>
                              <th>Thao tác</th>
                          </tr>
@@ -108,6 +174,7 @@
                                  <?=$dieu->dieu__Get_By_Id($khoan->khoan__Get_By_Id($item->id_khoan)->id_dieu)->ten_dieu?>
                              </td>
                              <td><?=$item->ten_muc?></td>
+                             <td><?=$item->diem_toi_da?></td>
                              <td><?=$item->ghi_chu?></td>
                              <td>
                                  <a href="#" type=" button" class="btn btn-warning"
@@ -134,20 +201,42 @@
 
 
  <script>
-window.addEventListener("load", function() {
-    $("#tablejs").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print"]
-    }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
-});
+ window.addEventListener("load", function() {
+     $("#tablejs").DataTable({
+         "responsive": true,
+         "autoWidth": false,
+         "buttons": ["copy", "csv", "excel", "pdf", "print"]
+     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+ });
 
-function update_obj(id_muc) {
-    $.post('quan-ly-muc/update.php', {
-        'id_muc': id_muc,
-    }, function(data) {
-        $(".card.card-success").addClass('collapsed-card');
-        $('#div_update').html(data);
-    });
-}
+ function update_obj(id_muc) {
+     $.post('quan-ly-muc/update.php', {
+         'id_muc': id_muc,
+     }, function(data) {
+         $(".card.card-success").addClass('collapsed-card');
+         $('#div_update').html(data);
+     });
+ }
+
+ // quân sửa: Hàm gọi AJAX load thứ tự còn trống
+ function loadThuTu(id_khoan, current_thu_tu = 0, target_id = '#thu_tu') {
+     if (!id_khoan) {
+         $(target_id).html('<option value="">-- Vui lòng chọn Khoản trước --</option>');
+         return;
+     }
+     $.post('quan-ly-muc/ajax_get_thu_tu.php', {
+         'id_khoan': id_khoan,
+         'current_thu_tu': current_thu_tu
+     }, function(data) {
+         $(target_id).html(data);
+     });
+ }
+
+ // Chạy lần đầu khi load trang nếu đã chọn sẵn khoản
+ $(document).ready(function() {
+     var firstKhoan = $('#id_khoan_add').val();
+     if(firstKhoan) {
+         loadThuTu(firstKhoan);
+     }
+ });
  </script>

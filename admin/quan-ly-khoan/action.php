@@ -9,10 +9,14 @@
                 $ten_khoan = $_POST['ten_khoan'];
                 $ghi_chu = $_POST['ghi_chu'];
                 $can_tren = $_POST['can_tren'];
-                $thu_tu = $_POST['thu_tu'];
                 $id_dieu = $_POST['id_dieu'];
+                $so_luong_muc = $_POST['so_luong_muc'];
 
-                $status = $khoan->khoan__Add($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu);
+                // quân sửa: Đồng bộ thứ tự Khoản theo Điều, không cần nhập thủ công
+                $dieu_info = $dieu->dieu__Get_By_Id($id_dieu);
+                $thu_tu = $dieu_info ? $dieu_info->thu_tu : 1;
+
+                $status = $khoan->khoan__Add($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc);
                 if($status !=0 ){
                     header('location: ../index.php?page=quan-ly-khoan&status=success');
                 }else{
@@ -26,10 +30,14 @@
                 $ten_khoan = $_POST['ten_khoan'];
                 $ghi_chu = $_POST['ghi_chu'];
                 $can_tren = $_POST['can_tren'];
-                $thu_tu = $_POST['thu_tu'];
                 $id_dieu = $_POST['id_dieu'];
+                $so_luong_muc = $_POST['so_luong_muc'];
 
-                $status = $khoan->khoan__Update($id_khoan, $ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu);
+                // quân sửa: Đồng bộ thứ tự Khoản theo Điều, không cần nhập thủ công
+                $dieu_info = $dieu->dieu__Get_By_Id($id_dieu);
+                $thu_tu = $dieu_info ? $dieu_info->thu_tu : 1;
+
+                $status = $khoan->khoan__Update($id_khoan, $ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc);
                 if($status !=0 ){
                     header('location: ../index.php?page=quan-ly-khoan&status=success');
                 }else{

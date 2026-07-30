@@ -60,6 +60,30 @@ class dieu extends Database {
         return $obj->fetch();
     }
 
+    // quân sửa: Hàm lấy thứ tự lớn nhất
+    public function dieu__Get_Max_Thu_Tu() {
+        $obj = $this->connect->prepare("SELECT MAX(thu_tu) as max_thu_tu FROM dieu");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute();
+        $result = $obj->fetch();
+        return $result ? $result->max_thu_tu : 0;
+    }
+
+    // quân sửa: Hàm lấy Điều theo thứ tự cụ thể (để check trùng lặp Swap)
+    public function dieu__Get_By_Thu_Tu($thu_tu) {
+        $obj = $this->connect->prepare("SELECT * FROM dieu WHERE thu_tu = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($thu_tu));
+        return $obj->fetch();
+    }
+
+    // quân sửa: Hàm chỉ cập nhật thứ tự
+    public function dieu__Update_Thu_Tu($id_dieu, $thu_tu) {
+        $obj = $this->connect->prepare("UPDATE dieu SET thu_tu=? WHERE id_dieu=?");
+        $obj->execute(array($thu_tu, $id_dieu));
+        return $obj->rowCount();
+    }
+
     public function dieu__Get_By_Id_Mau_Phieu($id_mau_phieu) {
         $obj = $this->connect->prepare("SELECT * FROM dieu WHERE id_mau_phieu = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);

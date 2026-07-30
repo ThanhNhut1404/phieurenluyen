@@ -2,6 +2,12 @@
     // require "../models/getModel.php";
     $khoan__Get_All = $khoan->khoan__Get_All();
     $dieu__Get_All = $dieu->dieu__Get_All();
+
+    // quân sửa: Lấy danh sách id_dieu đã được sử dụng
+    $used_dieu = [];
+    foreach ($khoan__Get_All as $k) {
+        $used_dieu[] = $k->id_dieu;
+    }
  ?>
 
 
@@ -42,7 +48,9 @@
                              <select class="form-control" name="id_dieu" required>
                                  <option value="">Chọn Điều</option>
                                  <?php foreach ($dieu__Get_All as $item):?>
-                                 <option value="<?=$item->id_dieu?>"><?=$item->ten_dieu?></option>
+                                     <?php if(!in_array($item->id_dieu, $used_dieu)): ?>
+                                         <option value="<?=$item->id_dieu?>"><?=$item->ten_dieu?></option>
+                                     <?php endif; ?>
                                  <?php endforeach; ?>
                              </select>
                          </div>
@@ -56,15 +64,17 @@
                              <textarea id="ghi_chu" name="ghi_chu" class="form-control" required
                                  placeholder="Nhập nội dung chi tiết"></textarea>
                          </div>
-                         <div class="form-group">
-                             <label for="">Thứ tự</label>
-                             <input type="number" id="thu_tu" name="thu_tu" class="form-control"
-                                 placeholder="Nhập thứ tự"></textarea>
-                         </div>
+                         <!-- quân sửa: Xoá ô nhập Thứ tự ở đây vì đã tự động đồng bộ theo Điều -->
                          <div class="form-group">
                              <label for="">Điểm tối đa</label>
                              <input type="number" id="can_tren" name="can_tren" class="form-control"
-                                 placeholder="Nhập điểm tối đa"></textarea>
+                                 placeholder="Nhập điểm tối đa">
+                         </div>
+                         <!-- quân sửa: Thêm ô nhập Số lượng mục tối đa -->
+                         <div class="form-group">
+                             <label for="">Số lượng mục tối đa</label>
+                             <input type="number" id="so_luong_muc" name="so_luong_muc" class="form-control" value="10" required
+                                 placeholder="Nhập giới hạn số lượng mục">
                          </div>
                      </div>
                      <!-- /.card-body -->
@@ -97,6 +107,9 @@
                          <tr>
                              <th>#</th>
                              <th>Điều</th>
+                             <th>Điểm tối đa</th>
+                             <!-- quân sửa: Bổ sung cột Số lượng mục vào bảng danh sách Khoản -->
+                             <th>Số lượng mục</th>
                              <th>Tên khoản</th>
                              <th>Ghi chú</th>
                              <th>Thao tác</th>
@@ -108,6 +121,9 @@
                          <tr>
                              <td><?=++$num?></td>
                              <td> <?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?></td>
+                             <td><?=$item->can_tren?></td>
+                             <!-- quân sửa: Hiển thị giá trị Số lượng mục -->
+                             <td><?=$item->so_luong_muc?></td>
                              <td><?=$item->ten_khoan?></td>
                              <td><?=$item->ghi_chu?></td>
                              <td>

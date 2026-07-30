@@ -33,15 +33,17 @@ class khoan extends Database {
         return $obj->fetchAll();
     }
     
-    public function khoan__Add($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu) {
-        $obj = $this->connect->prepare("INSERT INTO khoan(ten_khoan, ghi_chu, can_tren, thu_tu, id_dieu) VALUES (?,?,?,?,?)");
-        $obj->execute(array($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu));
+    // quân sửa: Bổ sung tham số so_luong_muc vào hàm Thêm
+    public function khoan__Add($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc) {
+        $obj = $this->connect->prepare("INSERT INTO khoan(ten_khoan, ghi_chu, can_tren, thu_tu, id_dieu, so_luong_muc) VALUES (?,?,?,?,?,?)");
+        $obj->execute(array($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc));
         return $obj->rowCount();
     }
 
-    public function khoan__Update($id_khoan, $ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu) {
-        $obj = $this->connect->prepare("UPDATE khoan SET ten_khoan=?, ghi_chu=?, can_tren=?, thu_tu=?, id_dieu=? WHERE id_khoan=?");
-        $obj->execute(array($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $id_khoan));
+    // quân sửa: Bổ sung tham số so_luong_muc vào hàm Sửa
+    public function khoan__Update($id_khoan, $ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc) {
+        $obj = $this->connect->prepare("UPDATE khoan SET ten_khoan=?, ghi_chu=?, can_tren=?, thu_tu=?, id_dieu=?, so_luong_muc=? WHERE id_khoan=?");
+        $obj->execute(array($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc, $id_khoan));
         return $obj->rowCount();
     }
     

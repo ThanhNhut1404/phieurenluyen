@@ -20,7 +20,7 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="">Khoản <span class="color-crimson">(*)</span></label>
-                        <select class="form-control" name="id_khoan" required>
+                        <select class="form-control" name="id_khoan" id="id_khoan_update" required onchange="loadThuTu(this.value, <?=$muc__Get_By_Id->thu_tu?>, '#thu_tu_update')">
                             <option value="<?=$muc__Get_By_Id->id_khoan?>">
                                 <?=$khoan->khoan__Get_By_Id($muc__Get_By_Id->id_khoan)->ten_khoan?>
                             </option>
@@ -43,10 +43,51 @@
                     </div>
                     <div class="form-group">
                         <label for="">Thứ tự <span class="color-crimson">(*)</span></label>
-                        <input type="text" id="thu_tu" name="thu_tu" class="form-control" required
-                            placeholder="Nhập thứ tự" value="<?=$muc__Get_By_Id->thu_tu?>">
+                        <select id="thu_tu_update" name="thu_tu" class="form-control" required>
+                            <option value="<?=$muc__Get_By_Id->thu_tu?>"><?=$muc__Get_By_Id->thu_tu?></option>
+                        </select>
                     </div>
-                   
+
+                    <script>
+                    $(document).ready(function() {
+                        loadThuTu($('#id_khoan_update').val(), <?=$muc__Get_By_Id->thu_tu?>, '#thu_tu_update');
+                    });
+                    </script>
+                    <!-- quân sửa: Bổ sung input Điểm tối đa -->
+                    <div class="form-group">
+                        <label for="">Điểm tối đa <span class="color-crimson">(*)</span></label>
+                        <input type="number" id="diem_toi_da" name="diem_toi_da" class="form-control" required
+                            placeholder="Nhập điểm tối đa của mục" min="0" value="<?=isset($muc__Get_By_Id->diem_toi_da) ? $muc__Get_By_Id->diem_toi_da : 0?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Quyền chấm điểm</label>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" id="quyen_sv_update" name="quyen_sv" value="1" <?=$muc__Get_By_Id->quyen_sv == 1 ? 'checked' : ''?>>
+                                    <label for="quyen_sv_update">Sinh viên</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" id="quyen_lt_update" name="quyen_lt" value="1" <?=$muc__Get_By_Id->quyen_lt == 1 ? 'checked' : ''?>>
+                                    <label for="quyen_lt_update">Lớp trưởng/BCS</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" id="quyen_btdk_update" name="quyen_btdk" value="1" <?=$muc__Get_By_Id->quyen_btdk == 1 ? 'checked' : ''?>>
+                                    <label for="quyen_btdk_update">Bí thư đoàn khoa</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="icheck-primary d-inline">
+                                    <input type="checkbox" id="quyen_gv_update" name="quyen_gv" value="1" <?=$muc__Get_By_Id->quyen_gv == 1 ? 'checked' : ''?>>
+                                    <label for="quyen_gv_update">Giảng viên/CVHT</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">

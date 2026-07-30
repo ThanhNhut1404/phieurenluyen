@@ -28,9 +28,11 @@
                             required><?=$dieu__Get_By_Id->ghi_chu?></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="">Thứ tự <span class="color-crimson">(*)</span></label>
-                        <input type="text" id="thu_tu" name="thu_tu" class="form-control" required
-                            placeholder="Nhập thứ tự" value="<?=$dieu__Get_By_Id->thu_tu?>">
+                        <!-- quân sửa: Cập nhật lời nhắc Thứ tự tự động -->
+                        <label for="">Thứ tự</label>
+                        <input type="number" id="thu_tu" name="thu_tu" class="form-control"
+                            placeholder="Nhập thứ tự (Có thể để trống)" value="<?=$dieu__Get_By_Id->thu_tu?>">
+                        <small class="form-text text-muted">Mẹo: Để trống để giữ nguyên. Nếu nhập trùng, hệ thống sẽ tự động hoán đổi 2 Điều.</small>
                     </div>
                 </div>
                 <!-- /.card-body -->

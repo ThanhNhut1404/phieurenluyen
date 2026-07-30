@@ -47,9 +47,11 @@
                                  placeholder="Nhập nội dung chi tiết"></textarea>
                          </div>
                          <div class="form-group">
+                             <!-- quân sửa: Cập nhật lời nhắc Thứ tự tự động -->
                              <label for="">Thứ tự</label>
                              <input type="number" id="thu_tu" name="thu_tu" class="form-control"
-                                 placeholder="Nhập thứ tự"></textarea>
+                                 placeholder="Nhập thứ tự (Có thể để trống)">
+                             <small class="form-text text-muted">Mẹo: Để trống hệ thống sẽ tự động xếp cuối. Nếu nhập trùng, hệ thống sẽ tự động hoán đổi.</small>
                          </div>
                      </div>
                      <!-- /.card-body -->
