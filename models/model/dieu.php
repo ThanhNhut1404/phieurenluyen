@@ -27,7 +27,8 @@ include_once($des);
 class dieu extends Database {
 
     public function dieu__Get_All() {
-        $obj = $this->connect->prepare("SELECT * FROM dieu");
+        // Nhựt sửa lỗi: Danh sách Điều phải hiển thị theo thứ tự nghiệp vụ, không phụ thuộc id_dieu.
+        $obj = $this->connect->prepare("SELECT * FROM dieu ORDER BY thu_tu ASC, id_dieu ASC");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         return $obj->fetchAll();
@@ -37,6 +38,21 @@ class dieu extends Database {
         $obj = $this->connect->prepare("INSERT INTO dieu(ten_dieu, ghi_chu, thu_tu) VALUES (?,?,?)");
         $obj->execute(array($ten_dieu, $ghi_chu, $thu_tu));
         return $obj->rowCount();
+    }
+
+    // Nhựt sửa lỗi: Dùng chung cho Add/Update để kiểm tra tên Điều đã tồn tại sau khi trim.
+    public function dieu__Get_By_Ten($ten_dieu, $id_dieu = 0) {
+        $ten_dieu = trim($ten_dieu);
+        if ($id_dieu > 0) {
+            $obj = $this->connect->prepare("SELECT * FROM dieu WHERE TRIM(ten_dieu) = ? AND id_dieu != ? LIMIT 1");
+            $obj->setFetchMode(PDO::FETCH_OBJ);
+            $obj->execute(array($ten_dieu, $id_dieu));
+        } else {
+            $obj = $this->connect->prepare("SELECT * FROM dieu WHERE TRIM(ten_dieu) = ? LIMIT 1");
+            $obj->setFetchMode(PDO::FETCH_OBJ);
+            $obj->execute(array($ten_dieu));
+        }
+        return $obj->fetch();
     }
 
     public function dieu__Update($id_dieu, $ten_dieu, $ghi_chu, $thu_tu) {
@@ -66,7 +82,8 @@ class dieu extends Database {
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         $result = $obj->fetch();
-        return $result ? $result->max_thu_tu : 0;
+        // Nhựt sửa lỗi: Bảng rỗng hoặc SQL trả về NULL phải xem max thứ tự là 0.
+        return ($result && $result->max_thu_tu != null) ? (int)$result->max_thu_tu : 0;
     }
 
     // quân sửa: Hàm lấy Điều theo thứ tự cụ thể (để check trùng lặp Swap)
@@ -82,6 +99,46 @@ class dieu extends Database {
         $obj = $this->connect->prepare("UPDATE dieu SET thu_tu=? WHERE id_dieu=?");
         $obj->execute(array($thu_tu, $id_dieu));
         return $obj->rowCount();
+    }
+
+    // Nhựt sửa lỗi: Sau khi xóa một Điều thì dồn thứ tự của các Điều phía sau xuống 1.
+    public function dieu__Giam_Thu_Tu_Sau_Khi_Xoa($thu_tu) {
+        $obj = $this->connect->prepare("UPDATE dieu SET thu_tu = thu_tu - 1 WHERE thu_tu > ?");
+        return $obj->execute(array($thu_tu));
+    }
+
+    public function dieu__Is_Used_In_Bocauhoi($id_dieu) {
+        // Nhựt sửa lỗi: Trước khi xóa phải kiểm tra Điều có đang dùng trong Mẫu phiếu hay không.
+        $obj = $this->connect->prepare("SELECT COUNT(*) as total FROM bocauhoi WHERE id_dieu = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dieu));
+        $result = $obj->fetch();
+        return $result && $result->total > 0;
+    }
+
+    public function dieu__Is_Used_In_Khoan($id_dieu) {
+        // Nhựt sửa lỗi: Không xóa Điều đang được Khoản tham chiếu để tránh dữ liệu mồ côi.
+        $obj = $this->connect->prepare("SELECT COUNT(*) as total FROM khoan WHERE id_dieu = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dieu));
+        $result = $obj->fetch();
+        return $result && $result->total > 0;
+    }
+
+    public function dieu__Check_Thu_Tu_Hop_Le() {
+        // Nhựt sửa lỗi: Kiểm tra toàn vẹn thứ tự, không cho trùng/hở/NULL/âm/0 sau thao tác.
+        $obj = $this->connect->prepare("SELECT COUNT(*) as total, COUNT(DISTINCT thu_tu) as total_thu_tu, MIN(thu_tu) as min_thu_tu, MAX(thu_tu) as max_thu_tu FROM dieu");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute();
+        $result = $obj->fetch();
+
+        if (!$result || $result->total == 0) {
+            return true;
+        }
+
+        return $result->total == $result->total_thu_tu
+            && $result->min_thu_tu == 1
+            && $result->max_thu_tu == $result->total;
     }
 
     public function dieu__Get_By_Id_Mau_Phieu($id_mau_phieu) {

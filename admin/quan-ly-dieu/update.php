@@ -1,7 +1,19 @@
     <?php 
         require '../../models/getModel.php';
-        $id_dieu = $_POST['id_dieu'];
+        $id_dieu = isset($_POST['id_dieu']) ? trim($_POST['id_dieu']) : "";
+        // Nhựt sửa lỗi: Ajax update thiếu id_dieu hoặc id_dieu sai kiểu thì quay về danh sách.
+        if (!preg_match('/^[1-9][0-9]*$/', $id_dieu)) {
+            echo "<script>location.href = 'index.php?page=quan-ly-dieu&status=not-found'</script>";
+            exit();
+        }
         $dieu__Get_By_Id = $dieu->dieu__Get_By_Id($id_dieu);
+        // Nhựt sửa lỗi: id_dieu không tồn tại thì không render form update để tránh lỗi object rỗng.
+        if (!$dieu__Get_By_Id) {
+            echo "<script>location.href = 'index.php?page=quan-ly-dieu&status=not-found'</script>";
+            exit();
+        }
+        // Nhựt sửa lỗi: Giới hạn thứ tự trên form cập nhật từ 1 đến max hiện tại để chặn nhập số âm, 0 hoặc vượt giới hạn ở client.
+        $dieu__Max_Thu_Tu = $dieu->dieu__Get_Max_Thu_Tu();
     ?>
 
     <form class="row form" action="quan-ly-dieu/action.php?req=update" method="post" enctype="multipart/form-data">
@@ -30,7 +42,8 @@
                     <div class="form-group">
                         <!-- quân sửa: Cập nhật lời nhắc Thứ tự tự động -->
                         <label for="">Thứ tự</label>
-                        <input type="number" id="thu_tu" name="thu_tu" class="form-control"
+                        <input type="number" id="thu_tu" name="thu_tu" class="form-control" min="1"
+                            max="<?=$dieu__Max_Thu_Tu?>" step="1"
                             placeholder="Nhập thứ tự (Có thể để trống)" value="<?=$dieu__Get_By_Id->thu_tu?>">
                         <small class="form-text text-muted">Mẹo: Để trống để giữ nguyên. Nếu nhập trùng, hệ thống sẽ tự động hoán đổi 2 Điều.</small>
                     </div>

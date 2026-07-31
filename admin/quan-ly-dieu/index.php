@@ -1,6 +1,8 @@
  <?php
     // require "../models/getModel.php";
     $dieu__Get_All = $dieu->dieu__Get_All();
+    // Nhựt sửa lỗi: Giới hạn thứ tự trên form thêm từ 1 đến max + 1 để chặn nhập số âm, 0 hoặc vượt giới hạn ở client.
+    $dieu__Max_Thu_Tu = $dieu->dieu__Get_Max_Thu_Tu();
  ?>
 
 
@@ -49,7 +51,8 @@
                          <div class="form-group">
                              <!-- quân sửa: Cập nhật lời nhắc Thứ tự tự động -->
                              <label for="">Thứ tự</label>
-                             <input type="number" id="thu_tu" name="thu_tu" class="form-control"
+                             <input type="number" id="thu_tu" name="thu_tu" class="form-control" min="1"
+                                 max="<?=$dieu__Max_Thu_Tu + 1?>" step="1"
                                  placeholder="Nhập thứ tự (Có thể để trống)">
                              <small class="form-text text-muted">Mẹo: Để trống hệ thống sẽ tự động xếp cuối. Nếu nhập trùng, hệ thống sẽ tự động hoán đổi.</small>
                          </div>
@@ -85,6 +88,7 @@
                              <th>#</th>
                              <th>Tên điều</th>
                              <th>Ghi chú</th>
+                             <th>Thứ tự</th>
                              <th>Thao tác</th>
                          </tr>
                      </thead>
@@ -95,6 +99,7 @@
                              <td><?=++$num?></td>
                              <td><?=$item->ten_dieu?></td>
                              <td><?=$item->ghi_chu?></td>
+                             <td><?=$item->thu_tu?></td>
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_dieu?>)">
