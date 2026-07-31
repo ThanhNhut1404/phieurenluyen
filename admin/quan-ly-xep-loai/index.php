@@ -60,10 +60,10 @@
                                  placeholder="Nhập điểm tối đa" minlength="0" max="100">
                          </div>
                          <div class="form-group">
-                             <label for="">Trừ trễ hạn <span class="color-crimson">(*)</span></label>
+                             <label for="">Hạ bậc <span class="color-crimson">(*)</span></label>
                              <input type="number" id="ha_bac" name="ha_bac" pattern="[0-9]{1-2}"
                                  class=" form-control" required title="Thấp nhất là 10, lớn nhất là 15"
-                                 placeholder="Nhập điểm trừ trễ hạn" minlength="10" max="15">
+                                 placeholder="Nhập điểm hạ bậc" minlength="10" max="15">
                          </div>
                      </div>
                      <!-- /.card-body -->

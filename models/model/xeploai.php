@@ -33,15 +33,15 @@ class xeploai extends Database {
         return $obj->fetchAll();
     }
     
-    public function xeploai__Add($ten_xep_loai, $can_tren, $can_duoi,$ha_bac, $ghi_chu) {
-        $obj = $this->connect->prepare("INSERT INTO xeploai(ten_xep_loai, ghi_chu, can_tren, can_duoi, ha_bac, ghi_chu) VALUES (?,?,?,?,?)");
-        $obj->execute(array($ten_xep_loai, $can_tren, $can_duoi,$ha_bac, $ghi_chu));
+    public function xeploai__Add($ten_xep_loai, $ghi_chu, $can_tren, $can_duoi, $ha_bac) {
+        $obj = $this->connect->prepare("INSERT INTO xeploai(ten_xep_loai, ghi_chu, can_tren, can_duoi, ha_bac) VALUES (?,?,?,?,?)");
+        $obj->execute(array($ten_xep_loai, $ghi_chu, $can_tren, $can_duoi, $ha_bac));
         return $obj->rowCount();
     }
 
-    public function xeploai__Update($id_xep_loai, $ten_xep_loai, $can_tren, $can_duoi,$ha_bac, $ghi_chu) {
-        $obj = $this->connect->prepare("UPDATE xeploai SET ten_xep_loai=?, ghi_chu=?, can_tren=?, can_duoi=?, ha_bac=?, ghi_chu=? WHERE id_xep_loai=?");
-        $obj->execute(array($ten_xep_loai, $can_tren, $can_duoi,$ha_bac, $ghi_chu, $id_xep_loai));
+    public function xeploai__Update($id_xep_loai, $ten_xep_loai, $ghi_chu, $can_tren, $can_duoi, $ha_bac) {
+        $obj = $this->connect->prepare("UPDATE xeploai SET ten_xep_loai=?, ghi_chu=?, can_tren=?, can_duoi=?, ha_bac=? WHERE id_xep_loai=?");
+        $obj->execute(array($ten_xep_loai, $ghi_chu, $can_tren, $can_duoi, $ha_bac, $id_xep_loai));
         return $obj->rowCount();
     }
     

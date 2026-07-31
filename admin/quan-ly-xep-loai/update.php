@@ -42,9 +42,9 @@
                             max="100">
                     </div>
                     <div class="form-group">
-                        <label for="">Trừ trễ hạn <span class="color-crimson">(*)</span></label>
+                        <label for="">Hạ bậc <span class="color-crimson">(*)</span></label>
                         <input type="number" id="ha_bac" name="ha_bac" pattern="[0-9]{1-2}" class=" form-control"
-                            required title="Thấp nhất là 10, lớn nhất là 15" placeholder="Nhập điểm trừ trễ hạn"
+                            required title="Thấp nhất là 10, lớn nhất là 15" placeholder="Nhập điểm hạ bậc"
                             minlength="10" max="15" value="<?=$xeploai__Get_By_Id->ha_bac?>">
                     </div>
                 </div>
@@ -61,7 +61,7 @@
 can_duoi_up = document.getElementById('can_duoi_up');
 $("#can_duoi_up").change(function() {
     $('#can_tren_up').attr({
-        "min": can_duoi.value
+        "min": can_duoi_up.value
     });
 });
     </script>
