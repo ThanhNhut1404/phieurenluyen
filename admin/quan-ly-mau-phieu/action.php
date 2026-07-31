@@ -54,6 +54,9 @@
 
                 $id_mau_phieu = $_GET['id_mau_phieu'];
 
+                // quân sửa: Phải xoá dữ liệu con trong bocauhoi trước khi xoá mauphieu cha
+                $bocauhoi->bocauhoi__Delete_Mau_Phieu($id_mau_phieu);
+                
                 $status = $mauphieu->mauphieu__Delete($id_mau_phieu);
                 if($status !=0 ){
                     header('location: ../index.php?page=quan-ly-mau-phieu&status=success');
