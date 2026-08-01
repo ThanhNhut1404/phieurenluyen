@@ -34,6 +34,21 @@
                      Tổng điểm của các Mục đã vượt quá Điểm tối đa của Khoản. Vui lòng kiểm tra lại.
                  </div>
              <?php endif; ?>
+             <!-- quân sửa: Cảnh báo khi dữ liệu đang bị khoá bởi Đợt chấm điểm -->
+             <?php if(isset($_GET['status']) && $_GET['status'] == 'locked_by_dotchamdiem'): ?>
+                 <div class="alert alert-danger alert-dismissible mt-2">
+                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                     <h5><i class="icon fas fa-lock"></i> Thao tác thất bại!</h5>
+                     Dữ liệu này đang được sử dụng trong một Đợt chấm điểm đang diễn ra. Bạn không thể Sửa hoặc Xoá vào lúc này!
+                 </div>
+             <?php endif; ?>
+             <?php if(isset($_GET['status']) && $_GET['status'] == 'locked_update'): ?>
+                 <div class="alert alert-danger alert-dismissible mt-2">
+                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                     <h5><i class="icon fas fa-lock"></i> Thao tác thất bại!</h5>
+                     Dữ liệu này đã được sử dụng trong một Đợt chấm điểm. Để bảo toàn lịch sử, bạn không thể Sửa dữ liệu này. Hãy tạo mới thay thế!
+                 </div>
+             <?php endif; ?>
          </div><!-- /.container-fluid -->
      </section>
 
@@ -82,6 +97,13 @@
                              <label for="">Điểm tối đa <span class="color-crimson">(*)</span></label>
                              <input type="number" id="diem_toi_da" name="diem_toi_da" class="form-control" required
                                  placeholder="Nhập điểm tối đa của mục" min="0">
+                         </div>
+                         <!-- quân sửa: Thêm tuỳ chọn Yêu cầu minh chứng -->
+                         <div class="form-group">
+                             <div class="icheck-danger d-inline">
+                                 <input type="checkbox" id="co_minh_chung" name="co_minh_chung" value="1">
+                                 <label for="co_minh_chung" class="text-danger">Yêu cầu sinh viên nộp minh chứng cho Mục này</label>
+                             </div>
                          </div>
                          <div class="form-group">
                              <label for="">Quyền chấm điểm</label>
@@ -161,6 +183,7 @@
                              <th>Điều - Khoản</th>
                              <th>Tên mục</th>
                              <th>Điểm tối đa</th>
+                             <th>Minh chứng</th>
                              <th>Ghi chú</th>
                              <th>Thao tác</th>
                          </tr>
@@ -175,12 +198,21 @@
                              </td>
                              <td><?=$item->ten_muc?></td>
                              <td><?=$item->diem_toi_da?></td>
+                             <td>
+                                 <?php if($item->co_minh_chung == 1): ?>
+                                     <span class="badge badge-danger"><i class="fas fa-file-upload"></i> Có</span>
+                                 <?php else: ?>
+                                     <span class="badge badge-secondary">Không</span>
+                                 <?php endif; ?>
+                             </td>
                              <td><?=$item->ghi_chu?></td>
                              <td>
+                                 <?php if(!$muc->muc__Is_Used_In_Bocauhoi($item->id_muc)): ?>
                                  <a href="#" type=" button" class="btn btn-warning"
                                      onclick="update_obj(<?=$item->id_muc?>)">
                                      <i class="fas fa-edit"></i>
                                  </a>
+                                 <?php endif; ?>
                                  <a href="#" type="button" class="btn btn-danger"
                                      onclick="return confirm_sweet('quan-ly-muc/action.php?req=delete&id_muc=<?=$item->id_muc?>')">
                                      <i class="fas fa-trash"></i>

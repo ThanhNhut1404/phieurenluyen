@@ -28,7 +28,8 @@ class dieu extends Database {
 
     public function dieu__Get_All() {
         // Nhựt sửa lỗi: Danh sách Điều phải hiển thị theo thứ tự nghiệp vụ, không phụ thuộc id_dieu.
-        $obj = $this->connect->prepare("SELECT * FROM dieu ORDER BY thu_tu ASC, id_dieu ASC");
+        // quân sửa: Chỉ hiển thị các Điều chưa bị xoá mềm
+        $obj = $this->connect->prepare("SELECT * FROM dieu WHERE is_deleted = 0 ORDER BY thu_tu ASC, id_dieu ASC");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         return $obj->fetchAll();
@@ -62,10 +63,19 @@ class dieu extends Database {
     }
     
 
+    // quân sửa: Cập nhật hàm Xoá (Soft Delete kết hợp Hard Delete)
     public function dieu__Delete($id_dieu) {
-        $obj = $this->connect->prepare("DELETE FROM dieu WHERE id_dieu = ?");
-        $obj->execute(array($id_dieu));
-        return $obj->rowCount();
+        // Nếu Điều đã từng được đưa vào Bộ câu hỏi (có lịch sử), thì chỉ xoá mềm
+        if ($this->dieu__Is_Used_In_Bocauhoi($id_dieu)) {
+            $obj = $this->connect->prepare("UPDATE dieu SET is_deleted = 1 WHERE id_dieu = ?");
+            $obj->execute(array($id_dieu));
+            return $obj->rowCount();
+        } else {
+            // Nếu chưa từng có lịch sử, xoá vĩnh viễn cho nhẹ DB
+            $obj = $this->connect->prepare("DELETE FROM dieu WHERE id_dieu = ?");
+            $obj->execute(array($id_dieu));
+            return $obj->rowCount();
+        }
     }
 
   
@@ -78,7 +88,7 @@ class dieu extends Database {
 
     // quân sửa: Hàm lấy thứ tự lớn nhất
     public function dieu__Get_Max_Thu_Tu() {
-        $obj = $this->connect->prepare("SELECT MAX(thu_tu) as max_thu_tu FROM dieu");
+        $obj = $this->connect->prepare("SELECT MAX(thu_tu) as max_thu_tu FROM dieu WHERE is_deleted = 0");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         $result = $obj->fetch();
@@ -88,7 +98,7 @@ class dieu extends Database {
 
     // quân sửa: Hàm lấy Điều theo thứ tự cụ thể (để check trùng lặp Swap)
     public function dieu__Get_By_Thu_Tu($thu_tu) {
-        $obj = $this->connect->prepare("SELECT * FROM dieu WHERE thu_tu = ?");
+        $obj = $this->connect->prepare("SELECT * FROM dieu WHERE thu_tu = ? AND is_deleted = 0");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($thu_tu));
         return $obj->fetch();
@@ -103,7 +113,7 @@ class dieu extends Database {
 
     // Nhựt sửa lỗi: Sau khi xóa một Điều thì dồn thứ tự của các Điều phía sau xuống 1.
     public function dieu__Giam_Thu_Tu_Sau_Khi_Xoa($thu_tu) {
-        $obj = $this->connect->prepare("UPDATE dieu SET thu_tu = thu_tu - 1 WHERE thu_tu > ?");
+        $obj = $this->connect->prepare("UPDATE dieu SET thu_tu = thu_tu - 1 WHERE thu_tu > ? AND is_deleted = 0");
         return $obj->execute(array($thu_tu));
     }
 
@@ -118,7 +128,8 @@ class dieu extends Database {
 
     public function dieu__Is_Used_In_Khoan($id_dieu) {
         // Nhựt sửa lỗi: Không xóa Điều đang được Khoản tham chiếu để tránh dữ liệu mồ côi.
-        $obj = $this->connect->prepare("SELECT COUNT(*) as total FROM khoan WHERE id_dieu = ?");
+        // quân sửa: Chỉ tính các Khoản chưa bị xoá mềm
+        $obj = $this->connect->prepare("SELECT COUNT(*) as total FROM khoan WHERE id_dieu = ? AND is_deleted = 0");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_dieu));
         $result = $obj->fetch();
@@ -127,7 +138,8 @@ class dieu extends Database {
 
     public function dieu__Check_Thu_Tu_Hop_Le() {
         // Nhựt sửa lỗi: Kiểm tra toàn vẹn thứ tự, không cho trùng/hở/NULL/âm/0 sau thao tác.
-        $obj = $this->connect->prepare("SELECT COUNT(*) as total, COUNT(DISTINCT thu_tu) as total_thu_tu, MIN(thu_tu) as min_thu_tu, MAX(thu_tu) as max_thu_tu FROM dieu");
+        // quân sửa: Chỉ check với is_deleted = 0
+        $obj = $this->connect->prepare("SELECT COUNT(*) as total, COUNT(DISTINCT thu_tu) as total_thu_tu, MIN(thu_tu) as min_thu_tu, MAX(thu_tu) as max_thu_tu FROM dieu WHERE is_deleted = 0");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         $result = $obj->fetch();
@@ -156,10 +168,29 @@ class dieu extends Database {
     }
 
     public function dieu__Get_All_Unselected($id_mau_phieu) {
-        $obj = $this->connect->prepare("SELECT * FROM dieu, bocauhoi WHERE dieu.id_dieu != bocauhoi.id_dieu AND bocauhoi.id_mau_phieu = ?");
+        // quân sửa: Lọc is_deleted = 0
+        $obj = $this->connect->prepare("SELECT * FROM dieu WHERE is_deleted = 0 AND id_dieu NOT IN (SELECT id_dieu FROM bocauhoi WHERE id_mau_phieu = ?)");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_mau_phieu));
         return $obj->fetchAll();
+    }
+
+    // quân sửa: Kiểm tra Điều có nằm trong Đợt chấm điểm Active không
+    public function dieu__Is_In_Active_DotChamDiem($id_dieu) {
+        $obj = $this->connect->prepare("
+            SELECT COUNT(*) as total 
+            FROM bocauhoi b
+            JOIN lopapdung l ON b.id_mau_phieu = l.id_mau_phieu
+            JOIN dotchamdiem d ON l.id_dot = d.id_dot
+            WHERE b.id_dieu = ? 
+              AND d.trang_thai = 1 
+              AND NOW() >= d.thoi_gian_bat_dau 
+              AND NOW() <= d.thoi_gian_ket_thuc
+        ");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dieu));
+        $result = $obj->fetch();
+        return $result && $result->total > 0;
     }
 }
 ?>

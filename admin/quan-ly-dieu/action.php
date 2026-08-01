@@ -113,6 +113,12 @@
                         throw new Exception("Khong tim thay dieu");
                     }
 
+                    // quân sửa: Không cho sửa nếu Điều đã nằm trong Mẫu phiếu (bảo toàn lịch sử)
+                    if ($dieu->dieu__Is_Used_In_Bocauhoi($id_dieu)) {
+                        $error_status = 'locked_update';
+                        throw new Exception("Dieu da phat sinh trong dot cham diem");
+                    }
+
                     // Nhựt sửa lỗi: Không cho đổi tên sang tên Điều đã tồn tại ở bản ghi khác.
                     if ($dieu->dieu__Get_By_Ten($ten_dieu, $id_dieu)) {
                         $error_status = 'duplicate-name';
@@ -184,10 +190,10 @@
                         throw new Exception("Khong tim thay dieu");
                     }
 
-                    // Nhựt sửa lỗi: Điều đang được dùng trong bocauhoi/Mẫu phiếu thì không được xóa.
-                    if ($dieu->dieu__Is_Used_In_Bocauhoi($id_dieu)) {
-                        $error_status = 'related-dieu';
-                        throw new Exception("Dieu dang duoc su dung trong mau phieu");
+                    // quân sửa: Thay thế ràng buộc Mẫu phiếu bằng ràng buộc Đợt chấm điểm
+                    if ($dieu->dieu__Is_In_Active_DotChamDiem($id_dieu)) {
+                        $error_status = 'locked_by_dotchamdiem';
+                        throw new Exception("Dieu dang bi khoa boi dot cham diem active");
                     }
 
                     // Nhựt sửa lỗi: Điều đang được Khoản tham chiếu thì không xóa để tránh dữ liệu mồ côi.

@@ -59,6 +59,13 @@
                         <input type="number" id="diem_toi_da" name="diem_toi_da" class="form-control" required
                             placeholder="Nhập điểm tối đa của mục" min="0" value="<?=isset($muc__Get_By_Id->diem_toi_da) ? $muc__Get_By_Id->diem_toi_da : 0?>">
                     </div>
+                    <!-- quân sửa: Thêm tuỳ chọn Yêu cầu minh chứng -->
+                    <div class="form-group">
+                        <div class="icheck-danger d-inline">
+                            <input type="checkbox" id="co_minh_chung_update" name="co_minh_chung" value="1" <?=($muc__Get_By_Id->co_minh_chung == 1) ? 'checked' : ''?>>
+                            <label for="co_minh_chung_update" class="text-danger">Yêu cầu sinh viên nộp minh chứng cho Mục này</label>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="">Quyền chấm điểm</label>
                         <div class="row">

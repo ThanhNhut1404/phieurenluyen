@@ -19,8 +19,10 @@
                 $quyen_btdk = isset($_POST['quyen_btdk']) ? 1 : 0;
                 $quyen_gv = isset($_POST['quyen_gv']) ? 1 : 0;
                 
-                // quân sửa: Bổ sung điểm tối đa và kiểm tra quỹ điểm
+                // quân sửa: Bổ sung điểm tối đa và kiểm tra quỹ điểm, bổ sung co_minh_chung
                 $diem_toi_da = isset($_POST['diem_toi_da']) ? (int)$_POST['diem_toi_da'] : 0;
+                $co_minh_chung = isset($_POST['co_minh_chung']) ? 1 : 0;
+
                 $khoan_info = $khoan->khoan__Get_By_Id($id_khoan);
                 $current_total_diem = $muc->muc__Get_Total_Diem_By_Khoan($id_khoan);
                 
@@ -29,7 +31,7 @@
                     exit();
                 }
 
-                $status = $muc->muc__Add($ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da);
+                $status = $muc->muc__Add($ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da, $co_minh_chung);
                 if($status !=0 ){
                     header('location: ../index.php?page=quan-ly-muc&status=success');
                 }else{
@@ -53,8 +55,16 @@
                 $quyen_btdk = isset($_POST['quyen_btdk']) ? 1 : 0;
                 $quyen_gv = isset($_POST['quyen_gv']) ? 1 : 0;
 
-                // quân sửa: Bổ sung điểm tối đa và kiểm tra quỹ điểm
+                // quân sửa: Bổ sung điểm tối đa và kiểm tra quỹ điểm, bổ sung co_minh_chung
                 $diem_toi_da = isset($_POST['diem_toi_da']) ? (int)$_POST['diem_toi_da'] : 0;
+                $co_minh_chung = isset($_POST['co_minh_chung']) ? 1 : 0;
+
+                // quân sửa: Không cho sửa nếu Mục đã nằm trong Mẫu phiếu (bảo toàn lịch sử)
+                if ($muc->muc__Is_Used_In_Bocauhoi($id_muc)) {
+                    header('location: ../index.php?page=quan-ly-muc&status=locked_update');
+                    exit();
+                }
+
                 $old_muc = $muc->muc__Get_By_Id($id_muc);
                 $khoan_info = $khoan->khoan__Get_By_Id($id_khoan);
                 $current_total_diem = $muc->muc__Get_Total_Diem_By_Khoan($id_khoan);
@@ -67,7 +77,7 @@
                     }
                 }
 
-                $status = $muc->muc__Update($id_muc, $ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da);
+                $status = $muc->muc__Update($id_muc, $ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da, $co_minh_chung);
                 if($status !=0 ){
                     header('location: ../index.php?page=quan-ly-muc&status=success');
                 }else{
@@ -79,6 +89,12 @@
             case 'delete':
 
                 $id_muc = $_GET['id_muc'];
+
+                // quân sửa: Không cho xoá nếu Mục đang nằm trong Đợt chấm điểm Active
+                if ($muc->muc__Is_In_Active_DotChamDiem($id_muc)) {
+                    header('location: ../index.php?page=quan-ly-muc&status=locked_by_dotchamdiem');
+                    exit();
+                }
 
                 $status = $muc->muc__Delete($id_muc);
                 if($status !=0 ){

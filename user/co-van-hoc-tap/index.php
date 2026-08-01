@@ -244,7 +244,7 @@ $sinhvien__Get_By_Id_Lop_Hoc_Da_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq
                                         </td>
 
                                         <td class="no-padding">
-                                            <?php foreach ($khoan->khoan__Get_By_Id_Dieu($item_1->id_dieu) as $item_2) : ?>
+                                            <?php foreach ($khoan->khoan__Get_All_By_Id_Dieu($item_1->id_dieu) as $item_2) : ?>
 
                                                 <table class="w-100 table-striped">
                                                     <tbody>
@@ -256,7 +256,7 @@ $sinhvien__Get_By_Id_Lop_Hoc_Da_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <?php foreach ($muc->muc__Get_By_Id_Khoan($item_2->id_khoan) as $item_3) : ?>
+                                                <?php foreach ($muc->muc__Get_All_By_Id_Khoan($item_2->id_khoan) as $item_3) : ?>
                                                     <?php $dw = $item_3->ten_muc ?>
 
                                                     <table class="w-100">

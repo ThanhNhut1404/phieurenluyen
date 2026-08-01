@@ -27,7 +27,8 @@ include_once($des);
 class khoan extends Database {
 
     public function khoan__Get_All() {
-        $obj = $this->connect->prepare("SELECT * FROM khoan");
+        // quân sửa: Chỉ hiển thị Khoản chưa xoá mềm
+        $obj = $this->connect->prepare("SELECT * FROM khoan WHERE is_deleted = 0");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         return $obj->fetchAll();
@@ -49,9 +50,16 @@ class khoan extends Database {
     
 
     public function khoan__Delete($id_khoan) {
-        $obj = $this->connect->prepare("DELETE FROM khoan WHERE id_khoan = ?");
-        $obj->execute(array($id_khoan));
-        return $obj->rowCount();
+        // quân sửa: Soft delete kết hợp Hard delete
+        if ($this->khoan__Is_Used_In_Bocauhoi($id_khoan)) {
+            $obj = $this->connect->prepare("UPDATE khoan SET is_deleted = 1 WHERE id_khoan = ?");
+            $obj->execute(array($id_khoan));
+            return $obj->rowCount();
+        } else {
+            $obj = $this->connect->prepare("DELETE FROM khoan WHERE id_khoan = ?");
+            $obj->execute(array($id_khoan));
+            return $obj->rowCount();
+        }
     }
 
   
@@ -63,10 +71,47 @@ class khoan extends Database {
     }
 
     public function khoan__Get_By_Id_Dieu($id_dieu) {
+        // quân sửa: Lọc Khoản chưa bị xoá mềm (dùng cho Admin và xử lý logic)
+        $obj = $this->connect->prepare("SELECT * FROM khoan WHERE id_dieu = ? AND is_deleted = 0");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dieu));
+        return $obj->fetchAll();
+    }
+
+    // quân sửa: Hàm lấy tất cả Khoản (bao gồm cả bị xoá mềm) để hiển thị lịch sử Mẫu phiếu
+    public function khoan__Get_All_By_Id_Dieu($id_dieu) {
         $obj = $this->connect->prepare("SELECT * FROM khoan WHERE id_dieu = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_dieu));
         return $obj->fetchAll();
+    }
+
+    // quân sửa: Kiểm tra Khoản có nằm trong lịch sử Mẫu phiếu không
+    public function khoan__Is_Used_In_Bocauhoi($id_khoan) {
+        $obj = $this->connect->prepare("SELECT COUNT(*) as total FROM bocauhoi b JOIN khoan k ON b.id_dieu = k.id_dieu WHERE k.id_khoan = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_khoan));
+        $result = $obj->fetch();
+        return $result && $result->total > 0;
+    }
+
+    // quân sửa: Kiểm tra Khoản có nằm trong Đợt chấm điểm Active không
+    public function khoan__Is_In_Active_DotChamDiem($id_khoan) {
+        $obj = $this->connect->prepare("
+            SELECT COUNT(*) as total 
+            FROM bocauhoi b
+            JOIN khoan k ON b.id_dieu = k.id_dieu
+            JOIN lopapdung l ON b.id_mau_phieu = l.id_mau_phieu
+            JOIN dotchamdiem d ON l.id_dot = d.id_dot
+            WHERE k.id_khoan = ? 
+              AND d.trang_thai = 1 
+              AND NOW() >= d.thoi_gian_bat_dau 
+              AND NOW() <= d.thoi_gian_ket_thuc
+        ");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_khoan));
+        $result = $obj->fetch();
+        return $result && $result->total > 0;
     }
 
 }

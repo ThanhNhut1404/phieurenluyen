@@ -22,6 +22,21 @@
                      </ol>
                  </div>
              </div>
+             <!-- quân sửa: Cảnh báo khi dữ liệu đang bị khoá bởi Đợt chấm điểm -->
+             <?php if(isset($_GET['status']) && $_GET['status'] == 'locked_by_dotchamdiem'): ?>
+                 <div class="alert alert-danger alert-dismissible mt-2">
+                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                     <h5><i class="icon fas fa-lock"></i> Thao tác thất bại!</h5>
+                     Dữ liệu này đang được sử dụng trong một Đợt chấm điểm đang diễn ra. Bạn không thể Sửa hoặc Xoá vào lúc này!
+                 </div>
+             <?php endif; ?>
+             <?php if(isset($_GET['status']) && $_GET['status'] == 'locked_update'): ?>
+                 <div class="alert alert-danger alert-dismissible mt-2">
+                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                     <h5><i class="icon fas fa-lock"></i> Thao tác thất bại!</h5>
+                     Dữ liệu này đã được sử dụng trong một Đợt chấm điểm. Để bảo toàn lịch sử, bạn không thể Sửa dữ liệu này. Hãy tạo mới thay thế!
+                 </div>
+             <?php endif; ?>
          </div><!-- /.container-fluid -->
      </section>
 
@@ -101,10 +116,12 @@
                              <td><?=$item->ghi_chu?></td>
                              <td><?=$item->thu_tu?></td>
                              <td>
+                                 <?php if(!$dieu->dieu__Is_Used_In_Bocauhoi($item->id_dieu)): ?>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_dieu?>)">
                                      <i class="fas fa-edit"></i>
                                  </a>
+                                 <?php endif; ?>
                                  <a href="#" type="button" class="btn  btn-danger m-2"
                                      onclick="return confirm_sweet('quan-ly-dieu/action.php?req=delete&id_dieu=<?=$item->id_dieu?>')">
                                      <i class="fas fa-trash"></i>

@@ -37,6 +37,12 @@
                 $dieu_info = $dieu->dieu__Get_By_Id($id_dieu);
                 $thu_tu = $dieu_info ? $dieu_info->thu_tu : 1;
 
+                // quân sửa: Không cho sửa nếu Khoản đã nằm trong Mẫu phiếu (bảo toàn lịch sử)
+                if ($khoan->khoan__Is_Used_In_Bocauhoi($id_khoan)) {
+                    header('location: ../index.php?page=quan-ly-khoan&status=locked_update');
+                    exit();
+                }
+
                 $status = $khoan->khoan__Update($id_khoan, $ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc);
                 if($status !=0 ){
                     header('location: ../index.php?page=quan-ly-khoan&status=success');
@@ -49,6 +55,12 @@
             case 'delete':
 
                 $id_khoan = $_GET['id_khoan'];
+
+                // quân sửa: Không cho xoá nếu Khoản đang nằm trong Đợt chấm điểm Active
+                if ($khoan->khoan__Is_In_Active_DotChamDiem($id_khoan)) {
+                    header('location: ../index.php?page=quan-ly-khoan&status=locked_by_dotchamdiem');
+                    exit();
+                }
 
                 $status = $khoan->khoan__Delete($id_khoan);
                 if($status !=0 ){
