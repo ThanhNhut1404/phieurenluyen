@@ -33,9 +33,9 @@ class minhchung extends Database {
         return $obj->fetchAll();
     }
     
-    public function minhchung__Add($id_phieu, $hinh_anh, $ghi_chu) {
-        $obj = $this->connect->prepare("INSERT INTO minhchung(id_phieu, hinh_anh, ghi_chu) VALUES (?,?,?)");
-        $obj->execute(array($id_phieu, $hinh_anh, $ghi_chu));
+    public function minhchung__Add($id_phieu, $hinh_anh, $ghi_chu, $id_muc = null) {
+        $obj = $this->connect->prepare("INSERT INTO minhchung(id_phieu, hinh_anh, ghi_chu, id_muc) VALUES (?,?,?,?)");
+        $obj->execute(array($id_phieu, $hinh_anh, $ghi_chu, $id_muc));
         return $obj->rowCount();
     }
 
@@ -65,6 +65,64 @@ class minhchung extends Database {
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_phieu));
         return $obj->fetchAll();
+    }
+
+    public function minhchung__Get_By_Id_Phieu_And_Muc($id_phieu, $id_muc) {
+        $obj = $this->connect->prepare("SELECT * FROM minhchung WHERE id_phieu = ? AND id_muc = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_phieu, $id_muc));
+        return $obj->fetchAll();
+    }
+
+    // Hàm tiện ích: Nén ảnh và trả về chuỗi Base64
+    public function minhchung__Compress_Image($source_path, $max_size = 800, $quality = 60) {
+        $info = getimagesize($source_path);
+        if ($info == false) return false;
+
+        $mime = $info['mime'];
+        switch ($mime) {
+            case 'image/jpeg': $image = imagecreatefromjpeg($source_path); break;
+            case 'image/png': $image = imagecreatefrompng($source_path); break;
+            case 'image/gif': $image = imagecreatefromgif($source_path); break;
+            default: return false;
+        }
+
+        $width = $info[0];
+        $height = $info[1];
+        
+        if ($width > $max_size || $height > $max_size) {
+            $ratio = $width / $height;
+            if ($ratio > 1) {
+                $new_width = $max_size;
+                $new_height = $max_size / $ratio;
+            } else {
+                $new_height = $max_size;
+                $new_width = $max_size * $ratio;
+            }
+        } else {
+            $new_width = $width;
+            $new_height = $height;
+        }
+
+        $image_p = imagecreatetruecolor($new_width, $new_height);
+        
+        // Handle transparency for PNG and GIF
+        if ($mime == 'image/png' || $mime == 'image/gif') {
+            imagecolortransparent($image_p, imagecolorallocatealpha($image_p, 0, 0, 0, 127));
+            imagealphablending($image_p, false);
+            imagesavealpha($image_p, true);
+        }
+
+        imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+
+        ob_start();
+        imagejpeg($image_p, null, $quality); // Convert to JPEG for smaller size
+        $compressed_image = ob_get_clean();
+        
+        imagedestroy($image);
+        imagedestroy($image_p);
+
+        return "data:image/jpeg;base64," . base64_encode($compressed_image);
     }
 
     public function minhchung__Has_By_Id_Dot($id_dot) {

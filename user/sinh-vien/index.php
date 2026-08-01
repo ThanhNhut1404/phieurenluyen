@@ -169,7 +169,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                     <table>
                                         <tbody>
                                             <tr>
-                                                <td class="w-90 no-border full  h-0 ">
+                                                <td class="w-50 no-border full  h-0 ">
                                                     <?= $dw ?>
                                                 </td>
                                                 <td class="w-10 h-0 no-border full  h-0">
@@ -187,9 +187,12 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                 <td class="w-10 h-0 no-border full  h-0">
                                                     Cố vấn học tập
                                                 </td>
+                                                <td class="w-10 h-0 no-border full  h-0">
+                                                    Minh chứng
+                                                </td>
                                             </tr>
                                             <tr>
-                                                <td class="w-90 no-border full vertical-align-middle">
+                                                <td class="w-50 no-border full vertical-align-middle">
                                                     Nội dung chấm điểm
                                                 </td>
                                                 <td class="w-10 no-border full vertical-align-middle">
@@ -206,6 +209,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                 </td>
                                                 <td class="w-10 no-border full vertical-align-middle">
                                                     Cố vấn <br /> học tập
+                                                </td>
+                                                <td class="w-10 no-border full vertical-align-middle">
+                                                    Kèm ảnh
                                                 </td>
                                         </tbody>
                                     </table>
@@ -258,7 +264,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                     <table class="w-100">
                                         <tbody>
                                             <tr>
-                                                <td class="w-90 no-border full  h-0 ">
+                                                <td class="w-50 no-border full  h-0 ">
                                                     <?= $dw ?>
                                                 </td>
                                                 <td class="w-10 h-0 no-border full">
@@ -278,7 +284,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                 </td>
                                             </tr>
                                             <tr class="border-bottom">
-                                                <td class="w-60 no-border full vertical-align-middle">
+                                                <td class="w-50 no-border full vertical-align-middle">
                                                     - <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
                                                 </td>
 
@@ -312,6 +318,29 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         max="<?= $item_2->can_tren ?>" required disabled
                                                         value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i] : 0 ?>">
                                                 </td>
+                                                <td class="w-10 no-border full vertical-align-middle">
+                                                    <?php if ($muc->muc__Get_By_Id($item_3->id_muc)->co_minh_chung == 1): ?>
+                                                        <input type="file" name="minh_chung_muc[<?= $item_3->id_muc ?>][]" multiple accept="image/*"
+                                                            <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>
+                                                            <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>
+                                                            class="form-control-file" style="font-size: 0.8rem;">
+                                                        <?php
+                                                            // Hiển thị ảnh đã nộp nếu có
+                                                            $minh_chung_cua_muc = $minhchung->minhchung__Get_By_Id_Phieu_And_Muc($phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu, $item_3->id_muc);
+                                                            if (count($minh_chung_cua_muc) > 0) {
+                                                                echo '<div class="mt-1 d-flex flex-wrap">';
+                                                                foreach ($minh_chung_cua_muc as $mc) {
+                                                                    echo '<a href="sinh-vien/image.php?id_minh_chung=' . $mc->id_minh_chung . '" data-toggle="lightbox" class="mr-1 mb-1 border" style="width: 30px; height: 30px; overflow: hidden; display: inline-block;">';
+                                                                    echo '<img src="' . $mc->hinh_anh . '" class="img-fluid" style="object-fit: cover; width: 100%; height: 100%;" />';
+                                                                    echo '</a>';
+                                                                }
+                                                                echo '</div>';
+                                                            }
+                                                        ?>
+                                                    <?php else: ?>
+                                                        <span class="text-muted text-center d-block w-100" style="font-size: 0.8rem;">(Không yêu cầu)</span>
+                                                    <?php endif; ?>
+                                                </td>
 
                                 </td>
                             </tr>
@@ -336,7 +365,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 <table>
                                     <tbody>
                                         <tr>
-                                            <td class="w-90 no-border full  h-0 ">
+                                            <td class="w-50 no-border full  h-0 ">
                                                 <?= $dw ?>
                                             </td>
                                             <td class="w-10 h-0 no-border full  h-0">
@@ -354,9 +383,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                             <td class="w-10 h-0 no-border full  h-0">
                                                 Cố vấn học tập
                                             </td>
+                                            <td class="w-10 h-0 no-border full  h-0">
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td class="w-60 no-border full vertical-align-middle h-0">
+                                            <td class="w-50 no-border full vertical-align-middle h-0">
                                                 <?= $dw ?>
                                                 Tổng
                                             </td>
@@ -382,7 +413,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                     placeholder="0" id="sum_gv" min="0" pattern="[-+]?[0-9]{1-2}"
                                                     title="max is 100" max="100" readonly required>
                                             </td>
-                                            </td>
+                                            <td class="w-10 no-border full vertical-align-middle"></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </th>
