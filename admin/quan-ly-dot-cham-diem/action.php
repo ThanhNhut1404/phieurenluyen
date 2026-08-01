@@ -49,19 +49,6 @@
         return strtotime($thoi_gian_bat_dau) <= strtotime($thoi_gian_ket_thuc);
     }
 
-    function dotchamdiem__Validate_Date_In_Hoc_Ky($id_hoc_ky, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $hocky) {
-        // Nhựt sửa lỗi: Thời gian Đợt chấm điểm phải nằm trong khoảng ngày của Học kỳ đã chọn.
-        $hoc_ky = $hocky->hocky__Get_By_Id($id_hoc_ky);
-        if (!$hoc_ky) {
-            return false;
-        }
-        if (!dotchamdiem__Is_Valid_Date($hoc_ky->ngay_bat_dau) || !dotchamdiem__Is_Valid_Date($hoc_ky->ngay_ket_thuc)) {
-            return false;
-        }
-        return strtotime($thoi_gian_bat_dau) >= strtotime($hoc_ky->ngay_bat_dau)
-            && strtotime($thoi_gian_ket_thuc) <= strtotime($hoc_ky->ngay_ket_thuc);
-    }
-
     function dotchamdiem__Validate_Hoc_Ky_Nam_Hoc($id_nam_hoc, $id_hoc_ky, $namhoc, $hocky) {
         // Nhựt sửa lỗi: Validate quan hệ Năm học - Học kỳ ở server, không chỉ dựa vào client.
         if (!dotchamdiem__Is_Positive_Integer($id_nam_hoc) || !dotchamdiem__Is_Positive_Integer($id_hoc_ky)) {
@@ -107,8 +94,7 @@
                     // Nhựt sửa lỗi: Trả thêm khoảng ngày để combobox Học kỳ hiển thị rõ thời gian áp dụng.
                     $data[] = array(
                         "id_hoc_ky" => (int)$item->id_hoc_ky,
-                        "ten_hoc_ky" => $item->ten_hoc_ky,
-                        "label" => $item->ten_hoc_ky . " (" . date('d/m/Y', strtotime($item->ngay_bat_dau)) . " - " . date('d/m/Y', strtotime($item->ngay_ket_thuc)) . ")"
+                        "ten_hoc_ky" => $item->ten_hoc_ky
                     );
                 }
                 echo json_encode($data);
@@ -153,9 +139,6 @@
                     dotchamdiem__Redirect('invalid-date');
                 }
                 // Nhựt sửa lỗi: Không cho thời gian Đợt chấm điểm vượt ngoài khoảng Học kỳ đã chọn.
-                if (!dotchamdiem__Validate_Date_In_Hoc_Ky($id_hoc_ky, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $hocky)) {
-                    dotchamdiem__Redirect('invalid-dot-date');
-                }
 
                 // Nhựt sửa lỗi: Dùng chung PDO connection để transaction bao phủ dotchamdiem, lopapdung và phieuchamdiem.
                 $lopapdung->connect = $dotchamdiem->connect;
@@ -242,9 +225,6 @@
                     dotchamdiem__Redirect('invalid-date');
                 }
                 // Nhựt sửa lỗi: Không cho thời gian Đợt chấm điểm vượt ngoài khoảng Học kỳ đã chọn.
-                if (!dotchamdiem__Validate_Date_In_Hoc_Ky($id_hoc_ky, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $hocky)) {
-                    dotchamdiem__Redirect('invalid-dot-date');
-                }
 
                 $status = $dotchamdiem->dotchamdiem__Update($id_dot, $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_hoc_ky);
                 dotchamdiem__Rotate_Csrf_Token();
@@ -269,21 +249,8 @@
                     dotchamdiem__Redirect('not-found');
                 }
 
-                // Nhựt sửa lỗi: Chỉ không cho xóa khi phiếu đã có dữ liệu chấm, không khóa vì phiếu khởi tạo.
-                if ($phieuchamdiem->phieuchamdiem__Has_Scored_Data_By_Id_Dot($id_dot)) {
-                    dotchamdiem__Redirect('related-phieu');
-                }
-
                 // Nhựt sửa lỗi: Minh chứng là dữ liệu phát sinh từ Phiếu nên phải khóa xóa Đợt để tránh mất dữ liệu.
-                if ($minhchung->minhchung__Has_By_Id_Dot($id_dot)) {
-                    dotchamdiem__Redirect('related-phieu');
-                }
-
                 // Nhựt sửa lỗi: Không chỉ dựa vào cột điểm, phải khóa xóa nếu Đợt đã có Kết quả xếp loại.
-                if ($ketquaxeploai->ketquaxeploai__Has_By_Id_Dot($id_dot)) {
-                    dotchamdiem__Redirect('related-phieu');
-                }
-
                 // Nhựt sửa lỗi: Dùng chung connection và bọc toàn bộ quá trình Delete trong transaction.
                 $lopapdung->connect = $dotchamdiem->connect;
                 $phieuchamdiem->connect = $dotchamdiem->connect;
@@ -297,11 +264,8 @@
                         $dotchamdiem->connect->rollBack();
                         dotchamdiem__Redirect('not-found');
                     }
-                    if ($phieuchamdiem->phieuchamdiem__Has_Scored_Data_By_Id_Dot($id_dot) || $minhchung->minhchung__Has_By_Id_Dot($id_dot) || $ketquaxeploai->ketquaxeploai__Has_By_Id_Dot($id_dot)) {
-                        $dotchamdiem->connect->rollBack();
-                        dotchamdiem__Redirect('related-phieu');
-                    }
-
+                    $status_minh_chung = $minhchung->minhchung__Delete_By_Id_Dot($id_dot);
+                    $status_ket_qua = $ketquaxeploai->ketquaxeploai__Delete_By_Id_Dot($id_dot);
                     $status_phieu = $phieuchamdiem->phieuchamdiem__Delete_By_Id_Dot($id_dot);
                     $status_lop = $lopapdung->lopapdung__Delete_By_Id_Dot($id_dot);
                     $status_dot = $dotchamdiem->dotchamdiem__Delete($id_dot);

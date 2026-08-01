@@ -14,17 +14,9 @@
             // Nhựt sửa lỗi: Escape dữ liệu hiển thị trong form cập nhật để tránh XSS.
             return htmlspecialchars($value ?? "", ENT_QUOTES, 'UTF-8');
         }
-        function dotchamdiem_update_format_date($value) {
-            // Nhựt sửa lỗi: Hiển thị ngày trong combobox theo dd/mm/yyyy để người dùng dễ nhận biết thời gian áp dụng.
-            $date = DateTime::createFromFormat('Y-m-d', (string)$value);
-            if (!$date) {
-                return $value;
-            }
-            return $date->format('d/m/Y');
-        }
         function dotchamdiem_update_format_range_label($title, $start, $end) {
-            // Nhựt sửa lỗi: Ghép tên và khoảng ngày cho combobox Năm học/Học kỳ.
-            return dotchamdiem_update_escape($title) . ' (' . dotchamdiem_update_format_date($start) . ' - ' . dotchamdiem_update_format_date($end) . ')';
+            // Nhựt sửa lỗi: Combobox chỉ hiển thị tên theo yêu cầu mới.
+            return dotchamdiem_update_escape($title);
         }
 
         $id_dot = isset($_POST['id_dot']) ? trim($_POST['id_dot']) : "";

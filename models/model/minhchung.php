@@ -74,5 +74,12 @@ class minhchung extends Database {
         return (int)$obj->fetchColumn() > 0;
     }
 
+    public function minhchung__Delete_By_Id_Dot($id_dot) {
+        // Nhựt sửa lỗi: Khi cho phép xóa Đợt thì phải xóa Minh chứng thuộc các Phiếu của Đợt trước để tránh dữ liệu mồ côi.
+        $obj = $this->connect->prepare("DELETE minhchung FROM minhchung, phieuchamdiem, lopapdung WHERE minhchung.id_phieu = phieuchamdiem.id_phieu AND phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_dot = ?");
+        $obj->execute(array($id_dot));
+        return $obj->rowCount();
+    }
+
 }
 ?>

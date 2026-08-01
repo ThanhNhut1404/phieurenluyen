@@ -100,9 +100,20 @@
                 $ngay_ket_thuc = hocky_post_text('ngay_ket_thuc');
                 $ghi_chu = hocky_post_text('ghi_chu');
 
-                if (!$id_nam_hoc || $id_nam_hoc < 1 || !$namhoc->namhoc__Get_By_Id($id_nam_hoc) || !hocky_valid_ten_hoc_ky($ten_hoc_ky) || !hocky_valid_date_range($ngay_bat_dau, $ngay_ket_thuc) || !hocky_valid_ghi_chu($ghi_chu)) {
+                if (!$id_nam_hoc || $id_nam_hoc < 1 || !$namhoc->namhoc__Get_By_Id($id_nam_hoc) || !hocky_valid_ten_hoc_ky($ten_hoc_ky) || !hocky_valid_ghi_chu($ghi_chu)) {
                     hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
                     hocky_redirect('invalid');
+                }
+
+                if (!hocky_valid_date($ngay_bat_dau) || !hocky_valid_date($ngay_ket_thuc)) {
+                    hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    hocky_redirect('invalid');
+                }
+
+                if (strtotime($ngay_ket_thuc) <= strtotime($ngay_bat_dau)) {
+                    // Nhựt sửa lỗi: báo riêng khi ngày kết thúc không lớn hơn ngày bắt đầu để người dùng biết lỗi nằm ở khoảng ngày.
+                    hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    hocky_redirect('invalid-date-range');
                 }
 
                 if (!$hocky->hocky__Is_Within_Nam_Hoc($id_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc)) {
@@ -147,9 +158,20 @@
                 $ngay_ket_thuc = hocky_post_text('ngay_ket_thuc');
                 $ghi_chu = hocky_post_text('ghi_chu');
 
-                if (!$id_hoc_ky || $id_hoc_ky < 1 || !$id_nam_hoc || $id_nam_hoc < 1 || !$namhoc->namhoc__Get_By_Id($id_nam_hoc) || !hocky_valid_ten_hoc_ky($ten_hoc_ky) || !hocky_valid_date_range($ngay_bat_dau, $ngay_ket_thuc) || !hocky_valid_ghi_chu($ghi_chu)) {
+                if (!$id_hoc_ky || $id_hoc_ky < 1 || !$id_nam_hoc || $id_nam_hoc < 1 || !$namhoc->namhoc__Get_By_Id($id_nam_hoc) || !hocky_valid_ten_hoc_ky($ten_hoc_ky) || !hocky_valid_ghi_chu($ghi_chu)) {
                     hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
                     hocky_redirect('invalid');
+                }
+
+                if (!hocky_valid_date($ngay_bat_dau) || !hocky_valid_date($ngay_ket_thuc)) {
+                    hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
+                    hocky_redirect('invalid');
+                }
+
+                if (strtotime($ngay_ket_thuc) <= strtotime($ngay_bat_dau)) {
+                    // Nhựt sửa lỗi: báo riêng khi ngày kết thúc không lớn hơn ngày bắt đầu để người dùng biết lỗi nằm ở khoảng ngày.
+                    hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
+                    hocky_redirect('invalid-date-range');
                 }
 
                 $hocky->connect->beginTransaction();

@@ -108,4 +108,11 @@ class dotchamdiem extends Database {
         $obj->execute(array($date));
         return $obj->fetchAll();
     }
+
+    public function dotchamdiem__Has_Dang_Dien_Ra($date) {
+        // Nhựt sửa lỗi: Kiểm tra có Đợt chấm điểm đang diễn ra để khóa thay đổi cấu hình Xếp loại trong thời gian chấm.
+        $obj = $this->connect->prepare("SELECT COUNT(*) FROM dotchamdiem WHERE thoi_gian_bat_dau <= DATE(?) AND thoi_gian_ket_thuc >= DATE(?)");
+        $obj->execute(array($date, $date));
+        return (int)$obj->fetchColumn() > 0;
+    }
 }

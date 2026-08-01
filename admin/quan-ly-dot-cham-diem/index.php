@@ -12,17 +12,9 @@
         // Nhựt sửa lỗi: Escape dữ liệu hiển thị của đợt chấm điểm để tránh XSS.
         return htmlspecialchars($value ?? "", ENT_QUOTES, 'UTF-8');
     }
-    function dotchamdiem_format_date($value) {
-        // Nhựt sửa lỗi: Hiển thị ngày trong combobox theo dd/mm/yyyy để người dùng dễ nhận biết thời gian áp dụng.
-        $date = DateTime::createFromFormat('Y-m-d', (string)$value);
-        if (!$date) {
-            return $value;
-        }
-        return $date->format('d/m/Y');
-    }
     function dotchamdiem_format_range_label($title, $start, $end) {
-        // Nhựt sửa lỗi: Ghép tên và khoảng ngày cho combobox Năm học/Học kỳ.
-        return dotchamdiem_escape($title) . ' (' . dotchamdiem_format_date($start) . ' - ' . dotchamdiem_format_date($end) . ')';
+        // Nhựt sửa lỗi: Giữ hàm cũ nhưng combobox chỉ hiển thị tên theo yêu cầu mới.
+        return dotchamdiem_escape($title);
     }
     function dotchamdiem_trang_thai_hien_thi($thoi_gian_bat_dau, $thoi_gian_ket_thuc) {
         // Nhựt sửa lỗi: Tính trạng thái đợt chấm điểm động theo ngày hiện tại, không dùng cột trang_thai.
@@ -303,8 +295,8 @@ function load_hoc_ky_by_nam_hoc(id_nam_hoc, id_hoc_ky_selector, selected_id_hoc_
         id_nam_hoc: id_nam_hoc
     }, function(data) {
             $.each(data, function(index, item) {
-            // Nhựt sửa lỗi: Nhận sẵn nhãn đầy đủ từ server để combobox Học kỳ hiển thị cả khoảng ngày.
-            const option = $('<option></option>').val(item.id_hoc_ky).text(item.label);
+            // Nhựt sửa lỗi: Combobox Học kỳ chỉ hiển thị tên theo yêu cầu mới.
+            const option = $('<option></option>').val(item.id_hoc_ky).text(item.ten_hoc_ky);
             if (selected_id_hoc_ky && selected_id_hoc_ky == item.id_hoc_ky) {
                 option.prop('selected', true);
             }

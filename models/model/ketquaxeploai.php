@@ -108,5 +108,12 @@ class ketquaxeploai extends Database {
         $obj->execute(array($id_dot));
         return (int)$obj->fetchColumn() > 0;
     }
+
+    public function ketquaxeploai__Delete_By_Id_Dot($id_dot) {
+        // Nhựt sửa lỗi: Khi cho phép xóa Đợt thì phải xóa Kết quả xếp loại thuộc Đợt trước để tránh dữ liệu mồ côi.
+        $obj = $this->connect->prepare("DELETE FROM ketquaxeploai WHERE id_dot = ?");
+        $obj->execute(array($id_dot));
+        return $obj->rowCount();
+    }
 }
 ?>
