@@ -5,27 +5,38 @@ $labels_2=[];
 $data_1=[];
 $data_2=[];
 
-$id_dot = $dotchamdiem->dotchamdiem__Get_Last()->id_dot;
-$id_lop_hoc = $lophoc->lophoc__Get_Last()->id_lop_hoc;
 $dotchamdiem__Get_All = $dotchamdiem->dotchamdiem__Get_All();
 $lophoc__Get_All = $lophoc->lophoc__Get_All();
-$ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
+$dotchamdiem__Get_Last = $dotchamdiem->dotchamdiem__Get_Last();
+$lophoc__Get_Last = $lophoc->lophoc__Get_Last();
+
+// Nhựt sửa lỗi: Tránh lỗi đọc id_dot/id_lop_hoc trên false khi chưa có Đợt chấm điểm hoặc Lớp học.
+$id_dot = $dotchamdiem__Get_Last ? $dotchamdiem__Get_Last->id_dot : 0;
+$id_lop_hoc = $lophoc__Get_Last ? $lophoc__Get_Last->id_lop_hoc : 0;
+
 if(isset($_GET['id_dot'])){
    $id_dot = $_GET['id_dot'];
 }
 if(isset($_GET['id_lop_hoc'])){
     $id_lop_hoc = $_GET['id_lop_hoc'];
-    $ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
 
  }
-$ketquaxeploai__Get_By_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Dot($id_dot, $id_lop_hoc);
-$ketquaxeploai__Get_By_Id_Dot_All = $ketquaxeploai->ketquaxeploai__Get_By_Id_Dot_All($id_dot, $id_lop_hoc)->sum;
+$ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot = array();
+$ketquaxeploai__Get_By_Id_Dot = array();
+$ketquaxeploai__Get_By_Id_Dot_All = 0;
+
+if ($id_dot > 0 && $id_lop_hoc > 0) {
+    $ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
+    $ketquaxeploai__Get_By_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Dot($id_dot, $id_lop_hoc);
+    $ketquaxeploai__Get_By_Id_Dot_All = $ketquaxeploai->ketquaxeploai__Get_By_Id_Dot_All($id_dot, $id_lop_hoc)->sum;
+}
 
 foreach($ketquaxeploai__Get_By_Id_Dot as $item){
     $labels_1[] = "% ". $item->xep_loai;
     $labels_2[] = $item->xep_loai;
     $data_1[] = isset($item->sum_so_luong) ? $item->sum_so_luong : 0;
-    $data_2[] =( isset($item->sum_so_luong) ? $item->sum_so_luong : 0) / $ketquaxeploai__Get_By_Id_Dot_All * 100;
+    // Nhựt sửa lỗi: Không chia cho 0 khi chưa có dữ liệu kết quả xếp loại.
+    $data_2[] = $ketquaxeploai__Get_By_Id_Dot_All > 0 ? (isset($item->sum_so_luong) ? $item->sum_so_luong : 0) / $ketquaxeploai__Get_By_Id_Dot_All * 100 : 0;
 }
 
 

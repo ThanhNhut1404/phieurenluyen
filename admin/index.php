@@ -159,7 +159,23 @@
             "out-of-range-hoc-ky" => array("Ngày không hợp lệ!", "Ngày của học kỳ phải nằm trong khoảng năm học đã chọn.", "error"),
             "invalid" => array("Dữ liệu không hợp lệ!", "Vui lòng kiểm tra lại thông tin nhập.", "error"),
             "not-found" => array("Không tìm thấy dữ liệu!", "Bản ghi cần thao tác không tồn tại.", "error"),
+            // Nhựt sửa lỗi: Bổ sung thông báo thời gian đợt chấm điểm không hợp lệ.
+            "invalid-date" => array("Thời gian không hợp lệ", "Thời gian bắt đầu phải nhỏ hơn hoặc bằng thời gian kết thúc.", "error"),
+            // Nhựt sửa lỗi: Thông báo khi thời gian Đợt chấm điểm không nằm trong khoảng Học kỳ đã chọn.
+            "invalid-dot-date" => array("Thời gian đợt chấm điểm không hợp lệ", "Thời gian đợt chấm điểm phải nằm trong khoảng Học kỳ đã chọn.", "error"),
+            // Nhựt sửa lỗi: Nội dung thông báo phải đúng nghiệp vụ, chỉ khóa xóa khi đã phát sinh dữ liệu chấm, Minh chứng hoặc Kết quả xếp loại.
+            "related-phieu" => array("Không thể xóa", "Đợt chấm điểm đã phát sinh dữ liệu chấm, Minh chứng hoặc Kết quả xếp loại. Không thể xóa để đảm bảo toàn vẹn dữ liệu.", "error"),
+            // Nhựt sửa lỗi: Bổ sung thông báo khi Học kỳ không thuộc Năm học đã chọn.
+            "invalid-semester" => array("Học kỳ không hợp lệ", "Học kỳ không thuộc Năm học đã chọn. Vui lòng kiểm tra lại.", "error"),
+            // Nhựt sửa lỗi: Chặn mỗi Học kỳ chỉ có một Đợt chấm điểm.
+            "duplicate-semester" => array("Không thể tạo Đợt chấm điểm", "Học kỳ này đã có Đợt chấm điểm. Mỗi Học kỳ chỉ được phép có một Đợt chấm điểm.", "error"),
+            "overlap-xep-loai" => array("Khoảng điểm bị trùng!", "Khoảng điểm xếp loại đang chồng lên xếp loại khác.", "error"),
+            "incomplete-xep-loai" => array("Chưa cấu hình đủ xếp loại!", "Hệ thống chưa cấu hình đầy đủ các khoảng điểm xếp loại từ 0 đến 100. Vui lòng kiểm tra lại.", "error"),
+            "related-xep-loai" => array("Không thể xóa!", "Xếp loại này đang được sử dụng trong kết quả xếp loại.", "error"),
+            "locked-xep-loai" => array("Không thể cập nhật!", "Xếp loại này đã được sử dụng trong kết quả xếp loại nên không thể cập nhật.", "error"),
             "duplicate-name" => array("Không thể thực hiện!", "Điều này đã tồn tại nên không thể lưu.", "error"),
+            // Nhựt sửa lỗi: Thông báo riêng khi đã tồn tại kết quả xếp loại cho cùng một đợt/lớp.
+            "duplicate-ket-qua" => array("Không thể thực hiện!", "Kết quả xếp loại đã tồn tại cho đợt/lớp này.", "error"),
             "duplicate" => array("Dữ liệu bị trùng!", "Tên khoa đã tồn tại.", "error"),
             "duplicate-bithu" => array("Dữ liệu bị trùng!", "Tên hoặc Email bí thư đoàn khoa đã tồn tại.", "error"),
             "duplicate-giangvien" => array("Dữ liệu bị trùng!", "Mã số hoặc Email giảng viên đã tồn tại.", "error"),
@@ -173,7 +189,22 @@
             "system" => array("Lỗi hệ thống!", "Có lỗi phát sinh khi xử lý dữ liệu.", "error")
         );
 
-        if (isset($alerts[$_GET['status']])) {
+        if ($_GET['status'] == "locked-dot") {
+            // Nhựt sửa lỗi: Không cho cập nhật Đợt đã phát sinh dữ liệu chấm hoặc kết quả xếp loại.
+            echo "<script>Swal.fire(" . json_encode("Không thể cập nhật") . ", " . json_encode("Đợt chấm điểm đã phát sinh dữ liệu chấm hoặc kết quả xếp loại nên không thể cập nhật.") . ", " . json_encode("error") . ")</script>";
+        }
+        if ($_GET['status'] == "unscored-phieu") {
+            // Nhựt sửa lỗi: Không cho tổng kết khi còn Phiếu chưa có kết quả cố vấn.
+            echo "<script>Swal.fire(" . json_encode("Chưa thể tổng kết") . ", " . json_encode("Vẫn còn Phiếu chấm điểm chưa có kết quả cố vấn. Vui lòng kiểm tra lại.") . ", " . json_encode("error") . ")</script>";
+        }
+
+        if (isset($_GET['page']) && $_GET['page'] == "quan-ly-dot-cham-diem" && $_GET['status'] == "not-found") {
+            // Nhựt sửa lỗi: Thông báo riêng khi đợt chấm điểm không tồn tại hoặc request sai.
+            echo "<script>Swal.fire(" . json_encode("Không tìm thấy dữ liệu") . ", " . json_encode("Đợt chấm điểm không tồn tại hoặc dữ liệu yêu cầu không hợp lệ.") . ", " . json_encode("error") . ")</script>";
+        } else if (isset($_GET['page']) && $_GET['page'] == "quan-ly-xep-loai" && $_GET['status'] == "duplicate-name") {
+            // Nhựt sửa lỗi: Thông báo riêng khi tên xếp loại bị trùng.
+            echo "<script>Swal.fire(" . json_encode("Trùng tên xếp loại") . ", " . json_encode("Tên xếp loại đã tồn tại. Vui lòng nhập tên khác.") . ", " . json_encode("error") . ")</script>";
+        } else if (isset($alerts[$_GET['status']])) {
             $alert = $alerts[$_GET['status']];
             echo "<script>Swal.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
         }

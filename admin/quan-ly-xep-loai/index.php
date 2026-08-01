@@ -1,5 +1,16 @@
- <?php
+<?php
     // require "../models/getModel.php";
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (empty($_SESSION['csrf_token'])) {
+        // Nhựt sửa lỗi: Tạo CSRF token cho Add/Delete Xếp loại giống các module danh mục khác.
+        try {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        } catch (Throwable $e) {
+            $_SESSION['csrf_token'] = hash('sha256', session_id() . uniqid('', true));
+        }
+    }
     $xeploai__Get_All = $xeploai->xeploai__Get_All();
  ?>
 
@@ -26,6 +37,7 @@
      <section class="content">
          <form class="row form" action="quan-ly-xep-loai/action.php?req=add" method="post"
              enctype="multipart/form-data">
+             <input type="hidden" name="csrf_token" value="<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
@@ -49,21 +61,21 @@
                          </div>
                          <div class="form-group">
                              <label for="">Điểm tối thiểu <span class="color-crimson">(*)</span></label>
-                             <input type="number" id="can_duoi" name="can_duoi" pattern="[0-9]{1-2}"
-                                 class=" form-control" required title="Thấp nhất là 1, lớn nhất là 100"
-                                 placeholder="Nhập điểm tối thiểu" minlength="0" max="100">
+                             <input type="number" id="can_duoi" name="can_duoi"
+                                 class=" form-control" required title="Thấp nhất là 0, lớn nhất là 100"
+                                 placeholder="Nhập điểm tối thiểu" min="0" max="100" step="1">
                          </div>
                          <div class="form-group">
                              <label for="">Điểm tối đa <span class="color-crimson">(*)</span></label>
-                             <input type="number" id="can_tren" name="can_tren" pattern="[0-9]{1-3}"
-                                 class=" form-control" required title="Thấp nhất là 1, lớn nhất là 100"
-                                 placeholder="Nhập điểm tối đa" minlength="0" max="100">
+                             <input type="number" id="can_tren" name="can_tren"
+                                 class=" form-control" required title="Thấp nhất là 0, lớn nhất là 100"
+                                 placeholder="Nhập điểm tối đa" min="0" max="100" step="1">
                          </div>
                          <div class="form-group">
                              <label for="">Hạ bậc <span class="color-crimson">(*)</span></label>
-                             <input type="number" id="ha_bac" name="ha_bac" pattern="[0-9]{1-2}"
+                             <input type="number" id="ha_bac" name="ha_bac" min="10" max="15" step="1"
                                  class=" form-control" required title="Thấp nhất là 10, lớn nhất là 15"
-                                 placeholder="Nhập điểm hạ bậc" minlength="10" max="15">
+                                 placeholder="Nhập điểm hạ bậc">
                          </div>
                      </div>
                      <!-- /.card-body -->
@@ -98,6 +110,7 @@
                              <th>Tên xếp loại</th>
                              <th>Điểm tối thiểu</th>
                              <th>Điểm tối đa</th>
+                             <th>Hạ bậc</th>
                              <th>Ghi chú</th>
                              <th>Thao tác</th>
                          </tr>
@@ -107,17 +120,18 @@
                          <?php foreach($xeploai__Get_All as $item):?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td><?=$item->ten_xep_loai?></td>
+                             <td><?=htmlspecialchars($item->ten_xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
                              <td><?=$item->can_duoi?></td>
                              <td><?=$item->can_tren?></td>
-                             <td><?=$item->ghi_chu?></td>
+                             <td><?=$item->ha_bac?></td>
+                             <td><?=htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8')?></td>
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_xep_loai?>)">
                                      <i class="fas fa-edit"></i>
                                  </a>
-                                 <a href="#" type="button" class="btn  btn-danger m-2"
-                                     onclick="return confirm_sweet('quan-ly-xep-loai/action.php?req=delete&id_xep_loai=<?=$item->id_xep_loai?>')">
+                                <a href="#" type="button" class="btn  btn-danger m-2"
+                                    onclick="return confirm_sweet('quan-ly-xep-loai/action.php?req=delete&id_xep_loai=<?=$item->id_xep_loai?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
                                      <i class="fas fa-trash"></i>
                                  </a>
                              </td>

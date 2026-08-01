@@ -1,28 +1,55 @@
 <?php
 
     require "../../models/getModel.php";
-     $href = $_SERVER["HTTP_REFERER"];
+    $href = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "../index.php?page=quan-ly-ket-qua";
     if(strlen(strpos($href, "&status")) > 0){
         $href = explode("&status", $href)[0];
     } 
+
+    function ketqua__Is_Positive_Integer($value) {
+        // Nhựt sửa lỗi: Validate id_ket_qua trước khi hạ bậc để tránh truy cập sai bản ghi.
+        return preg_match('/^[1-9][0-9]*$/', $value);
+    }
+
     if (isset($_GET["req"])){
         switch($_GET["req"]){
             
             case "update":
-               echo $id_ket_qua = $_GET["id_ket_qua"];
-               $ketquaxeploai__Get_By_Id = $ketquaxeploai->ketquaxeploai__Get_By_Id($id_ket_qua);
+                $id_ket_qua = isset($_GET["id_ket_qua"]) ? trim($_GET["id_ket_qua"]) : "";
 
+                // Nhựt sửa lỗi: Không hạ bậc khi id_ket_qua sai kiểu hoặc không tồn tại.
+                if (!ketqua__Is_Positive_Integer($id_ket_qua)) {
+                    header("location: $href&status=not-found");
+                    exit();
+                }
 
-               $xeploai__Get_By_Kq_Old = $xeploai->xeploai__Get_By_Kq($ketquaxeploai__Get_By_Id->ket_qua);
-               $ha_bac = $ketquaxeploai__Get_By_Id->ket_qua - $xeploai__Get_By_Kq_Old->ha_bac;
-               $xeploai__Get_By_Kq = $xeploai->xeploai__Get_By_Kq($ha_bac);
+                $ketquaxeploai__Get_By_Id = $ketquaxeploai->ketquaxeploai__Get_By_Id($id_ket_qua);
+                if (!$ketquaxeploai__Get_By_Id) {
+                    header("location: $href&status=not-found");
+                    exit();
+                }
 
-               echo $ket_qua_new = $ha_bac;
-               echo $xep_loai = $xeploai__Get_By_Kq->ten_xep_loai;
-               echo $ngay_xep_loai = date("Y-m-d");
-               echo  $ghi_chu = "Hạ bậc";
+                $xeploai__Get_By_Kq_Old = $xeploai->xeploai__Get_By_Kq($ketquaxeploai__Get_By_Id->ket_qua);
+                if (!$xeploai__Get_By_Kq_Old) {
+                    // Nhựt sửa lỗi: Nếu dữ liệu xếp loại cũ không còn hợp lệ thì không tính được mức hạ bậc.
+                    header("location: $href&status=incomplete-xep-loai");
+                    exit();
+                }
 
-               echo $status = $ketquaxeploai->ketquaxeploai__Update_Ha_Bac($id_ket_qua, $ket_qua_new, $xep_loai, $ngay_xep_loai, $ghi_chu);
+                $ha_bac = $ketquaxeploai__Get_By_Id->ket_qua - $xeploai__Get_By_Kq_Old->ha_bac;
+                $xeploai__Get_By_Kq = $xeploai->xeploai__Get_By_Kq($ha_bac);
+                if (!$xeploai__Get_By_Kq) {
+                    // Nhựt sửa lỗi: Sau khi hạ bậc mà không còn xếp loại phù hợp thì không được cập nhật kết quả.
+                    header("location: $href&status=incomplete-xep-loai");
+                    exit();
+                }
+
+                $ket_qua_new = $ha_bac;
+                $xep_loai = $xeploai__Get_By_Kq->ten_xep_loai;
+                $ngay_xep_loai = date("Y-m-d");
+                $ghi_chu = "Hạ bậc";
+
+                $status = $ketquaxeploai->ketquaxeploai__Update_Ha_Bac($id_ket_qua, $ket_qua_new, $xep_loai, $ngay_xep_loai, $ghi_chu);
                 if($status !=0 ){
                     header("location: $href&status=success");
                 }else{
@@ -33,13 +60,15 @@
 
             case "print":
 
-                $id_xep_loai = $_GET["id_xep_loai"];
+                $id_xep_loai = isset($_GET["id_xep_loai"]) ? trim($_GET["id_xep_loai"]) : "";
 
-                if($status !=0 ){
-                    header("location: $href&status=success");
-                }else{
-                    header("location: $href&status=failed");
+                if (!ketqua__Is_Positive_Integer($id_xep_loai)) {
+                    header("location: $href&status=not-found");
+                    exit();
                 }
+
+                header("location: $href&status=not-found");
+                exit();
                 
                 break;
         }

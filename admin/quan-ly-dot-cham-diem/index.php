@@ -1,7 +1,42 @@
  <?php
     // require "../models/getModel.php";
+    // Nhựt sửa lỗi: Tạo CSRF token cho form thêm/cập nhật đợt chấm điểm.
+    if (empty($_SESSION['csrf_token'])) {
+        try {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        } catch (Throwable $e) {
+            $_SESSION['csrf_token'] = hash('sha256', session_id() . uniqid('', true));
+        }
+    }
+    function dotchamdiem_escape($value) {
+        // Nhựt sửa lỗi: Escape dữ liệu hiển thị của đợt chấm điểm để tránh XSS.
+        return htmlspecialchars($value ?? "", ENT_QUOTES, 'UTF-8');
+    }
+    function dotchamdiem_format_date($value) {
+        // Nhựt sửa lỗi: Hiển thị ngày trong combobox theo dd/mm/yyyy để người dùng dễ nhận biết thời gian áp dụng.
+        $date = DateTime::createFromFormat('Y-m-d', (string)$value);
+        if (!$date) {
+            return $value;
+        }
+        return $date->format('d/m/Y');
+    }
+    function dotchamdiem_format_range_label($title, $start, $end) {
+        // Nhựt sửa lỗi: Ghép tên và khoảng ngày cho combobox Năm học/Học kỳ.
+        return dotchamdiem_escape($title) . ' (' . dotchamdiem_format_date($start) . ' - ' . dotchamdiem_format_date($end) . ')';
+    }
+    function dotchamdiem_trang_thai_hien_thi($thoi_gian_bat_dau, $thoi_gian_ket_thuc) {
+        // Nhựt sửa lỗi: Tính trạng thái đợt chấm điểm động theo ngày hiện tại, không dùng cột trang_thai.
+        $today = date('Y-m-d');
+        if ($today < $thoi_gian_bat_dau) {
+            return "Chưa bắt đầu";
+        }
+        if ($today >= $thoi_gian_bat_dau && $today <= $thoi_gian_ket_thuc) {
+            return "Đang diễn ra";
+        }
+        return "Đã kết thúc";
+    }
     $dotchamdiem__Get_All = $dotchamdiem->dotchamdiem__Get_All();
-    $hocky__Get_All = $hocky->hocky__Get_All();
+    $namhoc__Get_All = $namhoc->namhoc__Get_All();
     $mauphieu__Get_All = $mauphieu->mauphieu__Get_All();
     $lophoc__Get_All = $lophoc->lophoc__Get_All();
  ?>
@@ -58,6 +93,8 @@ button.btn.removeall.btn-outline-secondary:before {
      <section class="content">
          <form class="row form" action="quan-ly-dot-cham-diem/action.php?req=add" method="post"
              enctype="multipart/form-data">
+             <?php // Nhựt sửa lỗi: Thêm CSRF token cho form thêm đợt chấm điểm. ?>
+             <input type="hidden" name="csrf_token" value="<?=dotchamdiem_escape($_SESSION['csrf_token'])?>">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
@@ -96,13 +133,20 @@ button.btn.removeall.btn-outline-secondary:before {
                              </div>
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Học kỳ <span class="color-crimson">(*)</span></label>
-                                     <select class="form-control" name="id_hoc_ky" required>
-                                         <option value="">Chọn học kỳ</option>
-                                         <?php foreach ($hocky__Get_All as $item):?>
-                                         <option value="<?=$item->id_hoc_ky?>"><?=$item->ten_hoc_ky?> -
-                                             <?=$namhoc->namhoc__Get_By_Id($item->id_nam_hoc)->ten_nam_hoc?></option>
+                                     <?php // Nhựt sửa lỗi: Thêm combobox Năm học để lọc Học kỳ theo Năm học. ?>
+                                     <label for="">Năm học <span class="color-crimson">(*)</span></label>
+                                     <select class="form-control" id="id_nam_hoc" name="id_nam_hoc" required>
+                                         <option value="">Chọn năm học</option>
+                                         <?php foreach ($namhoc__Get_All as $item):?>
+                                         <option value="<?=$item->id_nam_hoc?>"><?=dotchamdiem_format_range_label($item->ten_nam_hoc, $item->ngay_bat_dau, $item->ngay_ket_thuc)?></option>
                                          <?php endforeach; ?>
+                                     </select>
+                                 </div>
+                                 <div class="form-group">
+                                     <?php // Nhựt sửa lỗi: Học kỳ ban đầu bị disable, chỉ tải theo Năm học đã chọn. ?>
+                                     <label for="">Học kỳ <span class="color-crimson">(*)</span></label>
+                                     <select class="form-control" id="id_hoc_ky" name="id_hoc_ky" required disabled>
+                                         <option value="">--- Chọn học kỳ ---</option>
                                      </select>
                                  </div>
                                  <div class="form-group">
@@ -154,8 +198,13 @@ button.btn.removeall.btn-outline-secondary:before {
                          <tr>
                              <th>#</th>
                              <th>Tên đợt</th>
+                             <?php // Nhựt sửa lỗi: Tách riêng cột Học kỳ và Năm học trong danh sách. ?>
+                             <th>Học kỳ</th>
+                             <th>Năm học</th>
                              <th>Thời gian bắt đầu</th>
                              <th>Thời gian kết thúc</th>
+                             <?php // Nhựt sửa lỗi: Bổ sung cột trạng thái tính động theo thời gian. ?>
+                             <th>Trạng thái</th>
                              <th>Lớp áp dụng</th>
                              <th>Mẫu phiếu</th>
                              <th>Ghi chú</th>
@@ -165,23 +214,35 @@ button.btn.removeall.btn-outline-secondary:before {
                      <tbody>
                          <?php $num = 0;?>
                          <?php foreach($dotchamdiem__Get_All as $item):?>
+                         <?php // Nhựt sửa lỗi: Lấy lớp áp dụng một lần để tránh lỗi truy cập mảng rỗng khi hiển thị. ?>
+                         <?php $lopapdung__Get_By_Id_Dot = $lopapdung->lopapdung__Get_By_Id_Dot($item->id_dot);?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td><?=$item->ten_dot?></td>
+                             <?php // Nhựt sửa lỗi: Escape dữ liệu tên đợt lấy từ database để tránh XSS. ?>
+                             <td><?=dotchamdiem_escape($item->ten_dot)?></td>
+                             <?php // Nhựt sửa lỗi: Hiển thị riêng Học kỳ và Năm học để danh sách dễ đọc hơn. ?>
+                             <td><?=dotchamdiem_escape($item->ten_hoc_ky)?></td>
+                             <td><?=dotchamdiem_escape($item->ten_nam_hoc)?></td>
                              <td><?=$item->thoi_gian_bat_dau?></td>
                              <td><?=$item->thoi_gian_ket_thuc?></td>
-                             <td><?php foreach($lopapdung->lopapdung__Get_By_Id_Dot($item->id_dot) as $item_2){echo $lophoc->lophoc__Get_By_Id($item_2->id_lop_hoc)->ten_lop_hoc . "<br/> ";}?>
+                             <?php // Nhựt sửa lỗi: Hiển thị trạng thái động theo ngày hiện tại. ?>
+                             <td><?=dotchamdiem_escape(dotchamdiem_trang_thai_hien_thi($item->thoi_gian_bat_dau, $item->thoi_gian_ket_thuc))?></td>
+                             <?php // Nhựt sửa lỗi: Kiểm tra lớp còn tồn tại trước khi hiển thị để tránh lỗi object rỗng. ?>
+                             <td><?php foreach($lopapdung__Get_By_Id_Dot as $item_2){$lop_hoc_item = $lophoc->lophoc__Get_By_Id($item_2->id_lop_hoc); if ($lop_hoc_item) {echo dotchamdiem_escape($lop_hoc_item->ten_lop_hoc) . "<br/> ";}}?>
                              </td>
-                             <td><?=$mauphieu->mauphieu__Get_By_Id($lopapdung->lopapdung__Get_By_Id_Dot($item->id_dot)[0]->id_mau_phieu)->ten_mau_phieu?>
+                             <?php // Nhựt sửa lỗi: Kiểm tra lopapdung/mẫu phiếu tồn tại trước khi hiển thị để tránh lỗi mảng rỗng. ?>
+                             <td><?php if (count($lopapdung__Get_By_Id_Dot) > 0) {$mau_phieu_item = $mauphieu->mauphieu__Get_By_Id($lopapdung__Get_By_Id_Dot[0]->id_mau_phieu); echo $mau_phieu_item ? dotchamdiem_escape($mau_phieu_item->ten_mau_phieu) : "";}?>
                              </td>
-                             <td><?=$item->ghi_chu?></td>
+                             <?php // Nhựt sửa lỗi: Escape ghi chú lấy từ database để tránh XSS. ?>
+                             <td><?=dotchamdiem_escape($item->ghi_chu)?></td>
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_dot?>)">
                                      <i class="fas fa-edit"></i>
                                  </a>
+                                 <?php // Nhựt sửa lỗi: Thêm CSRF token vào URL xóa Đợt chấm điểm. ?>
                                  <a href="#" type="button" class="btn  btn-danger m-2"
-                                     onclick="return confirm_sweet('quan-ly-dot-cham-diem/action.php?req=delete&id_dot=<?=$item->id_dot?>')">
+                                     onclick="return confirm_sweet('quan-ly-dot-cham-diem/action.php?req=delete&id_dot=<?=$item->id_dot?>&csrf_token=<?=dotchamdiem_escape($_SESSION['csrf_token'])?>')">
                                      <i class="fas fa-trash"></i>
                                  </a>
                              </td>
@@ -209,7 +270,16 @@ window.addEventListener("load", function() {
         "buttons": ["copy", "csv", "excel", "pdf", "print"]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 
+    // Nhựt sửa lỗi: Khi chọn Năm học thì tải lại danh sách Học kỳ tương ứng.
+    $("#id_nam_hoc").change(function() {
+        load_hoc_ky_by_nam_hoc($(this).val(), '#id_hoc_ky', '');
+    });
+
     thoi_gian_bat_dau = document.getElementById('thoi_gian_bat_dau');
+    // Nhựt sửa lỗi: Khi form vừa load đã có ngày bắt đầu thì cập nhật min cho ngày kết thúc ngay.
+    $('#thoi_gian_ket_thuc').attr({
+        "min": thoi_gian_bat_dau.value
+    });
     $("#thoi_gian_bat_dau").change(function() {
         $('#thoi_gian_ket_thuc').attr({
             "min": thoi_gian_bat_dau.value
@@ -218,6 +288,35 @@ window.addEventListener("load", function() {
 });
 
 
+
+function load_hoc_ky_by_nam_hoc(id_nam_hoc, id_hoc_ky_selector, selected_id_hoc_ky) {
+    // Nhựt sửa lỗi: Dùng AJAX để chỉ hiển thị Học kỳ thuộc Năm học đã chọn.
+    const hocKySelect = $(id_hoc_ky_selector);
+    hocKySelect.html('<option value="">--- Chọn học kỳ ---</option>');
+    hocKySelect.prop('disabled', true);
+
+    if (!id_nam_hoc) {
+        return;
+    }
+
+    $.getJSON('quan-ly-dot-cham-diem/action.php?req=get-hoc-ky', {
+        id_nam_hoc: id_nam_hoc
+    }, function(data) {
+            $.each(data, function(index, item) {
+            // Nhựt sửa lỗi: Nhận sẵn nhãn đầy đủ từ server để combobox Học kỳ hiển thị cả khoảng ngày.
+            const option = $('<option></option>').val(item.id_hoc_ky).text(item.label);
+            if (selected_id_hoc_ky && selected_id_hoc_ky == item.id_hoc_ky) {
+                option.prop('selected', true);
+            }
+            hocKySelect.append(option);
+        });
+        hocKySelect.prop('disabled', false);
+    }).fail(function() {
+        // Nhựt sửa lỗi: Nếu AJAX lấy học kỳ thất bại thì báo lỗi và giữ combobox học kỳ bị khóa.
+        hocKySelect.html('<option value="">Không tải được danh sách Học kỳ.</option>');
+        hocKySelect.prop('disabled', true);
+    });
+}
 
 function update_obj(id_dot) {
     $.post('quan-ly-dot-cham-diem/update.php', {

@@ -40,9 +40,17 @@ class ketquaxeploai extends Database {
     }
 
     public function ketquaxeploai__Update($id_ket_qua, $id_phieu, $id_xep_loai, $id_sinh_vien, $id_lop_hoc, $id_dot, $ma_sinh_vien, $ten_sinh_vien, $ten_lop_hoc, $ket_qua, $xep_loai, $ngay_xep_loai) {
-        $obj = $this->connect->prepare("UPDATE ketquaxeploai SET id_phieu=?, id_xep_loai=?, id_sinh_vien=?, id_lop_hoc=?, id_dot=?, ma_sinh_vien=?, ten_sinh_vien=?, ten_lop_hoc=?, ket_qua=?,  xep_loai=?, ngay_xep_loai=? WHERE id_xep_loai=?");
+        // Nhựt sửa lỗi: Update kết quả xếp loại phải theo khóa chính id_ket_qua, không phải id_xep_loai.
+        $obj = $this->connect->prepare("UPDATE ketquaxeploai SET id_phieu=?, id_xep_loai=?, id_sinh_vien=?, id_lop_hoc=?, id_dot=?, ma_sinh_vien=?, ten_sinh_vien=?, ten_lop_hoc=?, ket_qua=?,  xep_loai=?, ngay_xep_loai=? WHERE id_ket_qua=?");
         $obj->execute(array($id_phieu, $id_xep_loai, $id_sinh_vien, $id_lop_hoc, $id_dot, $ma_sinh_vien, $ten_sinh_vien, $ten_lop_hoc, $ket_qua, $xep_loai, $ngay_xep_loai, $id_ket_qua));
         return $obj->rowCount();
+    }
+
+    public function ketquaxeploai__Exists_By_Id_Phieu($id_phieu) {
+        // Nhựt sửa lỗi: Một Phiếu chấm điểm chỉ được có một Kết quả xếp loại.
+        $obj = $this->connect->prepare("SELECT COUNT(*) FROM ketquaxeploai WHERE id_phieu = ?");
+        $obj->execute(array($id_phieu));
+        return (int)$obj->fetchColumn() > 0;
     }
     
 
@@ -92,6 +100,13 @@ class ketquaxeploai extends Database {
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_dot, $id_lop_hoc));
         return $obj->fetch();
+    }
+
+    public function ketquaxeploai__Has_By_Id_Dot($id_dot) {
+        // Nhựt sửa lỗi: Không cho xóa Đợt chấm điểm nếu đã phát sinh Kết quả xếp loại.
+        $obj = $this->connect->prepare("SELECT COUNT(*) FROM ketquaxeploai WHERE id_dot = ?");
+        $obj->execute(array($id_dot));
+        return (int)$obj->fetchColumn() > 0;
     }
 }
 ?>

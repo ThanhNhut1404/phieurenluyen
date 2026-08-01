@@ -10,6 +10,8 @@
   
     if(isset($_GET['id_dot'])){
         $id_dot = $_GET['id_dot'];
+        // Nhựt sửa lỗi: Chỉ hiển thị Lớp áp dụng thuộc Đợt đã chọn, không hiển thị toàn bộ lớp.
+        $lophoc__Get_All = $lopapdung->lopapdung__Get_Lop_Hoc_By_Id_Dot($id_dot);
     }
     if(isset($_GET['id_lop_hoc'])){
         $id_lop_hoc = $_GET['id_lop_hoc'];

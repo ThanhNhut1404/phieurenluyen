@@ -20,6 +20,17 @@
         }
     }
 
+    if (!function_exists('namhoc_format_date')) {
+        function namhoc_format_date($value) {
+            // Nhựt sửa lỗi: Hiển thị ngày trong danh sách theo dd/mm/yyyy nhưng vẫn giữ ngày gốc để DataTable sắp xếp đúng.
+            $date = DateTime::createFromFormat('Y-m-d', (string)$value);
+            if (!$date) {
+                return $value;
+            }
+            return $date->format('d/m/Y');
+        }
+    }
+
     if (!function_exists('namhoc_old_value')) {
         function namhoc_old_value($field, $context, $default = '') {
             global $namhoc_old_input;
@@ -130,8 +141,8 @@
                         <tr>
                             <td><?=++$num?></td>
                             <td><?=namhoc_escape($item->ten_nam_hoc)?></td>
-                            <td><?=namhoc_escape($item->ngay_bat_dau)?></td>
-                            <td><?=namhoc_escape($item->ngay_ket_thuc)?></td>
+                            <td data-order="<?=namhoc_escape($item->ngay_bat_dau)?>"><?=namhoc_escape(namhoc_format_date($item->ngay_bat_dau))?></td>
+                            <td data-order="<?=namhoc_escape($item->ngay_ket_thuc)?>"><?=namhoc_escape(namhoc_format_date($item->ngay_ket_thuc))?></td>
                             <td><?=namhoc_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="#" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_nam_hoc?>)">

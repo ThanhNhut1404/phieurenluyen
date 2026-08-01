@@ -67,5 +67,12 @@ class minhchung extends Database {
         return $obj->fetchAll();
     }
 
+    public function minhchung__Has_By_Id_Dot($id_dot) {
+        // Nhựt sửa lỗi: Không cho xóa Đợt chấm điểm nếu Phiếu thuộc Đợt đã có Minh chứng.
+        $obj = $this->connect->prepare("SELECT COUNT(*) FROM minhchung, phieuchamdiem, lopapdung WHERE minhchung.id_phieu = phieuchamdiem.id_phieu AND phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_dot = ?");
+        $obj->execute(array($id_dot));
+        return (int)$obj->fetchColumn() > 0;
+    }
+
 }
 ?>

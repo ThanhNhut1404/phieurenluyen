@@ -33,14 +33,16 @@ class phieuchamdiem extends Database {
         return $obj->fetchAll();
     }
     
-    public function phieuchamdiem__Add($id_lop_ap_dung, $id_sinh_vien, $kq_sv, $kq_lt_bt, $kq_btdk, $ngay_thuc_hien) {
-        $obj = $this->connect->prepare("INSERT INTO phieuchamdiem(id_lop_ap_dung, id_sinh_vien, kq_sv, kq_lt_bt, kq_btdk, ngay_thuc_hien) VALUES (?,?,?,?,?,?)");
-        $obj->execute(array($id_lop_ap_dung, $id_sinh_vien, $kq_sv, $kq_lt_bt, $kq_btdk, $ngay_thuc_hien));
+    public function phieuchamdiem__Add($id_lop_ap_dung, $id_sinh_vien, $kq_sv, $kq_lt_bt, $kq_btdk, $ngay_thuc_hien, $kq_gv = "") {
+        // Nhựt sửa lỗi: Bảng phieuchamdiem có cột kq_gv NOT NULL nên phải insert giá trị khởi tạo để tránh lỗi SQL strict mode.
+        $obj = $this->connect->prepare("INSERT INTO phieuchamdiem(id_lop_ap_dung, id_sinh_vien, kq_sv, kq_lt_bt, kq_btdk, kq_gv, ngay_thuc_hien) VALUES (?,?,?,?,?,?,?)");
+        $obj->execute(array($id_lop_ap_dung, $id_sinh_vien, $kq_sv, $kq_lt_bt, $kq_btdk, $kq_gv, $ngay_thuc_hien));
         return $obj->rowCount();
     }
 
     public function phieuchamdiem__Update($id_phieu, $id_sinh_vien, $kq_sv, $kq_lt_bt, $kq_btdk, $ngay_thuc_hien) {
-        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET id_lop_ap_dung=?, id_sinh_vien=?, kq_sv=?, kq_lt_bt=?, kq_btdk=?, kq_gv=?, ngay_thuc_hien=? WHERE id_phieu=?");
+        // Nhựt sửa lỗi: Sửa SQL Update cho khớp số lượng placeholder và tham số execute().
+        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET id_sinh_vien=?, kq_sv=?, kq_lt_bt=?, kq_btdk=?, ngay_thuc_hien=? WHERE id_phieu=?");
         $obj->execute(array($id_sinh_vien, $kq_sv, $kq_lt_bt, $kq_btdk, $ngay_thuc_hien, $id_phieu));
         return $obj->rowCount();
     }
@@ -52,7 +54,35 @@ class phieuchamdiem extends Database {
         return $obj->rowCount();
     }
 
+    public function phieuchamdiem__Delete_By_Id_Dot($id_dot) {
+        // Nhựt sửa lỗi: Khi xóa Đợt chưa có dữ liệu chấm thì phải xóa Phiếu chấm điểm trước Lớp áp dụng.
+        $obj = $this->connect->prepare("DELETE phieuchamdiem FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_dot = ?");
+        $obj->execute(array($id_dot));
+        return $obj->rowCount();
+    }
+
+    public function phieuchamdiem__Has_Scored_Data_By_Id_Dot($id_dot) {
+        // Nhựt sửa lỗi: Chỉ khóa xóa Đợt chấm điểm khi Phiếu đã phát sinh dữ liệu chấm thật sự, không khóa vì phiếu khởi tạo.
+        $obj = $this->connect->prepare("SELECT COUNT(*) FROM dotchamdiem, lopapdung, phieuchamdiem WHERE dotchamdiem.id_dot = lopapdung.id_dot AND lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND dotchamdiem.id_dot = ? AND ((phieuchamdiem.kq_sv IS NOT NULL AND phieuchamdiem.kq_sv != '') OR (phieuchamdiem.kq_lt_bt IS NOT NULL AND phieuchamdiem.kq_lt_bt != '') OR (phieuchamdiem.kq_btdk IS NOT NULL AND phieuchamdiem.kq_btdk != '') OR (phieuchamdiem.kq_gv IS NOT NULL AND phieuchamdiem.kq_gv != ''))");
+        $obj->execute(array($id_dot));
+        return (int)$obj->fetchColumn() > 0;
+    }
+
   
+    public function phieuchamdiem__Has_Unscored_Gv_By_Id_Dot_And_Id_Lop_Hoc($id_dot, $id_lop_hoc) {
+        // Nhựt sửa lỗi: Không cho sinh kết quả xếp loại khi còn Phiếu chưa có kết quả cố vấn.
+        $obj = $this->connect->prepare("SELECT COUNT(*) FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND (phieuchamdiem.kq_gv IS NULL OR phieuchamdiem.kq_gv = '')");
+        $obj->execute(array($id_dot, $id_lop_hoc));
+        return (int)$obj->fetchColumn() > 0;
+    }
+
+    public function phieuchamdiem__Count_By_Id_Dot_And_Id_Lop_Hoc($id_dot, $id_lop_hoc) {
+        // Nhựt sửa lỗi: Kiểm tra Đợt/Lớp có Phiếu chấm điểm trước khi tổng kết để tránh báo thành công rỗng.
+        $obj = $this->connect->prepare("SELECT COUNT(*) FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ?");
+        $obj->execute(array($id_dot, $id_lop_hoc));
+        return (int)$obj->fetchColumn();
+    }
+
     public function phieuchamdiem__Get_By_Id($id_phieu) {
         $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem WHERE id_phieu = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
@@ -122,27 +152,33 @@ class phieuchamdiem extends Database {
     }
 
     public function phieuchamdiem__Get_By_Id_Lop($id_lop_hoc, $id_dot) {
-        $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_ap_dung = ? AND id_dot = ?");
+        // Nhựt sửa lỗi: Hàm nhận id_lop_hoc nên phải lọc theo lopapdung.id_lop_hoc, không phải id_lop_ap_dung.
+        $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_hoc = ? AND id_dot = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_lop_hoc, $id_dot));
         return $obj->fetchAll();
     }
 
     public function phieuchamdiem__Get_By_Id_Lop_Da_Cham($id_lop_hoc, $id_dot) {
-        $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_ap_dung = ? AND id_dot = ? AND kq_gv !=?");
+        // Nhựt sửa lỗi: Hàm nhận id_lop_hoc nên phải lọc theo lopapdung.id_lop_hoc, không phải id_lop_ap_dung.
+        // Nhựt sửa lỗi: So sánh rỗng bằng NULL || '' là sai, phải kiểm tra kq_gv khác NULL và khác chuỗi rỗng.
+        $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_hoc = ? AND id_dot = ? AND kq_gv IS NOT NULL AND kq_gv != ''");
         $obj->setFetchMode(PDO::FETCH_OBJ);
-        $obj->execute(array($id_lop_hoc, $id_dot, NULL || ""));
+        $obj->execute(array($id_lop_hoc, $id_dot));
         return $obj->fetchAll();
     }
 
     public function phieuchamdiem__Get_By_Id_Lop_Chua_Cham($id_lop_hoc, $id_dot) {
-        $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_ap_dung = ? AND id_dot = ? AND kq_gv =?");
+        // Nhựt sửa lỗi: Hàm nhận id_lop_hoc nên phải lọc theo lopapdung.id_lop_hoc, không phải id_lop_ap_dung.
+        // Nhựt sửa lỗi: So sánh rỗng bằng NULL || '' là sai, phải kiểm tra kq_gv NULL hoặc chuỗi rỗng.
+        $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_hoc = ? AND id_dot = ? AND (kq_gv IS NULL OR kq_gv = '')");
         $obj->setFetchMode(PDO::FETCH_OBJ);
-        $obj->execute(array($id_lop_hoc, $id_dot, NULL || ""));
+        $obj->execute(array($id_lop_hoc, $id_dot));
         return $obj->fetchAll();
     }
     public function phieuchamdiem__Get_By_Id_Lop_All($id_lop_hoc, $id_dot) {
-        $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_ap_dung = ? AND id_dot = ?");
+        // Nhựt sửa lỗi: Hàm nhận id_lop_hoc nên phải lọc theo lopapdung.id_lop_hoc, không phải id_lop_ap_dung.
+        $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_hoc = ? AND id_dot = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_lop_hoc, $id_dot));
         return $obj->fetchAll();

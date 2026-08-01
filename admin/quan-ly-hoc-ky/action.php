@@ -112,7 +112,8 @@
 
                 // Nhựt sửa lỗi: gom kiểm tra số lượng/trùng/chồng ngày và insert vào một transaction.
                 $hocky->connect->beginTransaction();
-                if ($hocky->hocky__Count_By_Nam_Hoc($id_nam_hoc) >= 2) {
+                // Nhựt sửa lỗi: Mỗi năm học được phép tối đa 3 học kỳ, nên chỉ khóa khi đã có đủ 3 học kỳ.
+                if ($hocky->hocky__Count_By_Nam_Hoc($id_nam_hoc) >= 3) {
                     $hocky->connect->rollBack();
                     hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
                     hocky_redirect('limit-hoc-ky');
@@ -163,7 +164,8 @@
                     hocky_redirect('out-of-range-hoc-ky');
                 }
 
-                if ($hocky->hocky__Count_By_Nam_Hoc($id_nam_hoc, $id_hoc_ky) >= 2) {
+                // Nhựt sửa lỗi: Mỗi năm học được phép tối đa 3 học kỳ, nên chỉ khóa khi số học kỳ khác đã đủ 3.
+                if ($hocky->hocky__Count_By_Nam_Hoc($id_nam_hoc, $id_hoc_ky) >= 3) {
                     $hocky->connect->rollBack();
                     hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
                     hocky_redirect('limit-hoc-ky');

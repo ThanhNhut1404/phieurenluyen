@@ -67,12 +67,28 @@ class lopapdung extends Database {
         return $obj->fetchAll();
     }
 
+    public function lopapdung__Get_Lop_Hoc_By_Id_Dot($id_dot) {
+        // Nhựt sửa lỗi: Combobox xử lý Phiếu/Kết quả chỉ được hiển thị các Lớp áp dụng của Đợt đã chọn.
+        $obj = $this->connect->prepare("SELECT lophoc.* FROM lopapdung, lophoc WHERE lopapdung.id_lop_hoc = lophoc.id_lop_hoc AND lopapdung.id_dot = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot));
+        return $obj->fetchAll();
+    }
+
+    public function lopapdung__Exists_By_Id_Dot_And_Id_Lop_Hoc($id_dot, $id_lop_hoc) {
+        // Nhựt sửa lỗi: Validate server lớp được chọn phải thuộc Đợt chấm điểm.
+        $obj = $this->connect->prepare("SELECT COUNT(*) FROM lopapdung WHERE id_dot = ? AND id_lop_hoc = ?");
+        $obj->execute(array($id_dot, $id_lop_hoc));
+        return (int)$obj->fetchColumn() > 0;
+    }
+
     public function lopapdung__Get_By_Id_Mau_Phieu($id_mau_phieu) {
         $obj = $this->connect->prepare("SELECT * FROM lopapdung WHERE id_mau_phieu = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_mau_phieu));
         return $obj->fetchAll();
     }
+
     public function lopapdung__Get_By_Id_Ap_Dung($id_lop_ap_dung) {
         $obj = $this->connect->prepare("SELECT * FROM lopapdung WHERE id_lop_ap_dung = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);

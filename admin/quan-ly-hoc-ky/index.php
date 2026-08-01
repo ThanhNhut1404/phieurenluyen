@@ -20,6 +20,17 @@
         }
     }
 
+    if (!function_exists('hocky_format_date')) {
+        function hocky_format_date($value) {
+            // Nhựt sửa lỗi: Hiển thị ngày trong danh sách theo dd/mm/yyyy nhưng vẫn giữ ngày gốc để DataTable sắp xếp đúng.
+            $date = DateTime::createFromFormat('Y-m-d', (string)$value);
+            if (!$date) {
+                return $value;
+            }
+            return $date->format('d/m/Y');
+        }
+    }
+
     if (!function_exists('hocky_old_value')) {
         function hocky_old_value($field, $context, $default = '') {
             global $hocky_old_input;
@@ -141,8 +152,8 @@
                             <td><?=++$num?></td>
                             <td><?=hocky_escape($item->ten_nam_hoc ?? 'Năm học không tồn tại')?></td>
                             <td><?=hocky_escape($item->ten_hoc_ky)?></td>
-                            <td><?=hocky_escape($item->ngay_bat_dau)?></td>
-                            <td><?=hocky_escape($item->ngay_ket_thuc)?></td>
+                            <td data-order="<?=hocky_escape($item->ngay_bat_dau)?>"><?=hocky_escape(hocky_format_date($item->ngay_bat_dau))?></td>
+                            <td data-order="<?=hocky_escape($item->ngay_ket_thuc)?>"><?=hocky_escape(hocky_format_date($item->ngay_ket_thuc))?></td>
                             <td><?=hocky_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="#" type="button" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_hoc_ky?>)">
