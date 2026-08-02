@@ -69,18 +69,19 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <label for="">Tên trình độ <span class="color-crimson">(*)</span></label>
-                    <input type="text" id="ten_trinh_do" name="ten_trinh_do" class="form-control" required maxlength="50"
+                    <label for="ten_trinh_do_update">Tên trình độ <span class="color-crimson">(*)</span></label>
+                    <input type="text" id="ten_trinh_do_update" name="ten_trinh_do" class="form-control" required maxlength="50"
                         placeholder="Nhập tên trình độ" value="<?=trinhdo_update_escape(trinhdo_update_old_value('ten_trinh_do', $trinhdo__Get_By_Id->id_trinh_do, $trinhdo__Get_By_Id->ten_trinh_do))?>">
                 </div>
                 <div class="form-group">
-                    <label for="">Ghi chú</label>
-                    <textarea id="ghi_chu" name="ghi_chu" class="form-control" maxlength="2000"
+                    <label for="ghi_chu_update">Ghi chú</label>
+                    <textarea id="ghi_chu_update" name="ghi_chu" class="form-control" maxlength="2000"
                         placeholder="Nhập ghi chú"><?=trinhdo_update_escape(trinhdo_update_old_value('ghi_chu', $trinhdo__Get_By_Id->id_trinh_do, $trinhdo__Get_By_Id->ghi_chu))?></textarea>
                 </div>
             </div>
             <div class="card-footer">
                 <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
+                <button type="button" class="btn btn-default float-right mr-2" onclick="cancel_update()">Hủy</button>
             </div>
         </div>
     </div>

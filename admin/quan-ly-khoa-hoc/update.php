@@ -69,30 +69,31 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <label for="">Tên khóa học <span class="color-crimson">(*)</span></label>
-                    <input type="text" id="ten_khoa_hoc" name="ten_khoa_hoc" class="form-control" required maxlength="50"
+                    <label for="ten_khoa_hoc_update">Tên khóa học <span class="color-crimson">(*)</span></label>
+                    <input type="text" id="ten_khoa_hoc_update" name="ten_khoa_hoc" class="form-control" required maxlength="50"
                         placeholder="Nhập tên khóa học" value="<?=khoahoc_update_escape(khoahoc_update_old_value('ten_khoa_hoc', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->ten_khoa_hoc))?>">
                 </div>
                 <div class="form-group">
-                    <label for="">Năm nhập học <span class="color-crimson">(*)</span></label>
-                    <input type="number" id="nam_nhap_hoc" name="nam_nhap_hoc" class="form-control" required
+                    <label for="nam_nhap_hoc_update">Năm nhập học <span class="color-crimson">(*)</span></label>
+                    <input type="number" id="nam_nhap_hoc_update" name="nam_nhap_hoc" class="form-control" required
                         min="2006" max="2099" placeholder="Nhập năm nhập học"
                         value="<?=khoahoc_update_escape(khoahoc_update_old_value('nam_nhap_hoc', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->nam_nhap_hoc))?>">
                 </div>
                 <div class="form-group">
-                    <label for="">Hệ đào tạo <span class="color-crimson">(*)</span></label>
-                    <input type="number" id="he_dao_tao" name="he_dao_tao" class="form-control" required min="2"
+                    <label for="he_dao_tao_update">Hệ đào tạo <span class="color-crimson">(*)</span></label>
+                    <input type="number" id="he_dao_tao_update" name="he_dao_tao" class="form-control" required min="2"
                         max="8" step="0.5" placeholder="Nhập số năm đào tạo"
                         value="<?=khoahoc_update_escape(khoahoc_update_old_value('he_dao_tao', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->he_dao_tao))?>">
                 </div>
                 <div class="form-group">
-                    <label for="">Ghi chú</label>
-                    <textarea id="ghi_chu" name="ghi_chu" class="form-control" maxlength="2000"
+                    <label for="ghi_chu_update">Ghi chú</label>
+                    <textarea id="ghi_chu_update" name="ghi_chu" class="form-control" maxlength="2000"
                         placeholder="Nhập ghi chú"><?=khoahoc_update_escape(khoahoc_update_old_value('ghi_chu', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->ghi_chu))?></textarea>
                 </div>
             </div>
             <div class="card-footer">
                 <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
+                <button type="button" class="btn btn-default float-right mr-2" onclick="cancel_update()">Hủy</button>
             </div>
         </div>
     </div>

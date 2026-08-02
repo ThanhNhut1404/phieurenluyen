@@ -139,7 +139,7 @@
                              <td><?=nganhhoc_escape($item->ten_nganh_hoc)?></td>
                              <td><?=nganhhoc_escape($item->ghi_chu)?></td>
                              <td>
-                                 <a href="#" type=" button" class="btn btn-warning" onclick="return update_obj(<?=(int)$item->id_nganh_hoc?>)">
+                                 <a href="javascript:void(0)" class="btn btn-warning" onclick="return update_obj(<?=(int)$item->id_nganh_hoc?>)">
                                      <i class="fas fa-edit"></i>
                                  </a>
                                  <a href="#" type="button" class="btn btn-danger"
@@ -262,15 +262,20 @@ function update_obj(id_nganh_hoc) {
     return false;
 }
 
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
+}
+
 function delete_obj(id_nganh_hoc) {
     Swal.fire({
-        title: 'Xác nhận thao tác?',
-        text: "Bạn chắc chắn thực hiện thao tác này",
+        title: 'Xác nhận xóa?',
+        text: 'Thao tác này sẽ xóa ngành học đã chọn.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes'
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa'
     }).then((result) => {
         if (!result.isConfirmed) {
             return;
@@ -297,4 +302,10 @@ function delete_obj(id_nganh_hoc) {
     });
     return false;
 }
+
+<?php if (isset($nganhhoc_old_input['context']) && $nganhhoc_old_input['context'] === 'update' && isset($nganhhoc_old_input['id_nganh_hoc'])): ?>
+window.addEventListener("load", function() {
+    update_obj(<?=(int)$nganhhoc_old_input['id_nganh_hoc']?>);
+});
+<?php endif; ?>
  </script>

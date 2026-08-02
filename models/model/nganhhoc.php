@@ -99,7 +99,7 @@ class nganhhoc extends Database {
         $obj = $this->connect->prepare("SELECT id_nganh_hoc, ten_nganh_hoc, ghi_chu, id_khoa FROM nganhhoc WHERE id_khoa = ? ORDER BY ten_nganh_hoc ASC, id_nganh_hoc DESC");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_khoa));
-        return $obj->fetch();
+        return $obj->fetchAll();
     }
 
     // Nhựt sửa lỗi: khóa bản ghi ngành học khi cập nhật/xóa để giảm race condition.

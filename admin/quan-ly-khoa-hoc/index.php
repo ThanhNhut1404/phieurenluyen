@@ -130,7 +130,7 @@
                             <td><?=khoahoc_escape($item->ten_khoa_hoc)?></td>
                             <td><?=khoahoc_escape($item->ghi_chu)?></td>
                             <td>
-                                <a href="#" type="button" class="btn  btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_khoa_hoc?>)">
+                                <a href="javascript:void(0)" class="btn  btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_khoa_hoc?>)">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <a href="#" type="button" class="btn  btn-danger m-2"
@@ -249,15 +249,20 @@ function update_obj(id_khoa_hoc) {
     return false;
 }
 
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
+}
+
 function delete_obj(id_khoa_hoc) {
     Swal.fire({
-        title: 'Xác nhận thao tác?',
-        text: "Bạn chắc chắn thực hiện thao tác này",
+        title: 'Xác nhận xóa?',
+        text: 'Thao tác này sẽ xóa khóa học đã chọn.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes'
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa'
     }).then((result) => {
         if (!result.isConfirmed) {
             return;
@@ -284,4 +289,10 @@ function delete_obj(id_khoa_hoc) {
     });
     return false;
 }
+
+<?php if (isset($khoahoc_old_input['context']) && $khoahoc_old_input['context'] === 'update' && isset($khoahoc_old_input['id_khoa_hoc'])): ?>
+window.addEventListener("load", function() {
+    update_obj(<?=(int)$khoahoc_old_input['id_khoa_hoc']?>);
+});
+<?php endif; ?>
 </script>

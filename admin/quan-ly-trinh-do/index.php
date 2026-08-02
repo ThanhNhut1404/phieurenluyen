@@ -120,11 +120,11 @@
                             <td><?=trinhdo_escape($item->ten_trinh_do)?></td>
                             <td><?=trinhdo_escape($item->ghi_chu)?></td>
                             <td>
-                                <a href="#" type="button" class="btn  btn-warning m-2"
+                                <a href="javascript:void(0)" class="btn  btn-warning m-2"
                                     onclick="return update_obj(<?=(int)$item->id_trinh_do?>)">
                                     <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="#" type="button" class="btn  btn-danger m-2"
+                                  </a>
+                                <a href="javascript:void(0)" class="btn  btn-danger m-2"
                                     onclick="return delete_obj(<?=(int)$item->id_trinh_do?>)">
                                     <i class="fas fa-trash"></i>
                                 </a>
@@ -240,15 +240,20 @@ function update_obj(id_trinh_do) {
     return false;
 }
 
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
+}
+
 function delete_obj(id_trinh_do) {
     Swal.fire({
-        title: 'Xác nhận thao tác?',
-        text: "Bạn chắc chắn thực hiện thao tác này",
+        title: 'Xác nhận xóa?',
+        text: 'Thao tác này sẽ xóa trình độ đã chọn.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes'
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa'
     }).then((result) => {
         if (!result.isConfirmed) {
             return;
@@ -275,4 +280,10 @@ function delete_obj(id_trinh_do) {
     });
     return false;
 }
+
+<?php if (isset($trinhdo_old_input['context']) && $trinhdo_old_input['context'] === 'update' && isset($trinhdo_old_input['id_trinh_do'])): ?>
+window.addEventListener("load", function() {
+    update_obj(<?=(int)$trinhdo_old_input['id_trinh_do']?>);
+});
+<?php endif; ?>
 </script>

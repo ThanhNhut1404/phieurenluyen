@@ -126,7 +126,7 @@
                              <td><?=khoa_escape($item->ten_khoa)?></td>
                              <td><?=khoa_escape($item->ghi_chu)?></td>
                              <td>
-                                 <a href="#" type="button" class="btn  btn-warning m-2" onclick="update_obj(<?=(int)$item->id_khoa?>)">
+                                 <a href="javascript:void(0)" class="btn  btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_khoa?>)">
                                      <i class="fas fa-edit"></i>
                                  </a>
                                  <a href="#" type="button" class="btn  btn-danger m-2"
@@ -250,6 +250,11 @@ function update_obj(id_khoa) {
     return false;
 }
 
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
+}
+
 function delete_obj(id_khoa) {
     Swal.fire({
         title: 'Xác nhận xóa?',
@@ -285,4 +290,10 @@ function delete_obj(id_khoa) {
     });
     return false;
 }
+
+<?php if (isset($khoa_old_input['context']) && $khoa_old_input['context'] === 'update' && isset($khoa_old_input['id_khoa'])): ?>
+window.addEventListener("load", function() {
+    update_obj(<?=(int)$khoa_old_input['id_khoa']?>);
+});
+<?php endif; ?>
  </script>

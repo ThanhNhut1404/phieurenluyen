@@ -145,10 +145,10 @@
                             <td data-order="<?=namhoc_escape($item->ngay_ket_thuc)?>"><?=namhoc_escape(namhoc_format_date($item->ngay_ket_thuc))?></td>
                             <td><?=namhoc_escape($item->ghi_chu)?></td>
                             <td>
-                                <a href="#" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_nam_hoc?>)">
+                                <a href="javascript:void(0)" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_nam_hoc?>)">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="#" class="btn btn-danger m-2" onclick="return delete_obj(<?=(int)$item->id_nam_hoc?>)">
+                                <a href="javascript:void(0)" class="btn btn-danger m-2" onclick="return delete_obj(<?=(int)$item->id_nam_hoc?>)">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </td>
@@ -268,6 +268,11 @@ function update_obj(id_nam_hoc) {
     return false;
 }
 
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
+}
+
 function delete_obj(id_nam_hoc) {
     Swal.fire({
         title: 'Xác nhận xóa?',
@@ -303,4 +308,10 @@ function delete_obj(id_nam_hoc) {
     });
     return false;
 }
+
+<?php if (isset($namhoc_old_input['context']) && $namhoc_old_input['context'] === 'update' && isset($namhoc_old_input['id_nam_hoc'])): ?>
+window.addEventListener("load", function() {
+    update_obj(<?=(int)$namhoc_old_input['id_nam_hoc']?>);
+});
+<?php endif; ?>
 </script>

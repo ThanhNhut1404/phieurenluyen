@@ -83,20 +83,21 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="">Tên ngành học <span class="color-crimson">(*)</span></label>
+                        <label for="ten_nganh_hoc_update">Tên ngành học <span class="color-crimson">(*)</span></label>
                         <!-- Nhựt sửa lỗi: giới hạn tên ngành học ở client khớp với validate server-side và DB. -->
-                        <input type="text" id="ten_nganh_hoc" name="ten_nganh_hoc" class="form-control" required maxlength="50"
+                        <input type="text" id="ten_nganh_hoc_update" name="ten_nganh_hoc" class="form-control" required maxlength="50"
                             placeholder="Nhập tên ngành học" value="<?=nganhhoc_update_escape(nganhhoc_update_old_value('ten_nganh_hoc', $nganhhoc__Get_By_Id->id_nganh_hoc, $nganhhoc__Get_By_Id->ten_nganh_hoc))?>">
                     </div>
                     <div class="form-group">
-                        <label for="">Ghi chú</label>
-                        <textarea id="ghi_chu" name="ghi_chu" class="form-control" maxlength="2000"
+                        <label for="ghi_chu_update">Ghi chú</label>
+                        <textarea id="ghi_chu_update" name="ghi_chu" class="form-control" maxlength="2000"
                             placeholder="Nhập ghi chú"><?=nganhhoc_update_escape(nganhhoc_update_old_value('ghi_chu', $nganhhoc__Get_By_Id->id_nganh_hoc, $nganhhoc__Get_By_Id->ghi_chu))?></textarea>
                     </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
                     <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
+                    <button type="button" class="btn btn-default float-right mr-2" onclick="cancel_update()">Hủy</button>
                 </div>
             </div>
             <!-- /.card -->
