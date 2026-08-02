@@ -1,4 +1,13 @@
  <?php
+    // Nhựt sửa lỗi: Khởi tạo csrf_token tránh lỗi Undefined index khi trang load lần đầu.
+    if (empty($_SESSION['csrf_token'])) {
+        try {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        } catch (Throwable $e) {
+            $_SESSION['csrf_token'] = hash('sha256', session_id() . uniqid('', true));
+        }
+    }
+
     $id_dot = -2;
     $id_lop_hoc  = -2;
     $id_sinh_vien  = -2;
@@ -61,6 +70,8 @@
              enctype="multipart/form-data">
              <input type="hidden" name="id_dot" value="<?=$id_dot?>">
              <input type="hidden" name="id_lop_hoc" value="<?=$id_lop_hoc?>">
+             <!-- Nhựt sửa lỗi: Bổ sung csrf_token chống tấn công CSRF. -->
+             <input type="hidden" name="csrf_token" value="<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">

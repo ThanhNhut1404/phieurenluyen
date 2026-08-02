@@ -1,4 +1,10 @@
 <?php
+    // Nhựt sửa lỗi: Thêm session_start và kiểm tra quyền Admin tránh bypass auth.
+    session_start();
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
 
     require '../../models/getModel.php';
     $href = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "../index.php?page=quan-ly-phieu-cham-diem";
@@ -14,6 +20,12 @@
     if (isset($_GET['req'])){
         switch($_GET['req']){
             case 'add':
+                // Nhựt sửa lỗi: Kiểm tra Token CSRF tránh tấn công giả mạo yêu cầu.
+                if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+                    header("location: $href&status=csrf");
+                    exit();
+                }
+
                 $status = 0;
                 $id_dot = isset($_POST['id_dot']) ? trim($_POST['id_dot']) : "";
                 $id_lop_hoc = isset($_POST['id_lop_hoc']) ? trim($_POST['id_lop_hoc']) : "";

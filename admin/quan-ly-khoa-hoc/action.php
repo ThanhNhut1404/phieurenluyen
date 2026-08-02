@@ -102,9 +102,24 @@
                 $ghi_chu = khoahoc_post_text('ghi_chu');
 
                 // Nhựt sửa lỗi: validate server-side cho các trường bắt buộc và giới hạn ghi chú.
-                if (!khoahoc_valid_ten_khoa_hoc($ten_khoa_hoc) || !khoahoc_valid_nam_nhap_hoc($nam_nhap_hoc) || !khoahoc_valid_he_dao_tao($he_dao_tao) || !khoahoc_valid_ghi_chu($ghi_chu)) {
+                if (!khoahoc_valid_ten_khoa_hoc($ten_khoa_hoc)) {
                     khoahoc_store_old_input('add', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu);
-                    khoahoc_redirect('invalid');
+                    khoahoc_redirect('invalid-ten-khoahoc');
+                }
+
+                if (!khoahoc_valid_nam_nhap_hoc($nam_nhap_hoc)) {
+                    khoahoc_store_old_input('add', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu);
+                    khoahoc_redirect('invalid-nam-nhap-hoc');
+                }
+
+                if (!khoahoc_valid_he_dao_tao($he_dao_tao)) {
+                    khoahoc_store_old_input('add', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu);
+                    khoahoc_redirect('invalid-he-dao-tao');
+                }
+
+                if (!khoahoc_valid_ghi_chu($ghi_chu)) {
+                    khoahoc_store_old_input('add', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu);
+                    khoahoc_redirect('invalid-ghichu');
                 }
 
                 if ($khoahoc->khoahoc__Name_Exists($ten_khoa_hoc)) {
@@ -126,9 +141,29 @@
                 $he_dao_tao = khoahoc_post_text('he_dao_tao');
                 $ghi_chu = khoahoc_post_text('ghi_chu');
 
-                if (!$id_khoa_hoc || $id_khoa_hoc < 1 || !khoahoc_valid_ten_khoa_hoc($ten_khoa_hoc) || !khoahoc_valid_nam_nhap_hoc($nam_nhap_hoc) || !khoahoc_valid_he_dao_tao($he_dao_tao) || !khoahoc_valid_ghi_chu($ghi_chu)) {
+                if (!$id_khoa_hoc || $id_khoa_hoc < 1) {
                     khoahoc_store_old_input('update', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu, $id_khoa_hoc);
                     khoahoc_redirect('invalid');
+                }
+
+                if (!khoahoc_valid_ten_khoa_hoc($ten_khoa_hoc)) {
+                    khoahoc_store_old_input('update', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu, $id_khoa_hoc);
+                    khoahoc_redirect('invalid-ten-khoahoc');
+                }
+
+                if (!khoahoc_valid_nam_nhap_hoc($nam_nhap_hoc)) {
+                    khoahoc_store_old_input('update', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu, $id_khoa_hoc);
+                    khoahoc_redirect('invalid-nam-nhap-hoc');
+                }
+
+                if (!khoahoc_valid_he_dao_tao($he_dao_tao)) {
+                    khoahoc_store_old_input('update', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu, $id_khoa_hoc);
+                    khoahoc_redirect('invalid-he-dao-tao');
+                }
+
+                if (!khoahoc_valid_ghi_chu($ghi_chu)) {
+                    khoahoc_store_old_input('update', $ten_khoa_hoc, $nam_nhap_hoc, $he_dao_tao, $ghi_chu, $id_khoa_hoc);
+                    khoahoc_redirect('invalid-ghichu');
                 }
 
                 $khoahoc->connect->beginTransaction();

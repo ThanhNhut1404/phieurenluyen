@@ -90,12 +90,34 @@ class phieuchamdiem extends Database {
         return $obj->fetch();
     }
 
-    
     public function phieuchamdiem__Get_By_Id_Sinh_Vien($id_sinh_vien, $id_dot) {
         $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND id_sinh_vien = ? AND id_dot = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_sinh_vien, $id_dot));
-        return $obj->fetch();
+        $res = $obj->fetch();
+        if ($res) {
+            return $res;
+        }
+
+        // Nhựt sửa: Tự động sinh phiếu chấm điểm nếu lớp của sinh viên đã được áp dụng trong đợt này
+        // 1. Tìm thông tin lớp học của sinh viên
+        $stmt_sv = $this->connect->prepare("SELECT id_lop_hoc FROM sinhvien WHERE id_sinh_vien = ?");
+        $stmt_sv->execute(array($id_sinh_vien));
+        $sv = $stmt_sv->fetch(PDO::FETCH_OBJ);
+        if ($sv && isset($sv->id_lop_hoc)) {
+            // 2. Tìm lớp áp dụng trong đợt này
+            $stmt_lad = $this->connect->prepare("SELECT id_lop_ap_dung FROM lopapdung WHERE id_dot = ? AND id_lop_hoc = ?");
+            $stmt_lad->execute(array($id_dot, $sv->id_lop_hoc));
+            $lad = $stmt_lad->fetch(PDO::FETCH_OBJ);
+            if ($lad) {
+                // 3. Tạo phiếu chấm điểm mới cho sinh viên đó
+                $this->phieuchamdiem__Add($lad->id_lop_ap_dung, $id_sinh_vien, "", "", "", date("Y-m-d"));
+                // 4. Lấy lại phiếu vừa tạo
+                $obj->execute(array($id_sinh_vien, $id_dot));
+                return $obj->fetch();
+            }
+        }
+        return false;
     }
 
     public function phieuchamdiem__Get_By_Id_Ap_Dung($id_lop_ap_dung) {

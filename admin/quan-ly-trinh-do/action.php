@@ -84,9 +84,14 @@
                 $ghi_chu = trinhdo_post_text('ghi_chu');
 
                 // Nhựt sửa lỗi: validate server-side cho tên trình độ và ghi chú.
-                if (!trinhdo_valid_ten_trinh_do($ten_trinh_do) || !trinhdo_valid_ghi_chu($ghi_chu)) {
+                if (!trinhdo_valid_ten_trinh_do($ten_trinh_do)) {
                     trinhdo_store_old_input('add', $ten_trinh_do, $ghi_chu);
-                    trinhdo_redirect('invalid');
+                    trinhdo_redirect('invalid-ten-trinh-do');
+                }
+
+                if (!trinhdo_valid_ghi_chu($ghi_chu)) {
+                    trinhdo_store_old_input('add', $ten_trinh_do, $ghi_chu);
+                    trinhdo_redirect('invalid-ghichu');
                 }
 
                 if ($trinhdo->trinhdo__Name_Exists($ten_trinh_do)) {
@@ -106,9 +111,19 @@
                 $ten_trinh_do = trinhdo_normalize_ten_trinh_do(trinhdo_post_text('ten_trinh_do'));
                 $ghi_chu = trinhdo_post_text('ghi_chu');
 
-                if (!$id_trinh_do || $id_trinh_do < 1 || !trinhdo_valid_ten_trinh_do($ten_trinh_do) || !trinhdo_valid_ghi_chu($ghi_chu)) {
+                if (!$id_trinh_do || $id_trinh_do < 1) {
                     trinhdo_store_old_input('update', $ten_trinh_do, $ghi_chu, $id_trinh_do);
                     trinhdo_redirect('invalid');
+                }
+
+                if (!trinhdo_valid_ten_trinh_do($ten_trinh_do)) {
+                    trinhdo_store_old_input('update', $ten_trinh_do, $ghi_chu, $id_trinh_do);
+                    trinhdo_redirect('invalid-ten-trinh-do');
+                }
+
+                if (!trinhdo_valid_ghi_chu($ghi_chu)) {
+                    trinhdo_store_old_input('update', $ten_trinh_do, $ghi_chu, $id_trinh_do);
+                    trinhdo_redirect('invalid-ghichu');
                 }
 
                 $trinhdo->connect->beginTransaction();

@@ -98,9 +98,19 @@
                 $ghi_chu = nganhhoc_post_text('ghi_chu');
 
                 // Nhựt sửa lỗi: phân biệt lỗi validate, khoa không tồn tại và lỗi trùng tên ngành học khi thêm.
-                if (!nganhhoc_khoa_exists($khoa, $id_khoa) || !nganhhoc_valid_ten_nganh_hoc($ten_nganh_hoc) || !nganhhoc_valid_ghi_chu($ghi_chu)) {
+                if (!nganhhoc_khoa_exists($khoa, $id_khoa)) {
                     nganhhoc_store_old_input('add', $id_khoa, $ten_nganh_hoc, $ghi_chu);
-                    nganhhoc_redirect('invalid');
+                    nganhhoc_redirect('invalid-khoa');
+                }
+
+                if (!nganhhoc_valid_ten_nganh_hoc($ten_nganh_hoc)) {
+                    nganhhoc_store_old_input('add', $id_khoa, $ten_nganh_hoc, $ghi_chu);
+                    nganhhoc_redirect('invalid-ten-nganh-hoc');
+                }
+
+                if (!nganhhoc_valid_ghi_chu($ghi_chu)) {
+                    nganhhoc_store_old_input('add', $id_khoa, $ten_nganh_hoc, $ghi_chu);
+                    nganhhoc_redirect('invalid-ghichu');
                 }
 
                 if ($nganhhoc->nganhhoc__Name_Exists($ten_nganh_hoc, $id_khoa)) {
@@ -122,9 +132,24 @@
                 $ghi_chu = nganhhoc_post_text('ghi_chu');
 
                 // Nhựt sửa lỗi: phân biệt lỗi id sai, không tìm thấy, validate và trùng tên khi cập nhật.
-                if (!$id_nganh_hoc || $id_nganh_hoc < 1 || !nganhhoc_khoa_exists($khoa, $id_khoa) || !nganhhoc_valid_ten_nganh_hoc($ten_nganh_hoc) || !nganhhoc_valid_ghi_chu($ghi_chu)) {
+                if (!$id_nganh_hoc || $id_nganh_hoc < 1) {
                     nganhhoc_store_old_input('update', $id_khoa, $ten_nganh_hoc, $ghi_chu, $id_nganh_hoc);
                     nganhhoc_redirect('invalid');
+                }
+
+                if (!nganhhoc_khoa_exists($khoa, $id_khoa)) {
+                    nganhhoc_store_old_input('update', $id_khoa, $ten_nganh_hoc, $ghi_chu, $id_nganh_hoc);
+                    nganhhoc_redirect('invalid-khoa');
+                }
+
+                if (!nganhhoc_valid_ten_nganh_hoc($ten_nganh_hoc)) {
+                    nganhhoc_store_old_input('update', $id_khoa, $ten_nganh_hoc, $ghi_chu, $id_nganh_hoc);
+                    nganhhoc_redirect('invalid-ten-nganh-hoc');
+                }
+
+                if (!nganhhoc_valid_ghi_chu($ghi_chu)) {
+                    nganhhoc_store_old_input('update', $id_khoa, $ten_nganh_hoc, $ghi_chu, $id_nganh_hoc);
+                    nganhhoc_redirect('invalid-ghichu');
                 }
 
                 $nganhhoc->connect->beginTransaction();

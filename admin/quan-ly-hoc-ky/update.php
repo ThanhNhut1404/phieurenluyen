@@ -53,6 +53,17 @@
         unset($_SESSION['hocky_old_input']);
     }
 
+    if (!function_exists('hocky_format_namhoc_combobox')) {
+        function hocky_format_namhoc_combobox($item) {
+            $bd = DateTime::createFromFormat('Y-m-d', (string)$item->ngay_bat_dau);
+            $kt = DateTime::createFromFormat('Y-m-d', (string)$item->ngay_ket_thuc);
+            if ($bd && $kt) {
+                return $item->ten_nam_hoc . ' (' . $bd->format('j/n/y') . ' - ' . $kt->format('j/n/y') . ')';
+            }
+            return $item->ten_nam_hoc;
+        }
+    }
+
     $namhoc__Get_All = $namhoc->namhoc__Get_All();
 ?>
 
@@ -75,7 +86,7 @@
                     <select class="form-control" name="id_nam_hoc" required>
                         <option value="">Chọn năm học</option>
                         <?php foreach ($namhoc__Get_All as $item):?>
-                        <option value="<?=(int)$item->id_nam_hoc?>" <?=(int)hocky_update_old_value('id_nam_hoc', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->id_nam_hoc) === (int)$item->id_nam_hoc ? 'selected' : ''?>><?=hocky_update_escape($item->ten_nam_hoc)?></option>
+                        <option value="<?=(int)$item->id_nam_hoc?>" <?=(int)hocky_update_old_value('id_nam_hoc', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->id_nam_hoc) === (int)$item->id_nam_hoc ? 'selected' : ''?>><?=hocky_update_escape(hocky_format_namhoc_combobox($item))?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -100,14 +100,29 @@
                 $ngay_ket_thuc = hocky_post_text('ngay_ket_thuc');
                 $ghi_chu = hocky_post_text('ghi_chu');
 
-                if (!$id_nam_hoc || $id_nam_hoc < 1 || !$namhoc->namhoc__Get_By_Id($id_nam_hoc) || !hocky_valid_ten_hoc_ky($ten_hoc_ky) || !hocky_valid_ghi_chu($ghi_chu)) {
+                if (!$id_nam_hoc || $id_nam_hoc < 1 || !$namhoc->namhoc__Get_By_Id($id_nam_hoc)) {
                     hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
-                    hocky_redirect('invalid');
+                    hocky_redirect('invalid-nam-hoc');
                 }
 
-                if (!hocky_valid_date($ngay_bat_dau) || !hocky_valid_date($ngay_ket_thuc)) {
+                if (!hocky_valid_ten_hoc_ky($ten_hoc_ky)) {
                     hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
-                    hocky_redirect('invalid');
+                    hocky_redirect('invalid-ten-hocky');
+                }
+
+                if (!hocky_valid_ghi_chu($ghi_chu)) {
+                    hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    hocky_redirect('invalid-ghichu');
+                }
+
+                if (!hocky_valid_date($ngay_bat_dau)) {
+                    hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    hocky_redirect('invalid-ngay-bat-dau');
+                }
+
+                if (!hocky_valid_date($ngay_ket_thuc)) {
+                    hocky_store_old_input('add', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    hocky_redirect('invalid-ngay-ket-thuc');
                 }
 
                 if (strtotime($ngay_ket_thuc) <= strtotime($ngay_bat_dau)) {
@@ -158,14 +173,34 @@
                 $ngay_ket_thuc = hocky_post_text('ngay_ket_thuc');
                 $ghi_chu = hocky_post_text('ghi_chu');
 
-                if (!$id_hoc_ky || $id_hoc_ky < 1 || !$id_nam_hoc || $id_nam_hoc < 1 || !$namhoc->namhoc__Get_By_Id($id_nam_hoc) || !hocky_valid_ten_hoc_ky($ten_hoc_ky) || !hocky_valid_ghi_chu($ghi_chu)) {
+                if (!$id_hoc_ky || $id_hoc_ky < 1) {
                     hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
                     hocky_redirect('invalid');
                 }
 
-                if (!hocky_valid_date($ngay_bat_dau) || !hocky_valid_date($ngay_ket_thuc)) {
+                if (!$id_nam_hoc || $id_nam_hoc < 1 || !$namhoc->namhoc__Get_By_Id($id_nam_hoc)) {
                     hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
-                    hocky_redirect('invalid');
+                    hocky_redirect('invalid-nam-hoc');
+                }
+
+                if (!hocky_valid_ten_hoc_ky($ten_hoc_ky)) {
+                    hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
+                    hocky_redirect('invalid-ten-hocky');
+                }
+
+                if (!hocky_valid_ghi_chu($ghi_chu)) {
+                    hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
+                    hocky_redirect('invalid-ghichu');
+                }
+
+                if (!hocky_valid_date($ngay_bat_dau)) {
+                    hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
+                    hocky_redirect('invalid-ngay-bat-dau');
+                }
+
+                if (!hocky_valid_date($ngay_ket_thuc)) {
+                    hocky_store_old_input('update', $ten_hoc_ky, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc, $id_hoc_ky);
+                    hocky_redirect('invalid-ngay-ket-thuc');
                 }
 
                 if (strtotime($ngay_ket_thuc) <= strtotime($ngay_bat_dau)) {

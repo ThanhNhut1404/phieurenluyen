@@ -151,6 +151,7 @@
     }
     </script>
     <?php
+       // Nhựt sửa lỗi: Sử dụng replaceState để xóa tham số status khỏi URL nhằm tránh lặp lại thông báo SweetAlert khi F5/reload trang.
        if(isset($_GET['status'])){
            if($_GET['status'] == "success"){
                echo "<script>
@@ -158,7 +159,13 @@
                    'Thành công!',
                    'Thao tác thành công!',
                    'success'
-                 )</script>";
+                 );
+                 if (window.history.replaceState) {
+                     const url = new URL(window.location.href);
+                     url.searchParams.delete('status');
+                     window.history.replaceState({ path: url.href }, '', url.href);
+                 }
+                 </script>";
            }
            if($_GET['status'] == "failed"){
                echo "<script>
@@ -166,7 +173,13 @@
                    'Thất bại!',
                    'Thao tác không thành công!',
                    'error'
-                 )</script>";
+                 );
+                 if (window.history.replaceState) {
+                     const url = new URL(window.location.href);
+                     url.searchParams.delete('status');
+                     window.history.replaceState({ path: url.href }, '', url.href);
+                 }
+                 </script>";
            }
          
        }

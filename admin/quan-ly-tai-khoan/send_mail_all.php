@@ -30,16 +30,16 @@ try {
     $mail->isSMTP();                                            //Send using SMTP
     $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $mail->Username   = 'fdcvlinh6@gmail.com';                     //SMTP username
-    $mail->Password   = 'kotoquxtobhfvphx';                               //SMTP password
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-    $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+    $mail->Username   = 'Lchsvhaugiang@tdu.edu.vn';                     //SMTP username
+    $mail->Password   = 'lixovuuyoerwzdwv';                               //SMTP password
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
+    $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
 
 
     foreach ($taikhoan__Get_By_Lop_Hoc as $item) {
-        $mail->setFrom('fdcvlinh6@gmail.com', 'TDU - PRL');
-        $mail->addCC('fdcvlinh6@gmail.com');
+        $mail->setFrom('Lchsvhaugiang@tdu.edu.vn', 'TDU - PRL');
+        $mail->addCC('Lchsvhaugiang@tdu.edu.vn');
         $mail->addAddress($item->email, $item->email);     //Add a recipient
         $mail->isHTML(true);
         $mail->CharSet = PHPMailer::CHARSET_UTF8;

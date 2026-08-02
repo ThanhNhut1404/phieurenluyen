@@ -166,7 +166,7 @@
             // Nhựt sửa lỗi: thông báo riêng cho lỗi trùng/xóa học kỳ.
             "duplicate-hoc-ky" => array("Dữ liệu bị trùng!", "Tên học kỳ đã tồn tại trong năm học đã chọn.", "error"),
             "related-hoc-ky" => array("Không thể xóa!", "Học kỳ này đang được sử dụng bởi đợt chấm điểm.", "error"),
-            "limit-hoc-ky" => array("Không thể thêm!", "Mỗi năm học chỉ được tối đa 2 học kỳ.", "error"),
+            "limit-hoc-ky" => array("Không thể thêm!", "Mỗi năm học chỉ được tối đa 3 học kỳ.", "error"),
             "overlap-hoc-ky" => array("Khoảng thời gian bị trùng!", "Học kỳ này đang chồng lên học kỳ khác trong cùng năm học.", "error"),
             "out-of-range-hoc-ky" => array("Ngày không hợp lệ!", "Ngày của học kỳ phải nằm trong khoảng năm học đã chọn.", "error"),
             "invalid" => array("Dữ liệu không hợp lệ!", "Vui lòng kiểm tra lại thông tin nhập.", "error"),
@@ -175,7 +175,25 @@
             "invalid-date" => array("Thời gian không hợp lệ", "Thời gian bắt đầu phải nhỏ hơn hoặc bằng thời gian kết thúc.", "error"),
             // Nhựt sửa lỗi: Thông báo khi thời gian Đợt chấm điểm không nằm trong khoảng Học kỳ đã chọn.
             // Nhựt sửa lỗi: báo riêng khi ngày kết thúc không lớn hơn ngày bắt đầu để người dùng biết lỗi nằm ở khoảng ngày.
-            "invalid-date-range" => array("Ngày học kỳ không hợp lệ", "Ngày kết thúc phải lớn hơn ngày bắt đầu.", "error"),
+            "invalid-date-range" => array("Khoảng thời gian không hợp lệ", "Ngày kết thúc phải lớn hơn ngày bắt đầu.", "error"),
+            // Chi tiết hóa lỗi của các chức năng quản lý chung
+            "invalid-nam-hoc" => array("Năm học không hợp lệ", "Năm học không hợp lệ hoặc không tồn tại trong hệ thống.", "error"),
+            "invalid-ten-hocky" => array("Tên học kỳ không hợp lệ", "Tên học kỳ không được rỗng và không quá 50 ký tự.", "error"),
+            "invalid-ten-nam-hoc" => array("Tên năm học không hợp lệ", "Tên năm học không được rỗng và không quá 50 ký tự.", "error"),
+            "invalid-ten-khoa" => array("Tên khoa không hợp lệ", "Tên khoa không được rỗng và không quá 50 ký tự.", "error"),
+            "invalid-ten-nganh-hoc" => array("Tên ngành học không hợp lệ", "Tên ngành học không được rỗng và không quá 50 ký tự.", "error"),
+            "invalid-ten-lop-hoc" => array("Tên lớp học không hợp lệ", "Tên lớp học không được rỗng và không quá 50 ký tự.", "error"),
+            "invalid-ten-khoahoc" => array("Tên khóa học không hợp lệ", "Tên khóa học không được rỗng và không quá 50 ký tự.", "error"),
+            "invalid-ten-trinh-do" => array("Tên trình độ không hợp lệ", "Tên trình độ không được rỗng và không quá 50 ký tự.", "error"),
+            "invalid-ghichu" => array("Ghi chú không hợp lệ", "Ghi chú không được vượt quá 2000 ký tự.", "error"),
+            "invalid-ngay-bat-dau" => array("Ngày bắt đầu không hợp lệ", "Ngày bắt đầu phải là ngày hợp lệ theo định dạng DD/MM/YYYY.", "error"),
+            "invalid-ngay-ket-thuc" => array("Ngày kết thúc không hợp lệ", "Ngày kết thúc phải là ngày hợp lệ theo định dạng DD/MM/YYYY.", "error"),
+            "invalid-khoa" => array("Khoa không hợp lệ", "Khoa đã chọn không hợp lệ hoặc không tồn tại.", "error"),
+            "invalid-khoa-hoc" => array("Khóa học không hợp lệ", "Khóa học đã chọn không hợp lệ hoặc không tồn tại.", "error"),
+            "invalid-nganh-hoc" => array("Ngành học không hợp lệ", "Ngành học đã chọn không hợp lệ hoặc không tồn tại.", "error"),
+            "invalid-nam-nhap-hoc" => array("Năm nhập học không hợp lệ", "Năm nhập học phải là số nguyên nằm trong khoảng từ 2006 đến 2099.", "error"),
+            "invalid-he-dao-tao" => array("Hệ đào tạo không hợp lệ", "Hệ đào tạo (số năm học) phải là số từ 2 đến 8 năm.", "error"),
+            "duplicate-khoa" => array("Dữ liệu bị trùng!", "Tên khoa đã tồn tại.", "error"),
             "invalid-dot-date" => array("Thời gian đợt chấm điểm không hợp lệ", "Thời gian đợt chấm điểm phải nằm trong khoảng Học kỳ đã chọn.", "error"),
             // Nhựt sửa lỗi: Nội dung thông báo phải đúng nghiệp vụ, chỉ khóa xóa khi đã phát sinh dữ liệu chấm, Minh chứng hoặc Kết quả xếp loại.
             "related-phieu" => array("Không thể xóa", "Đợt chấm điểm đã phát sinh dữ liệu chấm, Minh chứng hoặc Kết quả xếp loại. Không thể xóa để đảm bảo toàn vẹn dữ liệu.", "error"),

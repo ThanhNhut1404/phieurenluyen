@@ -1,3 +1,11 @@
+<?php
+// Nhựt sửa lỗi: Khởi động session và kiểm tra đăng nhập tránh bypass auth.
+session_start();
+if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
+    header('location: ../../auth/');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,16 +42,64 @@
 
         require "../../models/getModel.php";
 
-        if (isset($_GET['id_lop_hoc'])) {
-            $id_lop_hoc = $_GET['id_lop_hoc'];
+        $id_lop_hoc = isset($_GET['id_lop_hoc']) ? $_GET['id_lop_hoc'] : 0;
+        $id_dot = isset($_GET['id_dot']) ? $_GET['id_dot'] : 0;
+        $id_sinh_vien = isset($_GET['id_sinh_vien']) ? $_GET['id_sinh_vien'] : 0;
+
+        // Nhựt sửa lỗi: Phân quyền truy cập chi tiết phiếu chấm (IDOR).
+        // 1. Sinh viên thường chỉ được xem phiếu của chính mình
+        if (isset($_SESSION['sv']) && (int)$_SESSION['sv']->id_nguoi_dung !== (int)$id_sinh_vien) {
+            header('location: ../../auth/');
+            exit();
         }
 
-        if (isset($_GET['id_dot'])) {
-            $id_dot = $_GET['id_dot'];
+        // 2. Lớp trưởng / Bí thư chi đoàn chỉ được xem sinh viên thuộc lớp mình quản lý
+        if (isset($_SESSION['lt']) || isset($_SESSION['bt'])) {
+            $session_user = isset($_SESSION['lt']) ? $_SESSION['lt'] : $_SESSION['bt'];
+            $sinhvien_sender = $sinhvien->sinhvien__Get_By_Id($session_user->id_nguoi_dung);
+            if ($sinhvien_sender && (int)$sinhvien_sender->id_lop_hoc !== (int)$id_lop_hoc) {
+                header('location: ../../auth/');
+                exit();
+            }
         }
-        if (isset($_GET['id_sinh_vien'])) {
-            $id_sinh_vien = $_GET['id_sinh_vien'];
+
+        // 3. Giảng viên cố vấn chỉ được xem lớp mình được phân công cố vấn
+        if (isset($_SESSION['gv'])) {
+            $is_assigned = false;
+            $gv_id = $_SESSION['gv']->id_nguoi_dung;
+            $db = $phancong->connect;
+            $stmt_pc = $db->prepare("SELECT COUNT(*) FROM phancong WHERE id_giang_vien = ? AND id_lop_hoc = ?");
+            $stmt_pc->execute(array($gv_id, $id_lop_hoc));
+            if ((int)$stmt_pc->fetchColumn() > 0) {
+                $is_assigned = true;
+            }
+            if (!$is_assigned) {
+                header('location: ../../auth/');
+                exit();
+            }
         }
+
+        // 4. Bí thư đoàn khoa chỉ được xem sinh viên thuộc khoa của mình
+        if (isset($_SESSION['btdk'])) {
+            $is_same_khoa = false;
+            $btdk_id = $_SESSION['btdk']->id_nguoi_dung;
+            $btdk_info = $bithudoankhoa->bithudoankhoa__Get_By_Id($btdk_id);
+            if ($btdk_info) {
+                // Lấy khoa của lớp học cần xem
+                $lop_hoc = $lophoc->lophoc__Get_By_Id($id_lop_hoc);
+                if ($lop_hoc && isset($lop_hoc->id_nganh_hoc)) {
+                    $nganh = $nganhhoc->nganhhoc__Get_By_Id($lop_hoc->id_nganh_hoc);
+                    if ($nganh && (int)$nganh->id_khoa === (int)$btdk_info->id_khoa) {
+                        $is_same_khoa = true;
+                    }
+                }
+            }
+            if (!$is_same_khoa) {
+                header('location: ../../auth/');
+                exit();
+            }
+        }
+
         $phieuchamdiem__Get_By_Id_Sinh_Vien = $phieuchamdiem->phieuchamdiem__Get_By_Id_Sinh_Vien($id_sinh_vien, $id_dot);
 
         if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
@@ -128,23 +184,24 @@
                                 </div>
                             </div>
                             <hr>
+                             <?php // Nhựt sửa lỗi: Tránh cảnh báo Warning: Attempt to read property on bool khi chưa tổng kết kết quả xếp loại. ?>
                             <div class="row">
                                 <div class="col">
-                                    <p class="card-title">Điểm rèn luyện: <?= $ketquaxeploai__Get_By_Id_Phieu->ket_qua ?></p>
+                                    <p class="card-title">Điểm rèn luyện: <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></p>
                                 </div>
 
                                 <div class="col text-right">
                                     <p class="card-title w-100">Ngày xếp loại:
-                                        <?= $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai ?></p>
+                                        <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai : "Chưa tổng kết" ?></p>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <p class="card-title w-100">Xếp loại: <?= $ketquaxeploai__Get_By_Id_Phieu->xep_loai ?></p>
+                                    <p class="card-title w-100">Xếp loại: <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></p>
                                 </div>
 
                                 <div class="col text-right">
-                                    <p class="card-title w-100">Ghi chú: <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></p>
+                                    <p class="card-title w-100">Ghi chú: <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ghi_chu : "" ?></p>
                                 </div>
                             </div>
                         </div>
@@ -610,7 +667,13 @@ if (isset($_GET['status'])) {
                    'Thành công!',
                    'Thao tác thành công!',
                    'success'
-                 )</script>";
+                 );
+                 if (window.history.replaceState) {
+                     const url = new URL(window.location.href);
+                     url.searchParams.delete('status');
+                     window.history.replaceState({ path: url.href }, '', url.href);
+                 }
+                 </script>";
     }
     if ($_GET['status'] == "failed") {
         echo "<script>
@@ -618,7 +681,13 @@ if (isset($_GET['status'])) {
                    'Thất bại!',
                    'Thao tác không thành công!',
                    'error'
-                 )</script>";
+                 );
+                 if (window.history.replaceState) {
+                     const url = new URL(window.location.href);
+                     url.searchParams.delete('status');
+                     window.history.replaceState({ path: url.href }, '', url.href);
+                 }
+                 </script>";
     }
 }
 ?>

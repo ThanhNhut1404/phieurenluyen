@@ -91,9 +91,14 @@
                 $ghi_chu = khoa_post_text('ghi_chu');
 
                 // Nhựt sửa lỗi: phân biệt lỗi validate và lỗi trùng tên khoa khi thêm.
-                if (!khoa_valid_ten_khoa($ten_khoa) || !khoa_valid_ghi_chu($ghi_chu)) {
+                if (!khoa_valid_ten_khoa($ten_khoa)) {
                     khoa_store_old_input('add', $ten_khoa, $ghi_chu);
-                    khoa_redirect('invalid');
+                    khoa_redirect('invalid-ten-khoa');
+                }
+
+                if (!khoa_valid_ghi_chu($ghi_chu)) {
+                    khoa_store_old_input('add', $ten_khoa, $ghi_chu);
+                    khoa_redirect('invalid-ghichu');
                 }
 
                 if ($khoa->khoa__Name_Exists($ten_khoa)) {
@@ -114,9 +119,19 @@
                 $ghi_chu = khoa_post_text('ghi_chu');
 
                 // Nhựt sửa lỗi: phân biệt lỗi id sai, không tìm thấy, validate và trùng tên khi cập nhật.
-                if (!$id_khoa || $id_khoa < 1 || !khoa_valid_ten_khoa($ten_khoa) || !khoa_valid_ghi_chu($ghi_chu)) {
+                if (!$id_khoa || $id_khoa < 1) {
                     khoa_store_old_input('update', $ten_khoa, $ghi_chu, $id_khoa);
                     khoa_redirect('invalid');
+                }
+
+                if (!khoa_valid_ten_khoa($ten_khoa)) {
+                    khoa_store_old_input('update', $ten_khoa, $ghi_chu, $id_khoa);
+                    khoa_redirect('invalid-ten-khoa');
+                }
+
+                if (!khoa_valid_ghi_chu($ghi_chu)) {
+                    khoa_store_old_input('update', $ten_khoa, $ghi_chu, $id_khoa);
+                    khoa_redirect('invalid-ghichu');
                 }
 
                 $khoa->connect->beginTransaction();

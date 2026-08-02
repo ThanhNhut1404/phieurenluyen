@@ -99,9 +99,29 @@
                 $ngay_ket_thuc = namhoc_post_text('ngay_ket_thuc');
                 $ghi_chu = namhoc_post_text('ghi_chu');
 
-                if (!namhoc_valid_ten_nam_hoc($ten_nam_hoc) || !namhoc_valid_date_range($ngay_bat_dau, $ngay_ket_thuc) || !namhoc_valid_ghi_chu($ghi_chu)) {
+                if (!namhoc_valid_ten_nam_hoc($ten_nam_hoc)) {
                     namhoc_store_old_input('add', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
-                    namhoc_redirect('invalid');
+                    namhoc_redirect('invalid-ten-nam-hoc');
+                }
+
+                if (!namhoc_valid_ghi_chu($ghi_chu)) {
+                    namhoc_store_old_input('add', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
+                    namhoc_redirect('invalid-ghichu');
+                }
+
+                if (!namhoc_valid_date($ngay_bat_dau)) {
+                    namhoc_store_old_input('add', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
+                    namhoc_redirect('invalid-ngay-bat-dau');
+                }
+
+                if (!namhoc_valid_date($ngay_ket_thuc)) {
+                    namhoc_store_old_input('add', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
+                    namhoc_redirect('invalid-ngay-ket-thuc');
+                }
+
+                if (strtotime($ngay_ket_thuc) <= strtotime($ngay_bat_dau)) {
+                    namhoc_store_old_input('add', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
+                    namhoc_redirect('invalid-date-range');
                 }
 
                 if ($namhoc->namhoc__Name_Exists($ten_nam_hoc)) {
@@ -129,9 +149,34 @@
                 $ngay_ket_thuc = namhoc_post_text('ngay_ket_thuc');
                 $ghi_chu = namhoc_post_text('ghi_chu');
 
-                if (!$id_nam_hoc || $id_nam_hoc < 1 || !namhoc_valid_ten_nam_hoc($ten_nam_hoc) || !namhoc_valid_date_range($ngay_bat_dau, $ngay_ket_thuc) || !namhoc_valid_ghi_chu($ghi_chu)) {
+                if (!$id_nam_hoc || $id_nam_hoc < 1) {
                     namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
                     namhoc_redirect('invalid');
+                }
+
+                if (!namhoc_valid_ten_nam_hoc($ten_nam_hoc)) {
+                    namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    namhoc_redirect('invalid-ten-nam-hoc');
+                }
+
+                if (!namhoc_valid_ghi_chu($ghi_chu)) {
+                    namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    namhoc_redirect('invalid-ghichu');
+                }
+
+                if (!namhoc_valid_date($ngay_bat_dau)) {
+                    namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    namhoc_redirect('invalid-ngay-bat-dau');
+                }
+
+                if (!namhoc_valid_date($ngay_ket_thuc)) {
+                    namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    namhoc_redirect('invalid-ngay-ket-thuc');
+                }
+
+                if (strtotime($ngay_ket_thuc) <= strtotime($ngay_bat_dau)) {
+                    namhoc_store_old_input('update', $ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu, $id_nam_hoc);
+                    namhoc_redirect('invalid-date-range');
                 }
 
                 $namhoc->connect->beginTransaction();

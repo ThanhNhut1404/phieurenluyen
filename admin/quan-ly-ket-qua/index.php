@@ -1,5 +1,14 @@
  <?php
     // require "../models/getModel.php";
+    // Nhựt sửa lỗi: Khởi tạo csrf_token tránh lỗi Undefined index.
+    if (empty($_SESSION['csrf_token'])) {
+        try {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        } catch (Throwable $e) {
+            $_SESSION['csrf_token'] = hash('sha256', session_id() . uniqid('', true));
+        }
+    }
+
     $id_dot = -2;
     $id_lop_hoc  = -2;
     $ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
@@ -102,6 +111,8 @@
                  <h3 class="card-title">Danh sách</h3>
 
                  <div class="card-tools">
+                      <!-- Nhựt sửa lỗi: Ẩn nút EXPORT khi chưa chọn Lớp học & Đợt chấm hợp lệ. -->
+                     <?php if ($id_lop_hoc > 0 && $id_dot > 0): ?>
                      <form action="./quan-ly-thong-ke/action.php?req=export" method="post">
                          <input type="hidden" name="id_lop_hoc" value="<?=$id_lop_hoc?>">
                          <input type="hidden" name="id_dot" value="<?=$id_dot?>">
@@ -109,6 +120,7 @@
                              <i class="fas fa-print"></i> EXPORT
                          </button>
                      </form>
+                     <?php endif; ?>
                  </div>
              </div>
          </div>
@@ -136,8 +148,9 @@
                      <?php $sum_5 = 0;?>
                      <?php $sum_6 = 0;?>
                      <?php foreach($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot as $item):?>
+                      <!-- Nhựt sửa lỗi: Truyền thêm csrf_token qua GET request để bảo mật hành động hạ bậc. -->
                      <tr
-                         ondblclick="return confirm_sweet_ha_bac('quan-ly-ket-qua/action.php?req=update&id_ket_qua=<?=$item->id_ket_qua?>')">
+                         ondblclick="return confirm_sweet_ha_bac('quan-ly-ket-qua/action.php?req=update&id_ket_qua=<?=$item->id_ket_qua?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
                          <?php 
 
                                 $item->xep_loai == "Xuất sắc" ? $sum_1++ : "";

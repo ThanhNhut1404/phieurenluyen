@@ -105,9 +105,24 @@
                 $ghi_chu = lophoc_post_text('ghi_chu');
 
                 // Nhựt sửa lỗi: phân biệt lỗi validate, khoa/ngành không tồn tại và lỗi trùng tên lớp khi thêm.
-                if (!lophoc_khoahoc_exists($khoahoc, $id_khoa_hoc) || !lophoc_nganhhoc_exists($nganhhoc, $id_nganh_hoc) || !lophoc_valid_ten_lop_hoc($ten_lop_hoc) || !lophoc_valid_ghi_chu($ghi_chu)) {
+                if (!lophoc_khoahoc_exists($khoahoc, $id_khoa_hoc)) {
                     lophoc_store_old_input('add', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu);
-                    lophoc_redirect('invalid');
+                    lophoc_redirect('invalid-khoa-hoc');
+                }
+
+                if (!lophoc_nganhhoc_exists($nganhhoc, $id_nganh_hoc)) {
+                    lophoc_store_old_input('add', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu);
+                    lophoc_redirect('invalid-nganh-hoc');
+                }
+
+                if (!lophoc_valid_ten_lop_hoc($ten_lop_hoc)) {
+                    lophoc_store_old_input('add', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu);
+                    lophoc_redirect('invalid-ten-lop-hoc');
+                }
+
+                if (!lophoc_valid_ghi_chu($ghi_chu)) {
+                    lophoc_store_old_input('add', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu);
+                    lophoc_redirect('invalid-ghichu');
                 }
 
                 if ($lophoc->lophoc__Name_Exists($ten_lop_hoc, $id_khoa_hoc, $id_nganh_hoc)) {
@@ -130,9 +145,29 @@
                 $ghi_chu = lophoc_post_text('ghi_chu');
                 
                 // Nhựt sửa lỗi: phân biệt lỗi id sai, không tìm thấy, validate và trùng tên khi cập nhật.
-                if (!$id_lop_hoc || $id_lop_hoc < 1 || !lophoc_khoahoc_exists($khoahoc, $id_khoa_hoc) || !lophoc_nganhhoc_exists($nganhhoc, $id_nganh_hoc) || !lophoc_valid_ten_lop_hoc($ten_lop_hoc) || !lophoc_valid_ghi_chu($ghi_chu)) {
+                if (!$id_lop_hoc || $id_lop_hoc < 1) {
                     lophoc_store_old_input('update', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu, $id_lop_hoc);
                     lophoc_redirect('invalid');
+                }
+
+                if (!lophoc_khoahoc_exists($khoahoc, $id_khoa_hoc)) {
+                    lophoc_store_old_input('update', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu, $id_lop_hoc);
+                    lophoc_redirect('invalid-khoa-hoc');
+                }
+
+                if (!lophoc_nganhhoc_exists($nganhhoc, $id_nganh_hoc)) {
+                    lophoc_store_old_input('update', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu, $id_lop_hoc);
+                    lophoc_redirect('invalid-nganh-hoc');
+                }
+
+                if (!lophoc_valid_ten_lop_hoc($ten_lop_hoc)) {
+                    lophoc_store_old_input('update', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu, $id_lop_hoc);
+                    lophoc_redirect('invalid-ten-lop-hoc');
+                }
+
+                if (!lophoc_valid_ghi_chu($ghi_chu)) {
+                    lophoc_store_old_input('update', $id_khoa_hoc, $id_nganh_hoc, $ten_lop_hoc, $ghi_chu, $id_lop_hoc);
+                    lophoc_redirect('invalid-ghichu');
                 }
 
                 $lophoc->connect->beginTransaction();
