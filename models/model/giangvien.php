@@ -53,6 +53,15 @@ class giangvien extends Database {
     
 
     public function giangvien__Delete($id_giang_vien) {
+        // 1. Delete associated assignments in phancong table
+        $stmt_pc = $this->connect->prepare("DELETE FROM phancong WHERE id_giang_vien = ?");
+        $stmt_pc->execute(array($id_giang_vien));
+
+        // 2. Delete associated user account in taikhoan table (id_phan_nhom = 5 is Lecturer)
+        $stmt_tk = $this->connect->prepare("DELETE FROM taikhoan WHERE id_nguoi_dung = ? AND id_phan_nhom = 5");
+        $stmt_tk->execute(array($id_giang_vien));
+
+        // 3. Delete giangvien record
         $obj = $this->connect->prepare("DELETE FROM giangvien WHERE id_giang_vien = ?");
         $obj->execute(array($id_giang_vien));
         return $obj->rowCount();

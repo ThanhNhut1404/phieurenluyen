@@ -213,12 +213,16 @@
             "duplicate" => array("Dữ liệu bị trùng!", "Tên khoa đã tồn tại.", "error"),
             "duplicate-bithu" => array("Dữ liệu bị trùng!", "Tên hoặc Email bí thư đoàn khoa đã tồn tại.", "error"),
             "duplicate-giangvien" => array("Dữ liệu bị trùng!", "Mã số hoặc Email giảng viên đã tồn tại.", "error"),
+            "duplicate-phancong" => array("Dữ liệu bị trùng!", "Giảng viên đã được phân công lớp này rồi.", "error"),
             "related" => array("Không thể xóa!", "Khoa này đang được sử dụng bởi ngành học hoặc bí thư đoàn khoa.", "error"),
             "duplicate-lop-hoc" => array("Dữ liệu bị trùng!", "Tên lớp học đã tồn tại trong khóa/ngành đã chọn.", "error"),
             "related-lop-hoc" => array("Không thể xóa!", "Lớp học này đang được sử dụng bởi sinh viên hoặc các dữ liệu liên quan.", "error"),
             // Nhựt sửa lỗi: Thông báo đúng nghiệp vụ khi Điều đang được dùng trong Mẫu phiếu hoặc Khoản.
             "related-dieu" => array("Không thể xóa!", "Điều này đang được sử dụng trong Mẫu phiếu nên không thể xóa.", "error"),
             "related-dieu-khoan" => array("Không thể xóa!", "Điều này đang có Khoản nên không thể xóa.", "error"),
+            "duplicate-ma-sinh-vien" => array("Dữ liệu bị trùng!", "Mã sinh viên đã tồn tại trong hệ thống.", "error"),
+            "duplicate-email-sinh-vien" => array("Dữ liệu bị trùng!", "Email sinh viên đã tồn tại trong hệ thống.", "error"),
+            "invalid-import-file" => array("Định dạng file không hợp lệ!", "Vui lòng tải lên file Excel đúng mẫu.", "error"),
             "csrf" => array("Phiên thao tác không hợp lệ!", "Vui lòng tải lại trang rồi thực hiện lại.", "error"),
             "system" => array("Lỗi hệ thống!", "Có lỗi phát sinh khi xử lý dữ liệu.", "error")
         );

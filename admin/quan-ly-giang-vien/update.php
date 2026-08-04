@@ -2,6 +2,7 @@
     require '../../models/getModel.php';
     $id_giang_vien = $_POST['id_giang_vien'];
     $giangvien__Get_By_Id = $giangvien->giangvien__Get_By_Id($id_giang_vien);
+    $trinhdo__Get_All = $trinhdo->trinhdo__Get_All();
     ?>
 
     <form class="row form" action="quan-ly-giang-vien/action.php?req=update" method="post" enctype="multipart/form-data">
@@ -48,31 +49,47 @@
                                 <label for="">Email <span class="color-crimson">(*)</span></label>
                                 <input type="email" id="email" name="email" class="form-control" required value="<?= $giangvien__Get_By_Id->email ?>" placeholder="Nhập email">
                             </div>
-                            <div class="form-group">
-                                <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
-                                <input type="so_dien_thoai_1" id="so_dien_thoai_1" name="so_dien_thoai_1" pattern="[0][0-9]{8-9}" class=" form-control" required value="<?= $giangvien__Get_By_Id->so_dien_thoai_1 ?>" title="Số điện thoại có 10 hoặc 11 số" placeholder="Nhập số điện thoại 1" minlength="10" max="11">
-                            </div>
-                            <div class="form-group">
-                                <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
-                                <input type="so_dien_thoai_2" id="so_dien_thoai_2" name="so_dien_thoai_2" pattern="[0][0-9]{8-9}" class=" form-control" required value="<?= $giangvien__Get_By_Id->so_dien_thoai_2 ?>" title="Số điện thoại có 10 hoặc 11 số" placeholder="Nhập số điện thoại 2" minlength="10" max="11">
-                            </div>
+                             <div class="form-group">
+                                 <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
+                                 <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1" pattern="0[0-9]{9,10}" class="form-control" required value="<?= $giangvien__Get_By_Id->so_dien_thoai_1 ?>" title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1" minlength="10" maxlength="11">
+                             </div>
+                             <div class="form-group">
+                                 <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
+                                 <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2" pattern="0[0-9]{9,10}" class="form-control" required value="<?= $giangvien__Get_By_Id->so_dien_thoai_2 ?>" title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2" minlength="10" maxlength="11">
+                             </div>
                         </div>
 
                         <div class="col-6">
                             <!-- quân sửa: Tách chuỗi địa chỉ để gán vào 4 ô nhập (Sửa) -->
-                            <?php
-                                $arr_dc_ll = explode(', ', $giangvien__Get_By_Id->dia_chi_lien_lac);
-                                $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
-                                $dc_ll_ap = $arr_dc_ll[1] ?? '';
-                                $dc_ll_xa = $arr_dc_ll[2] ?? '';
-                                $dc_ll_tinh = $arr_dc_ll[3] ?? '';
+                             <?php
+                                 $dia_chi_ll = $giangvien__Get_By_Id->dia_chi_lien_lac ?? '';
+                                 $arr_dc_ll = preg_split('/,\s*/', $dia_chi_ll);
+                                 if (count($arr_dc_ll) < 4) {
+                                     $dc_ll_so_nha = $dia_chi_ll;
+                                     $dc_ll_ap = '';
+                                     $dc_ll_xa = '';
+                                     $dc_ll_tinh = '';
+                                 } else {
+                                     $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
+                                     $dc_ll_ap = $arr_dc_ll[1] ?? '';
+                                     $dc_ll_xa = $arr_dc_ll[2] ?? '';
+                                     $dc_ll_tinh = $arr_dc_ll[3] ?? '';
+                                 }
 
-                                $arr_dc_tt = explode(', ', $giangvien__Get_By_Id->dia_chi_thuong_tru);
-                                $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
-                                $dc_tt_ap = $arr_dc_tt[1] ?? '';
-                                $dc_tt_xa = $arr_dc_tt[2] ?? '';
-                                $dc_tt_tinh = $arr_dc_tt[3] ?? '';
-                            ?>
+                                 $dia_chi_tt = $giangvien__Get_By_Id->dia_chi_thuong_tru ?? '';
+                                 $arr_dc_tt = preg_split('/,\s*/', $dia_chi_tt);
+                                 if (count($arr_dc_tt) < 4) {
+                                     $dc_tt_so_nha = $dia_chi_tt;
+                                     $dc_tt_ap = '';
+                                     $dc_tt_xa = '';
+                                     $dc_tt_tinh = '';
+                                 } else {
+                                     $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
+                                     $dc_tt_ap = $arr_dc_tt[1] ?? '';
+                                     $dc_tt_xa = $arr_dc_tt[2] ?? '';
+                                     $dc_tt_tinh = $arr_dc_tt[3] ?? '';
+                                 }
+                             ?>
                             <div class="form-group">
                                 <label for="">Địa chỉ liên lạc <span class="color-crimson">(*)</span></label>
                                 <div class="row">
@@ -124,9 +141,10 @@
                     </div>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
-                    <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
-                </div>
+                 <div class="card-footer">
+                     <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
+                     <button type="button" class="btn btn-default float-right mr-2" onclick="cancel_update()">Hủy</button>
+                 </div>
             </div>
             <!-- /.card -->
         </div>

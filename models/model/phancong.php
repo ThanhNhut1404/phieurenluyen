@@ -101,5 +101,16 @@ class phancong extends Database {
         $obj->execute(array($id_giang_vien, $trang_thai));
         return $obj->fetchAll();
     }
+
+    public function phancong__Exists($id_giang_vien, $id_lop_hoc, $exclude_id = null) {
+        if ($exclude_id !== null) {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM phancong WHERE id_giang_vien = ? AND id_lop_hoc = ? AND id_phan_cong != ?");
+            $obj->execute(array($id_giang_vien, $id_lop_hoc, $exclude_id));
+        } else {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM phancong WHERE id_giang_vien = ? AND id_lop_hoc = ?");
+            $obj->execute(array($id_giang_vien, $id_lop_hoc));
+        }
+        return $obj->fetchColumn() > 0;
+    }
 }
 ?>

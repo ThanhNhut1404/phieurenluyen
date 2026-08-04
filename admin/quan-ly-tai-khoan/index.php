@@ -462,35 +462,64 @@ button.btn.removeall.btn-outline-secondary:before {
                          </tr>
                      </thead>
                      <tbody>
-                         <?php $num = 0; ?>
+                         <?php 
+                          $phanquyen__Get_All = $phanquyen->phanquyen__Get_All();
+                          $arr_phan_quyen = [];
+                          foreach ($phanquyen__Get_All as $pq_item) {
+                              $arr_phan_quyen[$pq_item->id_phan_quyen] = $pq_item;
+                          }
+                          
+                          $arr_phan_nhom = [];
+                          foreach ($phannhom__Get_All as $pn_item) {
+                              $arr_phan_nhom[$pn_item->id_phan_nhom] = $pn_item;
+                          }
+                          
+                          $sinhvien__Get_All_Raw = $sinhvien->sinhvien__Get_All();
+                          $arr_sinh_vien = [];
+                          foreach ($sinhvien__Get_All_Raw as $sv_item) {
+                              $arr_sinh_vien[$sv_item->id_sinh_vien] = $sv_item->ten_sinh_vien;
+                          }
+                          
+                          $bithudoankhoa__Get_All_Raw = $bithudoankhoa->bithudoankhoa__Get_All();
+                          $arr_bi_thu = [];
+                          foreach ($bithudoankhoa__Get_All_Raw as $bt_item) {
+                              $arr_bi_thu[$bt_item->id_bi_thu] = $bt_item->ten_bi_thu;
+                          }
+                          
+                          $giangvien__Get_All_Raw = $giangvien->giangvien__Get_All();
+                          $arr_giang_vien = [];
+                          foreach ($giangvien__Get_All_Raw as $gv_item) {
+                              $arr_giang_vien[$gv_item->id_giang_vien] = $gv_item->ten_giang_vien;
+                          }
+                          
+                          $num = 0; 
+                          ?>
                          <?php foreach ($taikhoan__Get_All as $item) : ?>
                          <tr>
                              <td><?= ++$num ?></td>
-                             <td><?= $item->email ?></td>
+                             <td><?= htmlspecialchars($item->email ?? '') ?></td>
                              <?php
                                 // quân sửa: Lấy họ tên dựa trên cấp bậc phân nhóm
                                 $ho_ten = '<span class="text-secondary">N/A</span>';
-                                $pn = $phannhom->phannhom__Get_By_Id($item->id_phan_nhom);
+                                $pn = isset($arr_phan_nhom[$item->id_phan_nhom]) ? $arr_phan_nhom[$item->id_phan_nhom] : null;
                                 if ($pn) {
                                     if ($pn->cap_bac == 0) $ho_ten = "Admin";
                                     elseif ($pn->cap_bac == 1) $ho_ten = "Manager";
                                     elseif ($pn->cap_bac == 2) {
-                                        $sv = $sinhvien->sinhvien__Get_By_Id($item->id_nguoi_dung);
-                                        if ($sv) $ho_ten = htmlspecialchars($sv->ten_sinh_vien);
+                                        $ho_ten = isset($arr_sinh_vien[$item->id_nguoi_dung]) ? htmlspecialchars($arr_sinh_vien[$item->id_nguoi_dung]) : '<span class="text-secondary">N/A</span>';
                                     } elseif ($pn->cap_bac == 3) {
-                                        $bt = $bithudoankhoa->bithudoankhoa__Get_By_Id($item->id_nguoi_dung);
-                                        if ($bt) $ho_ten = htmlspecialchars($bt->ten_bi_thu);
+                                        $ho_ten = isset($arr_bi_thu[$item->id_nguoi_dung]) ? htmlspecialchars($arr_bi_thu[$item->id_nguoi_dung]) : '<span class="text-secondary">N/A</span>';
                                     } elseif ($pn->cap_bac == 4) {
-                                        $gv = $giangvien->giangvien__Get_By_Id($item->id_nguoi_dung);
-                                        if ($gv) $ho_ten = htmlspecialchars($gv->ten_giang_vien);
+                                        $ho_ten = isset($arr_giang_vien[$item->id_nguoi_dung]) ? htmlspecialchars($arr_giang_vien[$item->id_nguoi_dung]) : '<span class="text-secondary">N/A</span>';
                                     }
                                 }
+                                $pq = isset($arr_phan_quyen[$item->id_phan_quyen]) ? $arr_phan_quyen[$item->id_phan_quyen] : null;
                              ?>
                              <td><b><?= $ho_ten ?></b></td>
-                             <td><?= $item->mat_khau ?></td>
+                             <td><?= htmlspecialchars($item->mat_khau ?? '') ?></td>
                              <!-- quân sửa: Bổ sung kiểm tra dữ liệu tồn tại để tránh lỗi báo Attempt to read property on bool -->
-                             <td><?= $pn ? $pn->ten_phan_nhom : '<span class="text-danger">Chưa xác định</span>' ?></td>
-                             <td><?= ($pq = $phanquyen->phanquyen__Get_By_Id($item->id_phan_quyen)) ? $pq->ten_phan_quyen : '<span class="text-danger">Chưa xác định</span>' ?></td>
+                             <td><?= $pn ? htmlspecialchars($pn->ten_phan_nhom) : '<span class="text-danger">Chưa xác định</span>' ?></td>
+                             <td><?= $pq ? htmlspecialchars($pq->ten_phan_quyen) : '<span class="text-danger">Chưa xác định</span>' ?></td>
                              <td
                                  onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=active&id_tai_khoan=<?= $item->id_tai_khoan ?>&trang_thai=<?= $item->trang_thai ?>')">
                                  <?= $item->trang_thai == 1 ? "<button class='btn btn-success'><i class='fas fa-user-check'></i></button>" : "<button class='btn btn-danger'><i class='fas fa-user-slash'></i></button>" ?>

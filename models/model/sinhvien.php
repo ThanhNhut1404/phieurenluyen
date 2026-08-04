@@ -54,6 +54,19 @@ class sinhvien extends Database {
     
 
     public function sinhvien__Delete($id_sinh_vien) {
+        // 1. Delete associated user account (id_phan_nhom = 3 is Student)
+        $stmt_tk = $this->connect->prepare("DELETE FROM taikhoan WHERE id_nguoi_dung = ? AND id_phan_nhom = 3");
+        $stmt_tk->execute(array($id_sinh_vien));
+
+        // 2. Delete associated grading sheets
+        $stmt_pcd = $this->connect->prepare("DELETE FROM phieuchamdiem WHERE id_sinh_vien = ?");
+        $stmt_pcd->execute(array($id_sinh_vien));
+
+        // 3. Delete associated classification results
+        $stmt_kq = $this->connect->prepare("DELETE FROM ketquaxeploai WHERE id_sinh_vien = ?");
+        $stmt_kq->execute(array($id_sinh_vien));
+
+        // 4. Delete student record
         $obj = $this->connect->prepare("DELETE FROM sinhvien WHERE id_sinh_vien = ?");
         $obj->execute(array($id_sinh_vien));
         return $obj->rowCount();
@@ -124,5 +137,28 @@ class sinhvien extends Database {
          $obj->execute(array($id_dot, $id_lop_hoc, NULL || ""));
          return $obj->fetchAll();
         }
-     }    }
+     }
+
+    public function sinhvien__Exists_Ma_Sinh_Vien($ma_sinh_vien, $exclude_id = null) {
+        if ($exclude_id !== null) {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM sinhvien WHERE ma_sinh_vien = ? AND id_sinh_vien != ?");
+            $obj->execute(array($ma_sinh_vien, $exclude_id));
+        } else {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM sinhvien WHERE ma_sinh_vien = ?");
+            $obj->execute(array($ma_sinh_vien));
+        }
+        return $obj->fetchColumn() > 0;
+    }
+
+    public function sinhvien__Exists_Email($email, $exclude_id = null) {
+        if ($exclude_id !== null) {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM sinhvien WHERE email = ? AND id_sinh_vien != ?");
+            $obj->execute(array($email, $exclude_id));
+        } else {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM sinhvien WHERE email = ?");
+            $obj->execute(array($email));
+        }
+        return $obj->fetchColumn() > 0;
+    }
+}
 ?>

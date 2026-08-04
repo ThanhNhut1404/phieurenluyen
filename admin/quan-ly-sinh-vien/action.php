@@ -6,19 +6,37 @@ require("../../assets/vendor/PHPOffice/PHPExcel.php");
 if (isset($_GET['req'])) {
     switch ($_GET['req']) {
         case 'add':
+            $ma_sinh_vien = isset($_POST['ma_sinh_vien']) ? trim($_POST['ma_sinh_vien']) : '';
+            $ten_sinh_vien = isset($_POST['ten_sinh_vien']) ? trim($_POST['ten_sinh_vien']) : '';
+            $gioi_tinh = isset($_POST['gioi_tinh']) ? $_POST['gioi_tinh'] : '';
+            $ngay_sinh = isset($_POST['ngay_sinh']) ? $_POST['ngay_sinh'] : '';
+            $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+            $so_dien_thoai_1 = isset($_POST['so_dien_thoai_1']) ? trim($_POST['so_dien_thoai_1']) : '';
+            $so_dien_thoai_2 = isset($_POST['so_dien_thoai_2']) ? trim($_POST['so_dien_thoai_2']) : '';
+            
+            $dc_ll_so_nha = isset($_POST['dc_ll_so_nha']) ? trim($_POST['dc_ll_so_nha']) : '';
+            $dc_ll_ap = isset($_POST['dc_ll_ap']) ? trim($_POST['dc_ll_ap']) : '';
+            $dc_ll_xa = isset($_POST['dc_ll_xa']) ? trim($_POST['dc_ll_xa']) : '';
+            $dc_ll_tinh = isset($_POST['dc_ll_tinh']) ? trim($_POST['dc_ll_tinh']) : '';
+            
+            $dc_tt_so_nha = isset($_POST['dc_tt_so_nha']) ? trim($_POST['dc_tt_so_nha']) : '';
+            $dc_tt_ap = isset($_POST['dc_tt_ap']) ? trim($_POST['dc_tt_ap']) : '';
+            $dc_tt_xa = isset($_POST['dc_tt_xa']) ? trim($_POST['dc_tt_xa']) : '';
+            $dc_tt_tinh = isset($_POST['dc_tt_tinh']) ? trim($_POST['dc_tt_tinh']) : '';
 
-            $ma_sinh_vien = $_POST['ma_sinh_vien'];
-            $ten_sinh_vien = $_POST['ten_sinh_vien'];
-            $gioi_tinh = $_POST['gioi_tinh'];
-            $ngay_sinh = $_POST['ngay_sinh'];
-            $email = $_POST['email'];
-            $so_dien_thoai_1 = $_POST['so_dien_thoai_1'];
-            $so_dien_thoai_2 = $_POST['so_dien_thoai_2'];
-            // quân sửa: Ghép 4 trường địa chỉ lại thành 1 chuỗi
-            $dia_chi_lien_lac = $_POST['dc_ll_so_nha'] . ', ' . $_POST['dc_ll_ap'] . ', ' . $_POST['dc_ll_xa'] . ', ' . $_POST['dc_ll_tinh'];
-            $dia_chi_thuong_tru = $_POST['dc_tt_so_nha'] . ', ' . $_POST['dc_tt_ap'] . ', ' . $_POST['dc_tt_xa'] . ', ' . $_POST['dc_tt_tinh'];
-            $chuc_vu = $_POST['chuc_vu'];
-            $id_lop_hoc = $_POST['id_lop_hoc'];
+            $dia_chi_lien_lac = $dc_ll_so_nha . ', ' . $dc_ll_ap . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
+            $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
+            $chuc_vu = isset($_POST['chuc_vu']) ? $_POST['chuc_vu'] : '';
+            $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
+
+            if ($sinhvien->sinhvien__Exists_Ma_Sinh_Vien($ma_sinh_vien)) {
+                header('location: ../index.php?page=quan-ly-sinh-vien&status=duplicate-ma-sinh-vien');
+                exit();
+            }
+            if ($sinhvien->sinhvien__Exists_Email($email)) {
+                header('location: ../index.php?page=quan-ly-sinh-vien&status=duplicate-email-sinh-vien');
+                exit();
+            }
 
             $status = $sinhvien->sinhvien__Add($ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
             if ($status != 0) {
@@ -26,138 +44,165 @@ if (isset($_GET['req'])) {
             } else {
                 header('location: ../index.php?page=quan-ly-sinh-vien&status=failed');
             }
+            exit();
 
-            break;
         case 'update':
+            $id_sinh_vien = isset($_POST['id_sinh_vien']) ? $_POST['id_sinh_vien'] : '';
+            $ma_sinh_vien = isset($_POST['ma_sinh_vien']) ? trim($_POST['ma_sinh_vien']) : '';
+            $ten_sinh_vien = isset($_POST['ten_sinh_vien']) ? trim($_POST['ten_sinh_vien']) : '';
+            $gioi_tinh = isset($_POST['gioi_tinh']) ? $_POST['gioi_tinh'] : '';
+            $ngay_sinh = isset($_POST['ngay_sinh']) ? $_POST['ngay_sinh'] : '';
+            $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+            $so_dien_thoai_1 = isset($_POST['so_dien_thoai_1']) ? trim($_POST['so_dien_thoai_1']) : '';
+            $so_dien_thoai_2 = isset($_POST['so_dien_thoai_2']) ? trim($_POST['so_dien_thoai_2']) : '';
+            
+            $dc_ll_so_nha = isset($_POST['dc_ll_so_nha']) ? trim($_POST['dc_ll_so_nha']) : '';
+            $dc_ll_ap = isset($_POST['dc_ll_ap']) ? trim($_POST['dc_ll_ap']) : '';
+            $dc_ll_xa = isset($_POST['dc_ll_xa']) ? trim($_POST['dc_ll_xa']) : '';
+            $dc_ll_tinh = isset($_POST['dc_ll_tinh']) ? trim($_POST['dc_ll_tinh']) : '';
+            
+            $dc_tt_so_nha = isset($_POST['dc_tt_so_nha']) ? trim($_POST['dc_tt_so_nha']) : '';
+            $dc_tt_ap = isset($_POST['dc_tt_ap']) ? trim($_POST['dc_tt_ap']) : '';
+            $dc_tt_xa = isset($_POST['dc_tt_xa']) ? trim($_POST['dc_tt_xa']) : '';
+            $dc_tt_tinh = isset($_POST['dc_tt_tinh']) ? trim($_POST['dc_tt_tinh']) : '';
 
-            $id_sinh_vien = $_POST['id_sinh_vien'];
-            $ma_sinh_vien = $_POST['ma_sinh_vien'];
-            $ten_sinh_vien = $_POST['ten_sinh_vien'];
-            $gioi_tinh = $_POST['gioi_tinh'];
-            $ngay_sinh = $_POST['ngay_sinh'];
-            $email = $_POST['email'];
-            $so_dien_thoai_1 = $_POST['so_dien_thoai_1'];
-            $so_dien_thoai_2 = $_POST['so_dien_thoai_2'];
-            // quân sửa: Ghép 4 trường địa chỉ lại thành 1 chuỗi
-            $dia_chi_lien_lac = $_POST['dc_ll_so_nha'] . ', ' . $_POST['dc_ll_ap'] . ', ' . $_POST['dc_ll_xa'] . ', ' . $_POST['dc_ll_tinh'];
-            $dia_chi_thuong_tru = $_POST['dc_tt_so_nha'] . ', ' . $_POST['dc_tt_ap'] . ', ' . $_POST['dc_tt_xa'] . ', ' . $_POST['dc_tt_tinh'];
-            $chuc_vu = $_POST['chuc_vu'];
-            $id_lop_hoc = $_POST['id_lop_hoc'];
+            $dia_chi_lien_lac = $dc_ll_so_nha . ', ' . $dc_ll_ap . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
+            $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
+            $chuc_vu = isset($_POST['chuc_vu']) ? $_POST['chuc_vu'] : '';
+            $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
 
-            $status = $sinhvien->sinhvien__Update($id_sinh_vien, $ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
-            if ($status != 0) {
-                header('location: ../index.php?page=quan-ly-sinh-vien&status=success');
-            } else {
-                header('location: ../index.php?page=quan-ly-sinh-vien&status=failed');
+            if ($sinhvien->sinhvien__Exists_Ma_Sinh_Vien($ma_sinh_vien, $id_sinh_vien)) {
+                header('location: ../index.php?page=quan-ly-sinh-vien&status=duplicate-ma-sinh-vien');
+                exit();
+            }
+            if ($sinhvien->sinhvien__Exists_Email($email, $id_sinh_vien)) {
+                header('location: ../index.php?page=quan-ly-sinh-vien&status=duplicate-email-sinh-vien');
+                exit();
             }
 
-            break;
+            $sinhvien->sinhvien__Update($id_sinh_vien, $ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
+            header('location: ../index.php?page=quan-ly-sinh-vien&status=success');
+            exit();
 
         case 'delete':
-
-            $id_sinh_vien = $_GET['id_sinh_vien'];
-
+            $id_sinh_vien = isset($_GET['id_sinh_vien']) ? $_GET['id_sinh_vien'] : '';
             $status = $sinhvien->sinhvien__Delete($id_sinh_vien);
             if ($status != 0) {
                 header('location: ../index.php?page=quan-ly-sinh-vien&status=success');
             } else {
                 header('location: ../index.php?page=quan-ly-sinh-vien&status=failed');
             }
-
-            break;
+            exit();
 
         case "import":
-            $status = 0;
+            if (!isset($_FILES["file"]["tmp_name"]) || empty($_FILES["file"]["tmp_name"])) {
+                header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                exit();
+            }
+            
             $file = $_FILES["file"]["tmp_name"];
-            $id_lop_hoc = $_POST['id_lop_hoc'];
-            if (isset($file)) {
+            $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
+            $success_count = 0;
+
+            try {
                 $objReader = PHPExcel_IOFactory::createReaderForFile($file);
-                // $objReader->setLoadSheetsOnly();
                 $objExcel = $objReader->load($file);
                 $sheetData = $objExcel->getActiveSheet()->toArray(null, true, true, true);
                 $highestRow = $objExcel->setActiveSheetIndex()->getHighestRow();
 
                 for ($row = 2; $row <= $highestRow; $row++) {
-                    $ma_sinh_vien = $sheetData[$row]['B'];
-                    $ten_sinh_vien = $sheetData[$row]['C'];
-                    $gioi_tinh = $sheetData[$row]['D'];
-                    $ngay_sinh = $sheetData[$row]['E'];
-                    $email = $sheetData[$row]['F'];
-                    $so_dien_thoai_1 = $sheetData[$row]['G'];
-                    $so_dien_thoai_2 = $sheetData[$row]['H'];
-                    $dia_chi_lien_lac = $sheetData[$row]['I'];
-                    $dia_chi_thuong_tru = $sheetData[$row]['J'];
-                    $chuc_vu = $sheetData[$row]['K'];
+                    $ma_sinh_vien = isset($sheetData[$row]['B']) ? trim($sheetData[$row]['B']) : '';
+                    $ten_sinh_vien = isset($sheetData[$row]['C']) ? trim($sheetData[$row]['C']) : '';
+                    $gioi_tinh = isset($sheetData[$row]['D']) ? trim($sheetData[$row]['D']) : '';
+                    $ngay_sinh = isset($sheetData[$row]['E']) ? trim($sheetData[$row]['E']) : '';
+                    $email = isset($sheetData[$row]['F']) ? trim($sheetData[$row]['F']) : '';
+                    $so_dien_thoai_1 = isset($sheetData[$row]['G']) ? trim($sheetData[$row]['G']) : '';
+                    $so_dien_thoai_2 = isset($sheetData[$row]['H']) ? trim($sheetData[$row]['H']) : '';
+                    $dia_chi_lien_lac = isset($sheetData[$row]['I']) ? trim($sheetData[$row]['I']) : '';
+                    $dia_chi_thuong_tru = isset($sheetData[$row]['J']) ? trim($sheetData[$row]['J']) : '';
+                    $chuc_vu = isset($sheetData[$row]['K']) ? trim($sheetData[$row]['K']) : '';
 
-                    $status += $sinhvien->sinhvien__Add($ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
+                    if (empty($ma_sinh_vien)) {
+                        continue;
+                    }
+
+                    // Skip if duplicate code or email
+                    if ($sinhvien->sinhvien__Exists_Ma_Sinh_Vien($ma_sinh_vien) || (!empty($email) && $sinhvien->sinhvien__Exists_Email($email))) {
+                        continue;
+                    }
+
+                    $add_status = $sinhvien->sinhvien__Add($ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
+                    if ($add_status > 0) {
+                        $success_count++;
+                    }
                 }
+            } catch (Exception $e) {
+                header("location:../index.php?page=quan-ly-sinh-vien&status=invalid-import-file");
+                exit();
             }
 
-            if ($status == 0) {
-                // quân sửa: Đổi fail thành failed để khớp với index.php
+            if ($success_count == 0) {
                 header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
             } else {
                 header("location:../index.php?page=quan-ly-sinh-vien&status=success");
             }
-            break;
-
+            exit();
 
         case 'export':
-            $status = 0;
-            $objPHPExcel = new PHPExcel();
-            $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'STT');
-            $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Mã số sinh viên');
-            $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Họ tên sinh viên');
-            $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Giới tính (Nam: 1, nữ: 0)');
-            $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Ngày sinh (YYYY-MM-DD)');
-            $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Email');
-            $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'Số điện thoại 1');
-            $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'Số điện thoại 2');
-            // quân sửa: Đổi tiêu đề cột địa chỉ để hướng dẫn nhập có dấu phẩy
-            $objPHPExcel->getActiveSheet()->SetCellValue('I1', 'Địa chỉ liên lạc (Số nhà, Ấp, Xã, Tỉnh phân cách bằng dấu phẩy)');
-            $objPHPExcel->getActiveSheet()->SetCellValue('J1', 'Địa chỉ thường trú (Số nhà, Ấp, Xã, Tỉnh phân cách bằng dấu phẩy)');
-            $objPHPExcel->getActiveSheet()->SetCellValue('K1', 'Chức vụ (Sinh viên: 0, Lớp trưởng: 1, Bí thư chi đoàn: 2)');
+            try {
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'STT');
+                $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Mã số sinh viên');
+                $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Họ tên sinh viên');
+                $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Giới tính (Nam: 1, nữ: 0)');
+                $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Ngày sinh (YYYY-MM-DD)');
+                $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Email');
+                $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'Số điện thoại 1');
+                $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'Số điện thoại 2');
+                $objPHPExcel->getActiveSheet()->SetCellValue('I1', 'Địa chỉ liên lạc (Số nhà, Ấp, Xã, Tỉnh phân cách bằng dấu phẩy)');
+                $objPHPExcel->getActiveSheet()->SetCellValue('J1', 'Địa chỉ thường trú (Số nhà, Ấp, Xã, Tỉnh phân cách bằng dấu phẩy)');
+                $objPHPExcel->getActiveSheet()->SetCellValue('K1', 'Chức vụ (Sinh viên: 0, Lớp trưởng: 1, Bí thư chi đoàn: 2)');
 
-            $objPHPExcel->getActiveSheet()->SetCellValue('A2', '1');
-            $objPHPExcel->getActiveSheet()->SetCellValue('B2', '187060001');
-            $objPHPExcel->getActiveSheet()->SetCellValue('C2', 'Nguyễn Ngọc Thiên Xuân');
-            $objPHPExcel->getActiveSheet()->SetCellValue('D2', '1');
-            $objPHPExcel->getActiveSheet()->SetCellValue('E2', '2001-06-05');
-            $objPHPExcel->getActiveSheet()->SetCellValue('F2', 'sv@tdu.edu.com');
-            $objPHPExcel->getActiveSheet()->SetCellValue('G2', '0123456789');
-            $objPHPExcel->getActiveSheet()->SetCellValue('H2', '0123456789');
-            // quân sửa: Đổi dữ liệu mẫu cho khớp 4 cấp
-            $objPHPExcel->getActiveSheet()->SetCellValue('I2', 'Số 1, Phường An Bình, Quận Ninh Kiều, Cần Thơ');
-            $objPHPExcel->getActiveSheet()->SetCellValue('J2', 'Số 1, Phường An Bình, Quận Ninh Kiều, Cần Thơ');
-            $objPHPExcel->getActiveSheet()->SetCellValue('K2', '0');
+                $objPHPExcel->getActiveSheet()->SetCellValue('A2', '1');
+                $objPHPExcel->getActiveSheet()->SetCellValue('B2', '187060001');
+                $objPHPExcel->getActiveSheet()->SetCellValue('C2', 'Nguyễn Ngọc Thiên Xuân');
+                $objPHPExcel->getActiveSheet()->SetCellValue('D2', '1');
+                $objPHPExcel->getActiveSheet()->SetCellValue('E2', '2001-06-05');
+                $objPHPExcel->getActiveSheet()->SetCellValue('F2', 'sv@tdu.edu.com');
+                $objPHPExcel->getActiveSheet()->SetCellValue('G2', '0123456789');
+                $objPHPExcel->getActiveSheet()->SetCellValue('H2', '0123456789');
+                $objPHPExcel->getActiveSheet()->SetCellValue('I2', 'Số 1, Phường An Bình, Quận Ninh Kiều, Cần Thơ');
+                $objPHPExcel->getActiveSheet()->SetCellValue('J2', 'Số 1, Phường An Bình, Quận Ninh Kiều, Cần Thơ');
+                $objPHPExcel->getActiveSheet()->SetCellValue('K2', '0');
 
-            // lưu file 
-            $file = 'export.xlsx';
-            $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
-            $objWriter->save($file);
+                // lưu file 
+                $file = 'export.xlsx';
+                $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+                $objWriter->save($file);
 
-            // download
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment; filename=' . basename($file));
-            header('Content-Transfer-Encoding: binary');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($file));
-            ob_clean();
-            flush();
-            readfile($file);
-            // xóa file tạm
-            $status .= unlink($file);
-
-            if ($status == 0) {
-                // quân sửa: Đổi fail thành failed để khớp với index.php
+                if (file_exists($file)) {
+                    // download
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                    header('Content-Disposition: attachment; filename=' . basename($file));
+                    header('Content-Transfer-Encoding: binary');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($file));
+                    ob_clean();
+                    flush();
+                    readfile($file);
+                    // xóa file tạm
+                    unlink($file);
+                    exit();
+                } else {
+                    header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                    exit();
+                }
+            } catch (Exception $e) {
                 header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
-            } else {
-                header("location:../index.php?page=quan-ly-sinh-vien&status=success");
+                exit();
             }
-
-            break;
     }
 }

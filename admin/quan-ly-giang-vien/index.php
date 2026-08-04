@@ -76,17 +76,17 @@
                                  </div>
                                  <div class="form-group">
                                      <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
-                                     <input type="so_dien_thoai_1" id="so_dien_thoai_1" name="so_dien_thoai_1"
-                                         pattern="[0][0-9]{8-9}" class=" form-control" required
-                                         title="Số điện thoại có 10 hoặc 11 số" placeholder="Nhập số điện thoại 1"
-                                         minlength="10" max="11">
+                                     <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1"
+                                         pattern="0[0-9]{9,10}" class="form-control" required
+                                         title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1"
+                                         minlength="10" maxlength="11">
                                  </div>
                                  <div class="form-group">
                                      <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
-                                     <input type="so_dien_thoai_2" id="so_dien_thoai_2" name="so_dien_thoai_2"
-                                         pattern="[0][0-9]{8-9}" class=" form-control" required
-                                         title="Số điện thoại có 10 hoặc 11 số" placeholder="Nhập số điện thoại 2"
-                                         minlength="10" max="11">
+                                     <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2"
+                                         pattern="0[0-9]{9,10}" class="form-control" required
+                                         title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2"
+                                         minlength="10" maxlength="11">
                                  </div>
                              </div>
 
@@ -244,5 +244,10 @@ function update_obj(id_giang_vien) {
         $(".card.card-success").addClass('collapsed-card');
         $('#div_update').html(data);
     });
+}
+
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
 }
  </script>

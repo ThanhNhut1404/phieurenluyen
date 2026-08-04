@@ -125,11 +125,11 @@
                                  </div>
                                  <div class="form-group">
                                      <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
-                                     <input type="so_dien_thoai_1" id="so_dien_thoai_1" name="so_dien_thoai_1" pattern="[0][0-9]{8-9}" class=" form-control" required title="Số điện thoại có 10 hoặc 11 số" placeholder="Nhập số điện thoại 1" minlength="10" max="11">
+                                     <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1" pattern="0[0-9]{9,10}" class="form-control" required title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1" minlength="10" maxlength="11">
                                  </div>
                                  <div class="form-group">
                                      <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
-                                     <input type="so_dien_thoai_2" id="so_dien_thoai_2" name="so_dien_thoai_2" pattern="[0][0-9]{8-9}" class=" form-control" required title="Số điện thoại có 10 hoặc 11 số" placeholder="Nhập số điện thoại 2" minlength="10" max="11">
+                                     <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2" pattern="0[0-9]{9,10}" class="form-control" required title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2" minlength="10" maxlength="11">
                                  </div>
                              </div>
 
@@ -313,32 +313,5 @@
              $(".card.card-success").addClass('collapsed-card');
              $('#div_update').html(data);
          });
-     }
-
-     function import_sv() {
-         Swal.fire({
-             title: 'Submit your Github username',
-             html: 'Mẫu import, ' +
-                 '<a href="quan-ly-sinh-vien/action.php?req=export">Tải mẫu</a>',
-             input: 'file',
-             inputAttributes: {
-                 autocapitalize: 'off'
-             },
-             showCancelButton: true,
-             confirmButtonText: 'Look up',
-             showLoaderOnConfirm: true,
-             preConfirm: (file) => {
-                 return $.post('quan-ly-sinh-vien/action.php?req=import', {
-                     'file': file,
-                 }, function(data) {
-                     alert(data);
-                 });
-             },
-             allowOutsideClick: () => !Swal.isLoading()
-         }).then((result) => {
-             if (result.isConfirmed) {
-                 alert(result);
-             }
-         })
      }
  </script>

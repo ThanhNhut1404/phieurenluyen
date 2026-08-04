@@ -170,4 +170,16 @@ class taikhoan extends Database
         $obj->execute(array($id_lop_hoc));
         return $obj->fetchAll();
     }
+
+    public function taikhoan__Exists_Email($email, $exclude_id = null)
+    {
+        if ($exclude_id !== null) {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM taikhoan WHERE email = ? AND id_tai_khoan != ?");
+            $obj->execute(array($email, $exclude_id));
+        } else {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM taikhoan WHERE email = ?");
+            $obj->execute(array($email));
+        }
+        return $obj->fetchColumn() > 0;
+    }
 }

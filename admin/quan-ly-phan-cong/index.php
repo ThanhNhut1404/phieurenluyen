@@ -98,14 +98,24 @@
                              <th>Thao tác</th>
                          </tr>
                      </thead>
-                     <tbody>
-                         <?php $num = 0;?>
-                         <?php foreach($phancong__Get_All as $item):?>
-                         <tr>
-                             <td><?=++$num?></td>
-                             <td><?=$giangvien->giangvien__Get_By_Id($item->id_giang_vien)->ten_giang_vien?></td>
-                             <td><?=$lophoc->lophoc__Get_By_Id($item->id_lop_hoc)->ten_lop_hoc?></td>
-                             <td><?=$item->ghi_chu?></td>
+                      <tbody>
+                          <?php 
+                          $arr_giang_vien = [];
+                          foreach ($giangvien__Get_All as $gv) {
+                              $arr_giang_vien[$gv->id_giang_vien] = $gv->ten_giang_vien;
+                          }
+                          $arr_lop_hoc = [];
+                          foreach ($lophoc__Get_All as $lh) {
+                              $arr_lop_hoc[$lh->id_lop_hoc] = $lh->ten_lop_hoc;
+                          }
+                          $num = 0;
+                          ?>
+                          <?php foreach($phancong__Get_All as $item):?>
+                          <tr>
+                              <td><?=++$num?></td>
+                              <td><?= isset($arr_giang_vien[$item->id_giang_vien]) ? htmlspecialchars($arr_giang_vien[$item->id_giang_vien]) : '' ?></td>
+                              <td><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
+                              <td><?= htmlspecialchars($item->ghi_chu ?? '') ?></td>
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_phan_cong?>)">
@@ -147,5 +157,10 @@ function update_obj(id_phan_cong) {
         $(".card.card-success").addClass('collapsed-card');
         $('#div_update').html(data);
     });
+}
+
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
 }
  </script>

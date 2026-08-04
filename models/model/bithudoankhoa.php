@@ -54,6 +54,11 @@ class bithudoankhoa extends Database {
     
 
     public function bithudoankhoa__Delete($id_bi_thu) {
+        // 1. Delete associated user account (id_phan_nhom = 4 is Faculty Union Secretary)
+        $stmt_tk = $this->connect->prepare("DELETE FROM taikhoan WHERE id_nguoi_dung = ? AND id_phan_nhom = 4");
+        $stmt_tk->execute(array($id_bi_thu));
+
+        // 2. Delete bithudoankhoa record
         $obj = $this->connect->prepare("DELETE FROM bithudoankhoa WHERE id_bi_thu = ?");
         $obj->execute(array($id_bi_thu));
         return $obj->rowCount();
@@ -89,6 +94,17 @@ class bithudoankhoa extends Database {
             $obj->execute(array($ten_bi_thu, $email, $id_bi_thu));
         }
         return $obj->rowCount();
+    }
+
+    public function bithudoankhoa__Exists_Email($email, $exclude_id = null) {
+        if ($exclude_id !== null) {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM bithudoankhoa WHERE email = ? AND id_bi_thu != ?");
+            $obj->execute(array($email, $exclude_id));
+        } else {
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM bithudoankhoa WHERE email = ?");
+            $obj->execute(array($email));
+        }
+        return $obj->fetchColumn() > 0;
     }
 }
 ?>

@@ -72,22 +72,22 @@
                                          placeholder="Nhập email">
                                  </div>
                              </div>
-                             <div class="col-6">
-                                 <div class="form-group">
-                                     <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
-                                     <input type="so_dien_thoai_1" id="so_dien_thoai_1" name="so_dien_thoai_1"
-                                         pattern="[0][0-9]{8-9}" class=" form-control" required
-                                         title="Số điện thoại có 10 hoặc 11 số" placeholder="Nhập số điện thoại 1"
-                                         minlength="10" max="11">
-                                 </div>
-                                 <div class="form-group">
-                                     <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
-                                     <input type="so_dien_thoai_2" id="so_dien_thoai_2" name="so_dien_thoai_2"
-                                         pattern="[0][0-9]{8-9}" class=" form-control" required
-                                         title="Số điện thoại có 10 hoặc 11 số" placeholder="Nhập số điện thoại 2"
-                                         minlength="10" max="11">
-                                 </div>
-                             </div>
+                              <div class="col-6">
+                                  <div class="form-group">
+                                      <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
+                                      <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1"
+                                          pattern="0[0-9]{9,10}" class="form-control" required
+                                          title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1"
+                                          minlength="10" maxlength="11">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
+                                      <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2"
+                                          pattern="0[0-9]{9,10}" class="form-control" required
+                                          title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2"
+                                          minlength="10" maxlength="11">
+                                  </div>
+                              </div>
 
                              <div class="col-6">
                                  <!-- quân sửa: Chia nhỏ phần nhập địa chỉ thành 4 ô (Thêm mới) -->
@@ -189,21 +189,27 @@
                              <th>Thao tác</th>
                          </tr>
                      </thead>
-                     <tbody>
-                         <?php $num = 0; ?>
-                         <?php foreach ($bithudoankhoa__Get_All as $item) : ?>
-                         <tr>
-                             <td><?= ++$num ?></td>
-                             <!-- quân sửa: Viết hoa chữ cái đầu của Tên riêng khi hiển thị ra danh sách -->
-                             <td><?= htmlspecialchars(mb_convert_case($item->ten_bi_thu ?? '', MB_CASE_TITLE, "UTF-8")) ?></td>
-                             <td><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
-                             <td><?= $item->ngay_sinh ?></td>
-                             <td><?= $item->so_dien_thoai_1 ?></td>
-                             <!-- quân sửa: Rút gọn hiển thị địa chỉ để không làm mất cột thao tác -->
-                             <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>">
-                                 <?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>
-                             </td>
-                             <td><?= $khoa->khoa__Get_By_Id($item->id_khoa)->ten_khoa ?></td>
+                      <tbody>
+                          <?php 
+                          $arr_khoa = [];
+                          foreach ($khoa__Get_All as $kh) {
+                              $arr_khoa[$kh->id_khoa] = $kh->ten_khoa;
+                          }
+                          $num = 0; 
+                          ?>
+                          <?php foreach ($bithudoankhoa__Get_All as $item) : ?>
+                          <tr>
+                              <td><?= ++$num ?></td>
+                              <!-- quân sửa: Viết hoa chữ cái đầu của Tên riêng khi hiển thị ra danh sách -->
+                              <td><?= htmlspecialchars(mb_convert_case($item->ten_bi_thu ?? '', MB_CASE_TITLE, "UTF-8")) ?></td>
+                              <td><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
+                              <td><?= $item->ngay_sinh ?></td>
+                              <td><?= $item->so_dien_thoai_1 ?></td>
+                              <!-- quân sửa: Rút gọn hiển thị địa chỉ để không làm mất cột thao tác -->
+                              <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>">
+                                  <?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>
+                              </td>
+                              <td><?= isset($arr_khoa[$item->id_khoa]) ? htmlspecialchars($arr_khoa[$item->id_khoa]) : '' ?></td>
 
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
@@ -247,5 +253,10 @@ function update_obj(id_bi_thu) {
         $(".card.card-success").addClass('collapsed-card');
         $('#div_update').html(data);
     });
+}
+
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
 }
  </script>

@@ -26,7 +26,7 @@ $taikhoan__Get_By_Lop_Hoc = $taikhoan->taikhoan__Get_By_Lop_Hoc($id_lop);
 
 try {
     //Server settings
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+    $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Disable verbose debug output
     $mail->isSMTP();                                            //Send using SMTP
     $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
@@ -38,6 +38,8 @@ try {
 
 
     foreach ($taikhoan__Get_By_Lop_Hoc as $item) {
+        $mail->clearAddresses();
+        $mail->clearCCs();
         $mail->setFrom('Lchsvhaugiang@tdu.edu.vn', 'TDU - PRL');
         $mail->addCC('Lchsvhaugiang@tdu.edu.vn');
         $mail->addAddress($item->email, $item->email);     //Add a recipient
