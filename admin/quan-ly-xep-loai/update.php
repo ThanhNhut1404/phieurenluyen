@@ -1,8 +1,13 @@
     <?php 
-        require '../../models/getModel.php';
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
+        // Nhựt sửa lỗi: chặn gọi trực tiếp form sửa khi chưa đăng nhập admin.
+        if (!isset($_SESSION['admin'])) {
+            http_response_code(403);
+            exit('Forbidden');
+        }
+        require '../../models/getModel.php';
         if (empty($_SESSION['csrf_token'])) {
             // Nhựt sửa lỗi: Tạo CSRF token cho form cập nhật Xếp loại.
             try {
@@ -76,6 +81,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                     <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
+                    <button type="button" class="btn btn-default float-right mr-2" onclick="cancel_update()">Hủy</button>
                 </div>
             </div>
             <!-- /.card -->

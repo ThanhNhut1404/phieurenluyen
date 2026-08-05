@@ -93,9 +93,10 @@
                             placeholder="Nhập Ghi chú"><?=dotchamdiem_update_escape($dotchamdiem__Get_By_Id->ghi_chu)?></textarea>
                     </div>
                     <!-- /.card-body -->
-                    <div class="card-footer">
-                        <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
-                    </div>
+                     <div class="card-footer">
+                         <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
+                         <button type="button" class="btn btn-default float-right mr-2" onclick="cancel_update()">Hủy</button>
+                     </div>
                 </div>
                 <!-- /.card -->
             </div>

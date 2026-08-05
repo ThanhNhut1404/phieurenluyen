@@ -126,12 +126,12 @@
                              <td><?=$item->ha_bac?></td>
                              <td><?=htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8')?></td>
                              <td>
-                                 <a href="#" type="button" class="btn  btn-warning m-2"
+                                 <a href="javascript:void(0)" class="btn btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_xep_loai?>)">
                                      <i class="fas fa-edit"></i>
                                  </a>
-                                <a href="#" type="button" class="btn  btn-danger m-2"
-                                    onclick="return confirm_sweet('quan-ly-xep-loai/action.php?req=delete&id_xep_loai=<?=$item->id_xep_loai?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
+                                 <a href="javascript:void(0)" class="btn btn-danger m-2"
+                                     onclick="confirm_sweet('quan-ly-xep-loai/action.php?req=delete&id_xep_loai=<?=$item->id_xep_loai?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
                                      <i class="fas fa-trash"></i>
                                  </a>
                              </td>
@@ -173,5 +173,10 @@ function update_obj(id_xep_loai) {
         $(".card.card-success").addClass('collapsed-card');
         $('#div_update').html(data);
     });
+}
+
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
 }
  </script>

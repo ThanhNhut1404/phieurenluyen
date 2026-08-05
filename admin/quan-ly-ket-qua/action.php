@@ -8,9 +8,9 @@
 
     require "../../models/getModel.php";
     $href = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "../index.php?page=quan-ly-ket-qua";
-    if(strlen(strpos($href, "&status")) > 0){
+    if (strpos($href, "&status") !== false) {
         $href = explode("&status", $href)[0];
-    } 
+    }
 
     function ketqua__Is_Positive_Integer($value) {
         // Nhựt sửa lỗi: Validate id_ket_qua trước khi hạ bậc để tránh truy cập sai bản ghi.

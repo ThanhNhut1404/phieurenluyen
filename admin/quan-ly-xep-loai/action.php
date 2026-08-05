@@ -1,6 +1,11 @@
 <?php
 
     session_start();
+    // Nhựt sửa lỗi: chặn endpoint thêm/sửa/xóa xếp loại khi chưa đăng nhập admin.
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
     require '../../models/getModel.php';
 
     // Nhá»±t sá»­a lá»—i: DÃ¹ng chung redirect cho cÃ¡c lá»—i validate/rÃ ng buá»™c cá»§a Quáº£n lÃ½ Xáº¿p loáº¡i.

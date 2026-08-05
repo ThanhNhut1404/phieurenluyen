@@ -125,10 +125,6 @@
                 if ($validate_hoc_ky != 'valid') {
                     dotchamdiem__Redirect($validate_hoc_ky);
                 }
-                // Nhựt sửa lỗi: Mỗi Học kỳ chỉ được phép có một Đợt chấm điểm.
-                if ($dotchamdiem->dotchamdiem__Exists_By_Hoc_Ky($id_hoc_ky)) {
-                    dotchamdiem__Redirect('duplicate-semester');
-                }
                 // Nhựt sửa lỗi: Kiểm tra tất cả lớp áp dụng phải tồn tại và bỏ lớp trùng.
                 $id_lop_hoc = dotchamdiem__Validate_Lop_Hoc($id_lop_hoc, $lophoc);
                 if ($id_lop_hoc === false) {
@@ -215,10 +211,6 @@
                 $validate_hoc_ky = dotchamdiem__Validate_Hoc_Ky_Nam_Hoc($id_nam_hoc, $id_hoc_ky, $namhoc, $hocky);
                 if ($validate_hoc_ky != 'valid') {
                     dotchamdiem__Redirect($validate_hoc_ky);
-                }
-                // Nhựt sửa lỗi: Khi đổi Học kỳ thì không được trùng với Đợt chấm điểm khác.
-                if ($dotchamdiem->dotchamdiem__Exists_By_Hoc_Ky($id_hoc_ky, $id_dot)) {
-                    dotchamdiem__Redirect('duplicate-semester');
                 }
                 // Nhựt sửa lỗi: Validate thời gian Update ở server.
                 if (!dotchamdiem__Validate_Date($thoi_gian_bat_dau, $thoi_gian_ket_thuc)) {

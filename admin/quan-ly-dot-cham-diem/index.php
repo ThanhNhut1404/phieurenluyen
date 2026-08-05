@@ -203,11 +203,26 @@ button.btn.removeall.btn-outline-secondary:before {
                              <th>Thao tác</th>
                          </tr>
                      </thead>
-                     <tbody>
-                         <?php $num = 0;?>
-                         <?php foreach($dotchamdiem__Get_All as $item):?>
+                      <tbody>
+                          <?php 
+                          $num = 0;
+                          $arr_lop_hoc = [];
+                          foreach ($lophoc__Get_All as $lh) {
+                              $arr_lop_hoc[$lh->id_lop_hoc] = $lh->ten_lop_hoc;
+                          }
+                          $arr_mau_phieu = [];
+                          foreach ($mauphieu__Get_All as $mp) {
+                              $arr_mau_phieu[$mp->id_mau_phieu] = $mp->ten_mau_phieu;
+                          }
+                          $lopapdung__Get_All = $lopapdung->lopapdung__Get_All();
+                          $arr_lop_ap_dung = [];
+                          foreach ($lopapdung__Get_All as $lad) {
+                              $arr_lop_ap_dung[$lad->id_dot][] = $lad;
+                          }
+                          ?>
+                          <?php foreach($dotchamdiem__Get_All as $item):?>
                          <?php // Nhựt sửa lỗi: Lấy lớp áp dụng một lần để tránh lỗi truy cập mảng rỗng khi hiển thị. ?>
-                         <?php $lopapdung__Get_By_Id_Dot = $lopapdung->lopapdung__Get_By_Id_Dot($item->id_dot);?>
+                         <?php $lopapdung__Get_By_Id_Dot = isset($arr_lop_ap_dung[$item->id_dot]) ? $arr_lop_ap_dung[$item->id_dot] : [];?>
                          <tr>
                              <td><?=++$num?></td>
                              <?php // Nhựt sửa lỗi: Escape dữ liệu tên đợt lấy từ database để tránh XSS. ?>
@@ -220,10 +235,16 @@ button.btn.removeall.btn-outline-secondary:before {
                              <?php // Nhựt sửa lỗi: Hiển thị trạng thái động theo ngày hiện tại. ?>
                              <td><?=dotchamdiem_escape(dotchamdiem_trang_thai_hien_thi($item->thoi_gian_bat_dau, $item->thoi_gian_ket_thuc))?></td>
                              <?php // Nhựt sửa lỗi: Kiểm tra lớp còn tồn tại trước khi hiển thị để tránh lỗi object rỗng. ?>
-                             <td><?php foreach($lopapdung__Get_By_Id_Dot as $item_2){$lop_hoc_item = $lophoc->lophoc__Get_By_Id($item_2->id_lop_hoc); if ($lop_hoc_item) {echo dotchamdiem_escape($lop_hoc_item->ten_lop_hoc) . "<br/> ";}}?>
+                             <td><?php foreach($lopapdung__Get_By_Id_Dot as $item_2){
+                                 $ten_lop = isset($arr_lop_hoc[$item_2->id_lop_hoc]) ? $arr_lop_hoc[$item_2->id_lop_hoc] : '';
+                                 if ($ten_lop != '') {echo dotchamdiem_escape($ten_lop) . "<br/> ";}
+                             }?>
                              </td>
                              <?php // Nhựt sửa lỗi: Kiểm tra lopapdung/mẫu phiếu tồn tại trước khi hiển thị để tránh lỗi mảng rỗng. ?>
-                             <td><?php if (count($lopapdung__Get_By_Id_Dot) > 0) {$mau_phieu_item = $mauphieu->mauphieu__Get_By_Id($lopapdung__Get_By_Id_Dot[0]->id_mau_phieu); echo $mau_phieu_item ? dotchamdiem_escape($mau_phieu_item->ten_mau_phieu) : "";}?>
+                             <td><?php if (count($lopapdung__Get_By_Id_Dot) > 0) {
+                                 $ten_mau = isset($arr_mau_phieu[$lopapdung__Get_By_Id_Dot[0]->id_mau_phieu]) ? $arr_mau_phieu[$lopapdung__Get_By_Id_Dot[0]->id_mau_phieu] : '';
+                                 echo dotchamdiem_escape($ten_mau);
+                             }?>
                              </td>
                              <?php // Nhựt sửa lỗi: Escape ghi chú lấy từ database để tránh XSS. ?>
                              <td><?=dotchamdiem_escape($item->ghi_chu)?></td>
@@ -317,5 +338,10 @@ function update_obj(id_dot) {
         $(".card.card-success").addClass('collapsed-card');
         $('#div_update').html(data);
     });
+}
+
+function cancel_update() {
+    $("#div_update").html('');
+    $(".card.card-success").removeClass('collapsed-card');
 }
  </script>

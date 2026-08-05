@@ -43,7 +43,13 @@
         $phieuchamdiem__Get_By_Id_Lop = $phieuchamdiem->phieuchamdiem__Get_By_Id_Lop_Chua_Cham($id_lop_hoc, $id_dot);
     }
    
-  
+    $arr_sinh_vien = [];
+    if ($id_lop_hoc > 0) {
+        $sinhvien__Get_By_Class = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc($id_lop_hoc);
+        foreach ($sinhvien__Get_By_Class as $sv) {
+            $arr_sinh_vien[$sv->id_sinh_vien] = $sv;
+        }
+    }
  ?>
 
  <!-- Content Wrapper. Contains page content -->
@@ -138,18 +144,18 @@
                      <a class="btn btn-outline-primary"
                          href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=xem-tat-ca">
                          Tất cả
-                         (<?=count($sinhvien__Get_By_Id_Lop_Hoc_All)?>)</a>
+                         (<?=count($sinhvien__Get_By_Id_Lop_Hoc_All)?>)
                      </a>
                      <a class="btn btn-outline-primary"
                          href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=da-cham-diem">Cố
                          vấn đã
-                         chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Da_Cham)?>)</a>
+                         chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Da_Cham)?>)
                      </a>
                      <a class="btn btn-outline-primary"
                          href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=chua-cham-diem">Cố
                          vấn chưa
-                         chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham)?>)</a>
-                     </button>
+                         chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham)?>)
+                     </a>
                  </div>
                  <?php endif; ?>
              </div>
@@ -168,15 +174,20 @@
                          </tr>
                      </thead>
                      <tbody>
-                         <?php $num = 0;?>
-                         <?php foreach($phieuchamdiem__Get_By_Id_Lop as $item):?>
-                         <tr
-                             onclick="return confirm_sweet_chi_tiet('../user/sinh-vien/chi-tiet.php?id_lop_hoc=<?=$item->id_lop_hoc?>&id_dot=<?=$item->id_dot?>&id_sinh_vien=<?=$item->id_sinh_vien?>')">
-                             <td><?=++$num?></td>
-                             <td><?=$sinhvien->sinhvien__Get_By_Id($item->id_sinh_vien)->ma_sinh_vien?>
-                             <td><?=$sinhvien->sinhvien__Get_By_Id($item->id_sinh_vien)->ten_sinh_vien?>
-                             <td><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_sv))?>
-                             </td>
+                          <?php $num = 0;?>
+                          <?php foreach($phieuchamdiem__Get_By_Id_Lop as $item):?>
+                          <tr
+                              onclick="return confirm_sweet_chi_tiet('../user/sinh-vien/chi-tiet.php?id_lop_hoc=<?=$item->id_lop_hoc?>&id_dot=<?=$item->id_dot?>&id_sinh_vien=<?=$item->id_sinh_vien?>')">
+                              <td><?=++$num?></td>
+                              <?php
+                                 $sv = isset($arr_sinh_vien[$item->id_sinh_vien]) ? $arr_sinh_vien[$item->id_sinh_vien] : null;
+                                 $ma_sv = $sv ? $sv->ma_sinh_vien : '';
+                                 $ten_sv = $sv ? $sv->ten_sinh_vien : '';
+                              ?>
+                              <td><?=htmlspecialchars($ma_sv)?></td>
+                              <td><?=htmlspecialchars($ten_sv)?></td>
+                              <td><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_sv))?>
+                              </td>
                              <td><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_lt_bt))?>
                              </td>
                              <td><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_btdk))?>

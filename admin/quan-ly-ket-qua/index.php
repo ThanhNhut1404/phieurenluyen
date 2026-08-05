@@ -123,7 +123,6 @@
                      <?php endif; ?>
                  </div>
              </div>
-         </div>
          <!-- /.card-header -->
          <div class="card-body">
              <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
@@ -162,13 +161,13 @@
                             
                             ?>
                          <td><?=++$num?></td>
-                         <td><?=$item->ma_sinh_vien?></td>
-                         <td><?=$item->ten_sinh_vien?></td>
-                         <td><?=$item->ten_lop_hoc?></td>
-                         <td><?=$item->ket_qua?></td>
-                         <td><?=$item->xep_loai?></td>
-                         <td><?=$item->ngay_xep_loai?></td>
-                         <td><?=$item->ghi_chu?></td>
+                         <td><?=htmlspecialchars($item->ma_sinh_vien ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td><?=htmlspecialchars($item->ten_sinh_vien ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td><?=htmlspecialchars($item->ten_lop_hoc ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td><?=htmlspecialchars($item->ket_qua ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td><?=htmlspecialchars($item->xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td><?=htmlspecialchars($item->ngay_xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td><?=htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8')?></td>
 
                      </tr>
                      <?php endforeach?>
