@@ -30,3 +30,25 @@ label {
 .color-crimson{
     color: crimson;
 }
+
+/* Fix collapsed sidebar text wrapping under icon */
+.sidebar-collapse .nav-sidebar .nav-link p {
+    display: none !important;
+}
+.sidebar-collapse .main-sidebar:hover .nav-sidebar .nav-link p {
+    display: inline-block !important;
+}
+
+/* Reduce spacing between sidebar menu items */
+.nav-sidebar .nav-item .nav-link {
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+}
+.nav-sidebar .nav-item {
+    margin-bottom: 0px !important;
+}
+/* Reduce spacing between inner/submenu functions even more */
+.nav-sidebar .nav-treeview .nav-item .nav-link {
+    padding-top: 0.2rem !important;
+    padding-bottom: 0.2rem !important;
+}

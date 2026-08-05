@@ -199,7 +199,6 @@ window.addEventListener("load", function() {
 
     // }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
     $('#tablejs').DataTable({
-        dom: 'Bfrtip',
         buttons: [{
                 extend: 'excel',
                 exportOptions: {

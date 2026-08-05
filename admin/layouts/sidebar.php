@@ -14,7 +14,6 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
         $ten_phan_quyen = $phan_quyen_hien_tai->ten_phan_quyen;
     }
 }
-
 ?>
 
 <!-- sidebar -->
@@ -26,10 +25,10 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
         <span class="brand-text font-weight-light"><?= htmlspecialchars($ten_phan_quyen, ENT_QUOTES, 'UTF-8') ?></span>
     </a>
     <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="true">
             <li class="nav-item">
                 <a href="?page=thong-ke" class="nav-link">
-                    <i class="nav-icon fas fa-home"></i>
+                    <i class="nav-icon ri-home-6-line"></i>
                     <p>
                         Thống kê
                     </p>
@@ -37,99 +36,97 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-copy"></i>
+                    <i class="nav-icon ri-file-list-3-line"></i>
                     <p>
                         Quản lý phiếu
-                        <i class="right fas fa-angle-left"></i>
+                        <i class="right ri-arrow-left-s-line"></i>
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
                         <a href="?page=quan-ly-ket-qua" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-file-chart-line nav-icon"></i>
                             <p>Kết quả xếp loại</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a href="?page=quan-ly-phieu-cham-diem" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-file-edit-line nav-icon"></i>
                             <p>Phiếu chấm điểm</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a href="?page=quan-ly-xep-loai" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-award-line nav-icon"></i>
                             <p>Xếp loại</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a href="?page=quan-ly-dot-cham-diem" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-calendar-todo-line nav-icon"></i>
                             <p>Đợt chấm điểm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-mau-phieu" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-file-copy-2-line nav-icon"></i>
                             <p>Mẫu phiếu</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-dieu" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-article-line nav-icon"></i>
                             <p>Điều</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-khoan" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-sticky-note-line nav-icon"></i>
                             <p>Khoản</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-muc" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-list-check-line nav-icon"></i>
                             <p>Mục</p>
                         </a>
                     </li>
                 </ul>
             </li>
 
-
-
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-user"></i>
+                    <i class="nav-icon ri-team-line"></i>
                     <p>
                         Quản lý tài khoản
-                        <i class="right fas fa-angle-left"></i>
+                        <i class="right ri-arrow-left-s-line"></i>
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
                         <a href="?page=quan-ly-sinh-vien" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-graduation-cap-line nav-icon"></i>
                             <p>Sinh viên</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-bi-thu-doan-khoa" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-user-star-line nav-icon"></i>
                             <p>Bí thư đoàn khoa</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-giang-vien" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-user-settings-line nav-icon"></i>
                             <p>Giảng viên</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-phan-cong" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-contacts-line nav-icon"></i>
                             <p>Phân công cố vấn</p>
                         </a>
                     </li>
@@ -137,75 +134,74 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
                     <!-- 
                     <li class="nav-item">
                         <a href="?page=quan-ly-phan-nhom" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-checkbox-blank-circle-line nav-icon" style="font-size: 0.6rem;"></i>
                             <p>Phân nhóm</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-phan-quyen" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-checkbox-blank-circle-line nav-icon" style="font-size: 0.6rem;"></i>
                             <p>Phân quyền</p>
                         </a>
                     </li>
                     -->
                     <li class="nav-item">
                         <a href="?page=quan-ly-tai-khoan" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-key-line nav-icon"></i>
                             <p>Tài khoản</p>
                         </a>
                     </li>
                 </ul>
             </li>
 
-
             <li class="nav-item">
                 <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-table"></i>
+                    <i class="nav-icon ri-database-2-line"></i>
                     <p>
                         Quản lý chung
-                        <i class="right fas fa-angle-left"></i>
+                        <i class="right ri-arrow-left-s-line"></i>
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
                         <a href="?page=quan-ly-khoa" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-building-line nav-icon"></i>
                             <p>Khoa</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-nganh-hoc" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-git-branch-line nav-icon"></i>
                             <p>Ngành học</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-lop-hoc" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-group-line nav-icon"></i>
                             <p>Lớp học</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-khoa-hoc" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-book-open-line nav-icon"></i>
                             <p>Khóa học</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-trinh-do" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-medal-line nav-icon"></i>
                             <p>Trình độ</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-nam-hoc" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-calendar-line nav-icon"></i>
                             <p>Năm học</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="?page=quan-ly-hoc-ky" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
+                            <i class="ri-time-line nav-icon"></i>
                             <p>Học kỳ</p>
                         </a>
                     </li>
