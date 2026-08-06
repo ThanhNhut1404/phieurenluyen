@@ -52,3 +52,25 @@ label {
     padding-top: 0.2rem !important;
     padding-bottom: 0.2rem !important;
 }
+
+/* Custom sidebar width (230px instead of 250px) */
+@media (min-width: 992px) {
+    /* 1. When sidebar is expanded (not collapsed) */
+    body:not(.sidebar-collapse) .main-sidebar,
+    body:not(.sidebar-collapse) .main-sidebar::before,
+    body:not(.sidebar-collapse) .brand-link {
+        width: 230px !important;
+    }
+    body:not(.sidebar-collapse) .content-wrapper,
+    body:not(.sidebar-collapse) .main-header,
+    body:not(.sidebar-collapse) .main-footer {
+        margin-left: 230px !important;
+    }
+
+    /* 2. When sidebar is collapsed and hovered (expanded on hover) */
+    .sidebar-mini.sidebar-collapse .main-sidebar:hover,
+    .sidebar-mini.sidebar-collapse .main-sidebar:hover::before,
+    .sidebar-mini.sidebar-collapse .main-sidebar:hover .brand-link {
+        width: 230px !important;
+    }
+}

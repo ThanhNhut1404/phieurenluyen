@@ -25,7 +25,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="../assets/theme/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="../assets/vendor/dropzone/dropzone.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css?v=4">
+    <link rel="stylesheet" href="../assets/css/main.css?v=6">
 
 </head>
 

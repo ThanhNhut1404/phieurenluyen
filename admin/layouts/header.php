@@ -5,7 +5,7 @@
     <!-- Left navbar links -->
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="ri-menu-line"></i></a>
         </li>
     </ul>
 
@@ -13,20 +13,20 @@
     <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                <i class="far fa-user"></i>
-                <i class="fas fa-caret-down"></i>
+                <i class="ri-user-line"></i>
+                <i class="ri-arrow-down-s-line"></i>
             </a>
 
             <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
                 <a href="../auth/action.php?req=dang-xuat" class="dropdown-item">
-                    <i class="fas fa-sign-out-alt"></i>
+                    <i class="ri-logout-box-line"></i>
                     Đăng xuất
                 </a>
             </div>
         </li>
         <li class="nav-item">
             <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                <i class="fas fa-expand-arrows-alt"></i>
+                <i class="ri-fullscreen-line"></i>
             </a>
         </li>
 

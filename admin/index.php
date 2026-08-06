@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="../assets/theme/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../assets/theme/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css?v=4">
+    <link rel="stylesheet" href="../assets/css/main.css?v=6">
 
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
