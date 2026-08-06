@@ -22,7 +22,7 @@
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                         <li class="breadcrumb-item"><a href="#">Home</a></li>
+                         <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
                          <li class="breadcrumb-item active">Quản lý khoản</li>
                      </ol>
                  </div>
@@ -120,7 +120,7 @@
                  <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                      <thead>
                          <tr>
-                             <th>#</th>
+                             <th>STT</th>
                              <th>Điều</th>
                              <th>Điểm tối đa</th>
                              <!-- quân sửa: Bổ sung cột Số lượng mục vào bảng danh sách Khoản -->
@@ -145,12 +145,12 @@
                                  <?php if(!$khoan->khoan__Is_Used_In_Bocauhoi($item->id_khoan)): ?>
                                  <a href="#" type=" button" class="btn btn-warning"
                                      onclick="update_obj(<?=$item->id_khoan?>)">
-                                     <i class="fas fa-edit"></i>
+                                     <i class="ri-edit-2-line"></i>
                                  </a>
                                  <?php endif; ?>
                                  <a href="#" type="button" class="btn btn-danger"
                                      onclick="return confirm_sweet('quan-ly-khoan/action.php?req=delete&id_khoan=<?=$item->id_khoan?>')">
-                                     <i class="fas fa-trash"></i>
+                                     <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
                          </tr>

@@ -40,7 +40,7 @@
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                         <li class="breadcrumb-item"><a href="#">Home</a></li>
+                         <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
                          <li class="breadcrumb-item active">Quản lý kết quả xếp loại</li>
                      </ol>
                  </div>
@@ -128,7 +128,7 @@
              <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                  <thead>
                      <tr>
-                         <th>#</th>
+                         <th>STT</th>
                          <th>Mã sinh viên</th>
                          <th>Tên sinh viên</th>
                          <th>Tên lớp</th>

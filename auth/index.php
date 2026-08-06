@@ -14,9 +14,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHẤM ĐIỂM RÈN LUYỆN</title>
+    <title>Chấm Điểm Rèn Luyện</title>
     <link rel="icon" href="../assets/img/favicon.ico" type="image/gif" sizes="16x16">
-    <meta name="description" content="CHẤM ĐIỂM RÈN LUYỆN">
+    <meta name="description" content="Chấm Điểm Rèn Luyện">
     <!-- CSS Files -->
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"

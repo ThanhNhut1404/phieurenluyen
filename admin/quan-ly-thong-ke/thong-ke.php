@@ -53,12 +53,12 @@ foreach($ketquaxeploai__Get_By_Id_Dot as $item){
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Dashboard Page</h1>
+                    <h1>Thống kê tổng quan</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Dashboard Page</li>
+                        <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
+                        <li class="breadcrumb-item active">Thống kê tổng quan</li>
                     </ol>
                 </div>
             </div>
@@ -181,7 +181,7 @@ foreach($ketquaxeploai__Get_By_Id_Dot as $item){
 
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>STT</th>
                         <th>Mã sinh viên</th>
                         <th>Tên sinh viên</th>
                         <th>Tên lớp</th>

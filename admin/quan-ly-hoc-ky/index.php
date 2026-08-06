@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
                         <li class="breadcrumb-item active">Quản lý học kỳ</li>
                     </ol>
                 </div>
@@ -147,9 +147,9 @@
                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Năm học</th>
+                            <th>STT</th>
                             <th>Tên học kỳ</th>
+                            <th>Năm học</th>
                             <th>Ngày bắt đầu</th>
                             <th>Ngày kết thúc</th>
                             <th>Ghi chú</th>
@@ -161,17 +161,17 @@
                         <?php foreach($hocky__Get_All as $item):?>
                         <tr>
                             <td><?=++$num?></td>
-                            <td><?=hocky_escape($item->ten_nam_hoc ?? 'Năm học không tồn tại')?></td>
                             <td><?=hocky_escape($item->ten_hoc_ky)?></td>
+                            <td><?=hocky_escape($item->ten_nam_hoc ?? 'Năm học không tồn tại')?></td>
                             <td data-order="<?=hocky_escape($item->ngay_bat_dau)?>"><?=hocky_escape(hocky_format_date($item->ngay_bat_dau))?></td>
                             <td data-order="<?=hocky_escape($item->ngay_ket_thuc)?>"><?=hocky_escape(hocky_format_date($item->ngay_ket_thuc))?></td>
                             <td><?=hocky_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="javascript:void(0)" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_hoc_ky?>)">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="ri-edit-2-line"></i>
                                 </a>
                                 <a href="javascript:void(0)" class="btn btn-danger m-2" onclick="return delete_obj(<?=(int)$item->id_hoc_ky?>)">
-                                    <i class="fas fa-trash"></i>
+                                    <i class="ri-delete-bin-line"></i>
                                 </a>
                             </td>
                         </tr>
@@ -199,11 +199,11 @@ window.addEventListener("load", function() {
             "decimal": ",",
             "thousands": ".",
             "emptyTable": "Không có dữ liệu trong bảng",
-            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-            "infoEmpty": "Hiển thị 0 đến 0 của 0 dòng",
-            "infoFiltered": "(lọc từ _MAX_ dòng)",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ học kỳ",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 học kỳ",
+            "infoFiltered": "(lọc từ _MAX_ học kỳ)",
             "infoPostFix": "",
-            "lengthMenu": "Hiển thị _MENU_ dòng",
+            "lengthMenu": "Hiển thị _MENU_ học kỳ",
             "loadingRecords": "Đang tải...",
             "processing": "Đang xử lý...",
             "search": "Tìm kiếm:",

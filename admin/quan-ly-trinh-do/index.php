@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
                         <li class="breadcrumb-item active">Quản lý trình độ</li>
                     </ol>
                 </div>
@@ -106,7 +106,7 @@
                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>STT</th>
                             <th>Tên trình độ</th>
                             <th>Ghi chú</th>
                             <th>Thao tác</th>
@@ -122,11 +122,11 @@
                             <td>
                                 <a href="javascript:void(0)" class="btn  btn-warning m-2"
                                     onclick="return update_obj(<?=(int)$item->id_trinh_do?>)">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="ri-edit-2-line"></i>
                                   </a>
                                 <a href="javascript:void(0)" class="btn  btn-danger m-2"
                                     onclick="return delete_obj(<?=(int)$item->id_trinh_do?>)">
-                                    <i class="fas fa-trash"></i>
+                                    <i class="ri-delete-bin-line"></i>
                                 </a>
                             </td>
                         </tr>
@@ -156,11 +156,11 @@ window.addEventListener("load", function() {
             "decimal": ",",
             "thousands": ".",
             "emptyTable": "Không có dữ liệu trong bảng",
-            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-            "infoEmpty": "Hiển thị 0 đến 0 của 0 dòng",
-            "infoFiltered": "(lọc từ _MAX_ dòng)",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ trình độ",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 trình độ",
+            "infoFiltered": "(lọc từ _MAX_ trình độ)",
             "infoPostFix": "",
-            "lengthMenu": "Hiển thị _MENU_ dòng",
+            "lengthMenu": "Hiển thị _MENU_ trình độ",
             "loadingRecords": "Đang tải...",
             "processing": "Đang xử lý...",
             "search": "Tìm kiếm:",

@@ -20,7 +20,7 @@
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                         <li class="breadcrumb-item"><a href="#">Home</a></li>
+                         <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
                          <li class="breadcrumb-item active">Quản lý mục</li>
                      </ol>
                  </div>
@@ -179,7 +179,7 @@
                  <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                      <thead>
                          <tr>
-                             <th>#</th>
+                             <th>STT</th>
                              <th>Điều - Khoản</th>
                              <th>Tên mục</th>
                              <th>Điểm tối đa</th>
@@ -210,12 +210,12 @@
                                  <?php if(!$muc->muc__Is_Used_In_Bocauhoi($item->id_muc)): ?>
                                  <a href="#" type=" button" class="btn btn-warning"
                                      onclick="update_obj(<?=$item->id_muc?>)">
-                                     <i class="fas fa-edit"></i>
+                                     <i class="ri-edit-2-line"></i>
                                  </a>
                                  <?php endif; ?>
                                  <a href="#" type="button" class="btn btn-danger"
                                      onclick="return confirm_sweet('quan-ly-muc/action.php?req=delete&id_muc=<?=$item->id_muc?>')">
-                                     <i class="fas fa-trash"></i>
+                                     <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
                          </tr>

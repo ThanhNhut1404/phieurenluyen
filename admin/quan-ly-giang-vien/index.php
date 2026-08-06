@@ -16,7 +16,7 @@
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                         <li class="breadcrumb-item"><a href="#">Home</a></li>
+                         <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
                          <li class="breadcrumb-item active">Quản lý giảng viên</li>
                      </ol>
                  </div>
@@ -167,7 +167,7 @@
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                          <thead>
                          <tr>
-                             <th>#</th>
+                             <th>STT</th>
                              <th>Mã giảng viên</th>
                              <th>Tên giảng viên</th>
                              <th>Giới tính</th>
@@ -205,11 +205,11 @@
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_giang_vien?>)">
-                                     <i class="fas fa-edit"></i>
+                                     <i class="ri-edit-2-line"></i>
                                  </a>
                                  <a href="#" type="button" class="btn  btn-danger m-2"
                                      onclick="return confirm_sweet('quan-ly-giang-vien/action.php?req=delete&id_giang_vien=<?=$item->id_giang_vien?>')">
-                                     <i class="fas fa-trash"></i>
+                                     <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
                          </tr>

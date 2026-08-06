@@ -31,13 +31,104 @@ label {
     color: crimson;
 }
 
-/* Fix collapsed sidebar text wrapping under icon */
-.sidebar-collapse .nav-sidebar .nav-link p {
+/* Prevent horizontal scrollbar on sidebar */
+.main-sidebar {
+    overflow-x: hidden !important;
+}
+
+
+/* Fix collapsed sidebar text wrapping under icon & customize collapsed state */
+.sidebar-collapse .main-sidebar:not(:hover) .brand-link {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 !important; /* Remove padding to match header height */
+    height: calc(3.5rem + 1px) !important; /* Force same height as header */
+}
+
+.sidebar-collapse .main-sidebar:not(:hover) .brand-link .brand-image {
+    float: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 40px !important;
+}
+
+.sidebar-collapse .main-sidebar:not(:hover) .brand-link .brand-text {
+    display: none !important; /* Hide text when collapsed to show only the logo */
+}
+
+.sidebar-collapse .main-sidebar:not(:hover) .nav-sidebar > .nav-item > .nav-link {
+    width: 100% !important;
+    position: relative !important;
+    text-align: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    display: block !important;
+}
+
+.sidebar-collapse .main-sidebar:not(:hover) .nav-sidebar > .nav-item > .nav-link > .nav-icon {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    display: inline-block !important;
+    float: none !important;
+}
+
+/* Position the text container absolutely so it doesn't affect icon centering */
+.sidebar-collapse .main-sidebar:not(:hover) .nav-sidebar > .nav-item > .nav-link p {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 0 !important;
+    display: block !important;
+    cursor: pointer !important;
+}
+
+/* Position dropdown arrows to the right of the centered icon, making them larger and clickable */
+.sidebar-collapse .main-sidebar:not(:hover) .nav-sidebar > .nav-item > .nav-link p i.right {
+    position: absolute !important;
+    left: calc(50% + 24px) !important; /* Shift further to the right (was 20px) */
+    top: 50% !important;
+    transform: translateY(-50%) rotate(-90deg) !important; /* Rotate left arrow to point down */
+    font-size: 0.85rem !important; /* Larger size (was 0.75rem) */
+    margin: 0 !important;
+    display: inline-block !important;
+    cursor: pointer !important;
+}
+
+/* Styling for submenu items when collapsed and not hovered (hide text and center icons) */
+.sidebar-collapse .main-sidebar:not(:hover) .nav-sidebar .nav-treeview .nav-link {
+    padding-left: 0 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+}
+
+.sidebar-collapse .main-sidebar:not(:hover) .nav-sidebar .nav-treeview .nav-link .nav-icon {
+    margin-right: 0 !important;
+    margin-left: 26px !important; /* Shift child icons to the maximum safe limit (26px) to show hierarchy clearly */
+    display: inline-block !important;
+    float: none !important;
+}
+
+.sidebar-collapse .main-sidebar:not(:hover) .nav-sidebar .nav-treeview .nav-link p {
     display: none !important;
 }
+
+
 .sidebar-collapse .main-sidebar:hover .nav-sidebar .nav-link p {
     display: inline-block !important;
+    font-size: 1rem !important;
 }
+
+
 
 /* Reduce spacing between sidebar menu items */
 .nav-sidebar .nav-item .nav-link {
@@ -47,10 +138,11 @@ label {
 .nav-sidebar .nav-item {
     margin-bottom: 0px !important;
 }
-/* Reduce spacing between inner/submenu functions even more */
+/* Reduce spacing between inner/submenu functions even more & indent them */
 .nav-sidebar .nav-treeview .nav-item .nav-link {
     padding-top: 0.2rem !important;
     padding-bottom: 0.2rem !important;
+    padding-left: 2rem !important; /* Indent child items */
 }
 
 /* Custom sidebar width (230px instead of 250px) */
@@ -73,4 +165,331 @@ label {
     .sidebar-mini.sidebar-collapse .main-sidebar:hover .brand-link {
         width: 230px !important;
     }
+}
+
+/* Sidebar bottom toggle button */
+.sidebar-toggle-btn-container {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1040;
+}
+
+.btn-sidebar-toggle {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    width: 42px;
+    height: 42px;
+    border-radius: 50% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    outline: none !important;
+    padding: 0 !important;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #fff !important;
+}
+
+.btn-sidebar-toggle i {
+    font-size: 1.2rem !important;
+    line-height: 1 !important;
+    transition: transform 0.3s ease-in-out !important;
+}
+
+/* Rotate icon 180 degrees (point right) when sidebar is collapsed and NOT hovered */
+body.sidebar-collapse .main-sidebar:not(:hover) .btn-sidebar-toggle i {
+    transform: rotate(180deg) !important;
+}
+
+/* Add padding to nav-sidebar bottom so menu items aren't obscured by the toggle button */
+.nav-sidebar {
+    padding-bottom: 80px !important;
+}
+
+/* Custom Header navbar icons style (matches sidebar icons style & theme color) */
+.main-header .nav-link i {
+    color: #0f2a5a !important;
+    font-size: 1.3rem !important; /* Make them a bit bigger (was 1.2rem) */
+    transition: color 0.2s ease-in-out !important;
+}
+
+/* Make the dropdown chevron slightly smaller to stay balanced next to user icon */
+.main-header .nav-link i.ri-arrow-down-s-line {
+    font-size: 1rem !important;
+    vertical-align: middle !important;
+}
+
+.main-header .nav-link:hover i {
+    color: #3b82f6 !important; /* Bright blue to light up on hover */
+}
+
+/* Custom Header dropdown styling */
+.main-header .dropdown-menu {
+    min-width: auto !important;
+    width: max-content !important;
+    padding: 4px !important;
+}
+
+.main-header .dropdown-item {
+    color: #0f2a5a !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 4px !important; /* Smooth rounded corners inside menu */
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out !important;
+}
+
+.main-header .dropdown-item i {
+    color: inherit !important; /* Inherit color from parent item */
+    font-size: 1.15rem !important;
+}
+
+.main-header .dropdown-item:hover {
+    color: #3b82f6 !important; /* Light up text & icon on hover */
+    background-color: transparent !important; /* Keep background transparent */
+}
+
+.brand-link {
+    background-color: #fff !important; /* Restore white background */
+    border-bottom: 1px solid #dee2e6 !important; /* Restore light gray border */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.5rem; /* Space between logo and text */
+    height: calc(3.5rem + 1px) !important; /* Force same height as header */
+    padding: 0 !important; /* Remove padding to prevent height stretching */
+}
+
+.brand-link .brand-image {
+    float: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 40px !important;
+}
+
+.brand-link .brand-text {
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    color: #0f2a5a !important; /* Restore ADMIN text to dark blue */
+    opacity: 1 !important;
+}
+
+/* Sidebar dark blue theme styling */
+.main-sidebar {
+    background-color: #0f2a5a !important;
+}
+
+/* Sidebar function names and icons to white */
+.nav-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.nav-sidebar .nav-link .nav-icon {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.nav-sidebar .nav-link p i.right {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Hover and active states for menu items */
+.nav-sidebar .nav-link:hover {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.nav-sidebar .nav-link:hover .nav-icon,
+.nav-sidebar .nav-link:hover p i.right {
+    color: #fff !important;
+}
+
+.nav-sidebar .nav-item.menu-open > .nav-link,
+.nav-sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+}
+
+.nav-sidebar .nav-link.active .nav-icon {
+    color: #fff !important;
+}
+
+/* Darker blue background overlay for submenus */
+.nav-sidebar .nav-treeview {
+    background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Style main content page titles to be bold and match the navy blue theme #0f2a5a */
+.content-wrapper .content-header h1 {
+    font-weight: 700 !important;
+    color: #0f2a5a !important;
+}
+
+/* Style breadcrumb 'Home' link to be theme blue and light up on hover */
+.content-wrapper .content-header .breadcrumb-item a {
+    color: #0f2a5a !important;
+    transition: color 0.15s ease-in-out !important;
+}
+
+.content-wrapper .content-header .breadcrumb-item a:hover {
+    color: #3b82f6 !important; /* Bright blue to light up on hover */
+}
+
+/* Style table headers to be uppercase, colored navy blue like the sidebar, centered, and have a medium gray background */
+.table thead th,
+table#tablejs thead th {
+    text-transform: uppercase !important;
+    color: #0f2a5a !important;
+    font-weight: 700 !important;
+    background-color: #dee2e6 !important; /* Darker gray background */
+    text-align: center !important; /* Centered text */
+    vertical-align: middle !important; /* Vertically centered text */
+}
+
+/* Make the vertical and horizontal table borders slightly darker and more defined */
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #d4d8db !important;
+}
+
+/* Style STT column (first column) to be centered, bold, and wrap tightly without wrapping lines */
+.table thead th:first-child,
+.table tbody td:first-child {
+    text-align: center !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    width: 1% !important;
+}
+
+.table tbody td:first-child {
+    font-weight: 700 !important;
+}
+
+/* Style table action buttons to look like the custom card buttons in the image */
+.table td .btn-warning,
+.table td .btn-danger {
+    background-color: transparent !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 8px !important;
+    width: 38px !important;
+    height: 38px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 4px !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.table td .btn-warning i,
+.table td .btn-danger i {
+    font-size: 1.15rem !important;
+    transition: transform 0.2s ease-in-out !important;
+}
+
+/* Edit / Update Button (Blue) */
+.table td .btn-warning {
+    color: #2563eb !important; /* Blue color for icon */
+}
+
+.table td .btn-warning:hover {
+    background-color: rgba(37, 99, 235, 0.06) !important;
+    border-color: #2563eb !important;
+}
+
+.table td .btn-warning:hover i {
+    transform: scale(1.1);
+}
+
+/* Delete Button (Red) */
+.table td .btn-danger {
+    color: #dc2626 !important; /* Red color for icon */
+}
+
+.table td .btn-danger:hover {
+    background-color: rgba(220, 38, 38, 0.06) !important;
+    border-color: #dc2626 !important;
+}
+
+.table td .btn-danger:hover i {
+    transform: scale(1.1);
+}
+
+/* Style Action column (last column) to center buttons and reduce width to fit them tightly */
+.table thead th:last-child,
+.table tbody td:last-child {
+    text-align: center !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    width: 1% !important; /* Shrink to fit buttons without wrapping them */
+}
+
+/* Reduce table body row heights and center content vertically */
+.table tbody td,
+.table tbody th {
+    vertical-align: middle !important;
+    padding: 6px 12px !important; /* Tighten row heights further */
+}
+
+/* Make the DataTables pagination info text slightly smaller and grayed out */
+.dataTables_info {
+    color: #868e96 !important; /* Muted gray color */
+    font-size: 0.9rem !important; /* Slightly smaller text size */
+}
+
+/* Custom Pagination styling to look like separate rounded card buttons */
+.pagination {
+    gap: 4px !important; /* Separate the buttons with gaps */
+}
+
+.pagination .page-item .page-link {
+    background-color: #fff !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 8px !important; /* Rounded corners on all buttons */
+    color: #2563eb !important; /* Page number color */
+    width: 38px !important;
+    height: 38px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+/* Active Page Button (Dark Blue background, white text) */
+.pagination .page-item.active .page-link {
+    background-color: #0f2a5a !important; /* Sidebar dark blue */
+    border-color: #0f2a5a !important;
+    color: #fff !important;
+}
+
+/* Hover state for normal page buttons */
+.pagination .page-item:not(.active):not(.disabled) .page-link:hover {
+    background-color: #f1f3f5 !important;
+    border-color: #adb5bd !important;
+    color: #0f2a5a !important;
+}
+
+/* Disabled Page Button (Grayed out) */
+.pagination .page-item.disabled .page-link {
+    background-color: #fff !important;
+    border-color: #f1f3f5 !important;
+    color: #cbd5e1 !important; /* Faded gray */
+    cursor: not-allowed !important;
 }

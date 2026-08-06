@@ -26,7 +26,7 @@
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
-                         <li class="breadcrumb-item"><a href="#">Home</a></li>
+                         <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
                          <li class="breadcrumb-item active">Quản lý xếp loại</li>
                      </ol>
                  </div>
@@ -106,7 +106,7 @@
                  <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                      <thead>
                          <tr>
-                             <th>#</th>
+                             <th>STT</th>
                              <th>Tên xếp loại</th>
                              <th>Điểm tối thiểu</th>
                              <th>Điểm tối đa</th>
@@ -128,11 +128,11 @@
                              <td>
                                  <a href="javascript:void(0)" class="btn btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_xep_loai?>)">
-                                     <i class="fas fa-edit"></i>
+                                     <i class="ri-edit-2-line"></i>
                                  </a>
                                  <a href="javascript:void(0)" class="btn btn-danger m-2"
                                      onclick="confirm_sweet('quan-ly-xep-loai/action.php?req=delete&id_xep_loai=<?=$item->id_xep_loai?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
-                                     <i class="fas fa-trash"></i>
+                                     <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
                          </tr>

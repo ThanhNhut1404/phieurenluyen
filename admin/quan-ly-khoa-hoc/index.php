@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
                         <li class="breadcrumb-item active">Quản lý khóa học</li>
                     </ol>
                 </div>
@@ -116,7 +116,7 @@
                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>STT</th>
                             <th>Tên khóa học</th>
                             <th>Ghi chú</th>
                             <th>Thao tác</th>
@@ -131,11 +131,11 @@
                             <td><?=khoahoc_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="javascript:void(0)" class="btn  btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_khoa_hoc?>)">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="ri-edit-2-line"></i>
                                 </a>
                                 <a href="#" type="button" class="btn  btn-danger m-2"
                                     onclick="return delete_obj(<?=(int)$item->id_khoa_hoc?>)">
-                                    <i class="fas fa-trash"></i>
+                                    <i class="ri-delete-bin-line"></i>
                                 </a>
                             </td>
                         </tr>
@@ -165,11 +165,11 @@ window.addEventListener("load", function() {
             "decimal": ",",
             "thousands": ".",
             "emptyTable": "Không có dữ liệu trong bảng",
-            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-            "infoEmpty": "Hiển thị 0 đến 0 của 0 dòng",
-            "infoFiltered": "(lọc từ _MAX_ dòng)",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ khóa học",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 khóa học",
+            "infoFiltered": "(lọc từ _MAX_ khóa học)",
             "infoPostFix": "",
-            "lengthMenu": "Hiển thị _MENU_ dòng",
+            "lengthMenu": "Hiển thị _MENU_ khóa học",
             "loadingRecords": "Đang tải...",
             "processing": "Đang xử lý...",
             "search": "Tìm kiếm:",
