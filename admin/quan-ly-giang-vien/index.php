@@ -166,17 +166,17 @@
                  <div class="table-responsive">
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                          <thead>
-                         <tr>
-                             <th>STT</th>
-                             <th>Mã giảng viên</th>
-                             <th>Tên giảng viên</th>
-                             <th>Giới tính</th>
-                             <th>Ngày sinh</th>
-                             <th>Số điện thoại 1</th>
-                             <th>Địa chỉ liên lạc</th>
-                             <th>Trình độ</th>
-                             <th>Thao tác</th>
-                         </tr>
+                          <tr>
+                              <th>STT</th>
+                              <th>MGV</th>
+                              <th>Họ và tên</th>
+                              <th>Giới tính</th>
+                              <th>Ngày sinh</th>
+                              <th>Số điện thoại 1</th>
+                              <th>Địa chỉ liên lạc</th>
+                              <th>Trình độ</th>
+                              <th>Thao tác</th>
+                          </tr>
                      </thead>
                      <tbody>
                          <?php 
@@ -190,17 +190,22 @@
                          <?php foreach($giangvien__Get_All as $item):?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td><?= htmlspecialchars($item->ma_giang_vien ?? '') ?></td>
+                             <td class="text-center" style="text-align: center !important;"><?= htmlspecialchars($item->ma_giang_vien ?? '') ?></td>
                              <!-- quân sửa: Viết hoa chữ cái đầu cho tên riêng -->
                              <td><?= htmlspecialchars(mb_convert_case($item->ten_giang_vien ?? '', MB_CASE_TITLE, "UTF-8")) ?></td>
-                             <td><?=$item->gioi_tinh == 1 ? "Nam" : "Nữ"?></td>
-                             <td><?= htmlspecialchars($item->ngay_sinh ?? '') ?></td>
-                             <td><?= htmlspecialchars($item->so_dien_thoai_1 ?? '') ?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=$item->gioi_tinh == 1 ? "Nam" : "Nữ"?></td>
+                             <td class="text-center" style="text-align: center !important;" data-order="<?= htmlspecialchars($item->ngay_sinh ?? '') ?>">
+                                 <?php
+                                 $date = DateTime::createFromFormat('Y-m-d', (string)($item->ngay_sinh ?? ''));
+                                 echo htmlspecialchars($date ? $date->format('d/m/Y') : ($item->ngay_sinh ?? ''));
+                                 ?>
+                             </td>
+                             <td class="text-center" style="text-align: center !important;"><?= htmlspecialchars($item->so_dien_thoai_1 ?? '') ?></td>
                              <!-- quân sửa: Rút gọn hiển thị địa chỉ để không làm mất cột thao tác -->
                              <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>">
                                  <?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>
                              </td>
-                             <td><?= isset($arr_trinh_do[$item->id_trinh_do]) ? htmlspecialchars($arr_trinh_do[$item->id_trinh_do]) : '' ?></td>
+                             <td class="text-center" style="text-align: center !important;"><?= isset($arr_trinh_do[$item->id_trinh_do]) ? htmlspecialchars($arr_trinh_do[$item->id_trinh_do]) : '' ?></td>
 
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
@@ -228,12 +233,75 @@
  <!-- /.content-wrapper -->
 
 
- <script>
+  <script>
 window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print"]
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ giảng viên",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 giảng viên",
+            "infoFiltered": "(lọc từ _MAX_ giảng viên)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ giảng viên",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
+        "columnDefs": [{
+            "targets": -1,
+            "orderable": false,
+            "searchable": false
+        }],
+        "buttons": [{
+                "extend": "copy",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "csv",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "excel",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "pdf",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "print",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            }
+        ]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 });
 

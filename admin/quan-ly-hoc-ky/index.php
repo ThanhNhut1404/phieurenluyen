@@ -147,13 +147,13 @@
                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Tên học kỳ</th>
-                            <th>Năm học</th>
-                            <th>Ngày bắt đầu</th>
-                            <th>Ngày kết thúc</th>
-                            <th>Ghi chú</th>
-                            <th>Thao tác</th>
+                            <th style="width: 5%;">STT</th>
+                            <th style="width: 10%;">Tên học kỳ</th>
+                            <th style="width: 15%;">Năm học</th>
+                            <th style="width: 15%;">Ngày bắt đầu</th>
+                            <th style="width: 15%;">Ngày kết thúc</th>
+                            <th style="width: 30%;">Ghi chú</th>
+                            <th style="width: 10%;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -161,10 +161,10 @@
                         <?php foreach($hocky__Get_All as $item):?>
                         <tr>
                             <td><?=++$num?></td>
-                            <td><?=hocky_escape($item->ten_hoc_ky)?></td>
-                            <td><?=hocky_escape($item->ten_nam_hoc ?? 'Năm học không tồn tại')?></td>
-                            <td data-order="<?=hocky_escape($item->ngay_bat_dau)?>"><?=hocky_escape(hocky_format_date($item->ngay_bat_dau))?></td>
-                            <td data-order="<?=hocky_escape($item->ngay_ket_thuc)?>"><?=hocky_escape(hocky_format_date($item->ngay_ket_thuc))?></td>
+                            <td class="text-center"><?=hocky_escape($item->ten_hoc_ky)?></td>
+                            <td class="text-center"><?=hocky_escape($item->ten_nam_hoc ?? 'Năm học không tồn tại')?></td>
+                            <td class="text-center" data-order="<?=hocky_escape($item->ngay_bat_dau)?>"><?=hocky_escape(hocky_format_date($item->ngay_bat_dau))?></td>
+                            <td class="text-center" data-order="<?=hocky_escape($item->ngay_ket_thuc)?>"><?=hocky_escape(hocky_format_date($item->ngay_ket_thuc))?></td>
                             <td><?=hocky_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="javascript:void(0)" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_hoc_ky?>)">

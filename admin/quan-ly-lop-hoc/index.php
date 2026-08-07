@@ -123,12 +123,12 @@
                  <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                      <thead>
                          <tr>
-                             <th>STT</th>
-                             <th>Khóa học</th>
-                             <th>Ngành học</th>
-                             <th>Tên lớp học</th>
-                             <th>Ghi chú</th>
-                             <th>Thao tác</th>
+                             <th style="width: 5%;">STT</th>
+                             <th style="width: 10%;">Khóa học</th>
+                             <th style="width: 30%;">Ngành học</th>
+                             <th style="width: 30%;">Tên lớp học</th>
+                             <th style="width: 15%;">Ghi chú</th>
+                             <th style="width: 10%;">Thao tác</th>
                          </tr>
                      </thead>
                      <tbody>
@@ -136,9 +136,9 @@
                          <?php foreach($lophoc__Get_All as $item):?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td><?=lophoc_escape($item->ten_khoa_hoc)?></td>
-                             <td><?=lophoc_escape($item->ten_nganh_hoc)?></td>
-                             <td><?=lophoc_escape($item->ten_lop_hoc)?></td>
+                             <td class="text-center"><?=lophoc_escape($item->ten_khoa_hoc)?></td>
+                             <td class="text-center"><?=lophoc_escape($item->ten_nganh_hoc)?></td>
+                             <td class="text-center"><?=lophoc_escape($item->ten_lop_hoc)?></td>
                              <td><?=lophoc_escape($item->ghi_chu)?></td>
                              <td>
                                  <a href="javascript:void(0)" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_lop_hoc?>)">

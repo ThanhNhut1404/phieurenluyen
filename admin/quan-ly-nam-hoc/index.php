@@ -127,12 +127,12 @@
                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Tên năm học</th>
-                            <th>Ngày bắt đầu</th>
-                            <th>Ngày kết thúc</th>
-                            <th>Ghi chú</th>
-                            <th>Thao tác</th>
+                            <th style="width: 5%;">STT</th>
+                            <th style="width: 15%;">Tên năm học</th>
+                            <th style="width: 15%;">Ngày bắt đầu</th>
+                            <th style="width: 15%;">Ngày kết thúc</th>
+                            <th style="width: 40%;">Ghi chú</th>
+                            <th style="width: 10%;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,9 +140,9 @@
                         <?php foreach($namhoc__Get_All as $item):?>
                         <tr>
                             <td><?=++$num?></td>
-                            <td><?=namhoc_escape($item->ten_nam_hoc)?></td>
-                            <td data-order="<?=namhoc_escape($item->ngay_bat_dau)?>"><?=namhoc_escape(namhoc_format_date($item->ngay_bat_dau))?></td>
-                            <td data-order="<?=namhoc_escape($item->ngay_ket_thuc)?>"><?=namhoc_escape(namhoc_format_date($item->ngay_ket_thuc))?></td>
+                            <td class="text-center"><?=namhoc_escape($item->ten_nam_hoc)?></td>
+                            <td class="text-center" data-order="<?=namhoc_escape($item->ngay_bat_dau)?>"><?=namhoc_escape(namhoc_format_date($item->ngay_bat_dau))?></td>
+                            <td class="text-center" data-order="<?=namhoc_escape($item->ngay_ket_thuc)?>"><?=namhoc_escape(namhoc_format_date($item->ngay_ket_thuc))?></td>
                             <td><?=namhoc_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="javascript:void(0)" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_nam_hoc?>)">

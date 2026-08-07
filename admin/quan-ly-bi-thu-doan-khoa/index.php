@@ -178,16 +178,16 @@
                  <div class="table-responsive">
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                          <thead>
-                         <tr>
-                             <th>STT</th>
-                             <th>Tên bí thư đoàn khoa</th>
-                             <th>Giới tính</th>
-                             <th>Ngày sinh</th>
-                             <th>Số điện thoại 1</th>
-                             <th>Địa chỉ liên lạc</th>
-                             <th>Khoa</th>
-                             <th>Thao tác</th>
-                         </tr>
+                          <tr>
+                              <th style="width: 3%; white-space: nowrap;">STT</th>
+                              <th style="width: 20%; white-space: nowrap;">Họ và tên</th>
+                              <th style="width: 10%; white-space: nowrap;">Khoa</th>
+                              <th style="width: 10%; white-space: nowrap;">Giới tính</th>
+                              <th style="width: 12%; white-space: nowrap;">Ngày sinh</th>
+                              <th style="width: 15%; white-space: nowrap;">Số điện thoại 1</th>
+                              <th style="width: 20%; white-space: nowrap;">Địa chỉ liên lạc</th>
+                              <th style="width: 10%; white-space: nowrap;">Thao tác</th>
+                          </tr>
                      </thead>
                       <tbody>
                           <?php 
@@ -202,14 +202,19 @@
                               <td><?= ++$num ?></td>
                               <!-- quân sửa: Viết hoa chữ cái đầu của Tên riêng khi hiển thị ra danh sách -->
                               <td><?= htmlspecialchars(mb_convert_case($item->ten_bi_thu ?? '', MB_CASE_TITLE, "UTF-8")) ?></td>
-                              <td><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
-                              <td><?= $item->ngay_sinh ?></td>
-                              <td><?= $item->so_dien_thoai_1 ?></td>
+                              <td><?= isset($arr_khoa[$item->id_khoa]) ? htmlspecialchars($arr_khoa[$item->id_khoa]) : '' ?></td>
+                               <td class="text-center" style="text-align: center !important;"><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
+                               <td class="text-center" style="text-align: center !important;" data-order="<?= htmlspecialchars($item->ngay_sinh ?? '') ?>">
+                                   <?php
+                                   $date = DateTime::createFromFormat('Y-m-d', (string)($item->ngay_sinh ?? ''));
+                                   echo htmlspecialchars($date ? $date->format('d/m/Y') : ($item->ngay_sinh ?? ''));
+                                   ?>
+                               </td>
+                               <td class="text-center" style="text-align: center !important;"><?= htmlspecialchars($item->so_dien_thoai_1 ?? '') ?></td>
                               <!-- quân sửa: Rút gọn hiển thị địa chỉ để không làm mất cột thao tác -->
                               <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>">
                                   <?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>
                               </td>
-                              <td><?= isset($arr_khoa[$item->id_khoa]) ? htmlspecialchars($arr_khoa[$item->id_khoa]) : '' ?></td>
 
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
@@ -237,12 +242,75 @@
  <!-- /.content-wrapper -->
 
 
- <script>
+  <script>
 window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print"]
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ bí thư đoàn khoa",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 bí thư đoàn khoa",
+            "infoFiltered": "(lọc từ _MAX_ bí thư đoàn khoa)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ bí thư đoàn khoa",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
+        "columnDefs": [{
+            "targets": -1,
+            "orderable": false,
+            "searchable": false
+        }],
+        "buttons": [{
+                "extend": "copy",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "csv",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "excel",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "pdf",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "print",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            }
+        ]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 });
 

@@ -116,10 +116,10 @@
                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Tên khóa học</th>
-                            <th>Ghi chú</th>
-                            <th>Thao tác</th>
+                            <th style="width: 5%;">STT</th>
+                            <th style="width: 15%;">Tên khóa học</th>
+                            <th style="width: 70%;">Ghi chú</th>
+                            <th style="width: 10%;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,7 +127,7 @@
                         <?php foreach($khoahoc__Get_All as $item):?>
                         <tr>
                             <td><?=++$num?></td>
-                            <td><?=khoahoc_escape($item->ten_khoa_hoc)?></td>
+                            <td class="text-center"><?=khoahoc_escape($item->ten_khoa_hoc)?></td>
                             <td><?=khoahoc_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="javascript:void(0)" class="btn  btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_khoa_hoc?>)">

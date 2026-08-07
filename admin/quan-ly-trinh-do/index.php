@@ -106,10 +106,10 @@
                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            <th>Tên trình độ</th>
-                            <th>Ghi chú</th>
-                            <th>Thao tác</th>
+                            <th style="width: 5%;">STT</th>
+                            <th style="width: 20%;">Tên trình độ</th>
+                            <th style="width: 65%;">Ghi chú</th>
+                            <th style="width: 10%;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,7 +117,7 @@
                         <?php foreach($trinhdo__Get_All as $item):?>
                         <tr>
                             <td><?=++$num?></td>
-                            <td><?=trinhdo_escape($item->ten_trinh_do)?></td>
+                            <td class="text-center"><?=trinhdo_escape($item->ten_trinh_do)?></td>
                             <td><?=trinhdo_escape($item->ghi_chu)?></td>
                             <td>
                                 <a href="javascript:void(0)" class="btn  btn-warning m-2"

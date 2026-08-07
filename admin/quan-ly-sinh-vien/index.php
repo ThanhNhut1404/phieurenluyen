@@ -235,15 +235,15 @@
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                          <thead>
                          <tr>
-                             <th>STT</th>
-                             <th>Mã sinh viên</th>
-                             <th>Tên sinh viên</th>
-                             <th>Giới tính</th>
-                             <th>Ngày sinh</th>
-                             <th>Số điện thoại 1</th>
-                             <th>Địa chỉ liên lạc</th>
-                             <th>Lớp học</th>
-                             <th>Thao tác</th>
+                             <th style="width: 5%;">STT</th>
+                             <th style="width: 10%;">Mã sinh viên</th>
+                             <th style="width: 18%;">Tên sinh viên</th>
+                             <th style="width: 8%;">Giới tính</th>
+                             <th style="width: 10%;">Ngày sinh</th>
+                             <th style="width: 12%;">Số điện thoại 1</th>
+                             <th style="width: 20%;">Địa chỉ liên lạc</th>
+                             <th style="width: 10%;">Lớp học</th>
+                             <th style="width: 7%;">Thao tác</th>
                          </tr>
                      </thead>
                      <tbody>
@@ -259,21 +259,26 @@
                              <tr>
                                  <!-- BỌC htmlspecialchars ĐỂ CHỐNG LỖI BẢO MẬT XSS Nguễn văn quân
                          $arr_lop_hoc = [];-->
-                                 <td><?= ++$num ?></td>
-                                 <td><?= htmlspecialchars($item->ma_sinh_vien ?? '') ?></td>
+                                 <td class="text-center" style="text-align: center !important;"><?= ++$num ?></td>
+                                 <td class="text-center" style="text-align: center !important;"><?= htmlspecialchars($item->ma_sinh_vien ?? '') ?></td>
                                  <td><?= htmlspecialchars($item->ten_sinh_vien ?? '') ?></td>
-                                 <td><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
-                                 <td><?= htmlspecialchars($item->ngay_sinh ?? '') ?></td>
-                                 <td><?= htmlspecialchars($item->so_dien_thoai_1 ?? '') ?></td>
+                                  <td class="text-center" style="text-align: center !important;"><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
+                                  <td class="text-center" style="text-align: center !important;" data-order="<?= htmlspecialchars($item->ngay_sinh ?? '') ?>">
+                                      <?php
+                                      $date = DateTime::createFromFormat('Y-m-d', (string)($item->ngay_sinh ?? ''));
+                                      echo htmlspecialchars($date ? $date->format('d/m/Y') : ($item->ngay_sinh ?? ''));
+                                      ?>
+                                  </td>
+                                  <td class="text-center" style="text-align: center !important;"><?= htmlspecialchars($item->so_dien_thoai_1 ?? '') ?></td>
                                  <!-- quân sửa: Rút gọn hiển thị địa chỉ để không làm mất cột thao tác -->
                                  <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>">
                                      <?= htmlspecialchars($item->dia_chi_lien_lac ?? '') ?>
                                  </td>
                                  <!-- SỬ DỤNG MẢNG ÁNH XẠ THAY VÌ QUERY TRONG VÒNG LẶPNguễn văn quân
                          $arr_lop_hoc = []; -->
-                                 <td><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
+                                 <td class="text-center" style="text-align: center !important;"><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
 
-                                 <td>
+                                 <td class="text-center" style="text-align: center !important;">
                                      <a href="#" type="button" class="btn  btn-warning m-2" onclick="update_obj(<?= (int)$item->id_sinh_vien ?>)">
                                          <i class="ri-edit-2-line"></i>
                                      </a>
@@ -297,14 +302,77 @@
  <!-- /.content-wrapper -->
 
 
- <script>
-     window.addEventListener("load", function() {
-         $("#tablejs").DataTable({
-             "responsive": true,
-             "autoWidth": false,
-             "buttons": ["copy", "csv", "excel", "pdf", "print"]
-         }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
-     });
+  <script>
+      window.addEventListener("load", function() {
+          $("#tablejs").DataTable({
+              "responsive": true,
+              "autoWidth": false,
+              "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+              "pagingType": "full_numbers",
+              "pageLength": 10,
+              "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+              "language": {
+                  "decimal": ",",
+                  "thousands": ".",
+                  "emptyTable": "Không có dữ liệu trong bảng",
+                  "info": "Hiển thị _START_ - _END_ của _TOTAL_ sinh viên",
+                  "infoEmpty": "Hiển thị 0 - 0 của 0 sinh viên",
+                  "infoFiltered": "(lọc từ _MAX_ sinh viên)",
+                  "infoPostFix": "",
+                  "lengthMenu": "Hiển thị _MENU_ sinh viên",
+                  "loadingRecords": "Đang tải...",
+                  "processing": "Đang xử lý...",
+                  "search": "Tìm kiếm:",
+                  "zeroRecords": "Không tìm thấy kết quả phù hợp",
+                  "paginate": {
+                      "first": "&laquo;",
+                      "last": "&raquo;",
+                      "next": "&rsaquo;",
+                      "previous": "&lsaquo;"
+                  },
+                  "aria": {
+                      "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                      "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+                  }
+              },
+              "columnDefs": [{
+                  "targets": -1,
+                  "orderable": false,
+                  "searchable": false
+              }],
+              "buttons": [{
+                      "extend": "copy",
+                      "exportOptions": {
+                          "columns": ":visible:not(:last-child)"
+                      }
+                  },
+                  {
+                      "extend": "csv",
+                      "exportOptions": {
+                          "columns": ":visible:not(:last-child)"
+                      }
+                  },
+                  {
+                      "extend": "excel",
+                      "exportOptions": {
+                          "columns": ":visible:not(:last-child)"
+                      }
+                  },
+                  {
+                      "extend": "pdf",
+                      "exportOptions": {
+                          "columns": ":visible:not(:last-child)"
+                      }
+                  },
+                  {
+                      "extend": "print",
+                      "exportOptions": {
+                          "columns": ":visible:not(:last-child)"
+                      }
+                  }
+              ]
+          }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+      });
 
      function update_obj(id_sinh_vien) {
          $.post('quan-ly-sinh-vien/update.php', {

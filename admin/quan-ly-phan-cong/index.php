@@ -114,7 +114,7 @@
                           <tr>
                               <td><?=++$num?></td>
                               <td><?= isset($arr_giang_vien[$item->id_giang_vien]) ? htmlspecialchars($arr_giang_vien[$item->id_giang_vien]) : '' ?></td>
-                              <td><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
+                              <td class="text-center" style="text-align: center !important;"><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
                               <td><?= htmlspecialchars($item->ghi_chu ?? '') ?></td>
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
@@ -141,12 +141,75 @@
  <!-- /.content-wrapper -->
 
 
- <script>
+  <script>
 window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print"]
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ phân công cố vấn",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 phân công cố vấn",
+            "infoFiltered": "(lọc từ _MAX_ phân công cố vấn)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ phân công cố vấn",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
+        "columnDefs": [{
+            "targets": -1,
+            "orderable": false,
+            "searchable": false
+        }],
+        "buttons": [{
+                "extend": "copy",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "csv",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "excel",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "pdf",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            },
+            {
+                "extend": "print",
+                "exportOptions": {
+                    "columns": ":visible:not(:last-child)"
+                }
+            }
+        ]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 });
 
