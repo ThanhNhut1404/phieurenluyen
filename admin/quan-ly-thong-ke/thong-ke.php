@@ -160,7 +160,7 @@ foreach($ketquaxeploai__Get_By_Id_Dot as $item){
     <section class="content">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Danh sách</h3>
+                <h3 class="card-title">Danh sách Kết quả thống kê</h3>
                 <div class="card-tools">
                     <form action="./quan-ly-thong-ke/action.php?req=export" method="post">
                         <input type="hidden" name="id_lop_hoc" value="<?=$id_lop_hoc?>">

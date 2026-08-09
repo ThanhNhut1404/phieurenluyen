@@ -138,7 +138,7 @@
      <section class="content">
          <div class="card card-primary">
              <div class="card-header">
-                 <h3 class="card-title">Danh sách</h3>
+                 <h3 class="card-title">Danh sách Phiếu chấm điểm</h3>
                  <?php if(isset($_GET['id_lop_hoc'])):?>
                  <div class="card-tools">
                      <a class="btn btn-outline-primary"
@@ -238,7 +238,50 @@ window.addEventListener("load", function() {
                 "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
             }
         },
-        "buttons": ["copy", "csv", "excel", "pdf", "print"]
+        "buttons": [{
+            "extend": "collection",
+            "text": "<i class='fas fa-file-export'></i> Xuất dữ liệu",
+            "className": "btn btn-sm btn-primary",
+            "align": "button-right",
+            "buttons": [
+                {
+                    "extend": "copy",
+                    "text": "<i class='far fa-copy'></i> Copy",
+                    "exportOptions": {
+                        "columns": ":visible:not(:last-child)"
+                    }
+                },
+                {
+                    "extend": "csv",
+                    "text": "<i class='fas fa-file-csv'></i> CSV",
+                    "bom": true,
+                    "exportOptions": {
+                        "columns": ":visible:not(:last-child)"
+                    }
+                },
+                {
+                    "extend": "excel",
+                    "text": "<i class='far fa-file-excel'></i> Excel",
+                    "exportOptions": {
+                        "columns": ":visible:not(:last-child)"
+                    }
+                },
+                {
+                    "extend": "pdf",
+                    "text": "<i class='far fa-file-pdf'></i> PDF",
+                    "exportOptions": {
+                        "columns": ":visible:not(:last-child)"
+                    }
+                },
+                {
+                    "extend": "print",
+                    "text": "<i class='fas fa-print'></i> In",
+                    "exportOptions": {
+                        "columns": ":visible:not(:last-child)"
+                    }
+                }
+            ]
+        }]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 
 });

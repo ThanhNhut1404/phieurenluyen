@@ -108,7 +108,7 @@
      <section class="content">
          <div class="card card-primary">
              <div class="card-header">
-                 <h3 class="card-title">Danh sách</h3>
+                 <h3 class="card-title">Danh sách Kết quả</h3>
 
                  <div class="card-tools">
                       <!-- Nhựt sửa lỗi: Ẩn nút EXPORT khi chưa chọn Lớp học & Đợt chấm hợp lệ. -->
