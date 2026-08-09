@@ -149,78 +149,224 @@
  <!-- /.content-wrapper -->
 
 
- <script>
-window.addEventListener("load", function() {
-    $("#tablejs").DataTable({
-        "responsive": true,
-        "autoWidth": false,
-        // Nhựt sửa lỗi: đưa dropdown chọn số dòng lên hàng riêng phía trên các nút xuất dữ liệu.
-        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
-        "pagingType": "full_numbers",
-        "pageLength": 10,
-        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
-        "language": {
-            "decimal": ",",
-            "thousands": ".",
-            "emptyTable": "Không có dữ liệu trong bảng",
-            "info": "Hiển thị _START_ - _END_ của _TOTAL_ khoa",
-            "infoEmpty": "Hiển thị 0 - 0 của 0 khoa",
-            "infoFiltered": "(lọc từ _MAX_ khoa)",
-            "infoPostFix": "",
-            "lengthMenu": "Hiển thị _MENU_ khoa",
-            "loadingRecords": "Đang tải...",
-            "processing": "Đang xử lý...",
-            "search": "Tìm kiếm:",
-            "zeroRecords": "Không tìm thấy kết quả phù hợp",
-            "paginate": {
-                "first": "&laquo;",
-                "last": "&raquo;",
-                "next": "&rsaquo;",
-                "previous": "&lsaquo;"
-            },
-            "aria": {
-                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
-                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
-            }
-        },
-        "columnDefs": [{
-            "targets": -1,
-            "orderable": false,
-            "searchable": false
-        }],
-        "buttons": [{
-                "extend": "copy",
-                "exportOptions": {
-                    "columns": ":visible:not(:last-child)"
-                }
-            },
-            {
-                "extend": "csv",
-                "exportOptions": {
-                    "columns": ":visible:not(:last-child)"
-                }
-            },
-            {
-                "extend": "excel",
-                "exportOptions": {
-                    "columns": ":visible:not(:last-child)"
-                }
-            },
-            {
-                "extend": "pdf",
-                "exportOptions": {
-                    "columns": ":visible:not(:last-child)"
-                }
-            },
-            {
-                "extend": "print",
-                "exportOptions": {
-                    "columns": ":visible:not(:last-child)"
-                }
-            }
-        ]
-    }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
-});
+  <style>
+      .dataTables_wrapper .dt-buttons {
+          margin-right: 15px;
+      }
+      /* Style the main "Xuất dữ liệu" collection button to match the dark blue sidebar color */
+      .dataTables_wrapper .dt-buttons .buttons-collection {
+          background-color: #0f2a5a !important;
+          border-color: #0f2a5a !important;
+          color: #fff !important;
+          border-radius: 4px !important;
+          padding: 6px 12px !important;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          box-shadow: none !important;
+          transition: all 0.15s ease-in-out !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          border: 1px solid transparent !important;
+      }
+      .dataTables_wrapper .dt-buttons .buttons-collection:hover {
+          background-color: #0c2147 !important;
+          border-color: #0c2147 !important;
+      }
+      .dataTables_wrapper .dataTables_filter {
+          margin-top: 0 !important;
+      }
+      .dataTables_wrapper .dt-button-collection,
+      .dataTables_wrapper .dt-button-collection > div,
+      .dataTables_wrapper .dt-button-collection .dropdown-menu {
+          display: grid !important;
+          grid-auto-flow: column !important;
+          grid-template-rows: repeat(3, auto) !important;
+          grid-template-columns: repeat(2, 80px) !important;
+          gap: 6px !important;
+          width: auto !important;
+          min-width: auto !important;
+      }
+      .dataTables_wrapper .dt-button-collection {
+          padding: 8px 8px 5px 8px !important;
+          border-radius: 6px !important;
+          border: 1px solid #dcdcdc !important;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+          background: #fff !important;
+          margin-top: 5px !important;
+      }
+      /* Reset style if there is an inner wrapper element and make it span full width of grid */
+      .dataTables_wrapper .dt-button-collection > div,
+      .dataTables_wrapper .dt-button-collection .dropdown-menu {
+          grid-column: span 2 !important;
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          position: static !important;
+          transform: none !important;
+      }
+      .dataTables_wrapper .dt-button-collection .dt-button,
+      .dataTables_wrapper .dt-button-collection .dropdown-item,
+      .dataTables_wrapper .dt-button-collection .buttons-copy,
+      .dataTables_wrapper .dt-button-collection .buttons-csv,
+      .dataTables_wrapper .dt-button-collection .buttons-excel,
+      .dataTables_wrapper .dt-button-collection .buttons-pdf,
+      .dataTables_wrapper .dt-button-collection .buttons-print {
+          margin-bottom: 0 !important;
+          border-radius: 6px !important;
+          padding: 6px 8px !important;
+          font-weight: 600 !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 13px !important;
+          transition: all 0.2s ease-in-out !important;
+          width: 80px !important;
+          max-width: 80px !important;
+          min-width: 80px !important;
+          flex: none !important;
+          white-space: nowrap !important;
+          background-color: #fff !important;
+          border: 1px solid #dee2e6 !important;
+      }
+      .dataTables_wrapper .dt-button-collection .dt-button i,
+      .dataTables_wrapper .dt-button-collection .dropdown-item i,
+      .dataTables_wrapper .dt-button-collection .buttons-copy i,
+      .dataTables_wrapper .dt-button-collection .buttons-csv i,
+      .dataTables_wrapper .dt-button-collection .buttons-excel i,
+      .dataTables_wrapper .dt-button-collection .buttons-pdf i,
+      .dataTables_wrapper .dt-button-collection .buttons-print i {
+          margin-right: 6px !important;
+          font-size: 13px !important;
+          width: 14px !important;
+          text-align: center !important;
+      }
+      /* Style specific buttons inside the collection dropdown to match action buttons */
+      /* Copy button - Grey */
+      .dataTables_wrapper .dt-button-collection .buttons-copy {
+          color: #6c757d !important;
+      }
+      .dataTables_wrapper .dt-button-collection .buttons-copy:hover {
+          background-color: rgba(108, 117, 125, 0.08) !important;
+          border-color: #6c757d !important;
+      }
+      /* CSV button - Greenish Teal */
+      .dataTables_wrapper .dt-button-collection .buttons-csv {
+          color: #17a2b8 !important;
+      }
+      .dataTables_wrapper .dt-button-collection .buttons-csv:hover {
+          background-color: rgba(23, 162, 184, 0.08) !important;
+          border-color: #17a2b8 !important;
+      }
+      /* Excel button - Green */
+      .dataTables_wrapper .dt-button-collection .buttons-excel {
+          color: #16a34a !important;
+      }
+      .dataTables_wrapper .dt-button-collection .buttons-excel:hover {
+          background-color: rgba(22, 163, 74, 0.08) !important;
+          border-color: #16a34a !important;
+      }
+      /* PDF button - Red */
+      .dataTables_wrapper .dt-button-collection .buttons-pdf {
+          color: #dc2626 !important;
+      }
+      .dataTables_wrapper .dt-button-collection .buttons-pdf:hover {
+          background-color: rgba(220, 38, 38, 0.08) !important;
+          border-color: #dc2626 !important;
+      }
+      /* Print button - Orange/Yellow */
+      .dataTables_wrapper .dt-button-collection .buttons-print {
+          color: #d97706 !important;
+      }
+      .dataTables_wrapper .dt-button-collection .buttons-print:hover {
+          background-color: rgba(217, 119, 6, 0.08) !important;
+          border-color: #d97706 !important;
+      }
+  </style>
+  <script>
+ window.addEventListener("load", function() {
+     $("#tablejs").DataTable({
+         "responsive": true,
+         "autoWidth": false,
+         "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+         "pagingType": "full_numbers",
+         "pageLength": 10,
+         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+         "language": {
+             "decimal": ",",
+             "thousands": ".",
+             "emptyTable": "Không có dữ liệu trong bảng",
+             "info": "Hiển thị _START_ - _END_ của _TOTAL_ khoa",
+             "infoEmpty": "Hiển thị 0 - 0 của 0 khoa",
+             "infoFiltered": "(lọc từ _MAX_ khoa)",
+             "infoPostFix": "",
+             "lengthMenu": "Hiển thị _MENU_ khoa",
+             "loadingRecords": "Đang tải...",
+             "processing": "Đang xử lý...",
+             "search": "Tìm kiếm:",
+             "zeroRecords": "Không tìm thấy kết quả phù hợp",
+             "paginate": {
+                 "first": "&laquo;",
+                 "last": "&raquo;",
+                 "next": "&rsaquo;",
+                 "previous": "&lsaquo;"
+             },
+             "aria": {
+                 "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                 "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+             }
+         },
+         "columnDefs": [{
+             "targets": -1,
+             "orderable": false,
+             "searchable": false
+         }],
+         "buttons": [{
+             "extend": "collection",
+             "text": "<i class='fas fa-file-export'></i> Xuất dữ liệu",
+             "className": "btn btn-sm btn-primary",
+             "align": "button-right",
+             "buttons": [
+                 {
+                     "extend": "copy",
+                     "text": "<i class='far fa-copy'></i> Copy",
+                     "exportOptions": {
+                         "columns": ":visible:not(:last-child)"
+                     }
+                 },
+                 {
+                     "extend": "csv",
+                     "text": "<i class='fas fa-file-csv'></i> CSV",
+                     "exportOptions": {
+                         "columns": ":visible:not(:last-child)"
+                     }
+                 },
+                 {
+                     "extend": "excel",
+                     "text": "<i class='far fa-file-excel'></i> Excel",
+                     "exportOptions": {
+                         "columns": ":visible:not(:last-child)"
+                     }
+                 },
+                 {
+                     "extend": "pdf",
+                     "text": "<i class='far fa-file-pdf'></i> PDF",
+                     "exportOptions": {
+                         "columns": ":visible:not(:last-child)"
+                     }
+                 },
+                 {
+                     "extend": "print",
+                     "text": "<i class='fas fa-print'></i> In",
+                     "exportOptions": {
+                         "columns": ":visible:not(:last-child)"
+                     }
+                 }
+             ]
+         }]
+     });
+ });
 
 function update_obj(id_khoa) {
     $.ajax({

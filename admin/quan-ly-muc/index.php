@@ -176,16 +176,17 @@
                          </div>
                      </div>
                  </form>
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
+                 <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                      <thead>
                          <tr>
-                             <th>STT</th>
-                             <th>Điều - Khoản</th>
-                             <th>Tên mục</th>
-                             <th>Điểm tối đa</th>
-                             <th>Minh chứng</th>
-                             <th>Ghi chú</th>
-                             <th>Thao tác</th>
+                             <th style="width: 3%; white-space: nowrap;">STT</th>
+                             <th style="width: 10%; white-space: nowrap;">Tên điều</th>
+                             <th style="width: 22%; white-space: nowrap;">Tên khoản</th>
+                             <th style="width: 25%; white-space: nowrap;">Tên mục</th>
+                             <th style="width: 8%; white-space: nowrap;">Điểm tối đa</th>
+                             <th style="width: 8%; white-space: nowrap;">Minh chứng</th>
+                             <th style="width: 12%; white-space: nowrap;">Ghi chú</th>
+                             <th style="width: 12%; white-space: nowrap;">Thao tác</th>
                          </tr>
                      </thead>
                      <tbody>
@@ -193,12 +194,15 @@
                          <?php foreach($muc__Get_All as $item):?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td> <?=$khoan->khoan__Get_By_Id($item->id_khoan)->ten_khoan?> -
-                                 <?=$dieu->dieu__Get_By_Id($khoan->khoan__Get_By_Id($item->id_khoan)->id_dieu)->ten_dieu?>
-                             </td>
+                             <?php 
+                                 $kh = $khoan->khoan__Get_By_Id($item->id_khoan);
+                                 $di = $kh ? $dieu->dieu__Get_By_Id($kh->id_dieu) : null;
+                             ?>
+                             <td class="text-center" style="text-align: center !important;"><?= $di ? htmlspecialchars($di->ten_dieu, ENT_QUOTES, 'UTF-8') : '<span class="text-danger">Chưa xác định</span>' ?></td>
+                             <td><?= $kh ? htmlspecialchars($kh->ten_khoan, ENT_QUOTES, 'UTF-8') : '<span class="text-danger">Chưa xác định</span>' ?></td>
                              <td><?=$item->ten_muc?></td>
-                             <td><?=$item->diem_toi_da?></td>
-                             <td>
+                             <td class="text-center" style="text-align: center !important;"><?=$item->diem_toi_da?></td>
+                             <td class="text-center" style="text-align: center !important;">
                                  <?php if($item->co_minh_chung == 1): ?>
                                      <span class="badge badge-danger"><i class="fas fa-file-upload"></i> Có</span>
                                  <?php else: ?>
@@ -233,13 +237,41 @@
 
 
  <script>
- window.addEventListener("load", function() {
-     $("#tablejs").DataTable({
-         "responsive": true,
-         "autoWidth": false,
-         "buttons": ["copy", "csv", "excel", "pdf", "print"]
-     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
- });
+  window.addEventListener("load", function() {
+      $("#tablejs").DataTable({
+          "responsive": true,
+          "autoWidth": false,
+          "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+          "pagingType": "full_numbers",
+          "pageLength": 10,
+          "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+          "language": {
+              "decimal": ",",
+              "thousands": ".",
+              "emptyTable": "Không có dữ liệu trong bảng",
+              "info": "Hiển thị _START_ - _END_ của _TOTAL_ mục",
+              "infoEmpty": "Hiển thị 0 - 0 của 0 mục",
+              "infoFiltered": "(lọc từ _MAX_ mục)",
+              "infoPostFix": "",
+              "lengthMenu": "Hiển thị _MENU_ mục",
+              "loadingRecords": "Đang tải...",
+              "processing": "Đang xử lý...",
+              "search": "Tìm kiếm:",
+              "zeroRecords": "Không tìm thấy kết quả phù hợp",
+              "paginate": {
+                  "first": "&laquo;",
+                  "last": "&raquo;",
+                  "next": "&rsaquo;",
+                  "previous": "&lsaquo;"
+              },
+              "aria": {
+                  "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                  "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+              }
+          },
+          "buttons": ["copy", "csv", "excel", "pdf", "print"]
+      }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+  });
 
  function update_obj(id_muc) {
      $.post('quan-ly-muc/update.php', {

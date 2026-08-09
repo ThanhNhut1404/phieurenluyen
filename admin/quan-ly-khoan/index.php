@@ -117,30 +117,30 @@
              </div>
              <!-- /.card-header -->
              <div class="card-body">
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
-                     <thead>
-                         <tr>
-                             <th>STT</th>
-                             <th>Điều</th>
-                             <th>Điểm tối đa</th>
-                             <!-- quân sửa: Bổ sung cột Số lượng mục vào bảng danh sách Khoản -->
-                             <th>Số lượng mục</th>
-                             <th>Tên khoản</th>
-                             <th>Ghi chú</th>
-                             <th>Thao tác</th>
-                         </tr>
-                     </thead>
+                  <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
+                      <thead>
+                          <tr>
+                              <th style="width: 3%; white-space: nowrap;">STT</th>
+                              <th style="width: 8%; white-space: nowrap;">Điều</th>
+                              <th style="width: 35%; white-space: nowrap;">Tên khoản</th>
+                              <th style="width: 8%; white-space: nowrap;">Điểm tối đa</th>
+                              <!-- quân sửa: Bổ sung cột Số lượng mục vào bảng danh sách Khoản -->
+                              <th style="width: 10%; white-space: nowrap;">Số lượng mục</th>
+                              <th style="width: 21%; white-space: nowrap;">Ghi chú</th>
+                              <th style="width: 15%; white-space: nowrap;">Thao tác</th>
+                          </tr>
+                      </thead>
                      <tbody>
                          <?php $num = 0;?>
                          <?php foreach($khoan__Get_All as $item):?>
                          <tr>
-                             <td><?=++$num?></td>
-                             <td> <?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?></td>
-                             <td><?=$item->can_tren?></td>
-                             <!-- quân sửa: Hiển thị giá trị Số lượng mục -->
-                             <td><?=$item->so_luong_muc?></td>
-                             <td><?=$item->ten_khoan?></td>
-                             <td><?=$item->ghi_chu?></td>
+                              <td><?=++$num?></td>
+                              <td class="text-center" style="text-align: center !important;"> <?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?></td>
+                              <td><?=$item->ten_khoan?></td>
+                              <td class="text-center" style="text-align: center !important;"><?=$item->can_tren?></td>
+                              <!-- quân sửa: Hiển thị giá trị Số lượng mục -->
+                              <td class="text-center" style="text-align: center !important;"><?=$item->so_luong_muc?></td>
+                              <td><?=$item->ghi_chu?></td>
                              <td>
                                  <?php if(!$khoan->khoan__Is_Used_In_Bocauhoi($item->id_khoan)): ?>
                                  <a href="#" type=" button" class="btn btn-warning"
@@ -172,6 +172,34 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ khoản",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 khoản",
+            "infoFiltered": "(lọc từ _MAX_ khoản)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ khoản",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
         "buttons": ["copy", "csv", "excel", "pdf", "print"]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 });

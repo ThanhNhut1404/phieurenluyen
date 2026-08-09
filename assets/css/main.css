@@ -382,8 +382,10 @@ table#tablejs thead th {
 
 /* Style table action buttons to look like the custom card buttons in the image */
 .table td .btn-warning,
-.table td .btn-danger {
-    background-color: transparent !important;
+.table td .btn-danger,
+.table td .btn-success,
+.table td .btn-info {
+    background-color: #fff !important;
     border: 1px solid #dee2e6 !important;
     border-radius: 8px !important;
     width: 38px !important;
@@ -398,7 +400,9 @@ table#tablejs thead th {
 }
 
 .table td .btn-warning i,
-.table td .btn-danger i {
+.table td .btn-danger i,
+.table td .btn-success i,
+.table td .btn-info i {
     font-size: 1.15rem !important;
     transition: transform 0.2s ease-in-out !important;
 }
@@ -428,6 +432,34 @@ table#tablejs thead th {
 }
 
 .table td .btn-danger:hover i {
+    transform: scale(1.1);
+}
+
+/* Success Button (Green) - used for Active Status and Send Mail */
+.table td .btn-success {
+    color: #16a34a !important; /* Green color for icon */
+}
+
+.table td .btn-success:hover {
+    background-color: rgba(22, 163, 74, 0.06) !important;
+    border-color: #16a34a !important;
+}
+
+.table td .btn-success:hover i {
+    transform: scale(1.1);
+}
+
+/* Info Button (Orange/Yellow) - used for Reset Password */
+.table td .btn-info {
+    color: #d97706 !important; /* Orange color for icon */
+}
+
+.table td .btn-info:hover {
+    background-color: rgba(217, 119, 6, 0.06) !important;
+    border-color: #d97706 !important;
+}
+
+.table td .btn-info:hover i {
     transform: scale(1.1);
 }
 

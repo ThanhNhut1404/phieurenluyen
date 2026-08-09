@@ -120,10 +120,10 @@
                          <?php foreach($xeploai__Get_All as $item):?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td><?=htmlspecialchars($item->ten_xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
-                             <td><?=$item->can_duoi?></td>
-                             <td><?=$item->can_tren?></td>
-                             <td><?=$item->ha_bac?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=htmlspecialchars($item->ten_xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=$item->can_duoi?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=$item->can_tren?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=$item->ha_bac?></td>
                              <td><?=htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8')?></td>
                              <td>
                                  <a href="javascript:void(0)" class="btn btn-warning m-2"
@@ -155,6 +155,34 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ xếp loại",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 xếp loại",
+            "infoFiltered": "(lọc từ _MAX_ xếp loại)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ xếp loại",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
         "buttons": ["copy", "csv", "excel", "pdf", "print"]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 

@@ -112,14 +112,14 @@ button.btn.removeall.btn-outline-secondary:before {
              </div>
              <!-- /.card-header -->
              <div class="card-body">
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
+                 <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                      <thead>
                          <tr>
-                             <th>STT</th>
-                             <th>Tên mẫu phiếu</th>
-                             <th>Điều</th>
-                             <th>Ghi chú</th>
-                             <th>Thao tác</th>
+                             <th style="width: 3%; white-space: nowrap;">STT</th>
+                             <th style="width: 35%; white-space: nowrap;">Tên mẫu phiếu</th>
+                             <th style="width: 12%; white-space: nowrap;">Điều</th>
+                             <th style="width: 30%; white-space: nowrap;">Ghi chú</th>
+                             <th style="width: 20%; white-space: nowrap;">Thao tác</th>
                          </tr>
                      </thead>
                      <tbody>
@@ -128,13 +128,13 @@ button.btn.removeall.btn-outline-secondary:before {
                          <tr>
                              <td><?=++$num?></td>
                              <td><?=$item->ten_mau_phieu?></td>
-                             <td><?php foreach($dieu->dieu__Get_All_Selected($item->id_mau_phieu) as $item){echo $item->ten_dieu ."<br/>";}?>
+                             <td><?php foreach($dieu->dieu__Get_All_Selected($item->id_mau_phieu) as $item_dieu){echo $item_dieu->ten_dieu ."<br/>";}?>
                              </td>
                              <td><?=$item->ghi_chu?></td>
                              <td>
-                                 <a href="#" type="button" class="btn  btn-warning m-2"
+                                 <a href="#" type="button" class="btn btn-sm btn-info m-2" style="width: auto !important; padding: 0 12px !important;"
                                      onclick="update_obj_dieu(<?=$item->id_mau_phieu?>)">
-                                     <i class="ri-edit-2-line">Sửa điều</i>
+                                     <i class="ri-article-line mr-1"></i> Sửa điều
                                  </a>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_mau_phieu?>)">
@@ -166,6 +166,34 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ mẫu phiếu",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 mẫu phiếu",
+            "infoFiltered": "(lọc từ _MAX_ mẫu phiếu)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ mẫu phiếu",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
         "buttons": ["copy", "csv", "excel", "pdf", "print"]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 });
