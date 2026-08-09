@@ -37,7 +37,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 ?>
 <link rel="stylesheet" href="../assets/css/user.css">
 <?php if (!isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) : ?>
-<div class="ml-0 mr-3 content-wrapper">
+<div class="content-wrapper student-evaluation-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
@@ -72,7 +72,21 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 <?php else : ?>
 
 <!-- Content Wrapper. Contains page content -->
-<div class="ml-0 mr-3 content-wrapper">
+<div class="content-wrapper student-evaluation-wrapper">
+    <style>
+        /* Override the global sidebar margin from main.css for this specific student page */
+        body:not(.sidebar-collapse) .content-wrapper.student-evaluation-wrapper,
+        body .content-wrapper.student-evaluation-wrapper {
+            margin-left: 0 !important;
+        }
+
+        .evaluation-page {
+            width: 100% !important;
+            max-width: none !important;
+            padding: 12px 16px !important;
+            margin: 0 !important;
+        }
+    </style>
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
@@ -89,7 +103,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             </div>
         </div><!-- /.container-fluid -->
     </section>
-    <section class="content">
+    <section class="content evaluation-page">
         <form class="form" action="sinh-vien/action.php?req=add" method="post" enctype="multipart/form-data">
 
             <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
@@ -160,332 +174,181 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     </div>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="w-10  text-center vertical-align-middle">Điều</th>
-                                <th class="w-90  text-center vertical-align-middle no-padding">
-                                    <table>
-                                        <tbody>
+                <style>
+                    table.table tbody tr td.criterion-text-cell {
+                        text-align: left !important;
+                        white-space: normal !important;
+                        overflow-wrap: break-word !important;
+                        word-break: normal !important;
+                        line-height: 1.45;
+                        padding: 8px 10px !important;
+                        vertical-align: middle;
+                    }
+                </style>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered mb-0" style="width: 100%; table-layout: fixed; white-space: normal; overflow-wrap: break-word; word-break: normal;">
+                            <colgroup>
+                                <col style="width:80px">
+                                <col>
+                                <col style="width:65px">
+                                <col style="width:75px">
+                                <col style="width:75px">
+                                <col style="width:75px">
+                                <col style="width:85px">
+                            </colgroup>
+                            <thead class="thead-light text-center">
+                                <tr>
+                                    <th class="align-middle" style="padding:6px 4px;">Điều</th>
+                                    <th class="align-middle" style="padding:6px 4px;">Nội dung</th>
+                                    <th class="align-middle" style="padding:6px 4px;">SV TỰ<br>CHẤM</th>
+                                    <th class="align-middle" style="padding:6px 4px;">LỚP TRƯỞNG<br>BÍ THƯ</th>
+                                    <th class="align-middle" style="padding:6px 4px;">BCH ĐOÀN<br>KHOA</th>
+                                    <th class="align-middle" style="padding:6px 4px;">CỐ VẤN<br>HỌC TẬP</th>
+                                    <th class="align-middle" style="padding:6px 4px;">MINH<br>CHỨNG</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $i = 0; ?>
+                                <?php foreach ($bocauhoi__Get_By_Id_Mau_Phieu as $item_1) : ?>
+                                    <?php
+                                    $rowspan = 0;
+                                    $khoan_list = $khoan->khoan__Get_All_By_Id_Dieu($item_1->id_dieu);
+                                    foreach ($khoan_list as $k) {
+                                        $rowspan += 1;
+                                        $rowspan += count($muc->muc__Get_All_By_Id_Khoan($k->id_khoan));
+                                    }
+                                    $is_first_row_dieu = true;
+                                    ?>
+                                    <?php foreach ($khoan_list as $item_2) : ?>
+                                        <tr class="table-info">
+                                            <?php if ($is_first_row_dieu): ?>
+                                                <td rowspan="<?= $rowspan ?>" class="align-middle text-center" style="padding:6px 4px;">
+                                                    <div class="font-weight-bold"><?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ten_dieu ?></div>
+                                                    <div class="text-muted small mt-1"><?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ghi_chu ?></div>
+                                                </td>
+                                                <?php $is_first_row_dieu = false; ?>
+                                            <?php endif; ?>
+                                            <td colspan="6" class="font-weight-bold" style="padding:6px 8px;">
+                                                <?= $khoan->khoan__Get_By_Id($item_2->id_khoan)->ten_khoan ?>
+                                            </td>
+                                        </tr>
+                                        <?php foreach ($muc->muc__Get_All_By_Id_Khoan($item_2->id_khoan) as $item_3) : ?>
                                             <tr>
-                                                <td class="w-50 no-border full  h-0 ">
-                                                    <?= $dw ?>
-                                                </td>
-                                                <td class="w-10 h-0 no-border full  h-0">
-                                                    Sv tự chấm
-                                                    <br>
-                                                    Tự chấm
-                                                </td>
-                                                <td class="w-10 h-0 no-border full  h-0">
-                                                    Lớp trưởng <br />
-                                                    Bí thư
-                                                </td>
-                                                <td class="w-10 h-0 no-border full  h-0">
-                                                    BCH <br /> đoàn khoa
-                                                </td>
-                                                <td class="w-10 h-0 no-border full  h-0">
-                                                    Cố vấn học tập
-                                                </td>
-                                                <td class="w-10 h-0 no-border full  h-0">
-                                                    Minh chứng
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="w-50 no-border full vertical-align-middle">
-                                                    Nội dung chấm điểm
-                                                </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
-                                                    Sinh viên
-                                                    <br>
-                                                    Tự chấm
-                                                </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
-                                                    Lớp trưởng <br />
-                                                    Bí thư
-                                                </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
-                                                    BCH <br /> đoàn khoa
-                                                </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
-                                                    Cố vấn <br /> học tập
-                                                </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
-                                                    Kèm ảnh
-                                                </td>
-                                        </tbody>
-                                    </table>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $i = 0; ?>
-
-                            <?php foreach ($bocauhoi__Get_By_Id_Mau_Phieu as $item_1) : ?>
-                            <tr>
-                                <td class="vertical-align-middle">
-                                    <table class="table no-border text-center">
-                                        <tbody>
-                                            <tr>
-                                                <th class="p-0">
-                                                    <?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ten_dieu ?>
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <th class="p-2">
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <th class="p-0">
-                                                    <?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ghi_chu ?>
-                                                </th>
-                                            </tr>
-
-                                        </tbody>
-                                    </table>
-                                </td>
-
-                                <td class="no-padding">
-                                    <?php foreach ($khoan->khoan__Get_All_By_Id_Dieu($item_1->id_dieu) as $item_2) : ?>
-
-                                    <table class="w-100 table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <th class="w-100 table table-border">
-                                                    <?= $khoan->khoan__Get_By_Id($item_2->id_khoan)->ten_khoan ?>
-                                                </th>
-
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <?php foreach ($muc->muc__Get_All_By_Id_Khoan($item_2->id_khoan) as $item_3) : ?>
-                                    <?php $dw = $item_3->ten_muc ?>
-
-                                    <table class="w-100">
-                                        <tbody>
-                                            <tr>
-                                                <td class="w-50 no-border full  h-0 ">
-                                                    <?= $dw ?>
-                                                </td>
-                                                <td class="w-10 h-0 no-border full">
-                                                    Sv tự chấm
-                                                    <br>
-                                                    Tự chấm
-                                                </td>
-                                                <td class="w-10 h-0 no-border full">
-                                                    Lớp trưởng <br />
-                                                    Bí thư
-                                                </td>
-                                                <td class="w-10 h-0 no-border full">
-                                                    BCH <br /> đoàn khoa
-                                                </td>
-                                                <td class="w-10 h-0 no-border full">
-                                                    Cố vấn học tập
-                                                </td>
-                                            </tr>
-                                            <tr class="border-bottom">
-                                                <td class="w-50 no-border full vertical-align-middle">
+                                                <td class="criterion-text-cell">
                                                     - <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
                                                 </td>
-
-                                                <td class="w-10 no-border full vertical-align-middle">
+                                                <td class="text-center align-middle" style="padding:4px;">
                                                     <input type="number" class="form-control kq_sv" name="kq_sv[]"
+                                                        style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                                                         <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'readonly' : '' ?>
                                                         <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'readonly' : '' ?>
-                                                        pattern="[-+]?[0-9]{1-2}"
+                                                        pattern="[-+]?[0-9]{1,2}"
                                                         title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
                                                         max="<?= $item_2->can_tren ?>" required
-                                                        value="<?= $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i] ?>">
+                                                        value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i] : 0 ?>">
                                                 </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
+                                                <td class="text-center align-middle" style="padding:4px;">
                                                     <input type="number" class="form-control kq_lt_bt" name="kq_lt_bt[]"
-                                                        pattern="[-+]?[0-9]{1-2}"
+                                                        style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
+                                                        pattern="[-+]?[0-9]{1,2}"
                                                         title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
                                                         max="<?= $item_2->can_tren ?>" required disabled
                                                         value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i] : 0 ?>">
                                                 </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
+                                                <td class="text-center align-middle" style="padding:4px;">
                                                     <input type="number" class="form-control kq_btdk" name="kq_btdk[]"
-                                                        pattern="[-+]?[0-9]{1-2}"
+                                                        style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
+                                                        pattern="[-+]?[0-9]{1,2}"
                                                         title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
                                                         max="<?= $item_2->can_tren ?>" required disabled
                                                         value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i] : 0 ?>">
                                                 </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
+                                                <td class="text-center align-middle" style="padding:4px;">
                                                     <input type="number" class="form-control kq_gv" name="kq_gv[]"
-                                                        pattern="[-+]?[0-9]{1-2}"
+                                                        style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
+                                                        pattern="[-+]?[0-9]{1,2}"
                                                         title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
                                                         max="<?= $item_2->can_tren ?>" required disabled
                                                         value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i] : 0 ?>">
                                                 </td>
-                                                <td class="w-10 no-border full vertical-align-middle">
+                                                <td class="text-center align-middle" style="padding:4px;">
                                                     <?php if ($muc->muc__Get_By_Id($item_3->id_muc)->co_minh_chung == 1): ?>
-                                                        <input type="file" name="minh_chung_muc[<?= $item_3->id_muc ?>][]" multiple accept="image/*"
-                                                            <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>
-                                                            <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>
-                                                            class="form-control-file" style="font-size: 0.8rem;">
                                                         <?php
-                                                            // Hiển thị ảnh đã nộp nếu có
                                                             $minh_chung_cua_muc = $minhchung->minhchung__Get_By_Id_Phieu_And_Muc($phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu, $item_3->id_muc);
-                                                            if (count($minh_chung_cua_muc) > 0) {
-                                                                echo '<div class="mt-1 d-flex flex-wrap">';
-                                                                foreach ($minh_chung_cua_muc as $mc) {
-                                                                    echo '<a href="sinh-vien/image.php?id_minh_chung=' . $mc->id_minh_chung . '" data-toggle="lightbox" class="mr-1 mb-1 border" style="width: 30px; height: 30px; overflow: hidden; display: inline-block;">';
-                                                                    echo '<img src="' . $mc->hinh_anh . '" class="img-fluid" style="object-fit: cover; width: 100%; height: 100%;" />';
-                                                                    echo '</a>';
-                                                                }
-                                                                echo '</div>';
-                                                            }
+                                                            $has_existing = count($minh_chung_cua_muc) > 0;
+                                                            $existing_url = $has_existing ? 'sinh-vien/image.php?id_minh_chung=' . $minh_chung_cua_muc[0]->id_minh_chung : '';
+                                                            $existing_name = $has_existing ? basename($minh_chung_cua_muc[0]->hinh_anh) : '';
                                                         ?>
+                                                        <div class="evidence-upload" style="display: flex; align-items: center; justify-content: center; gap: 5px; flex-wrap: wrap; flex-direction: column;">
+                                                            <input type="file" name="minh_chung_muc[<?= $item_3->id_muc ?>][]" accept="image/*,application/pdf"
+                                                                <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>
+                                                                <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>
+                                                                class="evidence-file-input" style="display:none;">
+
+                                                            <button type="button" class="btn btn-secondary btn-sm evidence-select-btn"
+                                                                <?= $has_existing ? 'style="display:none;"' : '' ?>
+                                                                <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>
+                                                                <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>
+                                                                style="font-size: 11px; padding: 3px 6px;">
+                                                                Chọn tệp
+                                                            </button>
+
+                                                            <div class="evidence-selected-info" style="<?= !$has_existing ? 'display:none;' : 'display:flex;' ?> flex-direction: column; align-items: center; gap: 3px; width: 100%;">
+                                                                <span class="evidence-file-name" title="<?= htmlspecialchars($existing_name) ?>" style="max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px;">
+                                                                    <?= htmlspecialchars($existing_name) ?>
+                                                                </span>
+                                                                <div style="display:flex; justify-content:center; gap:3px; margin-top:2px;">
+                                                                    <a class="btn btn-info btn-sm evidence-preview-link" target="_blank" rel="noopener"
+                                                                       href="<?= $existing_url ?>" style="font-size: 11px; padding: 3px 6px;">Xem</a>
+                                                                    <button type="button" class="btn btn-warning btn-sm evidence-change-btn"
+                                                                        <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>
+                                                                        <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>
+                                                                        style="font-size: 11px; padding: 3px 6px;">
+                                                                        Thay tệp
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     <?php else: ?>
-                                                        <span class="text-muted text-center d-block w-100" style="font-size: 0.8rem;">(Không yêu cầu)</span>
+                                                        <span class="text-muted d-block" style="font-size: 0.75rem;">(Không)</span>
                                                     <?php endif; ?>
                                                 </td>
-
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                    <?php $i++ ?>
-                    <?php endforeach ?>
-
-                    <?php endforeach ?>
-
-                    </td>
-                    </tr>
-
-                    <?php endforeach ?>
-
-                    </tbody>
-                    <footer>
-                        <tr>
-                            <th class="w-10  text-center vertical-align-middle">Điều</th>
-                            <th class="w-90  text-center vertical-align-middle no-padding">
-                                <table>
-                                    <tbody>
-                                        <tr>
-                                            <td class="w-50 no-border full  h-0 ">
-                                                <?= $dw ?>
-                                            </td>
-                                            <td class="w-10 h-0 no-border full  h-0">
-                                                Sv tự chấm
-                                                <br>
-                                                Tự chấm
-                                            </td>
-                                            <td class="w-10 h-0 no-border full  h-0">
-                                                Lớp trưởng <br />
-                                                Bí thư
-                                            </td>
-                                            <td class="w-10 h-0 no-border full  h-0">
-                                                BCH <br /> đoàn khoa
-                                            </td>
-                                            <td class="w-10 h-0 no-border full  h-0">
-                                                Cố vấn học tập
-                                            </td>
-                                            <td class="w-10 h-0 no-border full  h-0">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="w-50 no-border full vertical-align-middle h-0">
-                                                <?= $dw ?>
-                                                Tổng
-                                            </td>
-                                            <td class="w-10 no-border full vertical-align-middle">
-                                                <input type="number" class="form-control font-weight-bold  bg-success"
-                                                    <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'readonly' : '' ?>
-                                                    <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'readonly' : '' ?>
-                                                    placeholder="0" id="sum_sv" min="0" pattern="[-+]?[0-9]{1-2}"
-                                                    title="max is 100" max="100" readonly required>
-                                            </td>
-                                            <td class="w-10 no-border full vertical-align-middle">
-                                                <input type="number" class="form-control font-weight-bold"
-                                                    placeholder="0" id="sum_lt_bt" min="0" pattern="[-+]?[0-9]{1-2}"
-                                                    title="max is 100" max="100" readonly required>
-                                            </td>
-                                            <td class="w-10 no-border full vertical-align-middle">
-                                                <input type="number" class="form-control font-weight-bold"
-                                                    placeholder="0" id="sum_btdk" min="0" pattern="[-+]?[0-9]{1-2}"
-                                                    title="max is 100" max="100" readonly required>
-                                            </td>
-                                            <td class="w-10 no-border full vertical-align-middle">
-                                                <input type="number" class="form-control font-weight-bold"
-                                                    placeholder="0" id="sum_gv" min="0" pattern="[-+]?[0-9]{1-2}"
-                                                    title="max is 100" max="100" readonly required>
-                                            </td>
-                                            <td class="w-10 no-border full vertical-align-middle"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </th>
-                        </tr>
-                        <tr>
-
-                    </footer>
-
-                    </table>
+                                            </tr>
+                                            <?php $i++ ?>
+                                        <?php endforeach ?>
+                                    <?php endforeach ?>
+                                <?php endforeach ?>
+                            </tbody>
+                            <tfoot>
+                                <tr class="font-weight-bold table-secondary text-center">
+                                    <td colspan="2" class="align-middle text-right" style="padding:6px 8px;">Tổng điểm:</td>
+                                    <td class="align-middle" style="padding:4px;">
+                                        <input type="number" class="form-control font-weight-bold bg-success text-white" id="sum_sv" placeholder="0" min="0" max="100" readonly required style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;">
+                                    </td>
+                                    <td class="align-middle" style="padding:4px;">
+                                        <input type="number" class="form-control font-weight-bold" id="sum_lt_bt" placeholder="0" min="0" max="100" readonly required style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;">
+                                    </td>
+                                    <td class="align-middle" style="padding:4px;">
+                                        <input type="number" class="form-control font-weight-bold" id="sum_btdk" placeholder="0" min="0" max="100" readonly required style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;">
+                                    </td>
+                                    <td class="align-middle" style="padding:4px;">
+                                        <input type="number" class="form-control font-weight-bold" id="sum_gv" placeholder="0" min="0" max="100" readonly required style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;">
+                                    </td>
+                                    <td style="padding:4px;"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
-            </div>
             <div class="card-footer">
-                <label for="" class="text-muted text-crimson">Vui lòng thêm minh chứng trước khi nhấn cập
-                    nhật</label>
                 <input type="submit" value="Cập nhật" class="btn btn-danger float-right" id="submit"
                     <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>
                     <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>>
             </div>
         </form>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-success">
-                    <div class="card-header">
-                        <h3 class="card-title">Thêm các minh chứng</h3>
-                    </div>
-                    <form id="uploadForm"
-                        class=<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? '' : 'dropzone' ?>
-                        method="post" enctype="multipart/form-data" action="sinh-vien/upload.php">
-                        <input type="hidden" class="form-control" id="id_phieu" name="id_phieu"
-                            value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
-                        <button <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>
-                            <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? '' : 'disabled' ?> type="submit"
-                            class="btn btn-success" id="btn_upload">Tải lên minh
-                            chứng!</button>
-                    </form>
-                </div>
-            </div>
-        </div>
 
-        <!-- Main content -->
-
-        <div class="row">
-            <div class="col-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h4 class="card-title">Minh chứng đã thêm</h4>
-                    </div>
-                    <div class="card-body">
-
-                        <div>
-                            <div class="filter-container p-0 row">
-                                <?php foreach ($minhchung->minhchung__Get_By_Id_Phieu($phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu) as $item) : ?>
-                                <div class="card">
-                                    <div class="filtr-item no-flexed " data-category="1">
-                                        <a href="sinh-vien/image.php?id_minh_chung=<?= $item->id_minh_chung ?>"
-                                            data-toggle="lightbox">
-                                            <img src="<?= $item->hinh_anh ?>" class="img-fluid img-50" />
-                                        </a>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-</div>
 
 
 <div class="card-header">
@@ -610,6 +473,47 @@ window.addEventListener('load', function() {
             document.getElementById("submit").removeAttribute("disabled");
             document.getElementById("submit").setAttribute("value", "Cập nhật");
             $("#sum_sv").removeClass("bg-danger");
+        }
+    });
+
+    document.querySelectorAll('.evidence-upload').forEach(function(container) {
+        var fileInput = container.querySelector('.evidence-file-input');
+        var selectBtn = container.querySelector('.evidence-select-btn');
+        var changeBtn = container.querySelector('.evidence-change-btn');
+        var infoDiv = container.querySelector('.evidence-selected-info');
+        var nameSpan = container.querySelector('.evidence-file-name');
+        var previewLink = container.querySelector('.evidence-preview-link');
+        var currentObjectUrl = null;
+
+        if (selectBtn) {
+            selectBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+        }
+
+        if (changeBtn) {
+            changeBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    var file = this.files[0];
+                    nameSpan.textContent = file.name;
+                    nameSpan.title = file.name;
+
+                    if (currentObjectUrl) {
+                        URL.revokeObjectURL(currentObjectUrl);
+                    }
+                    currentObjectUrl = URL.createObjectURL(file);
+                    previewLink.href = currentObjectUrl;
+
+                    if (selectBtn) selectBtn.style.display = 'none';
+                    if (infoDiv) infoDiv.style.display = 'flex';
+                }
+            });
         }
     });
 

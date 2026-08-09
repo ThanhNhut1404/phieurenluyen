@@ -196,11 +196,7 @@
                         throw new Exception("Dieu dang bi khoa boi dot cham diem active");
                     }
 
-                    // Nhựt sửa lỗi: Điều đang được Khoản tham chiếu thì không xóa để tránh dữ liệu mồ côi.
-                    if ($dieu->dieu__Is_Used_In_Khoan($id_dieu)) {
-                        $error_status = 'related-dieu-khoan';
-                        throw new Exception("Dieu nay dang co Khoan nen khong the xoa");
-                    }
+                    // Quân sửa: Đã loại bỏ ràng buộc kiểm tra Khoản con vì hệ thống hỗ trợ xóa cascade (xóa toàn bộ Khoản, Mục con).
 
                     // Nhựt sửa lỗi: Dữ liệu thứ tự đang lỗi thì không xóa tiếp làm sai thêm.
                     if (!$dieu->dieu__Check_Thu_Tu_Hop_Le()) {
@@ -208,7 +204,7 @@
                     }
 
                     $thu_tu_xoa = $old_dieu->thu_tu;
-                    $status = $dieu->dieu__Delete($id_dieu);
+                    $status = $dieu->dieu__DeleteWithChildren($id_dieu);
                     // Nhựt sửa lỗi: Chỉ dồn thứ tự sau khi đã xóa thành công để tránh trùng thứ tự tạm thời.
                     if ($status == 0 || !$dieu->dieu__Giam_Thu_Tu_Sau_Khi_Xoa($thu_tu_xoa) || !$dieu->dieu__Check_Thu_Tu_Hop_Le()) {
                         throw new Exception("Xoa dieu that bai");

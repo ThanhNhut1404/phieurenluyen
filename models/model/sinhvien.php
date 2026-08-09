@@ -98,43 +98,66 @@ class sinhvien extends Database {
         $obj->execute(array($id_lop_hoc));
         return $obj->fetchAll();
     }
-    public function sinhvien__Get_By_Id_Lop_Hoc_Kq_LTBT($id_dot,$id_lop_hoc, $kq_lt_bt) {
-       if($kq_lt_bt == -1){
-        $obj = $this->connect->prepare("SELECT * FROM sinhvien,phieuchamdiem,lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot=? AND lopapdung.id_lop_hoc = ? AND kq_lt_bt = ? AND  phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+    // Quân sửa: Sửa lại các hàm Get theo kq_lt_bt bị lỗi NULL || "" và bổ sung các hàm lọc trạng thái
+    public function sinhvien__Get_All_In_Lop($id_dot, $id_lop_hoc) {
+        $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
         $obj->setFetchMode(PDO::FETCH_OBJ);
-        $obj->execute(array($id_dot, $id_lop_hoc, NULL || ""));
+        $obj->execute(array($id_dot, $id_lop_hoc));
         return $obj->fetchAll();
-       }else{
-        $obj = $this->connect->prepare("SELECT * FROM sinhvien,phieuchamdiem,lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot=? AND lopapdung.id_lop_hoc = ? AND kq_lt_bt != ? AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+    }
+
+    public function sinhvien__Get_Chua_Tu_Cham($id_dot, $id_lop_hoc) {
+        $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND (phieuchamdiem.kq_sv IS NULL OR phieuchamdiem.kq_sv = '') AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
         $obj->setFetchMode(PDO::FETCH_OBJ);
-        $obj->execute(array($id_dot, $id_lop_hoc, NULL || ""));
+        $obj->execute(array($id_dot, $id_lop_hoc));
+        return $obj->fetchAll();
+    }
+
+    public function sinhvien__Get_Da_Tu_Cham($id_dot, $id_lop_hoc) {
+        $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND phieuchamdiem.kq_sv IS NOT NULL AND phieuchamdiem.kq_sv != '' AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot, $id_lop_hoc));
+        return $obj->fetchAll();
+    }
+
+    public function sinhvien__Get_By_Id_Lop_Hoc_Kq_LTBT($id_dot, $id_lop_hoc, $kq_lt_bt) {
+       if($kq_lt_bt == -1){ // Chưa chấm
+        $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND (phieuchamdiem.kq_lt_bt IS NULL OR phieuchamdiem.kq_lt_bt = '') AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot, $id_lop_hoc));
+        return $obj->fetchAll();
+       } else { // Đã chấm
+        $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND phieuchamdiem.kq_lt_bt IS NOT NULL AND phieuchamdiem.kq_lt_bt != '' AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot, $id_lop_hoc));
         return $obj->fetchAll();
        }
     }
-    public function sinhvien__Get_By_Id_Lop_Hoc_Kq_BTDK($id_dot,$id_lop_hoc, $kq_btdk) {
+
+    public function sinhvien__Get_By_Id_Lop_Hoc_Kq_BTDK($id_dot, $id_lop_hoc, $kq_btdk) {
         if($kq_btdk == -1){
-         $obj = $this->connect->prepare("SELECT * FROM sinhvien,phieuchamdiem,lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot=? AND lopapdung.id_lop_hoc = ? AND kq_btdk = ? AND  phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+         $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND (phieuchamdiem.kq_btdk IS NULL OR phieuchamdiem.kq_btdk = '') AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
          $obj->setFetchMode(PDO::FETCH_OBJ);
-         $obj->execute(array($id_dot, $id_lop_hoc, NULL || ""));
+         $obj->execute(array($id_dot, $id_lop_hoc));
          return $obj->fetchAll();
-        }else{
-         $obj = $this->connect->prepare("SELECT * FROM sinhvien,phieuchamdiem,lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot=? AND lopapdung.id_lop_hoc = ? AND kq_btdk != ? AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+        } else {
+         $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND phieuchamdiem.kq_btdk IS NOT NULL AND phieuchamdiem.kq_btdk != '' AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
          $obj->setFetchMode(PDO::FETCH_OBJ);
-         $obj->execute(array($id_dot, $id_lop_hoc, NULL || ""));
+         $obj->execute(array($id_dot, $id_lop_hoc));
          return $obj->fetchAll();
         }
      }
 
-     public function sinhvien__Get_By_Id_Lop_Hoc_Kq_CVHT($id_dot,$id_lop_hoc, $kq_gv) {
+     public function sinhvien__Get_By_Id_Lop_Hoc_Kq_CVHT($id_dot, $id_lop_hoc, $kq_gv) {
         if($kq_gv == -1){
-         $obj = $this->connect->prepare("SELECT * FROM sinhvien,phieuchamdiem,lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot=? AND lopapdung.id_lop_hoc = ? AND kq_gv = ? AND  phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+         $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND (phieuchamdiem.kq_gv IS NULL OR phieuchamdiem.kq_gv = '') AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
          $obj->setFetchMode(PDO::FETCH_OBJ);
-         $obj->execute(array($id_dot, $id_lop_hoc, NULL || ""));
+         $obj->execute(array($id_dot, $id_lop_hoc));
          return $obj->fetchAll();
-        }else{
-         $obj = $this->connect->prepare("SELECT * FROM sinhvien,phieuchamdiem,lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot=? AND lopapdung.id_lop_hoc = ? AND kq_gv != ? AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
+        } else {
+         $obj = $this->connect->prepare("SELECT sinhvien.* FROM sinhvien, phieuchamdiem, lopapdung WHERE lopapdung.id_lop_ap_dung = phieuchamdiem.id_lop_ap_dung AND lopapdung.id_dot = ? AND lopapdung.id_lop_hoc = ? AND phieuchamdiem.kq_gv IS NOT NULL AND phieuchamdiem.kq_gv != '' AND phieuchamdiem.id_sinh_vien = sinhvien.id_sinh_vien");
          $obj->setFetchMode(PDO::FETCH_OBJ);
-         $obj->execute(array($id_dot, $id_lop_hoc, NULL || ""));
+         $obj->execute(array($id_dot, $id_lop_hoc));
          return $obj->fetchAll();
         }
      }

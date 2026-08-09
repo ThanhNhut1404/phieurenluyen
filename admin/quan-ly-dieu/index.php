@@ -122,8 +122,8 @@
                                      <i class="ri-edit-2-line"></i>
                                  </a>
                                  <?php endif; ?>
-                                 <a href="#" type="button" class="btn  btn-danger m-2"
-                                     onclick="return confirm_sweet('quan-ly-dieu/action.php?req=delete&id_dieu=<?=$item->id_dieu?>')">
+                                     <a href="#" type="button" class="btn  btn-danger m-2"
+                                         onclick="return confirm_delete_dieu('quan-ly-dieu/action.php?req=delete&id_dieu=<?=$item->id_dieu?>')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
@@ -229,5 +229,23 @@ function update_obj(id_dieu) {
         $(".card.card-success").addClass('collapsed-card');
         $('#div_update').html(data);
     });
+}
+
+// Quân sửa: Thêm hàm xác nhận xóa Điều với thông báo cảnh báo xóa toàn bộ dữ liệu con
+function confirm_delete_dieu(url) {
+    Swal.fire({
+        title: 'Bạn có chắc muốn xóa điều này?',
+        text: "Toàn bộ khoản và mục thuộc điều này cũng sẽ bị xóa và không thể khôi phục.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Đồng ý xóa',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = url;
+        }
+    })
 }
  </script>

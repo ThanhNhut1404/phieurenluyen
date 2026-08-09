@@ -32,6 +32,17 @@
             exit();
         }
         $namhoc__Get_All = $namhoc->namhoc__Get_All();
+        $mauphieu__Get_All = $mauphieu->mauphieu__Get_All();
+        $lophoc__Get_All = $lophoc->lophoc__Get_All();
+        
+        $lopapdung__Get_By_Id_Dot = $lopapdung->lopapdung__Get_By_Id_Dot($id_dot);
+        $id_mau_phieu_hien_tai = count($lopapdung__Get_By_Id_Dot) > 0 ? $lopapdung__Get_By_Id_Dot[0]->id_mau_phieu : "";
+        $arr_id_lop_hoc_hien_tai = [];
+        foreach ($lopapdung__Get_By_Id_Dot as $item) {
+            $arr_id_lop_hoc_hien_tai[] = $item->id_lop_hoc;
+        }
+        
+        $has_data = $phieuchamdiem->phieuchamdiem__Has_Scored_Data_By_Id_Dot($id_dot) || $minhchung->minhchung__Has_By_Id_Dot($id_dot) || $ketquaxeploai->ketquaxeploai__Has_By_Id_Dot($id_dot);
         $id_nam_hoc_hien_tai = $dotchamdiem__Get_By_Id->id_nam_hoc;
     ?>
 
@@ -51,6 +62,8 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
                     <div class="form-group">
                         <label for="">Tên đợt <span class="color-crimson">(*)</span></label>
                         <?php // Nhựt sửa lỗi: Đổi id form cập nhật sang hậu tố _up và sửa placeholder sai "tên điều". ?>
@@ -92,6 +105,36 @@
                         <textarea id="ghi_chu_up" name="ghi_chu" class="form-control"
                             placeholder="Nhập Ghi chú"><?=dotchamdiem_update_escape($dotchamdiem__Get_By_Id->ghi_chu)?></textarea>
                     </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="">Mẫu phiếu <span class="color-crimson">(*)</span></label>
+                        <?php if ($has_data): ?>
+                            <input type="hidden" name="id_mau_phieu" value="<?=$id_mau_phieu_hien_tai?>">
+                        <?php endif; ?>
+                        <select class="form-control" name="id_mau_phieu" required <?= $has_data ? 'disabled' : '' ?>>
+                            <option value="">Chọn Mẫu phiếu</option>
+                            <?php foreach ($mauphieu__Get_All as $item):?>
+                            <option value="<?=$item->id_mau_phieu?>" <?= $item->id_mau_phieu == $id_mau_phieu_hien_tai ? 'selected' : '' ?>><?=$item->ten_mau_phieu?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php if ($has_data): ?>
+                            <small class="text-danger">Đã phát sinh dữ liệu, không thể thay đổi mẫu phiếu.</small>
+                        <?php endif; ?>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Lớp áp dụng <span class="color-crimson">(*)</span></label>
+                        <select class="duallistbox" multiple="multiple" name="id_lop_hoc[]" required>
+                            <?php foreach ($lophoc__Get_All as $item):?>
+                            <option value="<?=$item->id_lop_hoc?>" <?= in_array($item->id_lop_hoc, $arr_id_lop_hoc_hien_tai) ? 'selected' : '' ?>><?=$item->ten_lop_hoc?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php if ($has_data): ?>
+                            <small class="text-danger">Lớp đã phát sinh dữ liệu sẽ được giữ lại khi cập nhật.</small>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
                     <!-- /.card-body -->
                      <div class="card-footer">
                          <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
@@ -121,4 +164,7 @@ load_hoc_ky_by_nam_hoc(<?=json_encode($id_nam_hoc_hien_tai)?>, '#id_hoc_ky_up', 
 $("#id_nam_hoc_up").change(function() {
     load_hoc_ky_by_nam_hoc($(this).val(), '#id_hoc_ky_up', '');
 });
+
+// Init duallistbox for update form
+$('.duallistbox').bootstrapDualListbox();
     </script>
