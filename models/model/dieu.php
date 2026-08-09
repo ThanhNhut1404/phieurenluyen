@@ -192,5 +192,30 @@ class dieu extends Database {
         $result = $obj->fetch();
         return $result && $result->total > 0;
     }
+
+    public function dieu__DeleteWithChildren($id_dieu) {
+        // Quân sửa: Thực hiện xóa cascade toàn bộ Khoản, Mục, BoCauHoi và Điều theo yêu cầu mới. Transaction được quản lý ở Controller.
+        try {
+            // 1 & 2 & 3. Tìm Khoản của Điều và Xóa Mục thuộc các Khoản đó
+            $stmtMuc = $this->connect->prepare("DELETE FROM muc WHERE id_khoan IN (SELECT id_khoan FROM khoan WHERE id_dieu = ?)");
+            $stmtMuc->execute(array($id_dieu));
+
+            // 4. Xóa Khoản thuộc Điều
+            $stmtKhoan = $this->connect->prepare("DELETE FROM khoan WHERE id_dieu = ?");
+            $stmtKhoan->execute(array($id_dieu));
+
+            // 5. Xóa quan hệ bocauhoi tham chiếu đến Điều
+            $stmtBoCauHoi = $this->connect->prepare("DELETE FROM bocauhoi WHERE id_dieu = ?");
+            $stmtBoCauHoi->execute(array($id_dieu));
+
+            // 6. Xóa Điều
+            $stmtDieu = $this->connect->prepare("DELETE FROM dieu WHERE id_dieu = ?");
+            $stmtDieu->execute(array($id_dieu));
+
+            return $stmtDieu->rowCount() > 0;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
 ?>

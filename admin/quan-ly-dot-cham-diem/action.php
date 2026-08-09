@@ -195,15 +195,16 @@
                 $thoi_gian_ket_thuc = isset($_POST['thoi_gian_ket_thuc']) ? trim($_POST['thoi_gian_ket_thuc']) : "";
                 $id_nam_hoc = isset($_POST['id_nam_hoc']) ? trim($_POST['id_nam_hoc']) : "";
                 $id_hoc_ky = isset($_POST['id_hoc_ky']) ? trim($_POST['id_hoc_ky']) : "";
+                $id_mau_phieu = isset($_POST['id_mau_phieu']) ? trim($_POST['id_mau_phieu']) : "";
+                $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : [];
 
                 // Nhựt sửa lỗi: Không update nếu id_dot sai kiểu hoặc không tồn tại.
                 if (!dotchamdiem__Is_Positive_Integer($id_dot) || !$dotchamdiem->dotchamdiem__Get_By_Id($id_dot)) {
                     dotchamdiem__Redirect('not-found');
                 }
-                // Nhựt sửa lỗi: Không cho cập nhật Đợt đã phát sinh dữ liệu chấm, Minh chứng hoặc Kết quả xếp loại.
-                if ($phieuchamdiem->phieuchamdiem__Has_Scored_Data_By_Id_Dot($id_dot) || $minhchung->minhchung__Has_By_Id_Dot($id_dot) || $ketquaxeploai->ketquaxeploai__Has_By_Id_Dot($id_dot)) {
-                    dotchamdiem__Redirect('locked-dot');
-                }
+                
+                $has_data = $phieuchamdiem->phieuchamdiem__Has_Scored_Data_By_Id_Dot($id_dot) || $minhchung->minhchung__Has_By_Id_Dot($id_dot) || $ketquaxeploai->ketquaxeploai__Has_By_Id_Dot($id_dot);
+
                 if ($ten_dot == "") {
                     dotchamdiem__Redirect('invalid');
                 }
@@ -216,13 +217,76 @@
                 if (!dotchamdiem__Validate_Date($thoi_gian_bat_dau, $thoi_gian_ket_thuc)) {
                     dotchamdiem__Redirect('invalid-date');
                 }
-                // Nhựt sửa lỗi: Không cho thời gian Đợt chấm điểm vượt ngoài khoảng Học kỳ đã chọn.
+                
+                $id_lop_hoc_valid = dotchamdiem__Validate_Lop_Hoc($id_lop_hoc, $lophoc);
+                if ($id_lop_hoc_valid === false) {
+                    dotchamdiem__Redirect('invalid');
+                }
 
-                $status = $dotchamdiem->dotchamdiem__Update($id_dot, $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_hoc_ky);
-                dotchamdiem__Rotate_Csrf_Token();
-                if($status !=0 ){
+                $lopapdung->connect = $dotchamdiem->connect;
+                $phieuchamdiem->connect = $dotchamdiem->connect;
+                
+                try {
+                    $dotchamdiem->connect->beginTransaction();
+                    
+                    $lopapdung__Get_By_Id_Dot = $lopapdung->lopapdung__Get_By_Id_Dot($id_dot);
+                    
+                    if ($has_data) {
+                        $id_mau_phieu = count($lopapdung__Get_By_Id_Dot) > 0 ? $lopapdung__Get_By_Id_Dot[0]->id_mau_phieu : $id_mau_phieu;
+                    } else {
+                        if (!dotchamdiem__Is_Positive_Integer($id_mau_phieu) || !$mauphieu->mauphieu__Get_By_Id($id_mau_phieu)) {
+                            $dotchamdiem->connect->rollBack();
+                            dotchamdiem__Redirect('invalid');
+                        }
+                    }
+
+                    $arr_id_lop_hoc_hien_tai = [];
+                    foreach ($lopapdung__Get_By_Id_Dot as $lad) {
+                        $arr_id_lop_hoc_hien_tai[] = $lad->id_lop_hoc;
+                    }
+
+                    foreach ($lopapdung__Get_By_Id_Dot as $lad) {
+                        if (!in_array($lad->id_lop_hoc, $id_lop_hoc_valid)) {
+                            $count_phieu = $phieuchamdiem->phieuchamdiem__Count_By_Id_Dot_And_Id_Lop_Hoc($id_dot, $lad->id_lop_hoc);
+                            if ($count_phieu > 0) {
+                                // Bỏ qua việc xóa
+                            } else {
+                                $lopapdung->lopapdung__Delete($lad->id_lop_ap_dung);
+                            }
+                        } else {
+                            if (!$has_data && $lad->id_mau_phieu != $id_mau_phieu) {
+                                $lopapdung->lopapdung__Update($lad->id_lop_ap_dung, $id_dot, $id_mau_phieu, $lad->id_lop_hoc);
+                            }
+                        }
+                    }
+
+                    foreach ($id_lop_hoc_valid as $id_lop_moi) {
+                        if (!in_array($id_lop_moi, $arr_id_lop_hoc_hien_tai)) {
+                            $id_lop_ap_dung = $lopapdung->lopapdung__Add($id_dot, $id_mau_phieu, $id_lop_moi);
+                            if (!dotchamdiem__Is_Positive_Integer($id_lop_ap_dung)) {
+                                throw new Exception('invalid-lop-ap-dung-id');
+                            }
+                            $sinhvien__Get_By_Id_Lop_Hoc = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc($id_lop_moi);
+                            foreach($sinhvien__Get_By_Id_Lop_Hoc as $item){
+                                $status_phieu = $phieuchamdiem->phieuchamdiem__Add($id_lop_ap_dung, $item->id_sinh_vien, "", "", "", date("Y-m-d"));
+                                if ($status_phieu == 0) {
+                                    throw new Exception('insert-phieu-failed');
+                                }
+                            }
+                        }
+                    }
+
+                    $dotchamdiem->dotchamdiem__Update($id_dot, $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_hoc_ky);
+                    
+                    $dotchamdiem->connect->commit();
+                    dotchamdiem__Rotate_Csrf_Token();
+                    
                     dotchamdiem__Redirect('success');
-                }else{
+
+                } catch (Throwable $e) {
+                    if ($dotchamdiem->connect->inTransaction()) {
+                        $dotchamdiem->connect->rollBack();
+                    }
                     dotchamdiem__Redirect('failed');
                 }
                 
@@ -241,41 +305,12 @@
                     dotchamdiem__Redirect('not-found');
                 }
 
-                // Nhựt sửa lỗi: Minh chứng là dữ liệu phát sinh từ Phiếu nên phải khóa xóa Đợt để tránh mất dữ liệu.
-                // Nhựt sửa lỗi: Không chỉ dựa vào cột điểm, phải khóa xóa nếu Đợt đã có Kết quả xếp loại.
-                // Nhựt sửa lỗi: Dùng chung connection và bọc toàn bộ quá trình Delete trong transaction.
-                $lopapdung->connect = $dotchamdiem->connect;
-                $phieuchamdiem->connect = $dotchamdiem->connect;
-                $minhchung->connect = $dotchamdiem->connect;
-                $ketquaxeploai->connect = $dotchamdiem->connect;
-                try {
-                    $dotchamdiem->connect->beginTransaction();
-
-                    // Nhựt sửa lỗi: Khóa và kiểm tra lại trong transaction để tránh xóa khi vừa phát sinh dữ liệu liên quan.
-                    if (!$dotchamdiem->dotchamdiem__Lock_By_Id($id_dot)) {
-                        $dotchamdiem->connect->rollBack();
-                        dotchamdiem__Redirect('not-found');
-                    }
-                    $status_minh_chung = $minhchung->minhchung__Delete_By_Id_Dot($id_dot);
-                    $status_ket_qua = $ketquaxeploai->ketquaxeploai__Delete_By_Id_Dot($id_dot);
-                    $status_phieu = $phieuchamdiem->phieuchamdiem__Delete_By_Id_Dot($id_dot);
-                    $status_lop = $lopapdung->lopapdung__Delete_By_Id_Dot($id_dot);
-                    $status_dot = $dotchamdiem->dotchamdiem__Delete($id_dot);
-
-                    if ($status_dot != 0) {
-                        $dotchamdiem->connect->commit();
-                        dotchamdiem__Redirect('success');
-                    }
-
-                    if ($dotchamdiem->connect->inTransaction()) {
-                        $dotchamdiem->connect->rollBack();
-                    }
-                    dotchamdiem__Redirect('failed');
-                } catch (Throwable $e) {
-                    if ($dotchamdiem->connect->inTransaction()) {
-                        // Nhựt sửa lỗi: Rollback toàn bộ nếu Delete lỗi giữa chừng.
-                        $dotchamdiem->connect->rollBack();
-                    }
+                // Quân sửa: Đưa logic xóa phân tầng và transaction vào model để dọn dẹp dữ liệu an toàn.
+                $status = $dotchamdiem->dotchamdiem__DeleteWithDependencies($id_dot);
+                
+                if ($status) {
+                    dotchamdiem__Redirect('success');
+                } else {
                     dotchamdiem__Redirect('failed');
                 }
                 

@@ -11,6 +11,20 @@
             case "add":
                 $status = 0;
                 $id_phieu = $_POST["id_phieu"];
+                
+                // Quân sửa: Kiểm tra quyền lớp trưởng chỉ được chấm cho sinh viên cùng lớp
+                $phieu = $phieuchamdiem->phieuchamdiem__Get_By_Id($id_phieu);
+                if (!$phieu) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+                $sv_target = $sinhvien->sinhvien__Get_By_Id($phieu->id_sinh_vien);
+                $lt_info = $sinhvien->sinhvien__Get_By_Id($_SESSION['lt']->id_nguoi_dung);
+                if (!$sv_target || !$lt_info || $sv_target->id_lop_hoc != $lt_info->id_lop_hoc) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+
                 $kq_lt_bt = $_POST["kq_lt_bt"];
                 $kq = "";
                 foreach($kq_lt_bt as $item){

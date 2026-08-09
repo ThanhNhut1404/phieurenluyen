@@ -115,4 +115,52 @@ class dotchamdiem extends Database {
         $obj->execute(array($date, $date));
         return (int)$obj->fetchColumn() > 0;
     }
+
+    public function dotchamdiem__DeleteWithDependencies($id_dot) {
+        // Quân sửa: Thêm logic xóa an toàn các dữ liệu phụ thuộc của đợt chấm điểm bằng transaction
+        try {
+            $this->connect->beginTransaction();
+
+            // Khóa dòng đợt chấm điểm để tránh tranh chấp dữ liệu
+            $stmtLock = $this->connect->prepare("SELECT id_dot FROM dotchamdiem WHERE id_dot = ? FOR UPDATE");
+            $stmtLock->execute(array($id_dot));
+            if (!$stmtLock->fetch()) {
+                $this->connect->rollBack();
+                return false;
+            }
+
+            // Xóa minh chứng của đợt
+            $stmtMinhChung = $this->connect->prepare("DELETE minhchung FROM minhchung INNER JOIN phieuchamdiem ON minhchung.id_phieu = phieuchamdiem.id_phieu INNER JOIN lopapdung ON phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung WHERE lopapdung.id_dot = ?");
+            $stmtMinhChung->execute(array($id_dot));
+
+            // Xóa kết quả xếp loại của đợt
+            $stmtKetQua = $this->connect->prepare("DELETE FROM ketquaxeploai WHERE id_dot = ?");
+            $stmtKetQua->execute(array($id_dot));
+
+            // Xóa phiếu chấm điểm của đợt
+            $stmtPhieu = $this->connect->prepare("DELETE phieuchamdiem FROM phieuchamdiem INNER JOIN lopapdung ON phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung WHERE lopapdung.id_dot = ?");
+            $stmtPhieu->execute(array($id_dot));
+
+            // Xóa lớp áp dụng của đợt
+            $stmtLop = $this->connect->prepare("DELETE FROM lopapdung WHERE id_dot = ?");
+            $stmtLop->execute(array($id_dot));
+
+            // Xóa đợt chấm điểm
+            $stmtDot = $this->connect->prepare("DELETE FROM dotchamdiem WHERE id_dot = ?");
+            $stmtDot->execute(array($id_dot));
+            
+            if ($stmtDot->rowCount() > 0) {
+                $this->connect->commit();
+                return true;
+            } else {
+                $this->connect->rollBack();
+                return false;
+            }
+        } catch (Exception $e) {
+            if ($this->connect->inTransaction()) {
+                $this->connect->rollBack();
+            }
+            return false;
+        }
+    }
 }
