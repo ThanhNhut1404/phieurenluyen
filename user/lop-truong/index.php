@@ -227,7 +227,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         </div><!-- /.container-fluid -->
     </section>
     <section class="content evaluation-page">
-        <form class="form" action="lop-truong/action.php?req=add" method="post" enctype="multipart/form-data">
+        <!-- Quân sửa: Định tuyến đúng hành động cập nhật điểm (Sinh viên tự chấm hoặc Lớp trưởng chấm) -->
+        <form class="form" action="lop-truong/action.php?req=<?= $mode == 'ban_than' ? 'add_sv' : 'add' ?>" method="post" enctype="multipart/form-data">
 
             <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
             <div class="card overflow-auto w-100">
@@ -362,10 +363,10 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                     - <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
                                                 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
+                                                    <!-- Quân sửa: Chỉ cho phép lớp trưởng sửa cột SV Tự Chấm khi chấm bản thân, và ngược lại -->
                                                     <input type="number" class="form-control kq_sv" name="kq_sv[]"
                                                         style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
-                                                        <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'readonly' : '' ?>
-                                                        <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'readonly' : '' ?>
+                                                        <?= ($mode == 'lop' || $dotchamdiem__Get_By_Id->trang_thai == 0 || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1) ? 'readonly' : '' ?>
                                                         pattern="[-+]?[0-9]{1,2}"
                                                         title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
                                                         max="<?= $item_2->can_tren ?>" required
@@ -376,7 +377,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                                                         pattern="[-+]?[0-9]{1,2}"
                                                         title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
-                                                        max="<?= $item_2->can_tren ?>" required  <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'readonly' : '' ?> <?= ($phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2) ? 'readonly' : '' ?> value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i] : 0 ?>">
+                                                        max="<?= $item_2->can_tren ?>" required  <?= ($mode == 'ban_than' || $dotchamdiem__Get_By_Id->trang_thai == 0 || ($phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2)) ? 'readonly' : '' ?> value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i] : 0 ?>">
                                                 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
                                                     <input type="number" class="form-control kq_btdk" name="kq_btdk[]"
@@ -597,6 +598,27 @@ window.addEventListener('load', function() {
             document.getElementById("submit").removeAttribute("disabled");
             document.getElementById("submit").setAttribute("value", "Cập nhật");
             $("#sum_sv").removeClass("bg-danger");
+        }
+    });
+
+    // Quân sửa: Thêm sự kiện change để tính tổng điểm Lớp trưởng/Bí thư động
+    $('.kq_lt_bt').change(function(event) {
+        var kq = 0;
+        var kq_lt_bt = document.getElementsByClassName("kq_lt_bt");
+        for (i = 0; i < kq_lt_bt.length; i++) {
+            a = Number(kq_lt_bt[i].value);
+            console.log(typeof a);
+            kq += a;
+        }
+        document.getElementById("sum_lt_bt").value = kq;
+        if (kq > 100) {
+            document.getElementById("submit").setAttribute("disabled", true);
+            document.getElementById("submit").setAttribute("value", "Điểm không hợp lệ");
+            $("#sum_lt_bt").addClass("bg-danger");
+        } else {
+            document.getElementById("submit").removeAttribute("disabled");
+            document.getElementById("submit").setAttribute("value", "Cập nhật");
+            $("#sum_lt_bt").removeClass("bg-danger");
         }
     });
 

@@ -406,10 +406,10 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                     - <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
                                                 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
+                                                    <!-- Quân sửa: Khóa cột điểm SV Tự chấm trên trang Bí thư Đoàn khoa bằng thuộc tính readonly -->
                                                     <input type="number" class="form-control kq_sv" name="kq_sv[]"
                                                         style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
-                                                        <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'readonly' : '' ?>
-                                                        <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'readonly' : '' ?>
+                                                        readonly
                                                         pattern="[-+]?[0-9]{1,2}"
                                                         title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
                                                         max="<?= $item_2->can_tren ?>" required
@@ -575,14 +575,15 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
 <script>
 window.addEventListener('load', function() {
-    var kq = 0;
-    var kq_btdk = document.getElementsByClassName("kq_btdk");
+    // Quân sửa: Tính tổng điểm tự chấm của Sinh viên trên giao diện Bí thư Đoàn khoa
+    var kq_sv_load = 0;
+    var kq_sv = document.getElementsByClassName("kq_sv");
     for (i = 0; i < kq_sv.length; i++) {
-        a = Number(kq_btdk[i].value);
+        a = Number(kq_sv[i].value);
         console.log(typeof a);
-        kq += a;
+        kq_sv_load += a;
     }
-    document.getElementById("sum_btdk").value = kq;
+    document.getElementById("sum_sv").value = kq_sv_load;
 
     var kq_lt_bt_load = 0;
     var kq_lt_bt = document.getElementsByClassName("kq_lt_bt");
@@ -617,7 +618,8 @@ window.addEventListener('load', function() {
     $('.kq_btdk').change(function(event) {
         var kq = 0;
         var kq_btdk = document.getElementsByClassName("kq_btdk");
-        for (i = 0; i < kq_sv.length; i++) {
+        // Quân sửa: Sửa biến kq_sv thành kq_btdk tránh lỗi Javascript ReferenceError
+        for (i = 0; i < kq_btdk.length; i++) {
             a = Number(kq_btdk[i].value);
             console.log(typeof a);
             kq += a;

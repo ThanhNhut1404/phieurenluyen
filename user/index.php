@@ -149,6 +149,56 @@
             }
         })
     }
+
+    // Quân sửa: Tăng cường trải nghiệm người dùng (UX) khi nhập điểm rèn luyện
+    $(document).on('focus', 'input.kq_sv, input.kq_lt_bt, input.kq_btdk, input.kq_gv', function() {
+        if ($(this).prop('readonly') || $(this).prop('disabled')) {
+            return;
+        }
+        if ($(this).val() === '0') {
+            $(this).val('');
+        }
+    });
+
+    $(document).on('blur', 'input.kq_sv, input.kq_lt_bt, input.kq_btdk, input.kq_gv', function() {
+        if ($(this).prop('readonly') || $(this).prop('disabled')) {
+            return;
+        }
+        if ($(this).val() === '') {
+            $(this).val('0');
+            $(this).trigger('change');
+        }
+    });
+
+    $(document).on('keydown keypress', 'input.kq_sv, input.kq_lt_bt, input.kq_btdk, input.kq_gv', function(e) {
+        if ($(this).prop('readonly') || $(this).prop('disabled')) {
+            return;
+        }
+        // Chặn các phím không phải là số (e, E, -, +, dấu chấm, dấu phẩy)
+        if (e.key === 'e' || e.key === 'E' || e.key === '-' || e.key === '+' || e.key === '.' || e.key === ',') {
+            e.preventDefault();
+        }
+    });
+
+    $(document).on('input', 'input.kq_sv, input.kq_lt_bt, input.kq_btdk, input.kq_gv', function() {
+        if ($(this).prop('readonly') || $(this).prop('disabled')) {
+            return;
+        }
+        var val = $(this).val();
+        // Tự động bỏ số 0 ở đầu khi nhập số khác (ví dụ: nhập 05 -> đổi thành 5)
+        if (val.length > 1 && val.startsWith('0')) {
+            $(this).val(parseInt(val, 10));
+        }
+    });
+
+    // Quân sửa: Tự động điền 0 vào các ô điểm rỗng trước khi submit form
+    $(document).on('submit', 'form', function() {
+        $(this).find('input.kq_sv, input.kq_lt_bt, input.kq_btdk, input.kq_gv').each(function() {
+            if ($(this).val() === '') {
+                $(this).val('0');
+            }
+        });
+    });
     </script>
     <?php
        // Nhựt sửa lỗi: Sử dụng replaceState để xóa tham số status khỏi URL nhằm tránh lặp lại thông báo SweetAlert khi F5/reload trang.
