@@ -98,23 +98,23 @@
              <!-- /.card-header -->
              <div class="card-body">
                  <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
-                     <thead>
-                         <tr>
-                             <th>STT</th>
-                             <th>Tên điều</th>
-                             <th>Ghi chú</th>
-                             <th>Thứ tự</th>
-                             <th>Thao tác</th>
-                         </tr>
-                     </thead>
+                      <thead>
+                          <tr>
+                              <th style="width: 5%; white-space: nowrap;">STT</th>
+                              <th style="width: 28%; white-space: nowrap;">Tên điều</th>
+                              <th style="width: 45%; white-space: nowrap;">Ghi chú</th>
+                              <th style="width: 12%; white-space: nowrap;">Thứ tự</th>
+                              <th style="width: 10%; white-space: nowrap;">Thao tác</th>
+                          </tr>
+                      </thead>
                      <tbody>
                          <?php $num = 0;?>
                          <?php foreach($dieu__Get_All as $item):?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td><?=$item->ten_dieu?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=$item->ten_dieu?></td>
                              <td><?=$item->ghi_chu?></td>
-                             <td><?=$item->thu_tu?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=$item->thu_tu?></td>
                              <td>
                                  <?php if(!$dieu->dieu__Is_Used_In_Bocauhoi($item->id_dieu)): ?>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
@@ -147,6 +147,34 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ điều",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 điều",
+            "infoFiltered": "(lọc từ _MAX_ điều)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ điều",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
         "buttons": ["copy", "csv", "excel", "pdf", "print"]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 });

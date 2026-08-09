@@ -434,33 +434,30 @@ button.btn.removeall.btn-outline-secondary:before {
                      </div>
                      <?php if (isset($_GET['view_by_lop'])) : ?>
                      <div class="col-6">
-                         <a href="#" type="button" class="btn  btn-success"
+                         <a href="#" type="button" class="btn  btn-primary"
                              onclick="return send_mail_all(<?= $_GET['view_by_lop'] ?>)">
                              <i class="fas fa-paper-plane"></i> Gửi mail tài khoản
                          </a>
-                         <progress id="progressBar" value="0" max="100" style="width:300px;display:none"></progress>
-                         <p id="loaded_n_total"></p>
-                         <?php endif ?>
                      </div>
+                     <?php endif ?>
 
                  </div>
 
                  <div class="table-responsive">
-                     <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
-                         <thead>
-                         <tr>
-                             <th>STT</th>
-                             <th>Email</th>
-                             <th>Họ và tên</th>
-                             <th>Mật khẩu</th>
-                             <th>Phân nhóm</th>
-                             <th>Phân quyền</th>
-                             <th>Trạng thái</th>
-                             <th>Gửi email</th>
-                             <th>Đặt lại mật khẩu (123456)</th>
-                             <th>Thao tác</th>
-                         </tr>
-                     </thead>
+                     <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%" style="font-size: 13px;">
+                     <thead style="font-size: 13px;">
+                          <tr>
+                              <th style="width: 3%; white-space: nowrap;">STT</th>
+                              <th style="width: 21%; white-space: nowrap;">Họ và tên</th>
+                              <th style="width: 22%; white-space: nowrap;">Email</th>
+                              <th style="width: 10%; white-space: nowrap;">Phân nhóm</th>
+                              <th style="width: 10%; white-space: nowrap;">Phân quyền</th>
+                              <th style="width: 7%; white-space: nowrap;">Trạng thái</th>
+                              <th style="width: 7%; white-space: nowrap;">Gửi email</th>
+                              <th style="width: 12%; white-space: nowrap;">Reset mật khẩu</th>
+                              <th style="width: 8%; white-space: nowrap;">Thao tác</th>
+                          </tr>
+                      </thead>
                      <tbody>
                          <?php 
                           $phanquyen__Get_All = $phanquyen->phanquyen__Get_All();
@@ -497,7 +494,6 @@ button.btn.removeall.btn-outline-secondary:before {
                          <?php foreach ($taikhoan__Get_All as $item) : ?>
                          <tr>
                              <td><?= ++$num ?></td>
-                             <td><?= htmlspecialchars($item->email ?? '') ?></td>
                              <?php
                                 // quân sửa: Lấy họ tên dựa trên cấp bậc phân nhóm
                                 $ho_ten = '<span class="text-secondary">N/A</span>';
@@ -516,32 +512,29 @@ button.btn.removeall.btn-outline-secondary:before {
                                 $pq = isset($arr_phan_quyen[$item->id_phan_quyen]) ? $arr_phan_quyen[$item->id_phan_quyen] : null;
                              ?>
                              <td><b><?= $ho_ten ?></b></td>
-                             <td><?= htmlspecialchars($item->mat_khau ?? '') ?></td>
+                             <td class="text-center" style="text-align: center !important;"><?= htmlspecialchars($item->email ?? '') ?></td>
                              <!-- quân sửa: Bổ sung kiểm tra dữ liệu tồn tại để tránh lỗi báo Attempt to read property on bool -->
-                             <td><?= $pn ? htmlspecialchars($pn->ten_phan_nhom) : '<span class="text-danger">Chưa xác định</span>' ?></td>
-                             <td><?= $pq ? htmlspecialchars($pq->ten_phan_quyen) : '<span class="text-danger">Chưa xác định</span>' ?></td>
-                             <td
+                             <td class="text-center" style="text-align: center !important;"><?= $pn ? htmlspecialchars($pn->ten_phan_nhom) : '<span class="text-danger">Chưa xác định</span>' ?></td>
+                             <td class="text-center" style="text-align: center !important;"><?= $pq ? htmlspecialchars($pq->ten_phan_quyen) : '<span class="text-danger">Chưa xác định</span>' ?></td>
+                             <td class="text-center" style="text-align: center !important;"
                                  onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=active&id_tai_khoan=<?= $item->id_tai_khoan ?>&trang_thai=<?= $item->trang_thai ?>')">
-                                 <?= $item->trang_thai == 1 ? "<button class='btn btn-success'><i class='fas fa-user-check'></i></button>" : "<button class='btn btn-danger'><i class='fas fa-user-slash'></i></button>" ?>
+                                 <?= $item->trang_thai == 1 ? "<a href='#' class='btn btn-sm btn-success'><i class='ri-checkbox-circle-line'></i></a>" : "<a href='#' class='btn btn-sm btn-danger'><i class='ri-forbid-line'></i></a>" ?>
 
                              </td>
-                             <td>
-                                 <a href="#" type="button" class="btn  btn-success"
+                             <td class="text-center" style="text-align: center !important;">
+                                 <a href="#" type="button" class="btn btn-sm btn-warning"
                                      onclick="return send_mail('<?= $item->email ?>', '<?= $item->mat_khau ?>')">
-                                     <i class="fas fa-paper-plane"></i>
+                                     <i class="ri-mail-send-line"></i>
                                  </a>
-                                 <progress id="progressBar" value="0" max="100"
-                                     style="width:300px;display:none"></progress>
-                                 <p id="loaded_n_total"></p>
                              </td>
-                             <td>
-                                 <a href="#" type="button" class="btn  btn-danger"
+                             <td class="text-center" style="text-align: center !important;">
+                                 <a href="#" type="button" class="btn btn-sm btn-info"
                                      onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=reset&id_tai_khoan=<?= $item->id_tai_khoan ?>')">
-                                     <i class="fas fa-user-cog"></i>
+                                     <i class="ri-key-2-line"></i>
                                  </a>
                              </td>
-                             <td>
-                                 <a href="#" type="button" class="btn  btn-danger"
+                             <td class="text-center" style="text-align: center !important;">
+                                 <a href="#" type="button" class="btn btn-sm btn-danger"
                                      onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=delete&id_tai_khoan=<?= $item->id_tai_khoan ?>')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
@@ -597,7 +590,7 @@ window.addEventListener("load", function() {
             }
         },
         "columnDefs": [{
-            "targets": [6, 7, 8, 9],
+            "targets": [5, 6, 7, 8],
             "orderable": false,
             "searchable": false
         }],

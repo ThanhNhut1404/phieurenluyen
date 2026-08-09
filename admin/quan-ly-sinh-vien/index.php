@@ -235,15 +235,15 @@
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                          <thead>
                          <tr>
-                             <th style="width: 5%;">STT</th>
-                             <th style="width: 10%;">Mã sinh viên</th>
-                             <th style="width: 18%;">Tên sinh viên</th>
-                             <th style="width: 8%;">Giới tính</th>
-                             <th style="width: 10%;">Ngày sinh</th>
-                             <th style="width: 12%;">Số điện thoại 1</th>
-                             <th style="width: 20%;">Địa chỉ liên lạc</th>
-                             <th style="width: 10%;">Lớp học</th>
-                             <th style="width: 7%;">Thao tác</th>
+                             <th style="width: 5%; white-space: nowrap;">STT</th>
+                             <th style="width: 8%; white-space: nowrap;">MSSV</th>
+                             <th style="width: 25%; white-space: nowrap;">HỌ VÀ TÊN</th>
+                             <th style="width: 8%; white-space: nowrap;">Giới tính</th>
+                             <th style="width: 10%; white-space: nowrap;">Ngày sinh</th>
+                             <th style="width: 12%; white-space: nowrap;">Số điện thoại 1</th>
+                             <th style="width: 15%; white-space: nowrap;">Địa chỉ liên lạc</th>
+                             <th style="width: 10%; white-space: nowrap;">Lớp học</th>
+                             <th style="width: 7%; white-space: nowrap;">Thao tác</th>
                          </tr>
                      </thead>
                      <tbody>
@@ -261,7 +261,8 @@
                          $arr_lop_hoc = [];-->
                                  <td class="text-center" style="text-align: center !important;"><?= ++$num ?></td>
                                  <td class="text-center" style="text-align: center !important;"><?= htmlspecialchars($item->ma_sinh_vien ?? '') ?></td>
-                                 <td><?= htmlspecialchars($item->ten_sinh_vien ?? '') ?></td>
+                                 <!-- quân sửa: Viết hoa chữ cái đầu của Tên riêng khi hiển thị ra danh sách -->
+                                 <td><?= htmlspecialchars(mb_convert_case($item->ten_sinh_vien ?? '', MB_CASE_TITLE, "UTF-8")) ?></td>
                                   <td class="text-center" style="text-align: center !important;"><?= $item->gioi_tinh == 1 ? "Nam" : "Nữ" ?></td>
                                   <td class="text-center" style="text-align: center !important;" data-order="<?= htmlspecialchars($item->ngay_sinh ?? '') ?>">
                                       <?php
@@ -278,7 +279,7 @@
                          $arr_lop_hoc = []; -->
                                  <td class="text-center" style="text-align: center !important;"><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
 
-                                 <td class="text-center" style="text-align: center !important;">
+                                 <td>
                                      <a href="#" type="button" class="btn  btn-warning m-2" onclick="update_obj(<?= (int)$item->id_sinh_vien ?>)">
                                          <i class="ri-edit-2-line"></i>
                                      </a>
@@ -381,5 +382,10 @@
              $(".card.card-success").addClass('collapsed-card');
              $('#div_update').html(data);
          });
+     }
+
+     function cancel_update() {
+         $("#div_update").html('');
+         $(".card.card-success").removeClass('collapsed-card');
      }
  </script>

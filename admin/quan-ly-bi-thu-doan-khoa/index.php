@@ -178,16 +178,16 @@
                  <div class="table-responsive">
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                          <thead>
-                          <tr>
-                              <th style="width: 3%; white-space: nowrap;">STT</th>
-                              <th style="width: 20%; white-space: nowrap;">Họ và tên</th>
-                              <th style="width: 10%; white-space: nowrap;">Khoa</th>
-                              <th style="width: 10%; white-space: nowrap;">Giới tính</th>
-                              <th style="width: 12%; white-space: nowrap;">Ngày sinh</th>
-                              <th style="width: 15%; white-space: nowrap;">Số điện thoại 1</th>
-                              <th style="width: 20%; white-space: nowrap;">Địa chỉ liên lạc</th>
-                              <th style="width: 10%; white-space: nowrap;">Thao tác</th>
-                          </tr>
+                           <tr>
+                               <th style="width: 3%; white-space: nowrap;">STT</th>
+                               <th style="width: 20%; white-space: nowrap;">Họ và tên</th>
+                               <th style="width: 15%; white-space: nowrap;">Khoa</th>
+                               <th style="width: 10%; white-space: nowrap;">Giới tính</th>
+                               <th style="width: 12%; white-space: nowrap;">Ngày sinh</th>
+                               <th style="width: 15%; white-space: nowrap;">Số điện thoại 1</th>
+                               <th style="width: 15%; white-space: nowrap;">Địa chỉ liên lạc</th>
+                               <th style="width: 10%; white-space: nowrap;">Thao tác</th>
+                           </tr>
                      </thead>
                       <tbody>
                           <?php 

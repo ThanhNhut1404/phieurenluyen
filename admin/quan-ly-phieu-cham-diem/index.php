@@ -161,18 +161,18 @@
              </div>
              <!-- /.card-header -->
              <div class="card-body">
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
-                     <thead>
-                         <tr>
-                             <th>STT</th>
-                             <th>Mã sinh viên</th>
-                             <th>Tên sinh viên</th>
-                             <th>Kết quả sinh viên</th>
-                             <th>Kết quả lớp trưởng/bí thư</th>
-                             <th>Kết quả bí thư đoàn khoa</th>
-                             <th>Kết quả cố vấn</th>
-                         </tr>
-                     </thead>
+                  <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
+                      <thead>
+                          <tr>
+                              <th style="width: 3%; white-space: nowrap;">STT</th>
+                              <th style="width: 10%; white-space: nowrap;">MSSV</th>
+                              <th style="width: 25%; white-space: nowrap;">HỌ VÀ TÊN</th>
+                              <th style="width: 15%; white-space: nowrap;">Sinh viên</th>
+                              <th style="width: 16%; white-space: nowrap;">Lớp trưởng / Bí thư</th>
+                              <th style="width: 16%; white-space: nowrap;">Bí thư Đoàn khoa</th>
+                              <th style="width: 15%; white-space: nowrap;">Cố vấn học tập</th>
+                          </tr>
+                      </thead>
                      <tbody>
                           <?php $num = 0;?>
                           <?php foreach($phieuchamdiem__Get_By_Id_Lop as $item):?>
@@ -180,20 +180,16 @@
                               onclick="return confirm_sweet_chi_tiet('../user/sinh-vien/chi-tiet.php?id_lop_hoc=<?=$item->id_lop_hoc?>&id_dot=<?=$item->id_dot?>&id_sinh_vien=<?=$item->id_sinh_vien?>')">
                               <td><?=++$num?></td>
                               <?php
-                                 $sv = isset($arr_sinh_vien[$item->id_sinh_vien]) ? $arr_sinh_vien[$item->id_sinh_vien] : null;
-                                 $ma_sv = $sv ? $sv->ma_sinh_vien : '';
-                                 $ten_sv = $sv ? $sv->ten_sinh_vien : '';
-                              ?>
-                              <td><?=htmlspecialchars($ma_sv)?></td>
-                              <td><?=htmlspecialchars($ten_sv)?></td>
-                              <td><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_sv))?>
-                              </td>
-                             <td><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_lt_bt))?>
-                             </td>
-                             <td><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_btdk))?>
-                             </td>
-                             <td><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_gv))?>
-                             </td>
+                                  $sv = isset($arr_sinh_vien[$item->id_sinh_vien]) ? $arr_sinh_vien[$item->id_sinh_vien] : null;
+                                  $ma_sv = $sv ? $sv->ma_sinh_vien : '';
+                                  $ten_sv = $sv ? mb_convert_case($sv->ten_sinh_vien, MB_CASE_TITLE, "UTF-8") : '';
+                               ?>
+                              <td class="text-center" style="text-align: center !important;"><?=htmlspecialchars($ma_sv)?></td>
+                              <td><b><?=htmlspecialchars($ten_sv)?></b></td>
+                              <td class="text-center" style="text-align: center !important;"><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_sv))?></td>
+                              <td class="text-center" style="text-align: center !important;"><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_lt_bt))?></td>
+                              <td class="text-center" style="text-align: center !important;"><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_btdk))?></td>
+                              <td class="text-center" style="text-align: center !important;"><?=$phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($item->kq_gv))?></td>
                          </tr>
                          <?php endforeach?>
                      </tbody>
@@ -214,6 +210,34 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ phiếu chấm điểm",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 phiếu chấm điểm",
+            "infoFiltered": "(lọc từ _MAX_ phiếu chấm điểm)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ phiếu chấm điểm",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
         "buttons": ["copy", "csv", "excel", "pdf", "print"]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 

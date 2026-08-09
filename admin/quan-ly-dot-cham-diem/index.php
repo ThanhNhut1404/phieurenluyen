@@ -185,22 +185,21 @@ button.btn.removeall.btn-outline-secondary:before {
              </div>
              <!-- /.card-header -->
              <div class="card-body">
-                 <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
+                 <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                      <thead>
                          <tr>
-                             <th>STT</th>
-                             <th>Tên đợt</th>
+                             <th style="width: 3%; white-space: nowrap;">STT</th>
+                             <th style="width: 10%; white-space: nowrap;">Tên đợt</th>
                              <?php // Nhựt sửa lỗi: Tách riêng cột Học kỳ và Năm học trong danh sách. ?>
-                             <th>Học kỳ</th>
-                             <th>Năm học</th>
-                             <th>Thời gian bắt đầu</th>
-                             <th>Thời gian kết thúc</th>
+                             <th style="width: 6%; white-space: nowrap;">Học kỳ</th>
+                             <th style="width: 8%; white-space: nowrap;">Năm học</th>
+                             <th style="width: 10%; white-space: nowrap;">Bắt đầu</th>
+                             <th style="width: 10%; white-space: nowrap;">Kết thúc</th>
                              <?php // Nhựt sửa lỗi: Bổ sung cột trạng thái tính động theo thời gian. ?>
-                             <th>Trạng thái</th>
-                             <th>Lớp áp dụng</th>
-                             <th>Mẫu phiếu</th>
-                             <th>Ghi chú</th>
-                             <th>Thao tác</th>
+                             <th style="width: 8%; white-space: nowrap;">Trạng thái</th>
+                             <th style="width: 22%; white-space: nowrap;">Lớp áp dụng</th>
+                             <th style="width: 15%; white-space: nowrap;">Mẫu phiếu</th>
+                             <th style="width: 8%; white-space: nowrap;">Thao tác</th>
                          </tr>
                      </thead>
                       <tbody>
@@ -224,16 +223,16 @@ button.btn.removeall.btn-outline-secondary:before {
                          <?php // Nhựt sửa lỗi: Lấy lớp áp dụng một lần để tránh lỗi truy cập mảng rỗng khi hiển thị. ?>
                          <?php $lopapdung__Get_By_Id_Dot = isset($arr_lop_ap_dung[$item->id_dot]) ? $arr_lop_ap_dung[$item->id_dot] : [];?>
                          <tr>
-                             <td><?=++$num?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=++$num?></td>
                              <?php // Nhựt sửa lỗi: Escape dữ liệu tên đợt lấy từ database để tránh XSS. ?>
                              <td><?=dotchamdiem_escape($item->ten_dot)?></td>
                              <?php // Nhựt sửa lỗi: Hiển thị riêng Học kỳ và Năm học để danh sách dễ đọc hơn. ?>
-                             <td><?=dotchamdiem_escape($item->ten_hoc_ky)?></td>
-                             <td><?=dotchamdiem_escape($item->ten_nam_hoc)?></td>
-                             <td><?=$item->thoi_gian_bat_dau?></td>
-                             <td><?=$item->thoi_gian_ket_thuc?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=dotchamdiem_escape($item->ten_hoc_ky)?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=dotchamdiem_escape($item->ten_nam_hoc)?></td>
+                             <td class="text-center" style="text-align: center !important;"><?= !empty($item->thoi_gian_bat_dau) ? date("d/m/Y", strtotime($item->thoi_gian_bat_dau)) : '' ?></td>
+                             <td class="text-center" style="text-align: center !important;"><?= !empty($item->thoi_gian_ket_thuc) ? date("d/m/Y", strtotime($item->thoi_gian_ket_thuc)) : '' ?></td>
                              <?php // Nhựt sửa lỗi: Hiển thị trạng thái động theo ngày hiện tại. ?>
-                             <td><?=dotchamdiem_escape(dotchamdiem_trang_thai_hien_thi($item->thoi_gian_bat_dau, $item->thoi_gian_ket_thuc))?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=dotchamdiem_escape(dotchamdiem_trang_thai_hien_thi($item->thoi_gian_bat_dau, $item->thoi_gian_ket_thuc))?></td>
                              <?php // Nhựt sửa lỗi: Kiểm tra lớp còn tồn tại trước khi hiển thị để tránh lỗi object rỗng. ?>
                              <td><?php foreach($lopapdung__Get_By_Id_Dot as $item_2){
                                  $ten_lop = isset($arr_lop_hoc[$item_2->id_lop_hoc]) ? $arr_lop_hoc[$item_2->id_lop_hoc] : '';
@@ -246,8 +245,6 @@ button.btn.removeall.btn-outline-secondary:before {
                                  echo dotchamdiem_escape($ten_mau);
                              }?>
                              </td>
-                             <?php // Nhựt sửa lỗi: Escape ghi chú lấy từ database để tránh XSS. ?>
-                             <td><?=dotchamdiem_escape($item->ghi_chu)?></td>
                              <td>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_dot?>)">
@@ -277,9 +274,36 @@ button.btn.removeall.btn-outline-secondary:before {
  <script>
 window.addEventListener("load", function() {
     $("#tablejs").DataTable({
-
         "responsive": true,
         "autoWidth": false,
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "pagingType": "full_numbers",
+        "pageLength": 10,
+        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+        "language": {
+            "decimal": ",",
+            "thousands": ".",
+            "emptyTable": "Không có dữ liệu trong bảng",
+            "info": "Hiển thị _START_ - _END_ của _TOTAL_ đợt chấm điểm",
+            "infoEmpty": "Hiển thị 0 - 0 của 0 đợt chấm điểm",
+            "infoFiltered": "(lọc từ _MAX_ đợt chấm điểm)",
+            "infoPostFix": "",
+            "lengthMenu": "Hiển thị _MENU_ đợt chấm điểm",
+            "loadingRecords": "Đang tải...",
+            "processing": "Đang xử lý...",
+            "search": "Tìm kiếm:",
+            "zeroRecords": "Không tìm thấy kết quả phù hợp",
+            "paginate": {
+                "first": "&laquo;",
+                "last": "&raquo;",
+                "next": "&rsaquo;",
+                "previous": "&lsaquo;"
+            },
+            "aria": {
+                "sortAscending": ": kích hoạt để sắp xếp cột tăng dần",
+                "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
+            }
+        },
         "buttons": ["copy", "csv", "excel", "pdf", "print"]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 
