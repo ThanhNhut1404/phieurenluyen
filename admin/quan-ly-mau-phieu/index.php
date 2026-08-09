@@ -132,14 +132,23 @@ button.btn.removeall.btn-outline-secondary:before {
                              </td>
                              <td><?=$item->ghi_chu?></td>
                              <td>
-                                 <a href="#" type="button" class="btn btn-sm btn-info m-2" style="width: auto !important; padding: 0 12px !important;"
-                                     onclick="update_obj_dieu(<?=$item->id_mau_phieu?>)">
-                                     <i class="ri-article-line mr-1"></i> Sửa điều
-                                 </a>
-                                 <a href="#" type="button" class="btn  btn-warning m-2"
-                                     onclick="update_obj(<?=$item->id_mau_phieu?>)">
-                                     <i class="ri-edit-2-line"></i>
-                                 </a>
+                                 <?php if($mauphieu->mauphieu__Is_Edit_Locked($item->id_mau_phieu)): ?>
+                                     <button class="btn btn-sm btn-info m-2 disabled" title="Mẫu đã phát sinh đợt chấm cho nội dung này." style="width: auto !important; padding: 0 12px !important;">
+                                         <i class="ri-article-line mr-1"></i> Sửa điều
+                                     </button>
+                                     <button class="btn btn-warning m-2 disabled" title="Mẫu đã phát sinh đợt chấm cho nội dung này.">
+                                         <i class="ri-edit-2-line"></i>
+                                     </button>
+                                 <?php else: ?>
+                                     <a href="#" type="button" class="btn btn-sm btn-info m-2" style="width: auto !important; padding: 0 12px !important;"
+                                         onclick="update_obj_dieu(<?=$item->id_mau_phieu?>)">
+                                         <i class="ri-article-line mr-1"></i> Sửa điều
+                                     </a>
+                                     <a href="#" type="button" class="btn btn-warning m-2"
+                                         onclick="update_obj(<?=$item->id_mau_phieu?>)">
+                                         <i class="ri-edit-2-line"></i>
+                                     </a>
+                                 <?php endif; ?>
 
                                  <a href="#" type="button" class="btn  btn-danger m-2"
                                      onclick="return confirm_sweet('quan-ly-mau-phieu/action.php?req=delete&id_mau_phieu=<?=$item->id_mau_phieu?>')">

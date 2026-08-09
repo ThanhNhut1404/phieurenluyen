@@ -59,9 +59,12 @@
                 $diem_toi_da = isset($_POST['diem_toi_da']) ? (int)$_POST['diem_toi_da'] : 0;
                 $co_minh_chung = isset($_POST['co_minh_chung']) ? 1 : 0;
 
-                // quân sửa: Không cho sửa nếu Mục đã nằm trong Mẫu phiếu (bảo toàn lịch sử)
-                if ($muc->muc__Is_Used_In_Bocauhoi($id_muc)) {
-                    header('location: ../index.php?page=quan-ly-muc&status=locked_update');
+                // Quân sửa: Cập nhật điều kiện khóa Sửa (Dựa vào phát sinh phiếu chấm hoặc đợt chấm)
+                if ($muc->muc__Is_Edit_Locked($id_muc)) {
+                    echo "<script>
+                            alert('Nội dung này thuộc mẫu đã phát sinh đợt chấm nên chưa thể chỉnh sửa.');
+                            window.history.back();
+                          </script>";
                     exit();
                 }
 

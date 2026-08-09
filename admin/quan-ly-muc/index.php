@@ -211,11 +211,15 @@
                              </td>
                              <td><?=$item->ghi_chu?></td>
                              <td>
-                                 <?php if(!$muc->muc__Is_Used_In_Bocauhoi($item->id_muc)): ?>
-                                 <a href="#" type=" button" class="btn btn-warning"
-                                     onclick="update_obj(<?=$item->id_muc?>)">
-                                     <i class="ri-edit-2-line"></i>
-                                 </a>
+                                 <?php if($muc->muc__Is_Edit_Locked($item->id_muc)): ?>
+                                     <button class="btn btn-warning disabled" title="Mẫu đã phát sinh đợt chấm cho nội dung này.">
+                                         <i class="ri-edit-2-line"></i>
+                                     </button>
+                                 <?php else: ?>
+                                     <a href="#" type=" button" class="btn btn-warning"
+                                         onclick="update_obj(<?=$item->id_muc?>)">
+                                         <i class="ri-edit-2-line"></i>
+                                     </a>
                                  <?php endif; ?>
                                  <a href="#" type="button" class="btn btn-danger"
                                      onclick="return confirm_sweet('quan-ly-muc/action.php?req=delete&id_muc=<?=$item->id_muc?>')">

@@ -126,6 +126,27 @@ class dieu extends Database {
         return $result && $result->total > 0;
     }
 
+    // Quân sửa: Kiểm tra Điều có nằm trong Mẫu phiếu đang bị khóa Sửa không
+    public function dieu__Is_Edit_Locked($id_dieu) {
+        $sql1 = "SELECT COUNT(*) FROM bocauhoi b
+                 JOIN lopapdung l ON b.id_mau_phieu = l.id_mau_phieu
+                 JOIN phieuchamdiem p ON p.id_lop_ap_dung = l.id_lop_ap_dung
+                 WHERE b.id_dieu = ?";
+        $stmt1 = $this->connect->prepare($sql1);
+        $stmt1->execute(array($id_dieu));
+        if ($stmt1->fetchColumn() > 0) return true;
+
+        $sql2 = "SELECT COUNT(*) FROM bocauhoi b
+                 JOIN lopapdung l ON b.id_mau_phieu = l.id_mau_phieu
+                 JOIN dotchamdiem d ON d.id_dot = l.id_dot
+                 WHERE b.id_dieu = ? AND NOW() >= d.thoi_gian_bat_dau";
+        $stmt2 = $this->connect->prepare($sql2);
+        $stmt2->execute(array($id_dieu));
+        if ($stmt2->fetchColumn() > 0) return true;
+
+        return false;
+    }
+
     public function dieu__Is_Used_In_Khoan($id_dieu) {
         // Nhựt sửa lỗi: Không xóa Điều đang được Khoản tham chiếu để tránh dữ liệu mồ côi.
         // quân sửa: Chỉ tính các Khoản chưa bị xoá mềm

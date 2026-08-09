@@ -21,8 +21,17 @@
                 
                 break;
             case 'update':
-                $status =0;
                 $id_mau_phieu = $_POST['id_mau_phieu'];
+                // Quân sửa: Chặn cập nhật nếu đã bị khóa
+                if ($mauphieu->mauphieu__Is_Edit_Locked($id_mau_phieu)) {
+                    echo "<script>
+                            alert('Nội dung này thuộc mẫu đã phát sinh đợt chấm nên chưa thể chỉnh sửa.');
+                            window.history.back();
+                          </script>";
+                    exit;
+                }
+                
+                $status =0;
                 $ten_mau_phieu = $_POST['ten_mau_phieu'];
                 $ghi_chu = $_POST['ghi_chu'];
                 $status += $mauphieu->mauphieu__Update($id_mau_phieu, $ten_mau_phieu, $ghi_chu);
@@ -34,8 +43,17 @@
                 
                 break;
             case 'update_dieu':
-                $status =0;
                 $id_mau_phieu = $_POST['id_mau_phieu'];
+                // Quân sửa: Chặn cập nhật nếu đã bị khóa
+                if ($mauphieu->mauphieu__Is_Edit_Locked($id_mau_phieu)) {
+                    echo "<script>
+                            alert('Nội dung này thuộc mẫu đã phát sinh đợt chấm nên chưa thể chỉnh sửa.');
+                            window.history.back();
+                          </script>";
+                    exit;
+                }
+                
+                $status =0;
                 $id_dieu = $_POST['id_dieu'];
 
                 $bocauhoi->bocauhoi__Delete_Mau_Phieu($id_mau_phieu);

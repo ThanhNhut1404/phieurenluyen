@@ -113,8 +113,8 @@
                         throw new Exception("Khong tim thay dieu");
                     }
 
-                    // quân sửa: Không cho sửa nếu Điều đã nằm trong Mẫu phiếu (bảo toàn lịch sử)
-                    if ($dieu->dieu__Is_Used_In_Bocauhoi($id_dieu)) {
+                    // Quân sửa: Cập nhật điều kiện khóa Sửa (Dựa vào phát sinh phiếu chấm hoặc đợt chấm)
+                    if ($dieu->dieu__Is_Edit_Locked($id_dieu)) {
                         $error_status = 'locked_update';
                         throw new Exception("Dieu da phat sinh trong dot cham diem");
                     }
