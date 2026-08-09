@@ -142,11 +142,15 @@
                               <td class="text-center" style="text-align: center !important;"><?=$item->so_luong_muc?></td>
                               <td><?=$item->ghi_chu?></td>
                              <td>
-                                 <?php if(!$khoan->khoan__Is_Used_In_Bocauhoi($item->id_khoan)): ?>
-                                 <a href="#" type=" button" class="btn btn-warning"
-                                     onclick="update_obj(<?=$item->id_khoan?>)">
-                                     <i class="ri-edit-2-line"></i>
-                                 </a>
+                                 <?php if($khoan->khoan__Is_Edit_Locked($item->id_khoan)): ?>
+                                     <button class="btn btn-warning disabled" title="Mẫu đã phát sinh đợt chấm cho nội dung này.">
+                                         <i class="ri-edit-2-line"></i>
+                                     </button>
+                                 <?php else: ?>
+                                     <a href="#" type=" button" class="btn btn-warning"
+                                         onclick="update_obj(<?=$item->id_khoan?>)">
+                                         <i class="ri-edit-2-line"></i>
+                                     </a>
                                  <?php endif; ?>
                                  <a href="#" type="button" class="btn btn-danger"
                                      onclick="return confirm_sweet('quan-ly-khoan/action.php?req=delete&id_khoan=<?=$item->id_khoan?>')">

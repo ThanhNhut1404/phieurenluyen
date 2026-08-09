@@ -37,9 +37,12 @@
                 $dieu_info = $dieu->dieu__Get_By_Id($id_dieu);
                 $thu_tu = $dieu_info ? $dieu_info->thu_tu : 1;
 
-                // quân sửa: Không cho sửa nếu Khoản đã nằm trong Mẫu phiếu (bảo toàn lịch sử)
-                if ($khoan->khoan__Is_Used_In_Bocauhoi($id_khoan)) {
-                    header('location: ../index.php?page=quan-ly-khoan&status=locked_update');
+                // Quân sửa: Cập nhật điều kiện khóa Sửa (Dựa vào phát sinh phiếu chấm hoặc đợt chấm)
+                if ($khoan->khoan__Is_Edit_Locked($id_khoan)) {
+                    echo "<script>
+                            alert('Nội dung này thuộc mẫu đã phát sinh đợt chấm nên chưa thể chỉnh sửa.');
+                            window.history.back();
+                          </script>";
                     exit();
                 }
 

@@ -59,5 +59,20 @@ class mauphieu extends Database {
         $obj->execute(array($id_mau_phieu));
         return $obj->fetch();
     }
+
+    // Quân sửa: Kiểm tra điều kiện khóa Sửa (Đã phát sinh phiếu chấm HOẶC đợt chấm đang diễn ra)
+    public function mauphieu__Is_Edit_Locked($id_mau_phieu) {
+        // 1. Kiểm tra xem đã phát sinh phiếu chấm điểm chưa
+        $stmt1 = $this->connect->prepare("SELECT COUNT(*) FROM phieuchamdiem p JOIN lopapdung l ON p.id_lop_ap_dung = l.id_lop_ap_dung WHERE l.id_mau_phieu = ?");
+        $stmt1->execute(array($id_mau_phieu));
+        if ($stmt1->fetchColumn() > 0) return true;
+
+        // 2. Kiểm tra xem đợt chấm điểm đã bắt đầu chưa
+        $stmt2 = $this->connect->prepare("SELECT COUNT(*) FROM dotchamdiem d JOIN lopapdung l ON d.id_dot = l.id_dot WHERE l.id_mau_phieu = ? AND NOW() >= d.thoi_gian_bat_dau");
+        $stmt2->execute(array($id_mau_phieu));
+        if ($stmt2->fetchColumn() > 0) return true;
+
+        return false;
+    }
 }
 ?>

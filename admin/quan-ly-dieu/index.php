@@ -116,11 +116,15 @@
                              <td><?=$item->ghi_chu?></td>
                              <td class="text-center" style="text-align: center !important;"><?=$item->thu_tu?></td>
                              <td>
-                                 <?php if(!$dieu->dieu__Is_Used_In_Bocauhoi($item->id_dieu)): ?>
-                                 <a href="#" type="button" class="btn  btn-warning m-2"
-                                     onclick="update_obj(<?=$item->id_dieu?>)">
-                                     <i class="ri-edit-2-line"></i>
-                                 </a>
+                                 <?php if($dieu->dieu__Is_Edit_Locked($item->id_dieu)): ?>
+                                     <button class="btn btn-warning m-2 disabled" title="Mẫu đã phát sinh đợt chấm cho nội dung này.">
+                                         <i class="ri-edit-2-line"></i>
+                                     </button>
+                                 <?php else: ?>
+                                     <a href="#" type="button" class="btn btn-warning m-2"
+                                         onclick="update_obj(<?=$item->id_dieu?>)">
+                                         <i class="ri-edit-2-line"></i>
+                                     </a>
                                  <?php endif; ?>
                                      <a href="#" type="button" class="btn  btn-danger m-2"
                                          onclick="return confirm_delete_dieu('quan-ly-dieu/action.php?req=delete&id_dieu=<?=$item->id_dieu?>')">

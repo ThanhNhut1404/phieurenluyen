@@ -95,6 +95,29 @@ class khoan extends Database {
         return $result && $result->total > 0;
     }
 
+    // Quân sửa: Kiểm tra Khoản có nằm trong Mẫu phiếu đang bị khóa Sửa không
+    public function khoan__Is_Edit_Locked($id_khoan) {
+        $sql1 = "SELECT COUNT(*) FROM bocauhoi b
+                 JOIN khoan k ON b.id_dieu = k.id_dieu
+                 JOIN lopapdung l ON b.id_mau_phieu = l.id_mau_phieu
+                 JOIN phieuchamdiem p ON p.id_lop_ap_dung = l.id_lop_ap_dung
+                 WHERE k.id_khoan = ?";
+        $stmt1 = $this->connect->prepare($sql1);
+        $stmt1->execute(array($id_khoan));
+        if ($stmt1->fetchColumn() > 0) return true;
+
+        $sql2 = "SELECT COUNT(*) FROM bocauhoi b
+                 JOIN khoan k ON b.id_dieu = k.id_dieu
+                 JOIN lopapdung l ON b.id_mau_phieu = l.id_mau_phieu
+                 JOIN dotchamdiem d ON d.id_dot = l.id_dot
+                 WHERE k.id_khoan = ? AND NOW() >= d.thoi_gian_bat_dau";
+        $stmt2 = $this->connect->prepare($sql2);
+        $stmt2->execute(array($id_khoan));
+        if ($stmt2->fetchColumn() > 0) return true;
+
+        return false;
+    }
+
     // quân sửa: Kiểm tra Khoản có nằm trong Đợt chấm điểm Active không
     public function khoan__Is_In_Active_DotChamDiem($id_khoan) {
         $obj = $this->connect->prepare("
