@@ -595,36 +595,49 @@ window.addEventListener("load", function() {
             "searchable": false
         }],
         "buttons": [{
-                "extend": "copy",
-                "exportOptions": {
-                    "columns": ":visible:not(:nth-last-child(-n+4))"
+            "extend": "collection",
+            "text": "<i class='fas fa-file-export'></i> Xuất dữ liệu",
+            "className": "btn btn-sm btn-primary",
+            "align": "button-right",
+            "buttons": [
+                {
+                    "extend": "copy",
+                    "text": "<i class='far fa-copy'></i> Copy",
+                    "exportOptions": {
+                        "columns": ":visible:not(:nth-last-child(-n+4))"
+                    }
+                },
+                {
+                    "extend": "csv",
+                    "text": "<i class='fas fa-file-csv'></i> CSV",
+                    "bom": true,
+                    "exportOptions": {
+                        "columns": ":visible:not(:nth-last-child(-n+4))"
+                    }
+                },
+                {
+                    "extend": "excel",
+                    "text": "<i class='far fa-file-excel'></i> Excel",
+                    "exportOptions": {
+                        "columns": ":visible:not(:nth-last-child(-n+4))"
+                    }
+                },
+                {
+                    "extend": "pdf",
+                    "text": "<i class='far fa-file-pdf'></i> PDF",
+                    "exportOptions": {
+                        "columns": ":visible:not(:nth-last-child(-n+4))"
+                    }
+                },
+                {
+                    "extend": "print",
+                    "text": "<i class='fas fa-print'></i> In",
+                    "exportOptions": {
+                        "columns": ":visible:not(:nth-last-child(-n+4))"
+                    }
                 }
-            },
-            {
-                "extend": "csv",
-                "exportOptions": {
-                    "columns": ":visible:not(:nth-last-child(-n+4))"
-                }
-            },
-            {
-                "extend": "excel",
-                "exportOptions": {
-                    "columns": ":visible:not(:nth-last-child(-n+4))"
-                }
-            },
-            {
-                "extend": "pdf",
-                "exportOptions": {
-                    "columns": ":visible:not(:nth-last-child(-n+4))"
-                }
-            },
-            {
-                "extend": "print",
-                "exportOptions": {
-                    "columns": ":visible:not(:nth-last-child(-n+4))"
-                }
-            }
-        ]
+            ]
+        }]
     }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
 });
 
