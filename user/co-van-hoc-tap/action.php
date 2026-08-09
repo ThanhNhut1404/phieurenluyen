@@ -26,6 +26,12 @@
                     exit();
                 }
 
+                // Quân sửa: Kiểm tra xem Ban chấp hành Đoàn khoa đã chấm điểm chưa
+                if (empty($phieu->kq_btdk)) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+
                 // Kiểm tra giảng viên có được phân công lớp này không
                 $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
                 if (!$lop_ap_dung) {

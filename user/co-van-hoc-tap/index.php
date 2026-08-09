@@ -44,6 +44,10 @@ $sinhvien__Get_By_Id_Lop_Hoc_Da_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq
 // Quân sửa: Định nghĩa các biến bị thiếu
 $dw = "";
 $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_hoc, $id_dot, $id_sinh_vien);
+$btdk_has_scored = false;
+if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
+    $btdk_has_scored = (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk));
+}
 ?>
 <link rel="stylesheet" href="../assets/css/user.css">
 <!-- Quân sửa: Thêm CSS override và class wrapper để loại bỏ khoảng trắng bên trái do ảnh hưởng sidebar -->
@@ -110,6 +114,12 @@ $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu
             <form class="form" action="co-van-hoc-tap/action.php?req=add" method="post" enctype="multipart/form-data">
 
                 <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
+                <!-- Quân sửa: Thêm cảnh báo nếu sinh viên chưa được BCH Đoàn khoa chấm điểm -->
+                <?php if (!$btdk_has_scored): ?>
+                    <div class="alert alert-warning text-center">
+                        <strong>Sinh viên này chưa được Ban chấp hành Đoàn khoa chấm điểm.</strong> Bạn không thể chấm điểm lúc này.
+                    </div>
+                <?php endif; ?>
                 <div class="card overflow-auto w-100">
                     <div class="card-header">
                         <div class="row">
@@ -273,6 +283,7 @@ $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu
                                                             style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                                                             <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'readonly' : '' ?>
                                                             <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 4 ? 'readonly' : '' ?>
+                                                            <?= !$btdk_has_scored ? 'readonly' : '' ?>
                                                             pattern="[-+]?[0-9]{1,2}"
                                                             title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
                                                             max="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i] : $item_2->can_tren ?>" required
@@ -334,7 +345,7 @@ $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu
                         <label for="" class="text-muted text-crimson">Vui lòng thêm minh chứng trước khi nhấn cập
                             nhật</label>
                         <input type="submit" value="Cập nhật" class="btn btn-danger float-right" id="submit"
-                            <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>
+                            <?= ($dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'disabled' : '' ?>
                             <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 4 ? 'disabled' : '' ?>>
                     </div>
                 </div>

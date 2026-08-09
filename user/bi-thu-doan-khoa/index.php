@@ -83,7 +83,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $khoahoc__Get_By_Id = $khoahoc->khoahoc__Get_By_Id($id_khoa_hoc);
     $bocauhoi__Get_By_Id_Mau_Phieu = $bocauhoi->bocauhoi__Get_By_Id_Mau_Phieu($id_mau_phieu);
 
-    $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_ap_dung, $id_dot, $id_sinh_vien);
+    // Quân sửa: Lấy đúng kết quả xếp loại theo id_lop_hoc của Bí thư Đoàn khoa
+    $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_hoc, $id_dot, $id_sinh_vien);
 }
 
 
@@ -355,7 +356,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     <div class="table-responsive">
                         <table class="table table-bordered mb-0" style="width: 100%; table-layout: fixed; white-space: normal; overflow-wrap: break-word; word-break: normal;">
                             <colgroup>
-                                <col style="width:80px">
+                                <col style="width:110px">
                                 <col>
                                 <col style="width:65px">
                                 <col style="width:75px">
@@ -389,7 +390,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                     <?php foreach ($khoan_list as $item_2) : ?>
                                         <tr class="table-info">
                                             <?php if ($is_first_row_dieu): ?>
-                                                <td rowspan="<?= $rowspan ?>" class="align-middle text-center" style="padding:6px 4px;">
+                                                <td rowspan="<?= $rowspan ?>" class="align-middle text-center" style="padding:6px 4px; word-break: break-word; overflow-wrap: break-word; white-space: normal;">
                                                     <div class="font-weight-bold"><?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ten_dieu ?></div>
                                                     <div class="text-muted small mt-1"><?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ghi_chu ?></div>
                                                 </td>

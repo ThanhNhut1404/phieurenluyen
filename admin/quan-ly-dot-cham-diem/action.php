@@ -278,6 +278,10 @@
 
                     $dotchamdiem->dotchamdiem__Update($id_dot, $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_hoc_ky);
                     
+                    // Quân sửa: Tự động cập nhật lại trạng thái đợt dựa vào thời gian kết thúc mới
+                    $new_trang_thai = (strtotime($thoi_gian_ket_thuc) >= strtotime(date('Y-m-d'))) ? 1 : 0;
+                    $dotchamdiem->dotchamdiem__Update_Trang_Thai($id_dot, $new_trang_thai);
+                    
                     $dotchamdiem->connect->commit();
                     dotchamdiem__Rotate_Csrf_Token();
                     
