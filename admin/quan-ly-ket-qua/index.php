@@ -126,18 +126,20 @@
          <!-- /.card-header -->
          <div class="card-body">
              <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
-                 <thead>
-                     <tr>
-                         <th>STT</th>
-                         <th>Mã sinh viên</th>
-                         <th>Tên sinh viên</th>
-                         <th>Tên lớp</th>
-                         <th>Điểm rèn luyện</th>
-                         <th>Kết quả xếp loại</th>
-                         <th>Ngày xếp loại</th>
-                         <th>Ghi chú</th>
-                     </tr>
-                 </thead>
+                  <thead>
+                      <tr>
+                          <th>STT</th>
+                          <!-- Nhựt sửa: Đổi tên cột từ Mã sinh viên thành MSSV -->
+                          <th>MSSV</th>
+                          <!-- Nhựt sửa: Đổi tên cột từ Tên sinh viên thành HỌ VÀ TÊN -->
+                          <th>HỌ VÀ TÊN</th>
+                          <th>Tên lớp</th>
+                          <th>Điểm rèn luyện</th>
+                          <th>Kết quả xếp loại</th>
+                          <th>Ngày xếp loại</th>
+                          <th>Ghi chú</th>
+                      </tr>
+                  </thead>
                  <tbody>
                      <?php $num = 0;?>
                      <?php $sum_1 = 0;?>
@@ -229,13 +231,56 @@ window.addEventListener("load", function() {
                 "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
             }
         },
+        // Nhựt sửa: Cấu hình dropdown "Xuất dữ liệu" đầy đủ (Copy, CSV, Excel, PDF, Print) thay vì chỉ xuất Excel
         buttons: [{
-                extend: 'excel',
-                exportOptions: {
-                    columns: ':visible'
-                }
+                extend: "collection",
+                text: "<i class='fas fa-file-export'></i> Xuất dữ liệu",
+                className: "btn btn-sm btn-primary",
+                align: "button-right",
+                buttons: [
+                    {
+                        extend: "copy",
+                        text: "<i class='far fa-copy'></i> Copy",
+                        exportOptions: {
+                            columns: ":visible"
+                        }
+                    },
+                    {
+                        extend: "csv",
+                        text: "<i class='fas fa-file-csv'></i> CSV",
+                        bom: true,
+                        exportOptions: {
+                            columns: ":visible"
+                        }
+                    },
+                    {
+                        extend: "excel",
+                        text: "<i class='far fa-file-excel'></i> Excel",
+                        exportOptions: {
+                            columns: ":visible"
+                        }
+                    },
+                    {
+                        extend: "pdf",
+                        text: "<i class='far fa-file-pdf'></i> PDF",
+                        exportOptions: {
+                            columns: ":visible"
+                        }
+                    },
+                    {
+                        extend: "print",
+                        text: "<i class='fas fa-print'></i> In",
+                        exportOptions: {
+                            columns: ":visible"
+                        }
+                    }
+                ]
             },
-            'colvis'
+            // Nhựt sửa: Đổi tên nút Column visibility thành Ẩn/Hiện cột
+            {
+                extend: 'colvis',
+                text: 'Ẩn/Hiện cột'
+            }
         ],
         columnDefs: [{
             targets: -1,

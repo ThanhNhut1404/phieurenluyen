@@ -39,9 +39,9 @@ $id_khoa_hoc = isset($lophoc__Get_By_Id->id_khoa_hoc) ? $lophoc__Get_By_Id->id_k
 $khoahoc__Get_By_Id = $khoahoc->khoahoc__Get_By_Id($id_khoa_hoc);
 $bocauhoi__Get_By_Id_Mau_Phieu = $bocauhoi->bocauhoi__Get_By_Id_Mau_Phieu($id_mau_phieu);
 
-$sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_BTDK($id_dot, $id_lop_hoc, -1);
-$sinhvien__Get_By_Id_Lop_Hoc_Da_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_BTDK($id_dot, $id_lop_hoc, null);
-// Quân sửa: Định nghĩa các biến bị thiếu
+$sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_CVHT($id_dot, $id_lop_hoc, -1);
+$sinhvien__Get_By_Id_Lop_Hoc_Da_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_CVHT($id_dot, $id_lop_hoc, null);
+// Quân sửa: Định nghĩa các biến bị thiếu và đổi sang hàm Get_By_Id_Lop_Hoc_Kq_CVHT cho Cố vấn học tập
 $dw = "";
 $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_hoc, $id_dot, $id_sinh_vien);
 $btdk_has_scored = false;
@@ -282,12 +282,12 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         <input type="number" class="form-control kq_gv" name="kq_gv[]"
                                                             style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                                                             <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'readonly' : '' ?>
-                                                            <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 4 ? 'readonly' : '' ?>
+                                                            <?php // Quân sửa: Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm ?>
                                                             <?= !$btdk_has_scored ? 'readonly' : '' ?>
                                                             pattern="[-+]?[0-9]{1,2}"
                                                             title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0"
-                                                            max="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i] : $item_2->can_tren ?>" required
-                                                            value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i] : (isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i] : 0) ?>">
+                                                            max="<?= $item_2->can_tren ?>" required
+                                                            value="<?= (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv) && !empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv) && isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i])) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i] : 0 ?>">
                                                     </td>
                                                     <td class="text-center align-middle" style="padding:4px;">
                                                         <?php if ($muc->muc__Get_By_Id($item_3->id_muc)->co_minh_chung == 1): ?>
@@ -345,8 +345,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <label for="" class="text-muted text-crimson">Vui lòng thêm minh chứng trước khi nhấn cập
                             nhật</label>
                         <input type="submit" value="Cập nhật" class="btn btn-danger float-right" id="submit"
-                            <?= ($dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'disabled' : '' ?>
-                            <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 4 ? 'disabled' : '' ?>>
+                            <?php // Quân sửa: Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm trên nút submit ?>
+                            <?= ($dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'disabled' : '' ?>>
                     </div>
                 </div>
             </form>

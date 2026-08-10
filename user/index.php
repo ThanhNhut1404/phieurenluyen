@@ -191,13 +191,57 @@
         }
     });
 
-    // Quân sửa: Tự động điền 0 vào các ô điểm rỗng trước khi submit form
-    $(document).on('submit', 'form', function() {
-        $(this).find('input.kq_sv, input.kq_lt_bt, input.kq_btdk, input.kq_gv').each(function() {
+    // Nhựt sửa: Tự động điền 0 vào các ô điểm rỗng trước khi submit form và gửi bằng AJAX để giữ lại dữ liệu khi thất bại
+    $(document).on('submit', 'form', function(e) {
+        var form = $(this);
+        form.find('input.kq_sv, input.kq_lt_bt, input.kq_btdk, input.kq_gv').each(function() {
             if ($(this).val() === '') {
                 $(this).val('0');
             }
         });
+
+        var actionUrl = form.attr('action') || '';
+        if (actionUrl.indexOf('action.php?req=add') !== -1) {
+            e.preventDefault();
+            var submitBtn = form.find('input[type="submit"], button[type="submit"]');
+            var originalBtnValue = submitBtn.val();
+            submitBtn.prop('disabled', true).val('Đang xử lý...');
+
+            $.ajax({
+                url: actionUrl,
+                type: form.attr('method') || 'POST',
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function(response, status, xhr) {
+                    var finalUrl = xhr.responseURL || '';
+                    if (finalUrl.indexOf('status=success') !== -1) {
+                        Swal.fire({
+                            title: 'Thành công!',
+                            text: 'Thao tác thành công!',
+                            icon: 'success'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Thất bại!',
+                            text: 'Thao tác không thành công! Điểm số đã nhập vẫn được giữ lại để bạn chỉnh sửa.',
+                            icon: 'error'
+                        });
+                        submitBtn.prop('disabled', false).val(originalBtnValue);
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: 'Thất bại!',
+                        text: 'Có lỗi kết nối mạng xảy ra. Điểm số đã nhập vẫn được giữ lại.',
+                        icon: 'error'
+                    });
+                    submitBtn.prop('disabled', false).val(originalBtnValue);
+                }
+            });
+        }
     });
     </script>
     <?php

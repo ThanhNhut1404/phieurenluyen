@@ -559,6 +559,27 @@ table#tablejs thead th {
     border-color: #0f2a5a !important;
     color: #fff !important;
 }
+
+/* Nhựt sửa: Tùy chỉnh màu sắc nút Ẩn/Hiện cột (xám outline) để phân biệt với nút Xuất dữ liệu (xanh đậm outline) */
+.dataTables_wrapper .dt-buttons .buttons-colvis {
+    background-color: transparent !important;
+    border: 1px solid #6c757d !important;
+    color: #6c757d !important;
+    border-radius: 4px !important;
+    padding: 6px 12px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease-in-out !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+.dataTables_wrapper .dt-buttons .buttons-colvis:hover {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+}
+
 .dataTables_wrapper .dataTables_filter {
     margin-top: 0 !important;
 }
@@ -669,4 +690,50 @@ table#tablejs thead th {
 .dataTables_wrapper .dt-button-collection .buttons-print:hover {
     background-color: rgba(217, 119, 6, 0.08) !important;
     border-color: #d97706 !important;
+}
+
+/* Nhựt sửa: Thiết lập dropdown Ẩn/Hiện cột thành dạng lưới 2 cột gọn gàng, độ rộng tự động co giãn vừa khít với nội dung */
+.dataTables_wrapper .dt-button-collection:has(.buttons-columnVisibility),
+.dataTables_wrapper .dt-button-collection:has(.buttons-columnVisibility) > div,
+.dataTables_wrapper .dt-button-collection:has(.buttons-columnVisibility) .dropdown-menu {
+    grid-template-columns: repeat(2, auto) !important;
+    grid-auto-flow: row !important;
+    grid-template-rows: auto !important;
+    min-width: auto !important;
+    width: auto !important;
+    gap: 6px !important;
+}
+
+.dataTables_wrapper .dt-button-collection .buttons-columnVisibility {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    background-color: #fff !important;
+    color: #495057 !important;
+    border: 1px solid #dee2e6 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
+.dataTables_wrapper .dt-button-collection .buttons-columnVisibility.active {
+    background-color: #0f2a5a !important;
+    border-color: #0f2a5a !important;
+    color: #fff !important;
+}
+
+.dataTables_wrapper .dt-button-collection .buttons-columnVisibility:hover {
+    background-color: rgba(15, 42, 90, 0.08) !important;
+    border-color: #0f2a5a !important;
+    color: #0f2a5a !important;
+}
+
+.dataTables_wrapper .dt-button-collection .buttons-columnVisibility.active:hover {
+    background-color: #0d244d !important;
+    border-color: #0d244d !important;
+    color: #fff !important;
 }

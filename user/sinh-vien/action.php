@@ -8,9 +8,27 @@
     
     if (isset($_GET["req"])){
         switch($_GET["req"]){
-            case "add":
+             case "add":
                 $status = 0;
                 $id_phieu = $_POST["id_phieu"];
+
+                // Nhựt sửa: Thêm bảo mật kiểm tra chủ sở hữu phiếu và đợt chấm điểm đang mở ở backend
+                $phieu = $phieuchamdiem->phieuchamdiem__Get_By_Id($id_phieu);
+                if (!$phieu || $phieu->id_sinh_vien != $_SESSION['sv']->id_nguoi_dung) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+                $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
+                if (!$lop_ap_dung) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+                $dot = $dotchamdiem->dotchamdiem__Get_By_Id($lop_ap_dung->id_dot);
+                if (!$dot || $dot->trang_thai == 0) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+
                 $kq_sv = $_POST["kq_sv"];
                 $kq = "";
                 foreach($kq_sv as $item){
@@ -40,11 +58,8 @@
                     }
                 }
 
-                if($status != "0" ){
-                    header("location: $href&status=success");
-                }else{
-                    header("location: $href&status=failed");
-                }
+                // Nhựt sửa: Thực hiện cập nhật điểm tự chấm của sinh viên và chuyển hướng thành công
+                header("location: $href&status=success");
                 break; 
 
            

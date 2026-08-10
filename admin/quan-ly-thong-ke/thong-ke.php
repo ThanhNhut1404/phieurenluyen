@@ -244,13 +244,55 @@ foreach($ketquaxeploai__Get_By_Id_Dot as $item){
         $('#tablejs').DataTable({
             responsive: true,
             dom: 'Bfrtip',
+            // Nhựt sửa: Cấu hình dropdown "Xuất dữ liệu" đầy đủ và đổi tên nút Column visibility thành Ẩn/Hiện cột
             buttons: [{
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
+                    extend: "collection",
+                    text: "<i class='fas fa-file-export'></i> Xuất dữ liệu",
+                    className: "btn btn-sm btn-primary",
+                    align: "button-right",
+                    buttons: [
+                        {
+                            extend: "copy",
+                            text: "<i class='far fa-copy'></i> Copy",
+                            exportOptions: {
+                                columns: ":visible"
+                            }
+                        },
+                        {
+                            extend: "csv",
+                            text: "<i class='fas fa-file-csv'></i> CSV",
+                            bom: true,
+                            exportOptions: {
+                                columns: ":visible"
+                            }
+                        },
+                        {
+                            extend: "excel",
+                            text: "<i class='far fa-file-excel'></i> Excel",
+                            exportOptions: {
+                                columns: ":visible"
+                            }
+                        },
+                        {
+                            extend: "pdf",
+                            text: "<i class='far fa-file-pdf'></i> PDF",
+                            exportOptions: {
+                                columns: ":visible"
+                            }
+                        },
+                        {
+                            extend: "print",
+                            text: "<i class='fas fa-print'></i> In",
+                            exportOptions: {
+                                columns: ":visible"
+                            }
+                        }
+                    ]
                 },
-                'colvis'
+                {
+                    extend: 'colvis',
+                    text: 'Ẩn/Hiện cột'
+                }
             ],
             columnDefs: [{
                 targets: -1,

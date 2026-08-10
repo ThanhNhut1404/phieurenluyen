@@ -12,29 +12,29 @@
                 $status = 0;
                 $id_phieu = $_POST["id_phieu"];
                 
-                // Quân sửa: Thêm ràng buộc bảo mật backend cho Cố vấn học tập
+                // Nhựt sửa: Thêm ràng buộc bảo mật backend cho Cố vấn học tập
                 $phieu = $phieuchamdiem->phieuchamdiem__Get_By_Id($id_phieu);
                 if (!$phieu) {
                     header("location: $href&status=failed");
                     exit();
                 }
-                
-                // Kiểm tra trạng thái phiếu phải là 4 (Cố vấn học tập chấm) và đợt phải đang mở
-                $dot = $dotchamdiem->dotchamdiem__Get_By_Id($phieu->id_dot);
-                if ($phieu->trang_thai != 4 || !$dot || $dot->trang_thai == 0) {
-                    header("location: $href&status=failed");
-                    exit();
-                }
-
-                // Quân sửa: Kiểm tra xem Ban chấp hành Đoàn khoa đã chấm điểm chưa
-                if (empty($phieu->kq_btdk)) {
-                    header("location: $href&status=failed");
-                    exit();
-                }
-
-                // Kiểm tra giảng viên có được phân công lớp này không
+                // Kiểm tra lớp áp dụng của phiếu
                 $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
                 if (!$lop_ap_dung) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+
+                // Kiểm tra xem đợt phải đang mở
+                // Nhựt sửa: Sửa lỗi lấy id_dot từ phiếu (phiếu không có id_dot, phải lấy từ lớp áp dụng) và bỏ kiểm tra trang_thai == 4
+                $dot = $dotchamdiem->dotchamdiem__Get_By_Id($lop_ap_dung->id_dot);
+                if (!$dot || $dot->trang_thai == 0) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+
+                // Nhựt sửa: Kiểm tra xem Ban chấp hành Đoàn khoa đã chấm điểm chưa
+                if (empty($phieu->kq_btdk)) {
                     header("location: $href&status=failed");
                     exit();
                 }
@@ -60,13 +60,9 @@
                     $kq .= $item."|";
                 }
                 
-                $status .= $phieuchamdiem->phieuchamdiem__Update_Kq_Gv($id_phieu, rtrim($kq, "|"));
-
-                if($status != "0" ){
-                    header("location: $href&status=success");
-                }else{
-                    header("location: $href&status=failed");
-                }
+                // Quân sửa: Thực hiện cập nhật điểm của cố vấn học tập và chuyển hướng thành công
+                $phieuchamdiem->phieuchamdiem__Update_Kq_Gv($id_phieu, rtrim($kq, "|"));
+                header("location: $href&status=success");
                 break; 
         }
     }

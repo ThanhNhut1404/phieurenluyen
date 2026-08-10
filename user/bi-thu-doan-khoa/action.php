@@ -31,7 +31,21 @@
                 // Kiểm tra xem sinh viên có thuộc khoa của BTDK không
                 $sv = $sinhvien->sinhvien__Get_By_Id($phieu->id_sinh_vien);
                 $lop = $lophoc->lophoc__Get_By_Id($sv->id_lop_hoc);
-                if ($lop->id_khoa != $bithudoankhoa__Get_By_Id->id_khoa) {
+                // Quân sửa: Lấy thông tin ngành học để kiểm tra id_khoa của lớp học
+                $nganh = $nganhhoc->nganhhoc__Get_By_Id($lop->id_nganh_hoc);
+                if ($nganh->id_khoa != $bithudoankhoa__Get_By_Id->id_khoa) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+                
+                // Nhựt sửa: Kiểm tra xem đợt phải đang mở ở backend
+                $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
+                if (!$lop_ap_dung) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+                $dot = $dotchamdiem->dotchamdiem__Get_By_Id($lop_ap_dung->id_dot);
+                if (!$dot || $dot->trang_thai == 0) {
                     header("location: $href&status=failed");
                     exit();
                 }
@@ -48,14 +62,9 @@
                     $kq .= $item."|";
                 }
                 
-                $status .= $phieuchamdiem->phieuchamdiem__Update_Kq_BTDK($id_phieu, rtrim($kq, "|"));
-
-
-                if($status != "0" ){
-                    header("location: $href&status=success");
-                }else{
-                    header("location: $href&status=failed");
-                }
+                // Quân sửa: Thực hiện cập nhật điểm và chuyển hướng thành công
+                $phieuchamdiem->phieuchamdiem__Update_Kq_BTDK($id_phieu, rtrim($kq, "|"));
+                header("location: $href&status=success");
                 break; 
         }
     }
