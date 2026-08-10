@@ -100,13 +100,13 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title text-center font-weight-bold w-100 mt-3 mb-3">
+                            <h3 class="card-title text-center font-weight-bold w-100 mt-3 mb-3" style="font-size: 1.65rem !important;">
                                 <?=$mauphieu__Get_By_Id->ten_mau_phieu?></h3>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title">Mã sinh viên: <?=$sinhvien__Get_By_Id->ma_sinh_vien?></h3>
+                            <h3 class="card-title">Mã số sinh viên: <?=$sinhvien__Get_By_Id->ma_sinh_vien?></h3>
                         </div>
 
                         <div class="col text-right">
@@ -115,7 +115,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title">Tên sinh viên: <?=$sinhvien__Get_By_Id->ten_sinh_vien?></h3>
+                            <h3 class="card-title">Họ tên sinh viên: <?=$sinhvien__Get_By_Id->ten_sinh_vien?></h3>
                         </div>
                         <div class="col text-right">
                             <p class="card-title w-100">Học kỳ: <?=$hocky__Get_By_Id->ten_hoc_ky?></p>

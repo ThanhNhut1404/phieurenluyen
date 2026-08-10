@@ -63,7 +63,34 @@ if ($id_lop_hoc != -2) {
             break;
     }
 }
+$sinhvien_list = array_values($sinhvien_list);
 
+// Quân sửa: Tính toán phân trang cho danh sách sinh viên
+$first_id = null;
+$prev_id = null;
+$next_id = null;
+$last_id = null;
+$current_index = false;
+
+if (count($sinhvien_list) > 0) {
+    $student_ids = array_map(function($sv) {
+        return $sv->id_sinh_vien;
+    }, $sinhvien_list);
+    
+    $current_index = array_search($id_sinh_vien, $student_ids);
+    
+    $first_id = $student_ids[0];
+    $last_id = $student_ids[count($student_ids) - 1];
+    
+    if ($current_index !== false) {
+        if ($current_index > 0) {
+            $prev_id = $student_ids[$current_index - 1];
+        }
+        if ($current_index < count($student_ids) - 1) {
+            $next_id = $student_ids[$current_index + 1];
+        }
+    }
+}
 
 if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
@@ -231,9 +258,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                     <label>Sinh viên (<?= count($sinhvien_list) ?>)</label>
                                     <select class="form-control" name="id_sinh_vien" onchange="this.form.submit()">
                                         <option value="-2">-- Chọn sinh viên --</option>
-                                        <?php foreach ($sinhvien_list as $sv_item): ?>
+                                        <?php foreach ($sinhvien_list as $index => $sv_item): ?>
                                             <option value="<?= $sv_item->id_sinh_vien ?>" <?= $id_sinh_vien == $sv_item->id_sinh_vien ? 'selected' : '' ?>>
-                                                <?= $sv_item->ma_sinh_vien ?> - <?= $sv_item->ten_sinh_vien ?>
+                                                <?= ($index + 1) ?>. <?= $sv_item->ma_sinh_vien ?> - <?= $sv_item->ten_sinh_vien ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -264,6 +291,36 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     
 
     <section class="content evaluation-page">
+        <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên -->
+        <?php if ($id_lop_hoc != -2 && count($sinhvien_list) > 0): ?>
+        <div class="row mb-3">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="?page=bi-thu-doan-khoa&id_dot=<?= $id_dot ?>&id_lop_hoc=<?= $id_lop_hoc ?>&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
+                       class="btn btn-outline-primary <?= ($current_index === 0 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                        <i class="fas fa-angle-double-left"></i> Đầu
+                    </a>
+                    <a href="?page=bi-thu-doan-khoa&id_dot=<?= $id_dot ?>&id_lop_hoc=<?= $id_lop_hoc ?>&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
+                       class="btn btn-outline-primary <?= ($prev_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                        <i class="fas fa-angle-left"></i> Trước
+                    </a>
+                </div>
+                <div class="text-muted font-weight-bold">
+                    Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?>
+                </div>
+                <div>
+                    <a href="?page=bi-thu-doan-khoa&id_dot=<?= $id_dot ?>&id_lop_hoc=<?= $id_lop_hoc ?>&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
+                       class="btn btn-outline-primary <?= ($next_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                        Sau <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page=bi-thu-doan-khoa&id_dot=<?= $id_dot ?>&id_lop_hoc=<?= $id_lop_hoc ?>&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
+                       class="btn btn-outline-primary <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                        Cuối <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
         
 <form class="form" action="bi-thu-doan-khoa/action.php?req=add" method="post" enctype="multipart/form-data">
@@ -505,6 +562,37 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             </div>
 
         </form>
+
+        <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên (dưới form) -->
+        <?php if ($id_lop_hoc != -2 && count($sinhvien_list) > 0): ?>
+        <div class="row mt-3 mb-3">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="?page=bi-thu-doan-khoa&id_dot=<?= $id_dot ?>&id_lop_hoc=<?= $id_lop_hoc ?>&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
+                       class="btn btn-outline-primary <?= ($current_index === 0 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                        <i class="fas fa-angle-double-left"></i> Đầu
+                    </a>
+                    <a href="?page=bi-thu-doan-khoa&id_dot=<?= $id_dot ?>&id_lop_hoc=<?= $id_lop_hoc ?>&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
+                       class="btn btn-outline-primary <?= ($prev_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                        <i class="fas fa-angle-left"></i> Trước
+                    </a>
+                </div>
+                <div class="text-muted font-weight-bold">
+                    Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?>
+                </div>
+                <div>
+                    <a href="?page=bi-thu-doan-khoa&id_dot=<?= $id_dot ?>&id_lop_hoc=<?= $id_lop_hoc ?>&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
+                       class="btn btn-outline-primary <?= ($next_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                        Sau <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page=bi-thu-doan-khoa&id_dot=<?= $id_dot ?>&id_lop_hoc=<?= $id_lop_hoc ?>&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
+                       class="btn btn-outline-primary <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                        Cuối <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
 
 

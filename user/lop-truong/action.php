@@ -24,6 +24,13 @@
                     header("location: $href&status=failed");
                     exit();
                 }
+                
+                // Quân sửa: Ngăn chặn lớp trưởng tự chấm điểm cho mình ở chế độ chấm cho lớp (req=add)
+                if ($sv_target->id_sinh_vien == $lt_info->id_sinh_vien) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+
                 $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
                 if (!$lop_ap_dung) {
                     header("location: $href&status=failed");

@@ -14,8 +14,13 @@ $mode = isset($_GET['mode']) ? $_GET['mode'] : 'lop';
 if ($mode == 'ban_than') {
     $id_sinh_vien = $_SESSION['lt']->id_nguoi_dung;
 } else {
+    // Quân sửa: Mặc định không chọn sinh viên nào khi vào chế độ chấm cho lớp (tránh tự chọn bản thân)
+    $id_sinh_vien = '';
     if (isset($_GET['id_sinh_vien']) && $_GET['id_sinh_vien'] != '') {
-        $id_sinh_vien = $_GET['id_sinh_vien'];
+        // Quân sửa: Không cho phép chọn bản thân lớp trưởng trong chế độ chấm cho lớp
+        if ($_GET['id_sinh_vien'] != $_SESSION['lt']->id_nguoi_dung) {
+            $id_sinh_vien = $_GET['id_sinh_vien'];
+        }
     }
 }
 $phieuchamdiem__Get_By_Id_Sinh_Vien = $phieuchamdiem->phieuchamdiem__Get_By_Id_Sinh_Vien($id_sinh_vien, $id_dot);
@@ -44,6 +49,41 @@ switch($filter) {
         break;
 }
 
+// Quân sửa: Lọc bỏ tài khoản của lớp trưởng khỏi danh sách chấm điểm lớp
+if ($mode == 'lop') {
+    $sinhvien_list = array_filter($sinhvien_list, function($sv) {
+        return $sv->id_sinh_vien != $_SESSION['lt']->id_nguoi_dung;
+    });
+}
+$sinhvien_list = array_values($sinhvien_list);
+
+// Quân sửa: Tính toán phân trang cho danh sách sinh viên
+$first_id = null;
+$prev_id = null;
+$next_id = null;
+$last_id = null;
+$current_index = false;
+
+if (count($sinhvien_list) > 0) {
+    $student_ids = array_map(function($sv) {
+        return $sv->id_sinh_vien;
+    }, $sinhvien_list);
+    
+    $current_index = array_search($id_sinh_vien, $student_ids);
+    
+    $first_id = $student_ids[0];
+    $last_id = $student_ids[count($student_ids) - 1];
+    
+    if ($current_index !== false) {
+        if ($current_index > 0) {
+            $prev_id = $student_ids[$current_index - 1];
+        }
+        if ($current_index < count($student_ids) - 1) {
+            $next_id = $student_ids[$current_index + 1];
+        }
+    }
+}
+
 if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
     $id_lop_ap_dung = isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung) ? $phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung : 0;
@@ -60,6 +100,13 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $id_khoa_hoc = isset($lophoc__Get_By_Id->id_khoa_hoc) ? $lophoc__Get_By_Id->id_khoa_hoc : 0;
 
     $khoahoc__Get_By_Id = $khoahoc->khoahoc__Get_By_Id($id_khoa_hoc);
+    
+    // Quân sửa: Lấy thông tin Khoa/Bộ môn của sinh viên để hiển thị trên phiếu
+    $id_nganh_hoc = isset($lophoc__Get_By_Id->id_nganh_hoc) ? $lophoc__Get_By_Id->id_nganh_hoc : 0;
+    $nganhhoc__Get_By_Id = $nganhhoc->nganhhoc__Get_By_Id($id_nganh_hoc);
+    $id_khoa = isset($nganhhoc__Get_By_Id->id_khoa) ? $nganhhoc__Get_By_Id->id_khoa : 0;
+    $khoa__Get_By_Id = $khoa->khoa__Get_By_Id($id_khoa);
+
     $bocauhoi__Get_By_Id_Mau_Phieu = $bocauhoi->bocauhoi__Get_By_Id_Mau_Phieu($id_mau_phieu);
 
     $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_ap_dung, $id_dot, $id_sinh_vien);
@@ -197,9 +244,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                     <label>Sinh viên (<?= count($sinhvien_list) ?>)</label>
                                     <select class="form-control" name="id_sinh_vien" onchange="this.form.submit()">
                                         <option value="">-- Chọn sinh viên --</option>
-                                        <?php foreach ($sinhvien_list as $sv_item): ?>
+                                        <?php foreach ($sinhvien_list as $index => $sv_item): ?>
                                             <option value="<?= $sv_item->id_sinh_vien ?>" <?= $id_sinh_vien == $sv_item->id_sinh_vien ? 'selected' : '' ?>>
-                                                <?= $sv_item->ma_sinh_vien ?> - <?= $sv_item->ten_sinh_vien ?>
+                                                <?= ($index + 1) ?>. <?= $sv_item->ma_sinh_vien ?> - <?= $sv_item->ten_sinh_vien ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -227,6 +274,37 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         </div><!-- /.container-fluid -->
     </section>
     <section class="content evaluation-page">
+        <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên -->
+        <?php if ($mode == 'lop' && count($sinhvien_list) > 0): ?>
+        <div class="row mb-3">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
+                       class="btn btn-outline-primary <?= ($current_index === 0 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                        <i class="fas fa-angle-double-left"></i> Đầu
+                    </a>
+                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
+                       class="btn btn-outline-primary <?= ($prev_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                        <i class="fas fa-angle-left"></i> Trước
+                    </a>
+                </div>
+                <div class="text-muted font-weight-bold">
+                    Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?>
+                </div>
+                <div>
+                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
+                       class="btn btn-outline-primary <?= ($next_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                        Sau <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
+                       class="btn btn-outline-primary <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                        Cuối <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- Quân sửa: Định tuyến đúng hành động cập nhật điểm (Sinh viên tự chấm hoặc Lớp trưởng chấm) -->
         <form class="form" action="lop-truong/action.php?req=<?= $mode == 'ban_than' ? 'add_sv' : 'add' ?>" method="post" enctype="multipart/form-data">
 
@@ -235,13 +313,13 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title text-center font-weight-bold w-100 mt-3 mb-3">
+                            <h3 class="card-title text-center font-weight-bold w-100 mt-3 mb-3" style="font-size: 1.65rem !important;">
                                 <?= $mauphieu__Get_By_Id->ten_mau_phieu ?></h3>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title">Mã sinh viên: <?= $sinhvien__Get_By_Id->ma_sinh_vien ?></h3>
+                            <h3 class="card-title">Mã số sinh viên: <?= $sinhvien__Get_By_Id->ma_sinh_vien ?></h3>
                         </div>
 
                         <div class="col text-right">
@@ -250,7 +328,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     </div>
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title">Tên sinh viên: <?= $sinhvien__Get_By_Id->ten_sinh_vien ?></h3>
+                            <h3 class="card-title">Họ tên sinh viên: <?= $sinhvien__Get_By_Id->ten_sinh_vien ?></h3>
                         </div>
                         <div class="col text-right">
                             <p class="card-title w-100">Học kỳ: <?= $hocky__Get_By_Id->ten_hoc_ky ?></p>
@@ -472,6 +550,37 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>>
             </div>
         </form>
+
+        <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên (dưới form) -->
+        <?php if ($mode == 'lop' && count($sinhvien_list) > 0): ?>
+        <div class="row mt-3 mb-3">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
+                       class="btn btn-outline-primary <?= ($current_index === 0 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                        <i class="fas fa-angle-double-left"></i> Đầu
+                    </a>
+                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
+                       class="btn btn-outline-primary <?= ($prev_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                        <i class="fas fa-angle-left"></i> Trước
+                    </a>
+                </div>
+                <div class="text-muted font-weight-bold">
+                    Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?>
+                </div>
+                <div>
+                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
+                       class="btn btn-outline-primary <?= ($next_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                        Sau <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
+                       class="btn btn-outline-primary <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                        Cuối <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
 
 

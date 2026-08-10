@@ -117,7 +117,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     </div>
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title">Mã sinh viên: <?= $sinhvien__Get_By_Id->ma_sinh_vien ?></h3>
+                            <h3 class="card-title">Mã số sinh viên: <?= $sinhvien__Get_By_Id->ma_sinh_vien ?></h3>
                         </div>
 
                         <div class="col text-right">
@@ -126,7 +126,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     </div>
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title">Tên sinh viên: <?= $sinhvien__Get_By_Id->ten_sinh_vien ?></h3>
+                            <h3 class="card-title">Họ tên sinh viên: <?= $sinhvien__Get_By_Id->ten_sinh_vien ?></h3>
                         </div>
                         <div class="col text-right">
                             <p class="card-title w-100">Học kỳ: <?= $hocky__Get_By_Id->ten_hoc_ky ?></p>

@@ -66,11 +66,11 @@ class taikhoan extends Database
     }
 
 
+    // Quân sửa: Trả về kết quả thực thi truy vấn (true/false) thay vì rowCount để tránh báo lỗi thất bại khi reset trùng mật khẩu cũ
     public function taikhoan__Reset($id_tai_khoan, $mat_khau)
     {
         $obj = $this->connect->prepare("UPDATE taikhoan SET mat_khau=? WHERE id_tai_khoan=?");
-        $obj->execute(array($mat_khau, $id_tai_khoan));
-        return $obj->rowCount();
+        return $obj->execute(array($mat_khau, $id_tai_khoan));
     }
 
 

@@ -1,4 +1,3 @@
-<!-- header -->
 <?php 
     session_start();
     if(!isset($_SESSION['user'])){
@@ -8,15 +7,33 @@
     require "../models/getModel.php";
 
 ?>
-<!-- Navbar -->
-<nav class="ml-0 main-header navbar navbar-expand navbar-white navbar-light">
+<!-- header -->
+<nav class="main-header navbar navbar-expand navbar-white navbar-light" style="margin-left: 0 !important; padding-left: 8px !important;">
     <!-- Left navbar links -->
-    <ul class="navbar-nav">
-        <!-- <li class="nav-item dropdown">
-            <a class="nav-link" href="#">
-                <img width="30" src="../assets/img/logo.png" alt="">
+    <ul class="navbar-nav align-items-center">
+        <!-- Quân sửa: Thêm logo và tên vai trò bên góc trái header -->
+        <li class="nav-item d-flex align-items-center">
+            <a class="nav-link d-flex align-items-center p-0" href="index.php" style="color: inherit; height: 38px;">
+                <img height="34" src="../assets/img/logo.png" alt="Logo" class="mr-2" style="object-fit: contain;">
+                <?php 
+                $role_name = '';
+                if (isset($_SESSION['lt'])) {
+                    $role_name = 'Lớp trưởng';
+                } elseif (isset($_SESSION['bt'])) {
+                    $role_name = 'Bí thư chi đoàn';
+                } elseif (isset($_SESSION['btdk'])) {
+                    $role_name = 'Bí thư đoàn khoa';
+                } elseif (isset($_SESSION['gv'])) {
+                    $role_name = 'Cố vấn học tập';
+                }
+                if (!empty($role_name)): 
+                ?>
+                    <span class="font-weight-bold ml-2" style="font-size: 1.55rem; color: #0d3b66; font-family: 'Source Sans Pro', sans-serif;">
+                        <?= $role_name ?>
+                    </span>
+                <?php endif; ?>
             </a>
-        </li> -->
+        </li>
     </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
