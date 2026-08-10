@@ -75,7 +75,17 @@
         </div><!-- /.container-fluid -->
     </section>
 
-    <section class="content">
+    <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
+    <section class="content mb-2">
+        <div class="col-12">
+            <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
+                <i class="fas fa-plus"></i> Thêm mới Học kỳ
+            </button>
+        </div>
+    </section>
+
+    <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
+    <section class="content" id="div_add_form" style="display: none;">
         <form class="row form" action="quan-ly-hoc-ky/action.php?req=add" method="post">
             <input type="hidden" name="csrf_token" value="<?=hocky_escape($_SESSION['csrf_token'])?>">
             <div class="col-12">
@@ -191,7 +201,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -268,8 +278,25 @@ window.addEventListener("load", function() {
                 }
             ]
         }]
-    }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+    });
 });
+
+// Nhựt sửa: Hàm bật/tắt hiển thị form thêm mới
+function toggle_add_form() {
+    var addForm = $('#div_add_form');
+    var btn = $('#btn-toggle-add');
+    
+    // Đóng form cập nhật nếu đang mở
+    $("#div_update").html('');
+    
+    addForm.slideToggle(300, function() {
+        if (addForm.is(':visible')) {
+            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+        } else {
+            btn.html('<i class="fas fa-plus"></i> Thêm mới Học kỳ').removeClass('btn-secondary').addClass('btn-primary');
+        }
+    });
+}
 
 function update_obj(id_hoc_ky) {
     $.ajax({
@@ -277,8 +304,10 @@ function update_obj(id_hoc_ky) {
         method: 'POST',
         data: { 'id_hoc_ky': id_hoc_ky },
         success: function(data) {
-            $(".card.card-success").addClass('collapsed-card');
-            $('#div_update').html(data);
+            // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
+            $('#div_add_form').slideUp(300);
+            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Học kỳ').removeClass('btn-secondary').addClass('btn-primary');
+            $("#div_update").html(data);
         },
         error: function(xhr) {
             var title = 'Lỗi hệ thống';
@@ -301,7 +330,6 @@ function update_obj(id_hoc_ky) {
 
 function cancel_update() {
     $("#div_update").html('');
-    $(".card.card-success").removeClass('collapsed-card');
 }
 
 function delete_obj(id_hoc_ky) {

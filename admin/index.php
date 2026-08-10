@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -284,6 +289,41 @@
         </script>";
     }
     ?>
+    
+    <style>
+        /* Nhựt sửa: Ẩn ô tìm kiếm mặc định của DataTable để sử dụng ô tìm kiếm chung trên Header */
+        .dataTables_filter {
+            display: none !important;
+        }
+        /* Nhựt sửa: Dịch chuyển nút xuất dữ liệu sát với viền bên phải của cột Thao tác */
+        .dt-buttons {
+            margin-right: 0px !important;
+        }
+        /* Nhựt sửa: Đồng thời căn lề lại mục chọn số dòng hiển thị bên trái */
+        .dataTables_length {
+            margin-left: 0px !important;
+        }
+    </style>
+    <script>
+        // Nhựt sửa: Tự động kết nối ô tìm kiếm ở Header với DataTable hiện tại trên trang
+        window.addEventListener('load', function() {
+            var tableEl = $('#tablejs');
+            var searchContainer = $('#header-search-container');
+            var searchInput = $('#global-header-search');
+
+            if (tableEl.length > 0) {
+                searchContainer.show();
+                searchInput.val('');
+                
+                searchInput.off('input keyup').on('input keyup', function() {
+                    var dataTable = tableEl.DataTable();
+                    dataTable.search(this.value).draw();
+                });
+            } else {
+                searchContainer.hide();
+            }
+        });
+    </script>
 </body>
 
 </html>

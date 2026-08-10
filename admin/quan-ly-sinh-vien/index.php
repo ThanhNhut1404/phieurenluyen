@@ -79,7 +79,17 @@
          </form>
      </section>
 
-     <section class="content" id="div_add">
+     <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
+     <section class="content mb-2">
+         <div class="col-12">
+             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
+                 <i class="fas fa-plus"></i> Thêm mới Sinh viên
+             </button>
+         </div>
+     </section>
+
+     <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
+     <section class="content" id="div_add" style="display: none;">
          <form class="row form" action="quan-ly-sinh-vien/action.php?req=add" method="post" enctype="multipart/form-data">
              <div class="col-12">
                  <div class="card card-success">
@@ -308,7 +318,7 @@
           $("#tablejs").DataTable({
               "responsive": true,
               "autoWidth": false,
-              "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+              "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
               "pagingType": "full_numbers",
               "pageLength": 10,
               "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -385,20 +395,38 @@
                       }
                   ]
               }]
-          }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+          });
       });
 
-     function update_obj(id_sinh_vien) {
-         $.post('quan-ly-sinh-vien/update.php', {
-             'id_sinh_vien': id_sinh_vien,
-         }, function(data) {
-             $(".card.card-success").addClass('collapsed-card');
-             $('#div_update').html(data);
-         });
-     }
+// Nhựt sửa: Hàm bật/tắt hiển thị form thêm mới
+function toggle_add_form() {
+    var addForm = $('#div_add');
+    var btn = $('#btn-toggle-add');
+    
+    // Đóng form cập nhật nếu đang mở
+    $("#div_update").html('');
+    
+    addForm.slideToggle(300, function() {
+        if (addForm.is(':visible')) {
+            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+        } else {
+            btn.html('<i class="fas fa-plus"></i> Thêm mới Sinh viên').removeClass('btn-secondary').addClass('btn-primary');
+        }
+    });
+}
 
-     function cancel_update() {
-         $("#div_update").html('');
-         $(".card.card-success").removeClass('collapsed-card');
-     }
+function update_obj(id_sinh_vien) {
+    $.post('quan-ly-sinh-vien/update.php', {
+        'id_sinh_vien': id_sinh_vien,
+    }, function(data) {
+        // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
+        $('#div_add').slideUp(300);
+        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Sinh viên').removeClass('btn-secondary').addClass('btn-primary');
+        $('#div_update').html(data);
+    });
+}
+
+function cancel_update() {
+    $("#div_update").html('');
+}
  </script>

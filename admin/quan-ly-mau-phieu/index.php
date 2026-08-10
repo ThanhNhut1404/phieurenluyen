@@ -175,7 +175,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -247,7 +247,7 @@ window.addEventListener("load", function() {
                 }
             ]
         }]
-    }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+    });
 });
 
 function update_obj(id_mau_phieu) {
