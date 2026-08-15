@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Tạo mã OTP 6 chữ số
     $otp_code = sprintf("%06d", mt_rand(1, 999999));
     
-    // Hạn sử dụng 5 phút
-    $expires_at = date('Y-m-d H:i:s', strtotime('+5 minutes'));
+    // Hạn sử dụng 3 phút
+    $expires_at = date('Y-m-d H:i:s', strtotime('+3 minutes'));
 
     // Lưu vào DB
     $taikhoan->taikhoan__Set_OTP($email, $otp_code, $expires_at);
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>Chào bạn,</p>
             <p>Bạn đã yêu cầu khôi phục mật khẩu tài khoản TDU - PRL.</p>
             <p>Mã xác nhận (OTP) của bạn là: <b><span style='font-size: 20px; color: blue;'>$otp_code</span></b></p>
-            <p>Mã này có hiệu lực trong vòng 5 phút.</p>
+            <p>Mã này có hiệu lực trong vòng 3 phút.</p>
             <p>Nếu bạn không yêu cầu, vui lòng bỏ qua email này.</p>
         ";
 

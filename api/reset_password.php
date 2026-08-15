@@ -25,7 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Nếu có new_password, tiến hành đổi mật khẩu
+    // Nếu có new_password, kiểm tra độ phức tạp trước khi đổi
+    if (strlen($new_password) < 9 || !preg_match('/[A-Za-z]/', $new_password) || !preg_match('/[0-9]/', $new_password) || !preg_match('/[^A-Za-z0-9]/', $new_password)) {
+        echo json_encode(["status" => "error", "message" => "Mật khẩu phải từ 9 ký tự, gồm chữ, số và ký tự đặc biệt."]);
+        exit();
+    }
+
     $mat_khau_ma_hoa = $hashpassword->Encryption($new_password);
     
     $status = $taikhoan->taikhoan__Reset_Password_By_Email($email, $mat_khau_ma_hoa);

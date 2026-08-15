@@ -91,7 +91,7 @@
                                     <input type="checkbox" id="rememberMeCheckbox">
                                     <span>Ghi nhớ đăng nhập</span>
                                 </label>
-                                <a href="#" class="forgot-password-link">Quên mật khẩu?</a>
+                                <a href="forgot_password.php" class="forgot-password-link">Quên mật khẩu?</a>
                             </div>
 
                             <!-- Captcha Input and Canvas -->
@@ -118,7 +118,7 @@
 
                             <!-- Footer Link -->
                             <div class="login-card-footer">
-                                Chưa có tài khoản? <a href="#">Liên hệ</a>
+                                Chưa có tài khoản? <a href="activation.php">Kích hoạt tài khoản</a>
                             </div>
                         </form>
                     </div>
