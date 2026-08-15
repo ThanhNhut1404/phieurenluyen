@@ -11,6 +11,7 @@ require_once '../models/getModel.php';
 
 // Hàm chuẩn hoá JSON response
 function response_json($status, $message, $data = null) {
+    if (ob_get_length()) ob_end_clean();
     echo json_encode([
         "status" => $status,
         "message" => $message,

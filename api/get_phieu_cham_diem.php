@@ -1,4 +1,7 @@
 <?php
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
 require_once 'core.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -96,7 +99,24 @@ foreach ($bo_cau_hoi as $bch) {
 // 3. Lấy kết quả đã chấm (nếu có)
 $kq_sv = [];
 if (!empty($active_phieu->kq_sv)) {
-    $kq_sv = explode('|', $active_phieu->kq_sv); // ["1-5", "2-10"]
+    $kq_sv_raw = explode('|', $active_phieu->kq_sv); // ["5", "10", "0"]
+    $idx = 0;
+    
+    foreach ($bo_cau_hoi as $bch) {
+        $danh_sach_khoan = $khoan->khoan__Get_By_Id_Dieu($bch->id_dieu);
+        foreach ($danh_sach_khoan as $k) {
+            $danh_sach_muc = $muc->muc__Get_By_Id_Khoan($k->id_khoan);
+            foreach ($danh_sach_muc as $m) {
+                if (isset($kq_sv_raw[$idx]) && $kq_sv_raw[$idx] !== '' && !str_contains($kq_sv_raw[$idx], '-')) {
+                    $kq_sv[] = $m->id_muc . '-' . $kq_sv_raw[$idx];
+                } elseif (isset($kq_sv_raw[$idx]) && str_contains($kq_sv_raw[$idx], '-')) {
+                    // Nếu dữ liệu cũ bị dính dạng 1-5 thì lấy nguyên (phòng hờ)
+                    $kq_sv[] = $kq_sv_raw[$idx];
+                }
+                $idx++;
+            }
+        }
+    }
 }
 
 // Lấy minh chứng đã nộp (nếu có)

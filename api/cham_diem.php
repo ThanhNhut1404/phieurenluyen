@@ -33,8 +33,38 @@ if (!$phieu || $phieu->id_sinh_vien != $tai_khoan->id_nguoi_dung) {
     response_json("error", "Bạn không có quyền chấm phiếu này");
 }
 
-// Chuyển mảng thành chuỗi lưu database: "id_muc-diem|id_muc-diem" (Ví dụ: "1-5|2-10|3-2")
-$kq_string = implode("|", $kq_sv);
+// Chuyển mảng từ app (id_muc-diem) thành mảng kết hợp
+$diem_sv = [];
+foreach ($kq_sv as $item) {
+    $parts = explode('-', $item);
+    if (count($parts) == 2) {
+        $diem_sv[$parts[0]] = $parts[1];
+    }
+}
+
+// Lấy danh sách id_muc theo đúng thứ tự của mẫu phiếu
+$kq_string_arr = [];
+if ($phieu) {
+    $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
+    if ($lop_ap_dung) {
+        $bocauhoi_list = $bocauhoi->bocauhoi__Get_By_Id_Mau_Phieu($lop_ap_dung->id_mau_phieu);
+        foreach ($bocauhoi_list as $item_1) {
+            $khoan_list = $khoan->khoan__Get_All_By_Id_Dieu($item_1->id_dieu);
+            foreach ($khoan_list as $item_2) {
+                $muc_list = $muc->muc__Get_All_By_Id_Khoan($item_2->id_khoan);
+                foreach ($muc_list as $item_3) {
+                    $id_muc = $item_3->id_muc;
+                    // Lấy điểm nếu có, không thì bằng 0 (hoặc chuỗi rỗng)
+                    $diem = isset($diem_sv[$id_muc]) ? $diem_sv[$id_muc] : 0;
+                    $kq_string_arr[] = $diem;
+                }
+            }
+        }
+    }
+}
+
+// Chuyển mảng thành chuỗi lưu database: "5|10|0|5" (đúng định dạng của Web)
+$kq_string = implode("|", $kq_string_arr);
 
 // Lưu vào cơ sở dữ liệu
 $status = $phieuchamdiem->phieuchamdiem__Update_Kq_Sv($id_phieu, $kq_string);
