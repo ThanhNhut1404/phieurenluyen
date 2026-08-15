@@ -7,6 +7,10 @@
         return $id_trinh_do && $id_trinh_do > 0 && $trinhdo->trinhdo__Get_By_Id($id_trinh_do);
     }
     
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
     if (isset($_GET['req'])){
         switch($_GET['req']){
             case 'add':
@@ -31,6 +35,8 @@
                 $dia_chi_lien_lac = $dc_ll_so_nha . ', ' . $dc_ll_ap . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
                 $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
                 $id_trinh_do = isset($_POST['id_trinh_do']) ? $_POST['id_trinh_do'] : '';
+                
+                $_SESSION['giangvien_old_input'] = array_merge($_POST, ['context' => 'add']);
 
                 if (!giangvien_trinhdo_exists($trinhdo, $id_trinh_do)) {
                     header('location: ../index.php?page=quan-ly-giang-vien&status=invalid');
@@ -45,6 +51,7 @@
                 
                 $status = $giangvien->giangvien__Add($ma_giang_vien, $ten_giang_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $id_trinh_do);
                 if($status != 0){
+                    unset($_SESSION['giangvien_old_input']);
                     header('location: ../index.php?page=quan-ly-giang-vien&status=success');
                 }else{
                     header('location: ../index.php?page=quan-ly-giang-vien&status=failed');
@@ -74,6 +81,8 @@
                 $dia_chi_lien_lac = $dc_ll_so_nha . ', ' . $dc_ll_ap . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
                 $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
                 $id_trinh_do = isset($_POST['id_trinh_do']) ? $_POST['id_trinh_do'] : '';
+                
+                $_SESSION['giangvien_old_input'] = array_merge($_POST, ['context' => 'update']);
 
                 if (!giangvien_trinhdo_exists($trinhdo, $id_trinh_do)) {
                     header('location: ../index.php?page=quan-ly-giang-vien&status=invalid');
@@ -87,6 +96,7 @@
                 }
 
                 $giangvien->giangvien__Update($id_giang_vien, $ma_giang_vien, $ten_giang_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $id_trinh_do);
+                unset($_SESSION['giangvien_old_input']);
                 header('location: ../index.php?page=quan-ly-giang-vien&status=success');
                 exit();
 

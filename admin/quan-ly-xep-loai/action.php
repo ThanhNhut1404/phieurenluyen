@@ -42,27 +42,49 @@
 
     // Nhá»±t sá»­a lá»—i: can_duoi, can_tren, ha_bac pháº£i lÃ  sá»‘ vÃ  khÃ´ng Ä‘Æ°á»£c rá»—ng.
     function xep_loai__Is_Number($value) {
-        // Nhá»±t sá»­a lá»—i: Äiá»ƒm rÃ¨n luyá»‡n vÃ  háº¡ báº­c Ä‘ang xá»­ lÃ½ theo sá»‘ nguyÃªn, khÃ´ng nháº­n sá»‘ tháº­p phÃ¢n hoáº·c dáº¡ng 1e2.
+        // Nhá»±t sá»­a lá»—i: Ä iá»ƒm rÃ¨n luyá»‡n vÃ  háº¡ báº­c Ä‘ang xá»­ lÃ½ theo sá»‘ nguyÃªn, khÃ´ng nháº­n sá»‘ tháº­p phÃ¢n hoáº·c dáº¡ng 1e2.
         return preg_match('/^[0-9]+$/', trim($value));
     }
 
-    // Nhá»±t sá»­a lá»—i: Validate server cho tÃªn, thang Ä‘iá»ƒm 0-100 vÃ  Ä‘iá»ƒm háº¡ báº­c 10-15.
+    // Nhựt sửa lỗi: Validate server cho tên, thang điểm 0-100 và điểm hạ bậc 10-15.
     function xep_loai__Validate_Data($ten_xep_loai, $can_duoi, $can_tren, $ha_bac) {
         if (trim($ten_xep_loai) == "") {
-            return false;
+            return 'invalid-ten';
         }
         if (!xep_loai__Is_Number($can_duoi) || !xep_loai__Is_Number($can_tren) || !xep_loai__Is_Number($ha_bac)) {
-            return false;
+            return 'invalid-diem';
         }
         $can_duoi = (float)$can_duoi;
         $can_tren = (float)$can_tren;
         $ha_bac = (float)$ha_bac;
 
-        return $can_duoi >= 0 && $can_duoi <= $can_tren && $can_tren <= 100 && $ha_bac >= 10 && $ha_bac <= 15;
+        if (!($can_duoi >= 0 && $can_duoi <= $can_tren && $can_tren <= 100)) {
+            return 'invalid-diem';
+        }
+        if (!($ha_bac >= 10 && $ha_bac <= 15)) {
+            return 'invalid-habac';
+        }
+        return 'valid';
+    }
+
+    function xep_loai_store_old_input($context, $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu, $id_xep_loai = null) {
+        $_SESSION['xep_loai_old_input'] = array(
+            'context' => $context,
+            'ten_xep_loai' => $ten_xep_loai,
+            'can_duoi' => $can_duoi,
+            'can_tren' => $can_tren,
+            'ha_bac' => $ha_bac,
+            'ghi_chu' => $ghi_chu,
+            'id_xep_loai' => $id_xep_loai,
+        );
+    }
+
+    function xep_loai_clear_old_input() {
+        unset($_SESSION['xep_loai_old_input']);
     }
 
     function xep_loai__Has_Dot_Dang_Dien_Ra($dotchamdiem) {
-        // Nhá»±t sá»­a lá»—i: KhÃ´ng cho thay Ä‘á»•i cáº¥u hÃ¬nh Xáº¿p loáº¡i khi Ä‘ang cÃ³ Äá»£t cháº¥m Ä‘iá»ƒm diá»…n ra.
+        // Nhá»±t sá»­a lá»—i: KhÃ´ng cho thay Ä‘á»•i cáº¥u hÃ¬nh Xáº¿p loáº¡i khi Ä‘ang cÃ³ Ä á»£t cháº¥m Ä‘iá»ƒm diá»…n ra.
         return $dotchamdiem->dotchamdiem__Has_Dang_Dien_Ra(date('Y-m-d'));
     }
     
@@ -114,10 +136,12 @@
                     $status = $xeploai->xeploai__Add($ten_xep_loai, $can_tren, $can_duoi, $ha_bac, $ghi_chu);
                     if($status !=0 ){
                         $xeploai->connect->commit();
+                        xep_loai_clear_old_input();
                         xep_loai__Rotate_Csrf_Token();
                         xep_loai__Redirect('success');
                     }else{
                         $xeploai->connect->rollBack();
+                        xep_loai_store_old_input('add', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu);
                         xep_loai__Redirect('failed');
                     }
                 } catch (Throwable $e) {
@@ -188,10 +212,12 @@
                     $status = $xeploai->xeploai__Update($id_xep_loai, $ten_xep_loai, $can_tren, $can_duoi, $ha_bac, $ghi_chu);
                     if($status !=0 ){
                         $xeploai->connect->commit();
+                        xep_loai_clear_old_input();
                         xep_loai__Rotate_Csrf_Token();
                         xep_loai__Redirect('success');
                     }else{
                         $xeploai->connect->rollBack();
+                        xep_loai_store_old_input('update', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu, $id_xep_loai);
                         xep_loai__Redirect('failed');
                     }
                 } catch (Throwable $e) {

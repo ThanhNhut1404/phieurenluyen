@@ -41,11 +41,11 @@
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý khoa</h1>
+                     <h1>Quản lý Khoa</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
@@ -57,89 +57,56 @@
          </div><!-- /.container-fluid -->
      </section>
 
-      <!-- Nhựt sửa: Thêm nút mở Modal thêm mới Khoa -->
+      <?php $is_add_error = isset($khoa_old_input['context']) && $khoa_old_input['context'] === 'add'; ?>
+      
+      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
       <section class="content mb-2">
-          <div class="col-12">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_add_khoa">
-                  <i class="fas fa-plus mr-1"></i> Thêm mới Khoa
-              </button>
-          </div>
+          <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+              <i class="fas <?= $is_add_error ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_add_error ? '' : 'Thêm mới' ?>
+          </button>
       </section>
 
-      <style>
-          /* Nhựt sửa: CSS tuỳ biến cho nút Hủy và hiệu ứng Hover chuẩn giống nút xóa trên bảng */
-          .btn-cancel-custom {
-              border-radius: 6px;
-              font-weight: 550;
-              padding: 6px 16px;
-              background-color: #ffffff !important;
-              color: #dc3545 !important;
-              border: 1px solid #dc3545 !important;
-              transition: all 0.2s ease;
-          }
-          .btn-cancel-custom:hover {
-              background-color: #fdf2f2 !important; /* màu nền đỏ nhạt khi rê chuột vào */
-              color: #dc3545 !important;
-              border-color: #dc3545 !important;
-          }
-          /* Nhựt sửa: CSS tuỳ biến cho nút Thêm mới và hiệu ứng sáng lên khi hover */
-          .btn-add-custom {
-              border-radius: 6px;
-              font-weight: 550;
-              padding: 6px 16px;
-              background-color: #28a745 !important;
-              border-color: #28a745 !important;
-              color: #ffffff !important;
-              transition: all 0.2s ease;
-          }
-          .btn-add-custom:hover {
-              background-color: #2ebd59 !important; /* màu xanh lá sáng hơn khi hover */
-              border-color: #2ebd59 !important;
-              color: #ffffff !important;
-          }
-      </style>
-      <!-- Nhựt sửa: Modal Thêm mới Khoa -->
-      <div class="modal fade" id="modal_add_khoa" tabindex="-1" role="dialog" aria-labelledby="modalAddLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-                  <form action="quan-ly-khoa/action.php?req=add" method="post" enctype="multipart/form-data">
-                      <input type="hidden" name="csrf_token" value="<?=khoa_escape($_SESSION['csrf_token'])?>">
-                      <div class="modal-header" style="background-color: #28a745; color: #ffffff; border-top-left-radius: 12px; border-top-right-radius: 12px; padding: 10px 20px;">
-                          <h5 class="modal-title" id="modalAddLabel" style="font-weight: 600; font-size: 1.1rem;">Thêm mới Khoa</h5>
-                           <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff; opacity: 0.8; outline: none; font-weight: normal; margin-top: -2px;">
-                               <span aria-hidden="true" style="font-size: 1.8rem; font-weight: normal;">&times;</span>
-                           </button>
+      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
+      <section class="content" id="div_add_form" <?= $is_add_error ? '' : 'style="display: none;"' ?>>
+          <form class="row form" action="quan-ly-khoa/action.php?req=add" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="csrf_token" value="<?=khoa_escape($_SESSION['csrf_token'])?>">
+              <div class="col-12">
+                  <div class="card card-success">
+                      <div class="card-header">
+                          <h3 class="card-title">Thêm mới Khoa</h3>
                       </div>
-                      <div class="modal-body" style="padding: 20px 24px;">
+                      <div class="card-body">
                           <div class="form-group">
-                               <label style="font-weight: bold; color: #000000;">Tên khoa <span class="color-crimson">(*)</span></label>
-                              <input type="text" id="ten_khoa" name="ten_khoa" class="form-control" required maxlength="50"
-                                     value="<?=khoa_escape(khoa_old_value('ten_khoa', 'add'))?>" placeholder="Nhập tên khoa"
-                                     style="border-radius: 6px; border: 1px solid #ced4da;">
+                               <label class="label-sidebar">Tên khoa <span class="color-crimson">*</span></label>
+                               <input type="text" id="ten_khoa" name="ten_khoa" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'invalid-ten-khoa'])) ? 'is-invalid' : '' ?>" required maxlength="50"
+                                      value="<?=khoa_escape(khoa_old_value('ten_khoa', 'add'))?>" placeholder="Nhập tên khoa">
+                              <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                  <?php if ($_GET['status'] == 'duplicate'): ?>
+                                      <small class="text-danger mt-1">Tên khoa đã tồn tại trong hệ thống.</small>
+                                  <?php elseif ($_GET['status'] == 'invalid-ten-khoa'): ?>
+                                      <small class="text-danger mt-1">Tên khoa không được để trống và tối đa 50 ký tự.</small>
+                                  <?php endif; ?>
+                              <?php endif; ?>
                           </div>
                           <div class="form-group">
-                               <label style="font-weight: bold; color: #000000;">Ghi chú</label>
-                              <textarea id="ghi_chu" name="ghi_chu" class="form-control" maxlength="2000"
-                                        placeholder="Nhập ghi chú" style="border-radius: 6px; border: 1px solid #ced4da; height: 100px;"><?=khoa_escape(khoa_old_value('ghi_chu', 'add'))?></textarea>
+                               <label class="label-sidebar">Ghi chú</label>
+                              <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000"
+                                        placeholder="Nhập ghi chú"><?=khoa_escape(khoa_old_value('ghi_chu', 'add'))?></textarea>
+                              <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
+                                  <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
+                              <?php endif; ?>
                           </div>
                       </div>
-                       <div class="modal-footer" style="border-top: 1px solid #e9ecef; padding: 6px 16px; background-color: #f8f9fa; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; height: auto;">
-                           <button type="button" class="btn btn-cancel-custom" data-dismiss="modal" style="margin-right: 8px !important;">Hủy</button>
-                           <button type="submit" class="btn btn-add-custom">Thêm mới</button>
-                       </div>
-                  </form>
+                      <!-- /.card-body -->
+                      <div class="card-footer">
+                          <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
+                      </div>
+                  </div>
+                  <!-- /.card -->
               </div>
-          </div>
-      </div>
-
-      <!-- Nhựt sửa: Tự động bật Modal nếu có lỗi Validate từ Server -->
-      <?php if (isset($khoa_old_input['context']) && $khoa_old_input['context'] === 'add'): ?>
-      <script>
-          window.addEventListener('load', function() {
-              $('#modal_add_khoa').modal('show');
-          });
-      </script>
-      <?php endif; ?>
+          </form>
+      </section>
 
      <section class="content" id="div_update">
      </section>
@@ -292,22 +259,22 @@ function toggle_add_form() {
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Khoa').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
 
-function update_obj(id_khoa) {
+function update_obj(id_khoa, error_status = '') {
     $.ajax({
         url: 'quan-ly-khoa/update.php',
         method: 'POST',
-        data: { 'id_khoa': id_khoa },
+        data: { 'id_khoa': id_khoa, 'error_status': error_status },
         success: function(data) {
             // Quân sửa: Ẩn form thêm mới khi mở form cập nhật
             $('#div_add_form').slideUp(300);
-            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Khoa').removeClass('btn-secondary').addClass('btn-primary');
+            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
             $("#div_update").html(data);
         },
         error: function(xhr) {
@@ -371,7 +338,7 @@ function delete_obj(id_khoa) {
 
 <?php if (isset($khoa_old_input['context']) && $khoa_old_input['context'] === 'update' && isset($khoa_old_input['id_khoa'])): ?>
 window.addEventListener("load", function() {
-    update_obj(<?=(int)$khoa_old_input['id_khoa']?>);
+    update_obj(<?=(int)$khoa_old_input['id_khoa']?>, '<?=$_GET['status'] ?? ''?>');
 });
 <?php endif; ?>
  </script>

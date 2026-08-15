@@ -6,6 +6,10 @@ if (strlen(strpos($href, '&status')) > 0) {
     $href = explode('&status', $href)[0];
 }
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 function locDau($str)
 {
     $unicode = array(
@@ -75,6 +79,8 @@ if (isset($_GET["req"])) {
             $email = isset($_POST["email"]) ? trim($_POST["email"]) : '';
             $mat_khau = isset($_POST["mat_khau"]) ? $_POST["mat_khau"] : '';
             $ghi_chu = date("Y-m-d H:i:s");
+            
+            $_SESSION['taikhoan_old_input'] = array_merge($_POST, ['context' => 'add']);
 
             // Check if email already exists in taikhoan table
             if ($taikhoan->taikhoan__Exists_Email($email)) {
@@ -84,6 +90,7 @@ if (isset($_GET["req"])) {
 
             $status = $taikhoan->taikhoan__Add($email, $hashpassword->Encryption($mat_khau), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $id_nguoi_dung);
             if ($status != 0) {
+                unset($_SESSION['taikhoan_old_input']);
                 header("location: $href&status=success");
             } else {
                 header("location: $href&status=failed");
@@ -118,6 +125,7 @@ if (isset($_GET["req"])) {
             }
 
             if ($status != 0) {
+                unset($_SESSION['taikhoan_old_input']);
                 header("location: $href&status=success");
             } else {
                 header("location: $href&status=failed");
@@ -145,6 +153,7 @@ if (isset($_GET["req"])) {
             }
 
             if ($status != 0) {
+                unset($_SESSION['taikhoan_old_input']);
                 header("location: $href&status=success");
             } else {
                 header("location: $href&status=failed");
@@ -179,6 +188,7 @@ if (isset($_GET["req"])) {
             }
 
             if ($status != 0) {
+                unset($_SESSION['taikhoan_old_input']);
                 header("location: $href&status=success");
             } else {
                 header("location: $href&status=failed");

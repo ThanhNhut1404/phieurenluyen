@@ -42,11 +42,11 @@
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý ngành học</h1>
+                     <h1>Quản lý Ngành học</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
@@ -58,56 +58,68 @@
          </div><!-- /.container-fluid -->
      </section>
 
+     <?php $is_add_error = isset($nganhhoc_old_input['context']) && $nganhhoc_old_input['context'] === 'add'; ?>
+
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
      <section class="content mb-2">
-         <div class="col-12">
-             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-                 <i class="fas fa-plus"></i> Thêm mới Ngành học
-             </button>
-         </div>
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <?php if ($is_add_error): ?>
+                 <i class="fas fa-times"></i>
+             <?php else: ?>
+                 <i class="fas fa-plus"></i> Thêm mới<?php endif; ?>
+         </button>
      </section>
 
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add_form" style="display: none;">
+     <section class="content" id="div_add_form" style="<?= $is_add_error ? '' : 'display: none;' ?>">
          <form class="row form" action="quan-ly-nganh-hoc/action.php?req=add" method="post"
              enctype="multipart/form-data">
              <input type="hidden" name="csrf_token" value="<?=nganhhoc_escape($_SESSION['csrf_token'])?>">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Thêm mới</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title">Thêm mới Ngành học</h3>
                      </div>
                      <div class="card-body">
                          <div class="form-group">
-                             <label for="">Khoa <span class="color-crimson">(*)</span></label>
-                             <select class="form-control" name="id_khoa" required>
+                             <label class="label-sidebar">Khoa <span class="color-crimson">*</span></label>
+                             <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-khoa') ? 'is-invalid' : '' ?>" name="id_khoa" required>
                                  <option value="">Chọn khoa</option>
                                  <?php foreach ($khoa__Get_All as $item):?>
                                  <option value="<?=(int)$item->id_khoa?>" <?=((int)nganhhoc_old_value('id_khoa', 'add') === (int)$item->id_khoa) ? "selected" : ""?>><?=nganhhoc_escape($item->ten_khoa)?></option>
                                  <?php endforeach; ?>
                              </select>
+                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-khoa'): ?>
+                                 <small class="text-danger mt-1">Khoa không hợp lệ.</small>
+                             <?php endif; ?>
                          </div>
                          <div class="form-group">
-                             <label for="">Tên ngành học <span class="color-crimson">(*)</span></label>
+                             <label class="label-sidebar">Tên ngành học <span class="color-crimson">*</span></label>
                              <!-- Nhựt sửa lỗi: giới hạn tên ngành học ở client khớp với validate server-side và DB. -->
-                             <input type="text" id="ten_nganh_hoc" name="ten_nganh_hoc" class="form-control" required maxlength="50"
+                             <input type="text" id="ten_nganh_hoc" name="ten_nganh_hoc" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate-nganh-hoc', 'invalid-ten-nganh-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
                                  value="<?=nganhhoc_escape(nganhhoc_old_value('ten_nganh_hoc', 'add'))?>"
                                  placeholder="Nhập tên ngành học">
+                             <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                 <?php if ($_GET['status'] == 'duplicate-nganh-hoc'): ?>
+                                     <small class="text-danger mt-1">Tên ngành học đã tồn tại trong khoa đã chọn.</small>
+                                 <?php elseif ($_GET['status'] == 'invalid-ten-nganh-hoc'): ?>
+                                     <small class="text-danger mt-1">Tên ngành học không được để trống và tối đa 50 ký tự.</small>
+                                 <?php endif; ?>
+                             <?php endif; ?>
                          </div>
                          <div class="form-group">
-                             <label for="">Ghi chú</label>
-                             <textarea id="ghi_chu" name="ghi_chu" class="form-control" maxlength="2000"
+                             <label class="label-sidebar">Ghi chú</label>
+                             <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000"
                                  placeholder="Nhập ghi chú"><?=nganhhoc_escape(nganhhoc_old_value('ghi_chu', 'add'))?></textarea>
+                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
+                                 <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
+                             <?php endif; ?>
                          </div>
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -257,32 +269,33 @@ window.addEventListener("load", function() {
     });
 });
 
-// Nhựt sửa: Hàm bật/tắt hiển thị form thêm mới
 function toggle_add_form() {
     var addForm = $('#div_add_form');
     var btn = $('#btn-toggle-add');
-    
-    // Đóng form cập nhật nếu đang mở
-    $("#div_update").html('');
+    var isUpdateVisible = $("#div_update").html().trim() !== '';
+
+    if (isUpdateVisible) {
+        $("#div_update").html('');
+    }
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Ngành học').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
 
-function update_obj(id_nganh_hoc) {
+function update_obj(id_nganh_hoc, error_status = '') {
     $.ajax({
         url: 'quan-ly-nganh-hoc/update.php',
         method: 'POST',
-        data: { 'id_nganh_hoc': id_nganh_hoc },
+        data: { 'id_nganh_hoc': id_nganh_hoc, 'error_status': error_status },
         success: function(data) {
             // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
             $('#div_add_form').slideUp(300);
-            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Ngành học').removeClass('btn-secondary').addClass('btn-primary');
+            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
             $('#div_update').html(data);
         },
         error: function(xhr) {
@@ -346,7 +359,7 @@ function delete_obj(id_nganh_hoc) {
 
 <?php if (isset($nganhhoc_old_input['context']) && $nganhhoc_old_input['context'] === 'update' && isset($nganhhoc_old_input['id_nganh_hoc'])): ?>
 window.addEventListener("load", function() {
-    update_obj(<?=(int)$nganhhoc_old_input['id_nganh_hoc']?>);
+    update_obj(<?=(int)$nganhhoc_old_input['id_nganh_hoc']?>, '<?=$_GET['status'] ?? ''?>');
 });
 <?php endif; ?>
  </script>

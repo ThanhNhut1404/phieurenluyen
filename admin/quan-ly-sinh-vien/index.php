@@ -8,13 +8,18 @@
             document.querySelector('.btn-tool').click();
             </script>";
     }
+    
+    $sinhvien_old_input = isset($_SESSION['sinhvien_old_input']) && is_array($_SESSION['sinhvien_old_input']) ? $_SESSION['sinhvien_old_input'] : array();
+    if (isset($sinhvien_old_input['context']) && $sinhvien_old_input['context'] === 'add') {
+        unset($_SESSION['sinhvien_old_input']);
+    }
     ?>
 
 
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
@@ -30,35 +35,52 @@
          </div><!-- /.container-fluid -->
      </section>
 
-     <section class="content" id="div_import">
+     <?php $is_add_error = isset($sinhvien_old_input['context']) && $sinhvien_old_input['context'] === 'add'; ?>
+
+     <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
+     <style>
+         .btn-navy-custom {
+             background-color: #1e2b58 !important;
+             border-color: #1e2b58 !important;
+             color: #ffffff !important;
+             transition: filter 0.2s ease;
+         }
+         .btn-navy-custom:hover {
+             filter: brightness(1.25);
+             color: #ffffff !important;
+         }
+     </style>
+     <section class="content mb-2">
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <i class="fas <?= $is_add_error ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_add_error ? '' : 'Thêm mới' ?>
+         </button>
+         <!-- Thêm nút toggle import excel -->
+         <button type="button" class="btn btn-success text-white font-weight-bold ml-2" id="btn-toggle-import" onclick="toggle_import_form()">
+             <i class="fas fa-file-excel"></i> Import dữ liệu
+         </button>
+     </section>
+
+     <section class="content" id="div_import" style="display: none;">
          <form class=" row form" action="quan-ly-sinh-vien/action.php?req=import" method="post" enctype="multipart/form-data">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">
-                             Tải mẩu file excel  
-                             <a href="quan-ly-sinh-vien/action.php?req=export" class="btn btn-sm btn-warning ml-3 text-dark" style="font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                 <i class="fas fa-download"></i> Tải mẫu
-                             </a>
+                         <h3 class="card-title font-weight-bold text-white">
+                             Tải mẫu file excel  
                          </h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
                      </div>
                      <div class="card-body">
                          <div class="row">
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Chọn file <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar">Chọn file <span class="color-crimson">*</span></label>
                                      <input type="file" id="file" name="file" class="form-control" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
                                  </div>
                              </div>
 
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Lớp học <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar">Lớp học <span class="color-crimson">*</span></label>
                                      <select class="form-control" name="id_lop_hoc" required>
                                          <option value="">Chọn Lớp học</option>
                                          <?php foreach ($lophoc__Get_All as $item) : ?>
@@ -71,7 +93,9 @@
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Import" class="btn btn-success float-right">
+                         <a href="quan-ly-sinh-vien/action.php?req=export" class="btn btn-navy-custom float-left font-weight-bold"><i class="fas fa-download"></i> Tải mẫu</a>
+                         <input type="submit" value="Import" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_import_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -79,73 +103,94 @@
          </form>
      </section>
 
-     <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
-     <section class="content mb-2">
-         <div class="col-12">
-             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-                 <i class="fas fa-plus"></i> Thêm mới Sinh viên
-             </button>
-         </div>
-     </section>
-
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add" style="display: none;">
+     <section class="content" id="div_add" style="<?= $is_add_error ? '' : 'display: none;' ?>">
          <form class="row form" action="quan-ly-sinh-vien/action.php?req=add" method="post" enctype="multipart/form-data">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Thêm mới</h3>
-                         <div class="card-tools">
-
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title font-weight-bold">Thêm mới Sinh viên</h3>
                      </div>
                      <div class="card-body">
                          <div class="row">
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Mã sinh viên <span class="color-crimson">(*)</span></label>
-                                     <input type="text" id="ma_sinh_vien" name="ma_sinh_vien" class="form-control" required placeholder="Nhập mã sinh viên">
-                                 </div>
-                                 <div class="form-group">
-                                     <label for="">Tên sinh viên <span class="color-crimson">(*)</span></label>
-                                     <input type="text" id="ten_sinh_vien" name="ten_sinh_vien" class="form-control" required placeholder="Nhập tên sinh viên">
+                                     <label class="label-sidebar">Mã số sinh viên <span class="color-crimson">*</span></label>
+                                     <input type="text" id="ma_sinh_vien" name="ma_sinh_vien" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-ma-sinh-vien') ? 'is-invalid' : '' ?>" required placeholder="Nhập mã sinh viên" value="<?= isset($sinhvien_old_input['ma_sinh_vien']) ? htmlspecialchars($sinhvien_old_input['ma_sinh_vien']) : '' ?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-ma-sinh-vien'): ?>
+                                         <small class="text-danger mt-1">Mã sinh viên đã tồn tại trong hệ thống.</small>
+                                     <?php endif; ?>
                                  </div>
                              </div>
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Giới tính <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar">Họ và tên <span class="color-crimson">*</span></label>
+                                     <input type="text" id="ten_sinh_vien" name="ten_sinh_vien" class="form-control" required placeholder="Nhập tên sinh viên">
+                                 </div>
+                             </div>
+                         </div>
+                         
+                         <div class="row">
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar">Giới tính <span class="color-crimson">*</span></label>
                                      <select class="form-control" name="gioi_tinh" required>
                                          <option value="">Chọn giới tính</option>
                                          <option value="0">Nữ</option>
                                          <option value="1">Nam</option>
                                      </select>
                                  </div>
+                             </div>
+                             <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Ngày sinh <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar">Ngày sinh <span class="color-crimson">*</span></label>
                                      <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control" required value="<?= date('Y-m-d', strtotime('-22 years')) ?>" min="<?= date('Y-m-d', strtotime('-100 years')) ?>" max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
                                  </div>
                              </div>
+                         </div>
+                         
+                         <div class="row">
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Email <span class="color-crimson">(*)</span></label>
-                                     <input type="email" id="email" name="email" class="form-control" required placeholder="Nhập email">
+                                     <label class="label-sidebar">Email <span class="color-crimson">*</span></label>
+                                     <input type="email" id="email" name="email" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-email-sinh-vien') ? 'is-invalid' : '' ?>" required placeholder="Nhập email" value="<?= isset($sinhvien_old_input['email']) ? htmlspecialchars($sinhvien_old_input['email']) : '' ?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-email-sinh-vien'): ?>
+                                         <small class="text-danger mt-1">Email đã tồn tại trong hệ thống.</small>
+                                     <?php endif; ?>
                                  </div>
+                             </div>
+                             <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar">Lớp học <span class="color-crimson">*</span></label>
+                                     <select class="form-control" name="id_lop_hoc" required>
+                                         <option value="">Chọn Lớp học</option>
+                                         <?php foreach ($lophoc__Get_All as $item) : ?>
+                                             <option value="<?= $item->id_lop_hoc ?>"><?= $item->ten_lop_hoc ?></option>
+                                         <?php endforeach; ?>
+                                     </select>
+                                 </div>
+                             </div>
+                         </div>
+
+                          <div class="row">
+                             <div class="col-6">
+<div class="form-group">
+                                     <label class="label-sidebar">Số điện thoại 1 <span class="color-crimson">*</span></label>
                                      <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1" pattern="0[0-9]{9,10}" class="form-control" required title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1" minlength="10" maxlength="11">
                                  </div>
-                                 <div class="form-group">
-                                     <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
+                             </div>
+                             <div class="col-6">
+<div class="form-group">
+                                     <label class="label-sidebar">Số điện thoại 2 <span class="color-crimson">*</span></label>
                                      <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2" pattern="0[0-9]{9,10}" class="form-control" required title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2" minlength="10" maxlength="11">
                                  </div>
                              </div>
-
+                         </div>
+                         
+                         <div class="row">
                              <div class="col-6">
-                                 <div class="form-group">
-                                     <label for="">Địa chỉ liên lạc <span class="color-crimson">(*)</span></label>
+<div class="form-group">
+                                     <label class="label-sidebar">Địa chỉ liên lạc <span class="color-crimson">*</span></label>
                                      <!-- quân sửa: Chia nhỏ địa chỉ liên lạc thành 4 cấp -->
                                      <div class="row">
                                          <div class="col-6 mb-2">
@@ -162,8 +207,10 @@
                                          </div>
                                      </div>
                                  </div>
-                                 <div class="form-group">
-                                     <label for="">Địa chỉ thường trú <span class="color-crimson">(*)</span></label>
+                             </div>
+                             <div class="col-6">
+<div class="form-group">
+                                     <label class="label-sidebar">Địa chỉ thường trú <span class="color-crimson">*</span></label>
                                      <!-- quân sửa: Chia nhỏ địa chỉ thường trú thành 4 cấp -->
                                      <div class="row">
                                          <div class="col-6 mb-2">
@@ -180,8 +227,14 @@
                                          </div>
                                      </div>
                                  </div>
+                             </div>
+                         </div>
+                         
+
+                         <div class="row">
+                             <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Chức vụ <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar">Chức vụ <span class="color-crimson">*</span></label>
                                      <select class="form-control" name="chuc_vu" required>
                                          <option value="">Chọn Chức vụ</option>
                                          <option value="0">Không có</option>
@@ -190,23 +243,12 @@
                                      </select>
                                  </div>
                              </div>
-                             <div class="col-6">
-                                 <div class="form-group">
-                                     <label for="">Lớp học <span class="color-crimson">(*)</span></label>
-                                     <select class="form-control" name="id_lop_hoc" required>
-                                         <option value="">Chọn Lớp học</option>
-                                         <?php foreach ($lophoc__Get_All as $item) : ?>
-                                             <option value="<?= $item->id_lop_hoc ?>"><?= $item->ten_lop_hoc ?></option>
-                                         <?php endforeach; ?>
-                                     </select>
-                                 </div>
-                             </div>
                          </div>
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
-
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -231,7 +273,7 @@
              <div class="card-body">
                  <div class="col-6">
                      <div class="form-group">
-                         <label for="">Lớp học</label>
+                         <label class="label-sidebar">Lớp học</label>
                          <select class="form-control" name="id_lop_hoc" required onchange="location.href=this.value">
                              <option value="?page=quan-ly-sinh-vien">Xem tất cả</option>
                              <?php foreach ($lophoc__Get_All as $item) : ?>
@@ -406,11 +448,35 @@ function toggle_add_form() {
     // Đóng form cập nhật nếu đang mở
     $("#div_update").html('');
     
+    // Đóng form import nếu đang mở
+    $('#div_import').slideUp(300);
+    $('#btn-toggle-import').html('<i class="fas fa-file-excel"></i> Import dữ liệu').removeClass('btn-cancel-custom').addClass('btn-success text-white');
+    
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Sinh viên').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
+        }
+    });
+}
+
+function toggle_import_form() {
+    var importForm = $('#div_import');
+    var btn = $('#btn-toggle-import');
+    
+    // Đóng form cập nhật nếu đang mở
+    $("#div_update").html('');
+    
+    // Đóng form thêm mới nếu đang mở
+    $('#div_add').slideUp(300);
+    $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
+    
+    importForm.slideToggle(300, function() {
+        if (importForm.is(':visible')) {
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success text-white').addClass('btn-cancel-custom');
+        } else {
+            btn.html('<i class="fas fa-file-excel"></i> Import dữ liệu').removeClass('btn-cancel-custom').addClass('btn-success text-white');
         }
     });
 }
@@ -421,7 +487,12 @@ function update_obj(id_sinh_vien) {
     }, function(data) {
         // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
         $('#div_add').slideUp(300);
-        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Sinh viên').removeClass('btn-secondary').addClass('btn-primary');
+        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
+        
+        // Ẩn form import
+        $('#div_import').slideUp(300);
+        $('#btn-toggle-import').html('<i class="fas fa-file-excel"></i> Import dữ liệu').removeClass('btn-cancel-custom').addClass('btn-success text-white');
+        
         $('#div_update').html(data);
     });
 }
@@ -429,4 +500,20 @@ function update_obj(id_sinh_vien) {
 function cancel_update() {
     $("#div_update").html('');
 }
+
+<?php $is_update_error = isset($sinhvien_old_input['context']) && $sinhvien_old_input['context'] === 'update'; ?>
+<?php if ($is_update_error): ?>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        $.post('quan-ly-sinh-vien/update.php', {
+            id_sinh_vien: <?= $sinhvien_old_input['id_sinh_vien'] ?? 0 ?>,
+            error_status: '<?= $_GET['status'] ?? '' ?>'
+        }, function(data) {
+            $('#div_update').html(data);
+            $('#div_update').show();
+            // hide add form
+            $('#div_add').slideUp(300);
+            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
+        });
+    });
+<?php endif; ?>
  </script>

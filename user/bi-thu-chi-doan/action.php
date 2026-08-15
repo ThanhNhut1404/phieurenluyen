@@ -70,11 +70,6 @@
                     exit();
                 }
                 
-                // Quân sửa: Ngăn chặn bí thư chi đoàn tự chấm điểm (chấm hộ) cho mình ở chế độ chấm cho lớp (req=add_sv)
-                if ($sv_target->id_sinh_vien == $bt_info->id_sinh_vien) {
-                    header("location: $href&status=failed");
-                    exit();
-                }
 
                 $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
                 if (!$lop_ap_dung) {

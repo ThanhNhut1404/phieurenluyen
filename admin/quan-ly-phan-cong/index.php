@@ -3,17 +3,33 @@
     $phancong__Get_All = $phancong->phancong__Get_All();
     $lophoc__Get_All = $lophoc->lophoc__Get_All();
     $giangvien__Get_All = $giangvien->giangvien__Get_All();
+    
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (!isset($_GET['status']) || $_GET['status'] === 'success') {
+        unset($_SESSION['phancong_old_input']);
+    }
+    $phancong_old_input = $_SESSION['phancong_old_input'] ?? [];
+    
+    function phancong_old_value($key, $context, $default = '') {
+        global $phancong_old_input;
+        if (isset($phancong_old_input['context']) && $phancong_old_input['context'] === $context && isset($phancong_old_input[$key])) {
+            return $phancong_old_input[$key];
+        }
+        return $default;
+    }
  ?>
 
 
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý phân công</h1>
+                     <h1>Quản lý Phân công</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
@@ -25,47 +41,64 @@
          </div><!-- /.container-fluid -->
      </section>
 
-     <section class="content">
+     <?php $is_add_error = isset($phancong_old_input['context']) && $phancong_old_input['context'] === 'add'; ?>
+
+     <section class="content mb-2">
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <?php if ($is_add_error): ?>
+                 <i class="fas fa-times"></i>
+             <?php else: ?>
+                 <i class="fas fa-plus"></i> Thêm mới
+             <?php endif; ?>
+         </button>
+     </section>
+
+     <section class="content" id="div_add_form" style="<?= $is_add_error ? '' : 'display: none;' ?>">
          <form class="row form" action="quan-ly-phan-cong/action.php?req=add" method="post"
              enctype="multipart/form-data">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Thêm mới</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title">Thêm mới Phân công</h3>
                      </div>
                      <div class="card-body">
-                         <div class="form-group">
-                             <label for="">Giảng viên <span class="color-crimson">(*)</span></label>
-                             <select class="form-control" name="id_giang_vien" required>
-                                 <option value="">Chọn Giảng viên</option>
-                                 <?php foreach ($giangvien__Get_All as $item):?>
-                                 <option value="<?=$item->id_giang_vien?>"><?=$item->ten_giang_vien?></option>
-                                 <?php endforeach; ?>
-                             </select>
+                         <div class="row">
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="">Giảng viên <span class="color-crimson">*</span></label>
+                                     <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-phancong') ? 'is-invalid' : '' ?>" name="id_giang_vien" required>
+                                         <option value="">Chọn Giảng viên</option>
+                                         <?php foreach ($giangvien__Get_All as $item):?>
+                                         <option value="<?=$item->id_giang_vien?>" <?= phancong_old_value('id_giang_vien', 'add') == $item->id_giang_vien ? 'selected' : '' ?>><?=$item->ten_giang_vien?></option>
+                                         <?php endforeach; ?>
+                                     </select>
+                                 </div>
+                             </div>
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="">Lớp học <span class="color-crimson">*</span></label>
+                                     <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-phancong') ? 'is-invalid' : '' ?>" name="id_lop_hoc" required>
+                                         <option value="">Chọn Lớp học</option>
+                                         <?php foreach ($lophoc__Get_All as $item):?>
+                                         <option value="<?=$item->id_lop_hoc?>" <?= phancong_old_value('id_lop_hoc', 'add') == $item->id_lop_hoc ? 'selected' : '' ?>><?=$item->ten_lop_hoc?></option>
+                                         <?php endforeach; ?>
+                                     </select>
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-phancong'): ?>
+                                         <small class="text-danger mt-1">Giảng viên đã được phân công lớp học này.</small>
+                                     <?php endif; ?>
+                                 </div>
+                             </div>
                          </div>
                          <div class="form-group">
-                             <label for="">Lớp học <span class="color-crimson">(*)</span></label>
-                             <select class="form-control" name="id_lop_hoc" required>
-                                 <option value="">Chọn Lớp học</option>
-                                 <?php foreach ($lophoc__Get_All as $item):?>
-                                 <option value="<?=$item->id_lop_hoc?>"><?=$item->ten_lop_hoc?></option>
-                                 <?php endforeach; ?>
-                             </select>
-                         </div>
-                         <div class="form-group">
-                             <label for="">Ghi chú</label>
+                             <label class="label-sidebar" for="">Ghi chú</label>
                              <textarea id="ghi_chu" name="ghi_chu" class="form-control"
-                                 placeholder="Nhập ghi chú"></textarea>
+                                 placeholder="Nhập ghi chú"><?= htmlspecialchars(phancong_old_value('ghi_chu', 'add')) ?></textarea>
                          </div>
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold" style="font-weight: bold;">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" style="font-weight: bold;" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -117,8 +150,7 @@
                               <td class="text-center" style="text-align: center !important;"><?= isset($arr_lop_hoc[$item->id_lop_hoc]) ? htmlspecialchars($arr_lop_hoc[$item->id_lop_hoc]) : '' ?></td>
                               <td><?= htmlspecialchars($item->ghi_chu ?? '') ?></td>
                              <td>
-                                 <a href="#" type="button" class="btn  btn-warning m-2"
-                                     onclick="update_obj(<?=$item->id_phan_cong?>)">
+                                 <a href="javascript:void(0)" class="btn btn-warning m-2" onclick="return update_obj(<?=(int)$item->id_phan_cong?>)">
                                      <i class="ri-edit-2-line"></i>
                                  </a>
                                  <a href="#" type="button" class="btn  btn-danger m-2"
@@ -146,7 +178,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -223,14 +255,30 @@ window.addEventListener("load", function() {
                 }
             ]
         }]
-    }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+    });
 });
+
+function toggle_add_form() {
+    var addForm = $('#div_add_form');
+    var btn = $('#btn-toggle-add');
+    
+    $("#div_update").html('');
+    
+    addForm.slideToggle(300, function() {
+        if (addForm.is(':visible')) {
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
+        } else {
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
+        }
+    });
+}
 
 function update_obj(id_phan_cong) {
     $.post('quan-ly-phan-cong/update.php', {
         'id_phan_cong': id_phan_cong,
     }, function(data) {
-        $(".card.card-success").addClass('collapsed-card');
+        $('#div_add_form').slideUp(300);
+        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         $('#div_update').html(data);
     });
 }

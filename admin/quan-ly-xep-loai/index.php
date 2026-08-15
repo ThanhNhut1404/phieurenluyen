@@ -11,18 +11,39 @@
             $_SESSION['csrf_token'] = hash('sha256', session_id() . uniqid('', true));
         }
     }
+
+    $xep_loai_old_input = isset($_SESSION['xep_loai_old_input']) && is_array($_SESSION['xep_loai_old_input']) ? $_SESSION['xep_loai_old_input'] : array();
+    if (isset($xep_loai_old_input['context']) && $xep_loai_old_input['context'] === 'add') {
+        unset($_SESSION['xep_loai_old_input']);
+    }
+
+    if (!function_exists('xep_loai_escape')) {
+        function xep_loai_escape($value) {
+            return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+        }
+    }
+
+    if (!function_exists('xep_loai_old_value')) {
+        function xep_loai_old_value($field, $context, $default = '') {
+            global $xep_loai_old_input;
+            if (isset($xep_loai_old_input['context']) && $xep_loai_old_input['context'] === $context && isset($xep_loai_old_input[$field])) {
+                return $xep_loai_old_input[$field];
+            }
+            return $default;
+        }
+    }
+
     $xeploai__Get_All = $xeploai->xeploai__Get_All();
  ?>
-
 
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý xếp loại</h1>
+                     <h1>Quản lý Xếp loại</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
@@ -34,62 +55,89 @@
          </div><!-- /.container-fluid -->
      </section>
 
+     <?php $is_add_error = isset($xep_loai_old_input['context']) && $xep_loai_old_input['context'] === 'add'; ?>
+
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
      <section class="content mb-2">
-         <div class="col-12">
-             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-                 <i class="fas fa-plus"></i> Thêm mới Xếp loại
-             </button>
-         </div>
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <i class="fas <?= $is_add_error ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_add_error ? '' : 'Thêm mới' ?>
+         </button>
      </section>
 
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add_form" style="display: none;">
+     <section class="content" id="div_add_form" <?= $is_add_error ? '' : 'style="display: none;"' ?>>
          <form class="row form" action="quan-ly-xep-loai/action.php?req=add" method="post" enctype="multipart/form-data">
-             <input type="hidden" name="csrf_token" value="<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>">
+             <input type="hidden" name="csrf_token" value="<?=xep_loai_escape($_SESSION['csrf_token'])?>">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Thêm mới</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title">Thêm mới Xếp loại</h3>
                      </div>
                      <div class="card-body">
                          <div class="form-group">
-                             <label for="">Tên xếp loại <span class="color-crimson">(*)</span></label>
-                             <input type="text" id="ten_xep_loai" name="ten_xep_loai" class="form-control" required
-                                 placeholder="Nhập tên xếp loại">
+                             <label class="label-sidebar" for="ten_xep_loai">Tên xếp loại <span class="color-crimson">*</span></label>
+                             <input type="text" id="ten_xep_loai" name="ten_xep_loai" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate-name', 'invalid-ten'])) ? 'is-invalid' : '' ?>" required
+                                 placeholder="Nhập tên xếp loại" value="<?=xep_loai_escape(xep_loai_old_value('ten_xep_loai', 'add'))?>">
+                             <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                 <?php if ($_GET['status'] == 'duplicate-name'): ?>
+                                     <small class="text-danger mt-1">Tên xếp loại đã tồn tại trong hệ thống.</small>
+                                 <?php elseif ($_GET['status'] == 'invalid-ten'): ?>
+                                     <small class="text-danger mt-1">Tên xếp loại không được để trống.</small>
+                                 <?php endif; ?>
+                             <?php endif; ?>
                          </div>
-                         <div class="form-group">
-                             <label for="">Ghi chú</label>
-                             <textarea id="ghi_chu" name="ghi_chu" class="form-control"
-                                 placeholder="Nhập ghi chú"></textarea>
+                         <div class="row">
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="can_duoi">Điểm tối thiểu <span class="color-crimson">*</span></label>
+                                     <input type="number" id="can_duoi" name="can_duoi"
+                                         class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['invalid-diem', 'overlap-xep-loai'])) ? 'is-invalid' : '' ?>" required title="Thấp nhất là 0, lớn nhất là 100"
+                                         placeholder="Nhập điểm tối thiểu" min="0" max="100" step="1" value="<?=xep_loai_escape(xep_loai_old_value('can_duoi', 'add'))?>">
+                                 </div>
+                             </div>
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="can_tren">Điểm tối đa <span class="color-crimson">*</span></label>
+                                     <input type="number" id="can_tren" name="can_tren"
+                                         class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['invalid-diem', 'overlap-xep-loai'])) ? 'is-invalid' : '' ?>" required title="Thấp nhất là 0, lớn nhất là 100"
+                                         placeholder="Nhập điểm tối đa" min="0" max="100" step="1" value="<?=xep_loai_escape(xep_loai_old_value('can_tren', 'add'))?>">
+                                 </div>
+                             </div>
+                             <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                 <div class="col-12">
+                                 <?php if ($_GET['status'] == 'invalid-diem'): ?>
+                                     <small class="text-danger mt-1">Điểm không hợp lệ (từ 0 đến 100, tối thiểu <= tối đa).</small>
+                                 <?php elseif ($_GET['status'] == 'overlap-xep-loai'): ?>
+                                     <small class="text-danger mt-1">Khoảng điểm bị trùng lặp với xếp loại khác.</small>
+                                 <?php endif; ?>
+                                 </div>
+                             <?php endif; ?>
                          </div>
-                         <div class="form-group">
-                             <label for="">Điểm tối thiểu <span class="color-crimson">(*)</span></label>
-                             <input type="number" id="can_duoi" name="can_duoi"
-                                 class=" form-control" required title="Thấp nhất là 0, lớn nhất là 100"
-                                 placeholder="Nhập điểm tối thiểu" min="0" max="100" step="1">
-                         </div>
-                         <div class="form-group">
-                             <label for="">Điểm tối đa <span class="color-crimson">(*)</span></label>
-                             <input type="number" id="can_tren" name="can_tren"
-                                 class=" form-control" required title="Thấp nhất là 0, lớn nhất là 100"
-                                 placeholder="Nhập điểm tối đa" min="0" max="100" step="1">
-                         </div>
-                         <div class="form-group">
-                             <label for="">Hạ bậc <span class="color-crimson">(*)</span></label>
-                             <input type="number" id="ha_bac" name="ha_bac" min="10" max="15" step="1"
-                                 class=" form-control" required title="Thấp nhất là 10, lớn nhất là 15"
-                                 placeholder="Nhập điểm hạ bậc">
+                         <div class="row">
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="ha_bac">Hạ bậc <span class="color-crimson">*</span></label>
+                                     <input type="number" id="ha_bac" name="ha_bac" min="10" max="15" step="1"
+                                         class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-habac') ? 'is-invalid' : '' ?>" required title="Thấp nhất là 10, lớn nhất là 15"
+                                         placeholder="Nhập điểm hạ bậc" value="<?=xep_loai_escape(xep_loai_old_value('ha_bac', 'add'))?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-habac'): ?>
+                                         <small class="text-danger mt-1">Điểm hạ bậc không hợp lệ (từ 10 đến 15).</small>
+                                     <?php endif; ?>
+                                 </div>
+                             </div>
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="ghi_chu">Ghi chú</label>
+                                     <textarea id="ghi_chu" name="ghi_chu" class="form-control" rows="1"
+                                         placeholder="Nhập ghi chú"><?=xep_loai_escape(xep_loai_old_value('ghi_chu', 'add'))?></textarea>
+                                 </div>
+                             </div>
                          </div>
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -256,25 +304,50 @@ function toggle_add_form() {
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Xếp loại').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
 
-function update_obj(id_xep_loai) {
-    $.post('quan-ly-xep-loai/update.php', {
-        'id_xep_loai': id_xep_loai,
-    }, function(data) {
-        // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
-        $('#div_add_form').slideUp(300);
-        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Xếp loại').removeClass('btn-secondary').addClass('btn-primary');
-        $('#div_update').html(data);
+function update_obj(id_xep_loai, error_status = '') {
+    $.ajax({
+        url: 'quan-ly-xep-loai/update.php',
+        method: 'POST',
+        data: { 'id_xep_loai': id_xep_loai, 'error_status': error_status },
+        success: function(data) {
+            // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
+            $('#div_add_form').slideUp(300);
+            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
+            $("#div_update").html(data);
+        },
+        error: function(xhr) {
+            var title = 'Lỗi hệ thống';
+            var text = 'Không thể tải form cập nhật.';
+            if (xhr.status === 403) {
+                title = 'Không có quyền';
+                text = 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.';
+            } else if (xhr.status === 404) {
+                title = 'Không tìm thấy';
+                text = 'Xếp loại cần sửa không tồn tại.';
+            } else if (xhr.status >= 500) {
+                title = 'Lỗi máy chủ';
+                text = 'Máy chủ đang gặp sự cố.';
+            }
+            Swal.fire(title, text, 'error');
+        }
     });
+    return false;
 }
 
 function cancel_update() {
     $("#div_update").html('');
 }
+
+<?php if (isset($xep_loai_old_input['context']) && $xep_loai_old_input['context'] === 'update' && isset($xep_loai_old_input['id_xep_loai'])): ?>
+window.addEventListener("load", function() {
+    update_obj(<?=(int)$xep_loai_old_input['id_xep_loai']?>, '<?=$_GET['status'] ?? ''?>');
+});
+<?php endif; ?>
  </script>

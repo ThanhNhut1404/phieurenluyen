@@ -1,5 +1,30 @@
  <?php
     // require "../models/getModel.php";
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $dieu_old_input = isset($_SESSION['dieu_old_input']) && is_array($_SESSION['dieu_old_input']) ? $_SESSION['dieu_old_input'] : array();
+    if (isset($dieu_old_input['context']) && $dieu_old_input['context'] === 'add') {
+        unset($_SESSION['dieu_old_input']);
+    }
+
+    if (!function_exists('dieu_escape')) {
+        function dieu_escape($value) {
+            return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+        }
+    }
+
+    if (!function_exists('dieu_old_value')) {
+        function dieu_old_value($field, $context, $default = '') {
+            global $dieu_old_input;
+            if (isset($dieu_old_input['context']) && $dieu_old_input['context'] === $context && isset($dieu_old_input[$field])) {
+                return $dieu_old_input[$field];
+            }
+            return $default;
+        }
+    }
+
     $dieu__Get_All = $dieu->dieu__Get_All();
     // Nhựt sửa lỗi: Giới hạn thứ tự trên form thêm từ 1 đến max + 1 để chặn nhập số âm, 0 hoặc vượt giới hạn ở client.
     $dieu__Max_Thu_Tu = $dieu->dieu__Get_Max_Thu_Tu();
@@ -9,16 +34,16 @@
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý điều</h1>
+                     <h1>Quản lý Điều</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
                          <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
-                         <li class="breadcrumb-item active">Quản lý điều</li>
+                         <li class="breadcrumb-item active">Quản lý Điều</li>
                      </ol>
                  </div>
              </div>
@@ -40,51 +65,54 @@
          </div><!-- /.container-fluid -->
      </section>
 
+     <?php $is_add_error = isset($dieu_old_input['context']) && $dieu_old_input['context'] === 'add'; ?>
+
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
      <section class="content mb-2">
-         <div class="col-12">
-             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-                 <i class="fas fa-plus"></i> Thêm mới Điều
-             </button>
-         </div>
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <i class="fas <?= $is_add_error ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_add_error ? '' : 'Thêm mới' ?>
+         </button>
      </section>
 
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add_form" style="display: none;">
+     <section class="content" id="div_add_form" <?= $is_add_error ? '' : 'style="display: none;"' ?>>
          <form class="row form" action="quan-ly-dieu/action.php?req=add" method="post" enctype="multipart/form-data">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Thêm mới</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title">Thêm mới Điều</h3>
                      </div>
                      <div class="card-body">
                          <div class="form-group">
-                             <label for="">Tên điều <span class="color-crimson">(*)</span></label>
-                             <input type="text" id="ten_dieu" name="ten_dieu" class="form-control" required
-                                 placeholder="Nhập tên điều">
+                             <label class="label-sidebar" for="ten_dieu">Tên điều <span class="color-crimson">*</span></label>
+                             <input type="text" id="ten_dieu" name="ten_dieu" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate-name', 'invalid'])) ? 'is-invalid' : '' ?>" required
+                                 placeholder="Nhập tên điều" value="<?=dieu_escape(dieu_old_value('ten_dieu', 'add'))?>">
+                             <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                 <?php if ($_GET['status'] == 'duplicate-name'): ?>
+                                     <small class="text-danger mt-1">Tên điều đã tồn tại trong hệ thống.</small>
+                                 <?php elseif ($_GET['status'] == 'invalid'): ?>
+                                     <small class="text-danger mt-1">Tên điều không được để trống.</small>
+                                 <?php endif; ?>
+                             <?php endif; ?>
                          </div>
                          <div class="form-group">
-                             <label for="">Nội dung chi tiết</label>
+                             <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết</label>
                              <textarea id="ghi_chu" name="ghi_chu" class="form-control" required
-                                 placeholder="Nhập nội dung chi tiết"></textarea>
+                                 placeholder="Nhập nội dung chi tiết"><?=dieu_escape(dieu_old_value('ghi_chu', 'add'))?></textarea>
                          </div>
                          <div class="form-group">
                              <!-- quân sửa: Cập nhật lời nhắc Thứ tự tự động -->
-                             <label for="">Thứ tự</label>
+                             <label class="label-sidebar" for="thu_tu">Thứ tự</label>
                              <input type="number" id="thu_tu" name="thu_tu" class="form-control" min="1"
                                  max="<?=$dieu__Max_Thu_Tu + 1?>" step="1"
-                                 placeholder="Nhập thứ tự (Có thể để trống)">
+                                 placeholder="Nhập thứ tự (Có thể để trống)" value="<?=dieu_escape(dieu_old_value('thu_tu', 'add'))?>">
                              <small class="form-text text-muted">Mẹo: Để trống hệ thống sẽ tự động xếp cuối. Nếu nhập trùng, hệ thống sẽ tự động hoán đổi.</small>
                          </div>
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -246,23 +274,48 @@ function toggle_add_form() {
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Điều').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
 
-function update_obj(id_dieu) {
-    $.post('quan-ly-dieu/update.php', {
-        'id_dieu': id_dieu,
-    }, function(data) {
-        // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
-        $('#div_add_form').slideUp(300);
-        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Điều').removeClass('btn-secondary').addClass('btn-primary');
-        $('#div_update').html(data);
+function update_obj(id_dieu, error_status = '') {
+    $.ajax({
+        url: 'quan-ly-dieu/update.php',
+        method: 'POST',
+        data: { 'id_dieu': id_dieu, 'error_status': error_status },
+        success: function(data) {
+            // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
+            $('#div_add_form').slideUp(300);
+            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
+            $('#div_update').html(data);
+        },
+        error: function(xhr) {
+            var title = 'Lỗi hệ thống';
+            var text = 'Không thể tải form cập nhật.';
+            if (xhr.status === 403) {
+                title = 'Không có quyền';
+                text = 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.';
+            } else if (xhr.status === 404) {
+                title = 'Không tìm thấy';
+                text = 'Điều cần sửa không tồn tại.';
+            } else if (xhr.status >= 500) {
+                title = 'Lỗi máy chủ';
+                text = 'Máy chủ đang gặp sự cố.';
+            }
+            Swal.fire(title, text, 'error');
+        }
     });
+    return false;
 }
+
+<?php if (isset($dieu_old_input['context']) && $dieu_old_input['context'] === 'update' && isset($dieu_old_input['id_dieu'])): ?>
+window.addEventListener("load", function() {
+    update_obj(<?=(int)$dieu_old_input['id_dieu']?>, '<?=$_GET['status'] ?? ''?>');
+});
+<?php endif; ?>
 
 function cancel_update() {
     $("#div_update").html('');

@@ -2,6 +2,10 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+if (!isset($_SESSION['admin'])) {
+    header('location: ../auth/');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -249,17 +253,25 @@ if (session_status() === PHP_SESSION_NONE) {
         } else if (isset($_GET['page']) && $_GET['page'] == "quan-ly-xep-loai" && $_GET['status'] == "duplicate-name") {
             // Nhựt sửa lỗi: Thông báo riêng khi tên xếp loại bị trùng.
             echo "<script>Swal.fire(" . json_encode("Trùng tên xếp loại") . ", " . json_encode("Tên xếp loại đã tồn tại. Vui lòng nhập tên khác.") . ", " . json_encode("error") . ")</script>";
-        } else if (isset($_GET['page']) && $_GET['status'] == "invalid" && isset($invalid_alerts[$_GET['page']])) {
-            $alert = $invalid_alerts[$_GET['page']];
-            echo "<script>Swal.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
-        } else if (isset($alerts[$_GET['status']])) {
-            $alert = $alerts[$_GET['status']];
-            echo "<script>Swal.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
         }
+        
+        $inline_error_pages = ['quan-ly-khoa', 'quan-ly-hoc-ky', 'quan-ly-nam-hoc', 'quan-ly-khoa-hoc', 'quan-ly-nganh-hoc', 'quan-ly-trinh-do', 'quan-ly-lop-hoc', 'quan-ly-sinh-vien', 'quan-ly-bi-thu-doan-khoa', 'quan-ly-giang-vien', 'quan-ly-phan-cong', 'quan-ly-tai-khoan'];
+        $inline_error_statuses = ['duplicate', 'duplicate-nganh-hoc', 'invalid', 'invalid-ten-khoa', 'invalid-ghichu', 'invalid-ten-hoc-ky', 'invalid-ngay', 'invalid-ten-nam-hoc', 'invalid-ten-khoa-hoc', 'invalid-ten-nganh-hoc', 'invalid-ten-trinh-do', 'invalid-ten-lop-hoc', 'invalid-khoa', 'invalid-nganh-hoc', 'invalid-khoa-hoc', 'invalid-trinh-do', 'invalid-sdt', 'duplicate-bithu', 'duplicate-giangvien', 'duplicate-phancong', 'duplicate-ma-sinh-vien', 'duplicate-email-sinh-vien'];
+        $is_inline_error = (isset($_GET['page']) && in_array($_GET['page'], $inline_error_pages) && (in_array($_GET['status'], $inline_error_statuses) || strpos($_GET['status'], 'invalid-') === 0));
 
-        // Nhựt sửa lỗi: bổ sung thông báo riêng cho quản lý ngành học để không dùng nhầm nội dung của khoa.
-        if ($_GET['status'] == "duplicate-nganh-hoc") {
-            echo "<script>Swal.fire(" . json_encode("Dữ liệu bị trùng!") . ", " . json_encode("Tên ngành học đã tồn tại trong khoa đã chọn.") . ", " . json_encode("error") . ")</script>";
+        if (!$is_inline_error) {
+            if (isset($_GET['page']) && $_GET['status'] == "invalid" && isset($invalid_alerts[$_GET['page']])) {
+                $alert = $invalid_alerts[$_GET['page']];
+                echo "<script>Swal.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
+            } else if (isset($alerts[$_GET['status']])) {
+                $alert = $alerts[$_GET['status']];
+                echo "<script>Swal.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
+            }
+
+            // Nhựt sửa lỗi: bổ sung thông báo riêng cho quản lý ngành học để không dùng nhầm nội dung của khoa.
+            if ($_GET['status'] == "duplicate-nganh-hoc") {
+                echo "<script>Swal.fire(" . json_encode("Dữ liệu bị trùng!") . ", " . json_encode("Tên ngành học đã tồn tại trong khoa đã chọn.") . ", " . json_encode("error") . ")</script>";
+            }
         }
         if ($_GET['status'] == "related-nganh-hoc") {
             echo "<script>Swal.fire(" . json_encode("Không thể xóa!") . ", " . json_encode("Ngành học này đang được sử dụng bởi lớp học.") . ", " . json_encode("error") . ")</script>";

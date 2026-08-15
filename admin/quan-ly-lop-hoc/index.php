@@ -35,11 +35,11 @@
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper" id="div_top">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý lớp học</h1>
+                     <h1>Quản lý Lớp học</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
@@ -51,63 +51,78 @@
          </div><!-- /.container-fluid -->
      </section>
 
+     <?php $is_add_error = isset($lophoc_old_input['context']) && $lophoc_old_input['context'] === 'add'; ?>
+
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
      <section class="content mb-2">
-         <div class="col-12">
-             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-                 <i class="fas fa-plus"></i> Thêm mới Lớp học
-             </button>
-         </div>
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <?php if ($is_add_error): ?>
+                 <i class="fas fa-times"></i>
+             <?php else: ?>
+                 <i class="fas fa-plus"></i> Thêm mới<?php endif; ?>
+         </button>
      </section>
-
+     
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add_form" style="display: none;">
+     <section class="content" id="div_add_form" style="<?= $is_add_error ? '' : 'display: none;' ?>">
          <form class="row form" action="quan-ly-lop-hoc/action.php?req=add" method="post">
              <input type="hidden" name="csrf_token" value="<?=lophoc_escape($_SESSION['csrf_token'])?>">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Thêm mới</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title">Thêm mới Lớp học</h3>
                      </div>
                      <div class="card-body">
                          <div class="form-group">
-                             <label for="">Khóa học <span class="color-crimson">(*)</span></label>
-                             <select class="form-control" name="id_khoa_hoc" required>
+                             <label class="label-sidebar">Khóa học <span class="color-crimson">*</span></label>
+                             <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-khoa-hoc') ? 'is-invalid' : '' ?>" name="id_khoa_hoc" required>
                                  <option value="">Chọn khóa học</option>
                                  <?php foreach ($khoahoc__Get_All as $item):?>
                                  <option value="<?=(int)$item->id_khoa_hoc?>" <?=((int)lophoc_old_value('id_khoa_hoc', 'add') === (int)$item->id_khoa_hoc) ? 'selected' : ''?>><?=lophoc_escape($item->ten_khoa_hoc)?></option>
                                  <?php endforeach; ?>
                              </select>
+                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-khoa-hoc'): ?>
+                                 <small class="text-danger mt-1">Khóa học không hợp lệ.</small>
+                             <?php endif; ?>
                          </div>
                          <div class="form-group">
-                             <label for="">Ngành học <span class="color-crimson">(*)</span></label>
-                             <select class="form-control" name="id_nganh_hoc" required>
+                             <label class="label-sidebar">Ngành học <span class="color-crimson">*</span></label>
+                             <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-nganh-hoc') ? 'is-invalid' : '' ?>" name="id_nganh_hoc" required>
                                  <option value="">Chọn ngành học</option>
                                  <?php foreach ($nganhhoc__Get_All as $item):?>
                                  <option value="<?=(int)$item->id_nganh_hoc?>" <?=((int)lophoc_old_value('id_nganh_hoc', 'add') === (int)$item->id_nganh_hoc) ? 'selected' : ''?>><?=lophoc_escape($item->ten_nganh_hoc)?></option>
                                  <?php endforeach; ?>
                              </select>
+                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-nganh-hoc'): ?>
+                                 <small class="text-danger mt-1">Ngành học không hợp lệ.</small>
+                             <?php endif; ?>
                          </div>
                          <div class="form-group">
-                             <label for="">Tên lớp học <span class="color-crimson">(*)</span></label>
-                             <input type="text" id="ten_lop_hoc" name="ten_lop_hoc" class="form-control" required maxlength="50"
+                             <label class="label-sidebar">Tên lớp học <span class="color-crimson">*</span></label>
+                             <input type="text" id="ten_lop_hoc" name="ten_lop_hoc" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate-lop-hoc', 'invalid-ten-lop-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
                                  value="<?=lophoc_escape(lophoc_old_value('ten_lop_hoc', 'add'))?>" placeholder="Nhập tên lớp học">
+                             <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                 <?php if ($_GET['status'] == 'duplicate-lop-hoc'): ?>
+                                     <small class="text-danger mt-1">Tên lớp học đã tồn tại trong khóa học và ngành học đã chọn.</small>
+                                 <?php elseif ($_GET['status'] == 'invalid-ten-lop-hoc'): ?>
+                                     <small class="text-danger mt-1">Tên lớp học không được để trống và tối đa 50 ký tự.</small>
+                                 <?php endif; ?>
+                             <?php endif; ?>
                          </div>
 
                          <div class="form-group">
-                             <label for="">Ghi chú</label>
-                             <textarea id="ghi_chu" name="ghi_chu" class="form-control" maxlength="2000"
+                             <label class="label-sidebar">Ghi chú</label>
+                             <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000"
                                  placeholder="Nhập ghi chú"><?=lophoc_escape(lophoc_old_value('ghi_chu', 'add'))?></textarea>
+                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
+                                 <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
+                             <?php endif; ?>
                          </div>
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -258,32 +273,33 @@ window.addEventListener("load", function() {
     });
 });
 
-// Nhựt sửa: Hàm bật/tắt hiển thị form thêm mới
 function toggle_add_form() {
     var addForm = $('#div_add_form');
     var btn = $('#btn-toggle-add');
-    
-    // Đóng form cập nhật nếu đang mở
-    $("#div_update").html('');
+    var isUpdateVisible = $("#div_update").html().trim() !== '';
+
+    if (isUpdateVisible) {
+        $("#div_update").html('');
+    }
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Lớp học').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
 
-function update_obj(id_lop_hoc) {
+function update_obj(id_lop_hoc, error_status = '') {
     $.ajax({
         url: 'quan-ly-lop-hoc/update.php',
         method: 'POST',
-        data: { 'id_lop_hoc': id_lop_hoc },
+        data: { 'id_lop_hoc': id_lop_hoc, 'error_status': error_status },
         success: function(data) {
             // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
             $('#div_add_form').slideUp(300);
-            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Lớp học').removeClass('btn-secondary').addClass('btn-primary');
+            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
             $('#div_update').html(data);
         },
         error: function(xhr) {
@@ -347,7 +363,7 @@ function delete_obj(id_lop_hoc) {
 
 <?php if (isset($lophoc_old_input['context']) && $lophoc_old_input['context'] === 'update' && isset($lophoc_old_input['id_lop_hoc'])): ?>
 window.addEventListener("load", function() {
-    update_obj(<?=(int)$lophoc_old_input['id_lop_hoc']?>);
+    update_obj(<?=(int)$lophoc_old_input['id_lop_hoc']?>, '<?=$_GET['status'] ?? ''?>');
 });
 <?php endif; ?>
  </script>

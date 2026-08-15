@@ -18,6 +18,23 @@
         $obj = $dieu->connect->query("SELECT id_dieu FROM dieu ORDER BY id_dieu FOR UPDATE");
         $obj->fetchAll();
     }
+
+    function dieu_store_old_input($context, $ten_dieu, $ghi_chu, $thu_tu, $id_dieu = null) {
+        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+        $_SESSION['dieu_old_input'] = array(
+            'context' => $context,
+            'ten_dieu' => $ten_dieu,
+            'ghi_chu' => $ghi_chu,
+            'thu_tu' => $thu_tu,
+            'id_dieu' => $id_dieu,
+        );
+    }
+
+    function dieu_clear_old_input() {
+        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+        unset($_SESSION['dieu_old_input']);
+    }
+
     
     if (isset($_GET['req'])){
         switch($_GET['req']){
@@ -30,6 +47,7 @@
 
                 // Nhựt sửa lỗi: Tên Điều rỗng hoặc chỉ có khoảng trắng vẫn lọt validate HTML required.
                 if ($ten_dieu == "") {
+                    dieu_store_old_input('add', $ten_dieu, $ghi_chu, $thu_tu);
                     dieu__Redirect('invalid');
                 }
 
@@ -72,13 +90,15 @@
                     }
 
                     $dieu->connect->commit();
+                    dieu_clear_old_input();
                     dieu__Redirect('success');
                 } catch (Exception $e) {
                     // Nhựt sửa lỗi: Có lỗi trong quá trình swap/thêm thì rollback toàn bộ.
                     if ($dieu->connect->inTransaction()) {
                         $dieu->connect->rollBack();
                     }
-                    dieu__Redirect('invalid');
+                    dieu_store_old_input('add', $ten_dieu, $ghi_chu, $thu_tu);
+                    dieu__Redirect(isset($error_status) ? $error_status : 'invalid');
                 }
                 
                 break;
@@ -97,6 +117,7 @@
 
                 // Nhựt sửa lỗi: Không cho update tên Điều rỗng hoặc chỉ chứa khoảng trắng.
                 if ($ten_dieu == "") {
+                    dieu_store_old_input('update', $ten_dieu, $ghi_chu, $thu_tu, $id_dieu);
                     dieu__Redirect('invalid');
                 }
 
@@ -156,12 +177,14 @@
                     }
 
                     $dieu->connect->commit();
+                    dieu_clear_old_input();
                     dieu__Redirect('success');
                 } catch (Exception $e) {
                     // Nhựt sửa lỗi: Có lỗi trong quá trình swap/update thì rollback toàn bộ.
                     if ($dieu->connect->inTransaction()) {
                         $dieu->connect->rollBack();
                     }
+                    dieu_store_old_input('update', $ten_dieu, $ghi_chu, $thu_tu, $id_dieu);
                     dieu__Redirect($error_status);
                 }
                 

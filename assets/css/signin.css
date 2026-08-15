@@ -1,49 +1,537 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 html,
 body {
   height: 100%;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 body {
-  display: -ms-flexbox;
-  display: -webkit-box;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #dbeafe 100%);
+  position: relative;
+  min-height: 100vh;
   display: flex;
-  -ms-flex-align: center;
-  -ms-flex-pack: center;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #f5f5f5;
+  flex-direction: column;
 }
 
-.form-signin {
+
+
+/* Hiệu ứng 3D các khối cầu mờ trong nền */
+body::before,
+body::after {
+  content: "";
+  position: absolute;
+  width: 45vw;
+  height: 45vw;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  top: -10vw;
+  left: -10vw;
+  background: rgba(191, 219, 254, 0.5); /* Xanh dương nhẹ */
+}
+
+body::after {
+  bottom: -15vw;
+  right: -10vw;
+  background: rgba(167, 243, 208, 0.35); /* Xanh lá nhạt */
+}
+
+/* Header */
+.login-header {
+  height: 56px;
   width: 100%;
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  z-index: 10;
+  flex-shrink: 0;
 }
-.form-signin .checkbox {
-  font-weight: 400;
+
+.login-header-logo img {
+  height: 36px;
+  object-fit: contain;
 }
-.form-signin .form-control {
-  position: relative;
-  box-sizing: border-box;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
+
+.login-header-nav {
+  display: flex;
+  gap: 24px;
 }
-.form-signin .form-control:focus {
+
+.login-header-nav a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #4a5568;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.login-header-nav a:hover {
+  color: #2b6cb0;
+}
+
+/* Container chính */
+.login-main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0;
   z-index: 2;
+  width: 100%;
 }
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+
+.login-row-wrapper {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+
+.login-row-wrapper > .row {
+  width: 100%;
+  margin: 0;
+  flex: 1;
+  min-height: calc(100vh - 56px);
+}
+
+/* Cột bên trái: Welcome Box */
+.welcome-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px;
+  background: linear-gradient(rgba(30, 58, 138, 0.7), rgba(59, 130, 246, 0.7)), url('../img/school.png');
+  background-size: cover;
+  background-position: 75% center;
+  background-repeat: no-repeat;
+}
+
+.welcome-box h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.welcome-box h1 span.blue-text {
+  color: #4ade80;
+  background: none;
+  -webkit-text-fill-color: initial;
+}
+
+.welcome-box p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #e2e8f0;
+  margin-bottom: 28px;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px 0;
+}
+
+.features-list li {
+  position: relative;
+  padding-left: 28px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.features-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+/* Hộp trang trí giả lập phía dưới bên trái */
+.illustration-box {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  max-width: 320px;
+}
+
+.shimmer-line {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+}
+
+.shimmer-line.line-long {
+  width: 150px;
+}
+
+.shimmer-line.line-short {
+  width: 90px;
+}
+
+.bullet-indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.4);
+}
+
+/* Cột bên phải: Login Card */
+.login-card-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 60px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 410px;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 24px;
+  padding: 40px 32px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  transition: none;
+}
+
+.login-card:hover {
+  transform: none;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+}
+
+.login-card-logo-wrap {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.login-card-logo-wrap img {
+  height: 64px;
+  object-fit: contain;
+}
+
+.login-card h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #2b6cb0;
+  text-align: center;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.login-title-line {
+  width: 60px;
+  height: 3px;
+  background: #3182ce;
+  border-radius: 1.5px;
+  margin: 0 auto 24px auto;
+}
+
+/* Form Styles */
+.form-group-custom {
+  margin-bottom: 16px;
+}
+
+.form-group-custom label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.input-wrapper-custom {
+  position: relative;
+}
+
+.form-control-custom {
+  width: 100%;
+  height: 46px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 40px 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d3748;
+  background-color: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control-custom:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+}
+
+.form-control-custom::placeholder {
+  color: #cbd5e0;
+}
+
+.input-icon-right {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0aec0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* Toggle eye mật khẩu */
+.password-toggle-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+  color: #4a5568;
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+}
+
+/* Remember me và Forgot Password */
+.login-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -6px;
+  margin-bottom: 16px;
+}
+
+.custom-checkbox-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.custom-checkbox-wrap input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2b6cb0;
+  cursor: pointer;
+}
+
+.custom-checkbox-wrap span {
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.forgot-password-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3182ce;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.forgot-password-link:hover {
+  color: #2b6cb0;
+  text-decoration: none;
+}
+
+.captcha-group-custom {
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
+/* Captcha Layout */
+.captcha-container-custom {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.captcha-input-col {
+  flex: 4;
+}
+
+.captcha-input-col .form-control-custom {
+  padding-right: 16px;
+}
+
+.captcha-reload-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2b6cb0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.captcha-reload-btn:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.captcha-reload-btn:focus {
+  outline: none;
+}
+
+.captcha-canvas-col {
+  flex: 5;
+  height: 46px;
+  border-radius: 6px;
+  border: 1.5px solid #bfdbfe;
+  background: #eff6ff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+#captchaCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Nút Submit */
+.btn-submit-custom {
+  width: 100%;
+  height: 48px;
+  background-color: #3fb564;
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(72, 187, 120, 0.2), 0 2px 4px -1px rgba(72, 187, 120, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-submit-custom:hover {
+  background-color: #38a169;
+  box-shadow: 0 10px 15px -3px rgba(56, 161, 105, 0.3), 0 4px 6px -2px rgba(56, 161, 105, 0.15);
+}
+
+.btn-submit-custom:active {
+  transform: scale(0.98);
+}
+
+/* Thông báo lỗi / thành công */
+.login-message-container {
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+  padding: 4px 0;
+  transition: all 0.3s ease;
+}
+
+.login-message-container.success {
+  color: #28a745;
+}
+
+.login-message-container.error {
+  color: #dc3545;
+}
+
+/* Chân trang */
+.login-card-footer {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #718096;
+}
+
+.login-card-footer a {
+  font-weight: 700;
+  color: #3182ce;
+  text-decoration: none;
+}
+
+.login-card-footer a:hover {
+  text-decoration: none;
+  color: #2b6cb0;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .login-main-container {
+    height: auto;
+  }
+  .login-row-wrapper .row > div {
+    height: auto;
+  }
+  .login-header {
+    padding: 16px 24px;
+  }
+  .welcome-box {
+    padding: 40px 24px;
+    text-align: center;
+    align-items: center;
+  }
+  .welcome-box h1 {
+    font-size: 2.25rem;
+  }
+  .features-list {
+    display: inline-block;
+    text-align: left;
+  }
+  .login-card-wrapper {
+    padding: 40px 24px;
+  }
 }

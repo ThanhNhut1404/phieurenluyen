@@ -3,6 +3,10 @@
 require '../../models/getModel.php';
 require("../../assets/vendor/PHPOffice/PHPExcel.php");
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 if (isset($_GET['req'])) {
     switch ($_GET['req']) {
         case 'add':
@@ -29,6 +33,11 @@ if (isset($_GET['req'])) {
             $chuc_vu = isset($_POST['chuc_vu']) ? $_POST['chuc_vu'] : '';
             $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
 
+            $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
+
+            // Nhựt sửa: Lưu lại giá trị form để fill lại khi lỗi
+            $_SESSION['sinhvien_old_input'] = array_merge($_POST, ['context' => 'add']);
+
             if ($sinhvien->sinhvien__Exists_Ma_Sinh_Vien($ma_sinh_vien)) {
                 header('location: ../index.php?page=quan-ly-sinh-vien&status=duplicate-ma-sinh-vien');
                 exit();
@@ -40,6 +49,7 @@ if (isset($_GET['req'])) {
 
             $status = $sinhvien->sinhvien__Add($ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
             if ($status != 0) {
+                unset($_SESSION['sinhvien_old_input']);
                 header('location: ../index.php?page=quan-ly-sinh-vien&status=success');
             } else {
                 header('location: ../index.php?page=quan-ly-sinh-vien&status=failed');
@@ -71,6 +81,11 @@ if (isset($_GET['req'])) {
             $chuc_vu = isset($_POST['chuc_vu']) ? $_POST['chuc_vu'] : '';
             $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
 
+            $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
+
+            // Nhựt sửa: Lưu lại giá trị form để fill lại khi lỗi
+            $_SESSION['sinhvien_old_input'] = array_merge($_POST, ['context' => 'update']);
+
             if ($sinhvien->sinhvien__Exists_Ma_Sinh_Vien($ma_sinh_vien, $id_sinh_vien)) {
                 header('location: ../index.php?page=quan-ly-sinh-vien&status=duplicate-ma-sinh-vien');
                 exit();
@@ -81,6 +96,7 @@ if (isset($_GET['req'])) {
             }
 
             $sinhvien->sinhvien__Update($id_sinh_vien, $ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
+            unset($_SESSION['sinhvien_old_input']);
             header('location: ../index.php?page=quan-ly-sinh-vien&status=success');
             exit();
 

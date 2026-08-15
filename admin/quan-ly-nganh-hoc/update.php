@@ -58,6 +58,9 @@
         if (isset($nganhhoc_old_input['context'], $nganhhoc_old_input['id_nganh_hoc']) && $nganhhoc_old_input['context'] === 'update' && (int)$nganhhoc_old_input['id_nganh_hoc'] === (int)$nganhhoc__Get_By_Id->id_nganh_hoc) {
             unset($_SESSION['nganhhoc_old_input']);
         }
+
+        $status = isset($_POST['error_status']) ? $_POST['error_status'] : '';
+        $is_update_error = !empty($status);
     ?>
 
     <form class="row form" action="quan-ly-nganh-hoc/action.php?req=update" method="post" enctype="multipart/form-data">
@@ -66,38 +69,46 @@
         <div class="col-12">
             <div class="card card-danger">
                 <div class="card-header">
-                    <h3 class="card-title">Cập nhật</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
+                    <h3 class="card-title">Cập nhật Ngành học</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="">Khoa <span class="color-crimson">(*)</span></label>
-                        <select class="form-control" name="id_khoa" required>
+                        <label class="label-sidebar" for="">Khoa <span class="color-crimson">*</span></label>
+                        <select class="form-control <?= ($is_update_error && $status == 'invalid-khoa') ? 'is-invalid' : '' ?>" name="id_khoa" required>
                             <?php foreach ($khoa__Get_All as $item):?>
                             <option value="<?=(int)$item->id_khoa?>" <?=((int)$old_id_khoa === (int)$item->id_khoa) ? "selected" : ""?>><?=nganhhoc_update_escape($item->ten_khoa)?></option>
                             <?php endforeach; ?>
                         </select>
+                        <?php if ($is_update_error && $status == 'invalid-khoa'): ?>
+                            <small class="text-danger mt-1">Khoa không hợp lệ.</small>
+                        <?php endif; ?>
                     </div>
                     <div class="form-group">
-                        <label for="ten_nganh_hoc_update">Tên ngành học <span class="color-crimson">(*)</span></label>
+                        <label class="label-sidebar" for="ten_nganh_hoc_update">Tên ngành học <span class="color-crimson">*</span></label>
                         <!-- Nhựt sửa lỗi: giới hạn tên ngành học ở client khớp với validate server-side và DB. -->
-                        <input type="text" id="ten_nganh_hoc_update" name="ten_nganh_hoc" class="form-control" required maxlength="50"
+                        <input type="text" id="ten_nganh_hoc_update" name="ten_nganh_hoc" class="form-control <?= ($is_update_error && in_array($status, ['duplicate-nganh-hoc', 'invalid-ten-nganh-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
                             placeholder="Nhập tên ngành học" value="<?=nganhhoc_update_escape(nganhhoc_update_old_value('ten_nganh_hoc', $nganhhoc__Get_By_Id->id_nganh_hoc, $nganhhoc__Get_By_Id->ten_nganh_hoc))?>">
+                        <?php if ($is_update_error): ?>
+                            <?php if ($status == 'duplicate-nganh-hoc'): ?>
+                                <small class="text-danger mt-1">Tên ngành học đã tồn tại trong khoa đã chọn.</small>
+                            <?php elseif ($status == 'invalid-ten-nganh-hoc'): ?>
+                                <small class="text-danger mt-1">Tên ngành học không được để trống và tối đa 50 ký tự.</small>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                     <div class="form-group">
-                        <label for="ghi_chu_update">Ghi chú</label>
-                        <textarea id="ghi_chu_update" name="ghi_chu" class="form-control" maxlength="2000"
+                        <label class="label-sidebar" for="ghi_chu_update">Ghi chú</label>
+                        <textarea id="ghi_chu_update" name="ghi_chu" class="form-control <?= ($is_update_error && $status == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000"
                             placeholder="Nhập ghi chú"><?=nganhhoc_update_escape(nganhhoc_update_old_value('ghi_chu', $nganhhoc__Get_By_Id->id_nganh_hoc, $nganhhoc__Get_By_Id->ghi_chu))?></textarea>
+                        <?php if ($is_update_error && $status == 'invalid-ghichu'): ?>
+                            <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
-                    <button type="button" class="btn btn-default float-right mr-2" onclick="cancel_update()">Hủy</button>
+                    <input type="submit" value="Cập nhật" class="btn btn-danger float-right font-weight-bold">
+                    <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="cancel_update()">Hủy</button>
                 </div>
             </div>
             <!-- /.card -->

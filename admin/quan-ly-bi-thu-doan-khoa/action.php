@@ -2,6 +2,10 @@
 
     require '../../models/getModel.php';
     
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
     if (isset($_GET['req'])){
         switch($_GET['req']){
             case 'add':
@@ -26,6 +30,9 @@
                 $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
                 $id_khoa = isset($_POST['id_khoa']) ? $_POST['id_khoa'] : '';
                 
+                // Nhựt sửa: Lưu lại giá trị form để fill lại khi lỗi
+                $_SESSION['bithu_old_input'] = array_merge($_POST, ['context' => 'add']);
+
                 // Check if email already exists
                 if ($bithudoankhoa->bithudoankhoa__Exists_Email($email)) {
                     header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=duplicate-bithu');
@@ -35,6 +42,7 @@
                 $status = $bithudoankhoa->bithudoankhoa__Add($ten_bi_thu, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $id_khoa);
                 
                 if($status != 0){
+                    unset($_SESSION['bithu_old_input']);
                     header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=success');
                 }else{
                     header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=failed');
@@ -64,6 +72,9 @@
                 $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
                 $id_khoa = isset($_POST['id_khoa']) ? $_POST['id_khoa'] : '';
 
+                // Nhựt sửa: Lưu lại giá trị form để fill lại khi lỗi
+                $_SESSION['bithu_old_input'] = array_merge($_POST, ['context' => 'update']);
+
                 // Check if email already exists (excluding current id_bi_thu)
                 if ($bithudoankhoa->bithudoankhoa__Exists_Email($email, $id_bi_thu)) {
                     header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=duplicate-bithu');
@@ -71,6 +82,7 @@
                 }
 
                 $bithudoankhoa->bithudoankhoa__Update($id_bi_thu, $ten_bi_thu, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $id_khoa);
+                unset($_SESSION['bithu_old_input']);
                 header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=success');
                 exit();
 

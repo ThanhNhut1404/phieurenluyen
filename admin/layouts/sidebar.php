@@ -2,10 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['admin'])) {
-    header('location: ../auth/');
-    exit();
-}
+// Auth check is handled globally in admin/index.php
+
 require "../models/getModel.php";
 
 // Nhựt sửa lỗi: tránh warning khi session admin thiếu phân quyền hoặc phân quyền không còn tồn tại.

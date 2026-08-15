@@ -737,3 +737,20 @@ table#tablejs thead th {
     border-color: #0d244d !important;
     color: #fff !important;
 }
+/* Custom Cancel Button & Label Sidebar for all Admin modules */
+.btn-cancel-custom {
+    border-radius: 6px !important;
+    font-weight: 550 !important;
+    background-color: #ffffff !important;
+    color: #dc3545 !important;
+    border: 1px solid #dc3545 !important;
+    transition: all 0.2s ease !important;
+}
+.btn-cancel-custom:hover {
+    background-color: #fdf2f2 !important;
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+.label-sidebar {
+    color: #0f2a5a !important;
+}

@@ -2,17 +2,38 @@
     // require "../models/getModel.php";
     $giangvien__Get_All = $giangvien->giangvien__Get_All();
     $trinhdo__Get_All = $trinhdo->trinhdo__Get_All();
+    
+    // Hàm escape và old_value
+    function giangvien_escape($string) {
+        return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
+    }
+    
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (!isset($_GET['status']) || $_GET['status'] === 'success') {
+        unset($_SESSION['giangvien_old_input']);
+    }
+    $giangvien_old_input = $_SESSION['giangvien_old_input'] ?? [];
+    
+    function giangvien_old_value($key, $context, $default = '') {
+        global $giangvien_old_input;
+        if (isset($giangvien_old_input['context']) && $giangvien_old_input['context'] === $context && isset($giangvien_old_input[$key])) {
+            return $giangvien_old_input[$key];
+        }
+        return $default;
+    }
  ?>
 
 
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý giảng viên</h1>
+                     <h1>Quản lý Giảng viên</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
@@ -24,133 +45,144 @@
          </div><!-- /.container-fluid -->
      </section>
 
+     <?php $is_add_error = isset($giangvien_old_input['context']) && $giangvien_old_input['context'] === 'add'; ?>
+
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
      <section class="content mb-2">
-         <div class="col-12">
-             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-                 <i class="fas fa-plus"></i> Thêm mới Giảng viên
-             </button>
-         </div>
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <?php if ($is_add_error): ?>
+                 <i class="fas fa-times"></i>
+             <?php else: ?>
+                 <i class="fas fa-plus"></i> Thêm mới
+             <?php endif; ?>
+         </button>
      </section>
 
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add_form" style="display: none;">
+     <section class="content" id="div_add_form" style="<?= $is_add_error ? '' : 'display: none;' ?>">
          <form class="row form" action="quan-ly-giang-vien/action.php?req=add" method="post"
              enctype="multipart/form-data">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Thêm mới</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title">Thêm mới Giảng viên</h3>
                      </div>
                      <div class="card-body">
                          <div class="row">
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Mã giảng viên <span class="color-crimson">(*)</span></label>
-                                     <input type="text" id="ma_giang_vien" name="ma_giang_vien" class="form-control"
-                                         required placeholder="Nhập mã giảng viên">
+                                     <label class="label-sidebar" for="">Mã giảng viên <span class="color-crimson">*</span></label>
+                                     <input type="text" id="ma_giang_vien" name="ma_giang_vien" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-giangvien') ? 'is-invalid' : '' ?>"
+                                         required placeholder="Nhập mã giảng viên" value="<?= htmlspecialchars(giangvien_old_value('ma_giang_vien', 'add')) ?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-giangvien'): ?>
+                                         <small class="text-danger mt-1">Mã giảng viên hoặc Email đã tồn tại.</small>
+                                     <?php endif; ?>
                                  </div>
                                  <div class="form-group">
-                                     <label for="">Tên giảng viên <span class="color-crimson">(*)</span></label>
-                                     <input type="text" id="ten_giang_vien" name="ten_giang_vien" class="form-control"
-                                         required placeholder="Nhập tên giảng viên">
-                                 </div>
-                             </div>
-                             <div class="col-6">
-                                 <div class="form-group">
-                                     <label for="">Giới tính <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar" for="">Giới tính <span class="color-crimson">*</span></label>
                                      <select class="form-control" name="gioi_tinh" required>
                                          <option value="">Chọn giới tính</option>
-                                         <option value="0">Nữ</option>
-                                         <option value="1">Nam</option>
+                                         <option value="0" <?= giangvien_old_value('gioi_tinh', 'add') === '0' ? 'selected' : '' ?>>Nữ</option>
+                                         <option value="1" <?= giangvien_old_value('gioi_tinh', 'add') === '1' ? 'selected' : '' ?>>Nam</option>
                                      </select>
                                  </div>
                                  <div class="form-group">
-                                     <label for="">Ngày sinh <span class="color-crimson">(*)</span></label>
-                                     <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control" required
-                                         value="<?=date('Y-m-d', strtotime('-22 years'))?>"
-                                         min="<?=date('Y-m-d', strtotime('-100 years'))?>"
-                                         max="<?=date('Y-m-d', strtotime('-10 years'))?>" placeholder="Nhập ngày sinh">
+                                     <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
+                                     <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                         value="<?= giangvien_old_value('ngay_sinh', 'add', date('Y-m-d', strtotime('-22 years'))) ?>"
+                                         min="<?= date('Y-m-d', strtotime('-100 years')) ?>"
+                                         max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
                                  </div>
                              </div>
+
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Email <span class="color-crimson">(*)</span></label>
-                                     <input type="email" id="email" name="email" class="form-control" required
-                                         placeholder="Nhập email">
+                                     <label class="label-sidebar" for="">Tên giảng viên <span class="color-crimson">*</span></label>
+                                     <input type="text" id="ten_giang_vien" name="ten_giang_vien" class="form-control"
+                                         required placeholder="Nhập tên giảng viên" value="<?= htmlspecialchars(giangvien_old_value('ten_giang_vien', 'add')) ?>">
                                  </div>
                                  <div class="form-group">
-                                     <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
-                                     <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1"
-                                         pattern="0[0-9]{9,10}" class="form-control" required
-                                         title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1"
-                                         minlength="10" maxlength="11">
+                                     <label class="label-sidebar" for="">Trình độ <span class="color-crimson">*</span></label>
+                                     <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid') ? 'is-invalid' : '' ?>" name="id_trinh_do" required>
+                                         <option value="">Chọn trình độ</option>
+                                         <?php foreach($trinhdo__Get_All as $item):?>
+                                         <option value="<?=$item->id_trinh_do?>" <?= giangvien_old_value('id_trinh_do', 'add') == $item->id_trinh_do ? 'selected' : '' ?>><?=$item->ten_trinh_do?></option>
+                                         <?php endforeach;?>
+                                     </select>
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid'): ?>
+                                         <small class="text-danger mt-1">Trình độ không hợp lệ.</small>
+                                     <?php endif; ?>
                                  </div>
                                  <div class="form-group">
-                                     <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
-                                     <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2"
-                                         pattern="0[0-9]{9,10}" class="form-control" required
-                                         title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2"
-                                         minlength="10" maxlength="11">
+                                     <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
+                                     <input type="email" id="email" name="email" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-giangvien') ? 'is-invalid' : '' ?>" required
+                                         placeholder="Nhập email" value="<?= htmlspecialchars(giangvien_old_value('email', 'add')) ?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-giangvien'): ?>
+                                         <small class="text-danger mt-1">Email hoặc Mã giảng viên đã tồn tại.</small>
+                                     <?php endif; ?>
                                  </div>
                              </div>
 
                              <div class="col-6">
                                  <!-- quân sửa: Chia nhỏ phần nhập địa chỉ thành 4 ô (Thêm mới) -->
                                  <div class="form-group">
-                                     <label for="">Địa chỉ liên lạc <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar" for="">Địa chỉ liên lạc <span class="color-crimson">*</span></label>
                                      <div class="row">
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                             <input type="text" name="dc_ll_so_nha" class="form-control" required placeholder="Số nhà, đường" value="<?= htmlspecialchars(giangvien_old_value('dc_ll_so_nha', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                             <input type="text" name="dc_ll_ap" class="form-control" required placeholder="Ấp / Khu phố" value="<?= htmlspecialchars(giangvien_old_value('dc_ll_ap', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_xa" class="form-control" required placeholder="Xã / Phường">
+                                             <input type="text" name="dc_ll_xa" class="form-control" required placeholder="Xã / Phường" value="<?= htmlspecialchars(giangvien_old_value('dc_ll_xa', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                             <input type="text" name="dc_ll_tinh" class="form-control" required placeholder="Tỉnh / Thành phố" value="<?= htmlspecialchars(giangvien_old_value('dc_ll_tinh', 'add')) ?>">
                                          </div>
                                      </div>
                                  </div>
                                  <div class="form-group">
-                                     <label for="">Địa chỉ thường trú <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar" for="">Số điện thoại 1 <span class="color-crimson">*</span></label>
+                                     <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1"
+                                         pattern="0[0-9]{9,10}" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-sdt') ? 'is-invalid' : '' ?>" required
+                                         title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1"
+                                         minlength="10" maxlength="11" value="<?= htmlspecialchars(giangvien_old_value('so_dien_thoai_1', 'add')) ?>">
+                                 </div>
+                             </div>
+
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="">Địa chỉ thường trú <span class="color-crimson">*</span></label>
                                      <div class="row">
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                             <input type="text" name="dc_tt_so_nha" class="form-control" required placeholder="Số nhà, đường" value="<?= htmlspecialchars(giangvien_old_value('dc_tt_so_nha', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                             <input type="text" name="dc_tt_ap" class="form-control" required placeholder="Ấp / Khu phố" value="<?= htmlspecialchars(giangvien_old_value('dc_tt_ap', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_xa" class="form-control" required placeholder="Xã / Phường">
+                                             <input type="text" name="dc_tt_xa" class="form-control" required placeholder="Xã / Phường" value="<?= htmlspecialchars(giangvien_old_value('dc_tt_xa', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                             <input type="text" name="dc_tt_tinh" class="form-control" required placeholder="Tỉnh / Thành phố" value="<?= htmlspecialchars(giangvien_old_value('dc_tt_tinh', 'add')) ?>">
                                          </div>
                                      </div>
                                  </div>
                                  <div class="form-group">
-                                     <label for="">Trình độ <span class="color-crimson">(*)</span></label>
-                                     <select class="form-control" name="id_trinh_do" required>
-                                         <option value="">Chọn trình độ</option>
-                                         <?php foreach($trinhdo__Get_All as $item):?>
-                                         <option value="<?=$item->id_trinh_do?>"><?=$item->ten_trinh_do?></option>
-                                         <?php endforeach;?>
-                                     </select>
+                                     <label class="label-sidebar" for="">Số điện thoại 2 <span class="color-crimson">*</span></label>
+                                     <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2"
+                                         pattern="0[0-9]{9,10}" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-sdt') ? 'is-invalid' : '' ?>" required
+                                         title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2"
+                                         minlength="10" maxlength="11" value="<?= htmlspecialchars(giangvien_old_value('so_dien_thoai_2', 'add')) ?>">
                                  </div>
                              </div>
                          </div>
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -338,9 +370,9 @@ function toggle_add_form() {
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Giảng viên').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
@@ -351,7 +383,7 @@ function update_obj(id_giang_vien) {
     }, function(data) {
         // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
         $('#div_add_form').slideUp(300);
-        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Giảng viên').removeClass('btn-secondary').addClass('btn-primary');
+        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         $('#div_update').html(data);
     });
 }

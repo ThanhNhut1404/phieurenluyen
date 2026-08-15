@@ -10,6 +10,19 @@
     $taikhoan__Get_All_Btdk = $taikhoan->taikhoan__Get_All_Phan_Nhom(3);
     $taikhoan__Get_All_Cvht = $taikhoan->taikhoan__Get_All_Phan_Nhom(4);
     $taikhoan__Get_All_All = $taikhoan->taikhoan__Get_All();
+    
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $taikhoan_old_input = $_SESSION['taikhoan_old_input'] ?? [];
+    
+    function taikhoan_old_value($key, $context, $default = '') {
+        global $taikhoan_old_input;
+        if (isset($taikhoan_old_input['context']) && $taikhoan_old_input['context'] === $context && isset($taikhoan_old_input[$key])) {
+            return $taikhoan_old_input[$key];
+        }
+        return $default;
+    }
 
     if (isset($_GET['view'])) {
         $view = $_GET['view'];
@@ -70,16 +83,16 @@ button.btn.removeall.btn-outline-secondary:before {
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý tài khoản</h1>
+                     <h1>Quản lý Tài khoản</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
                          <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
-                         <li class="breadcrumb-item active">Quản lý tài khoản</li>
+                         <li class="breadcrumb-item active">Quản lý Tài khoản</li>
                      </ol>
                  </div>
              </div>
@@ -87,308 +100,113 @@ button.btn.removeall.btn-outline-secondary:before {
      </section>
 
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
+     <?php $is_add_error = isset($taikhoan_old_input['context']) && $taikhoan_old_input['context'] === 'add'; ?>
+     
      <section class="content mb-2">
-         <div class="col-12">
-             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-                 <i class="fas fa-plus"></i> Thêm mới Tài khoản
-             </button>
-         </div>
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold ml-2" id="btn-toggle-add" onclick="toggle_add_form()">
+             <?php if ($is_add_error): ?>
+                 <i class="fas fa-times"></i>
+             <?php else: ?>
+                 <i class="fas fa-plus"></i> Thêm mới
+             <?php endif; ?>
+         </button>
      </section>
 
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add_form" style="display: none;">
-         <div class="col-12">
-             <div class="card card-success">
-                 <div class="card-header">
-                     <h3 class="card-title">Thêm mới</h3>
-                     <div class="card-tools">
-                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                             <i class="fas fa-minus"></i>
-                         </button>
+     <section class="content" id="div_add_form" style="<?= $is_add_error ? '' : 'display: none;' ?>">
+         <div class="container-fluid">
+             <form action="quan-ly-tai-khoan/action.php?req=add_admin" method="post" enctype="multipart/form-data" id="form-add-taikhoan">
+                 <input type="hidden" name="id_phan_quyen" value="<?= $phanquyen->phanquyen__Get_By_Cap_Bac(2)->id_phan_quyen ?>">
+                 <div class="row">
+                     <div class="col-12">
+                         <div class="card card-success">
+                             <div class="card-header">
+                                 <h3 class="card-title">Thêm mới Tài khoản</h3>
+                             </div>
+                             <div class="card-body">
+                                 <div class="row">
+                                     <div class="col-6">
+                                         <div class="form-group">
+                                             <label class="label-sidebar" for="">Phân nhóm <span class="color-crimson">*</span></label>
+                                             <select class="form-control" name="id_phan_nhom" id="id_phan_nhom_select" required>
+                                                 <?php foreach ($phannhom__Get_All as $item) : ?>
+                                                 <option value="<?= $item->id_phan_nhom ?>" data-capbac="<?= $item->cap_bac ?>" <?= ($item->cap_bac == 0) ? 'selected' : '' ?>>
+                                                     <?= $item->ten_phan_nhom ?>
+                                                 </option>
+                                                 <?php endforeach; ?>
+                                             </select>
+                                         </div>
+                                     </div>
+                                     
+                                     <!-- FIELDS FOR ADMIN / MANAGER (cap_bac = 0, 1) -->
+                                     <div class="col-6 block-admin-manager">
+                                         <div class="form-group">
+                                             <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
+                                             <input type="email" id="email" name="email" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-email-sinh-vien') ? 'is-invalid' : '' ?>" 
+                                                 placeholder="Nhập email" value="<?= htmlspecialchars(taikhoan_old_value('email', 'add')) ?>">
+                                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-email-sinh-vien'): ?>
+                                                 <small class="text-danger mt-1">Email này đã tồn tại trong hệ thống.</small>
+                                             <?php endif; ?>
+                                         </div>
+                                     </div>
+                                     <div class="col-6 block-admin-manager">
+                                         <div class="form-group">
+                                             <label class="label-sidebar" for="">Mật khẩu <span class="color-crimson">*</span></label>
+                                             <input type="password" id="mat_khau" name="mat_khau" class="form-control" 
+                                                 placeholder="Nhập mật khẩu" value="<?= htmlspecialchars(taikhoan_old_value('mat_khau', 'add')) ?>">
+                                         </div>
+                                     </div>
+
+                                     <!-- FIELDS FOR SINH VIEN / CO VAN HOC TAP (cap_bac = 2, 4) -->
+                                     <div class="col-6 block-lop-hoc" style="display: none;">
+                                         <div class="form-group">
+                                             <label class="label-sidebar" for="">Chọn lớp <span class="color-crimson">*</span></label>
+                                             <select class="form-control" name="id_lop_hoc" id="id_lop_hoc_select">
+                                                 <option value="">Chọn Lớp</option>
+                                                 <?php foreach ($lophoc__Get_All as $item) : ?>
+                                                 <option value="<?= $item->id_lop_hoc ?>">
+                                                     <?= $item->ten_lop_hoc ?>
+                                                 </option>
+                                                 <?php endforeach; ?>
+                                             </select>
+                                         </div>
+                                     </div>
+
+                                     <!-- FIELDS FOR BI THU DOAN KHOA (cap_bac = 3) -->
+                                     <div class="col-6 block-khoa" style="display: none;">
+                                         <div class="form-group">
+                                             <label class="label-sidebar" for="">Chọn khoa <span class="color-crimson">*</span></label>
+                                             <select class="form-control" name="id_khoa" id="id_khoa_select">
+                                                 <option value="">Chọn Khoa</option>
+                                                 <?php foreach ($khoa__Get_All as $item) : ?>
+                                                 <option value="<?= $item->id_khoa ?>">
+                                                     <?= $item->ten_khoa ?>
+                                                 </option>
+                                                 <?php endforeach; ?>
+                                             </select>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 
+                                 <div class="row block-duallistbox" style="display: none;">
+                                     <div class="col-12">
+                                         <div class="form-group">
+                                             <label class="label-sidebar" id="lbl-chon-nguoi-dung">Chọn người dùng <span class="color-crimson">*</span></label>
+                                             <select class="duallistbox" multiple="multiple" name="id_nguoi_dung[]" id="id_nguoi_dung_select">
+                                             </select>
+                                         </div>
+                                     </div>
+                                 </div>
+
+                             </div>
+                             <div class="card-footer">
+                                 <button type="submit" class="btn btn-success float-right font-weight-bold" style="font-weight: bold;">Thêm mới</button>
+                                 <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" style="font-weight: bold;" onclick="toggle_add_form()">Hủy</button>
+                             </div>
+                         </div>
                      </div>
                  </div>
-                 <div class="card-body">
-                     <div class="form-group">
-                         <label for="">Phân nhóm <span class="color-crimson">(*)</span></label>
-                         <select class="form-control" name="id_phan_nhom" required onchange="location.href=this.value">
-                             <?php if (isset($_GET['id_phan_nhom'])) : ?>
-                             <?php $id_phan_nhom = $_GET['id_phan_nhom']; ?>
-                             <option value="<?= $id_phan_nhom ?>">
-                                 <?= $phannhom->phannhom__Get_By_Id($id_phan_nhom)->ten_phan_nhom ?>
-                             </option>
-                             <?php foreach ($phannhom__Get_All as $item) : ?>
-                             <?php if ($item->id_phan_nhom != $id_phan_nhom) : ?>
-                             <option value="?page=quan-ly-tai-khoan&id_phan_nhom=<?= $item->id_phan_nhom ?>">
-                                 <?= $item->ten_phan_nhom ?>
-                             </option>
-                             <?php endif ?>
-                             <?php endforeach; ?>
-                             <?php else : ?>
-                             <option value="">Chọn Phân nhóm</option>
-                             <?php foreach ($phannhom__Get_All as $item) : ?>
-                             <option value="?page=quan-ly-tai-khoan&id_phan_nhom=<?= $item->id_phan_nhom ?>">
-                                 <?= $item->ten_phan_nhom ?>
-                             </option>
-                             <?php endforeach; ?>
-                             <?php endif ?>
-
-                         </select>
-                     </div>
-                 </div>
-
-                 <?php if (isset($_GET['id_phan_nhom'])) : ?>
-                 <?php $id_phan_nhom = $_GET['id_phan_nhom']; ?>
-
-
-                 <!-- ADMIN -->
-                 <?php if ($phannhom->phannhom__Get_By_Id($id_phan_nhom)->cap_bac == 0) : ?>
-                 <form action="quan-ly-tai-khoan/action.php?req=add_admin" method="post" enctype="multipart/form-data">
-                     <input type="hidden" name="id_phan_nhom" value="<?= $id_phan_nhom ?>">
-                     <input type="hidden" name="id_phan_quyen"
-                         value="<?= $phanquyen->phanquyen__Get_By_Cap_Bac(0)->id_phan_quyen ?>">
-                     <div class="card-body">
-                         <div class="form-group">
-                             <label for="">Email <span class="color-crimson">(*)</span></label>
-                             <input type="email" id="email" name="email" class="form-control" required
-                                 placeholder="Nhập email">
-                         </div>
-                         <div class="form-group">
-                             <label for="">Mật khẩu <span class="color-crimson">(*)</span></label>
-                             <input type="password" id="mat_khau" name="mat_khau" class="form-control" required
-                                 placeholder="Nhập mật khẩu">
-                         </div>
-                     </div>
-                     <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
-                     </div>
-                 </form>
-                 <?php endif ?>
-                 <!-- END ADMIN -->
-
-                 <!-- MANAGER  -->
-                 <?php if ($phannhom->phannhom__Get_By_Id($id_phan_nhom)->cap_bac == 1) : ?>
-                 <form action="quan-ly-tai-khoan/action.php?req=add_admin" method="post" enctype="multipart/form-data">
-                     <input type="hidden" name="id_phan_nhom" value="<?= $id_phan_nhom ?>">
-                     <input type="hidden" name="id_phan_quyen"
-                         value="<?= $phanquyen->phanquyen__Get_By_Cap_Bac(1)->id_phan_quyen ?>">
-                     <div class="card-body">
-                         <div class="form-group">
-                             <label for="">Email <span class="color-crimson">(*)</span></label>
-                             <input type="email" id="email" name="email" class="form-control" required
-                                 placeholder="Nhập email">
-                         </div>
-                         <div class="form-group">
-                             <label for="">Mật khẩu <span class="color-crimson">(*)</span></label>
-                             <input type="password" id="mat_khau" name="mat_khau" class="form-control" required
-                                 placeholder="Nhập mật khẩu">
-                         </div>
-                     </div>
-                     <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
-                     </div>
-                 </form>
-                 <?php endif ?>
-                 <!-- END MANAGER -->
-
-                 <!-- SINHVIEN -->
-                 <?php if ($phannhom->phannhom__Get_By_Id($id_phan_nhom)->cap_bac == 2) : ?>
-                 <div class="card-body">
-                     <div class="form-group">
-                         <label for="">Chọn lớp <span class="color-crimson">(*)</span></label>
-                         <select class="form-control" name="id_lop_hoc" required onchange="location.href=this.value">
-                             <?php if (isset($_GET['id_lop_hoc'])) : ?>
-                             <?php $id_lop_hoc = $_GET['id_lop_hoc']; ?>
-                             <option value="<?= $id_lop_hoc ?>">
-                                 <?= $lophoc->lophoc__Get_By_Id($id_lop_hoc)->ten_lop_hoc ?>
-                             </option>
-                             <?php foreach ($lophoc__Get_All as $item) : ?>
-                             <?php if ($item->id_lop_hoc != $id_lop_hoc) : ?>
-                             <option
-                                 value="?page=quan-ly-tai-khoan&id_phan_nhom=<?= $id_phan_nhom ?>&id_lop_hoc=<?= $item->id_lop_hoc ?>">
-                                 <?= $item->ten_lop_hoc ?>
-                             </option>
-                             <?php endif ?>
-                             <?php endforeach; ?>
-                             <?php else : ?>
-                             <option value="">Chọn Lớp</option>
-                             <?php foreach ($lophoc__Get_All as $item) : ?>
-                             <option
-                                 value="?page=quan-ly-tai-khoan&id_phan_nhom=<?= $id_phan_nhom ?>&id_lop_hoc=<?= $item->id_lop_hoc ?>">
-                                 <?= $item->ten_lop_hoc ?>
-                             </option>
-                             <?php endforeach; ?>
-                             <?php endif ?>
-
-                         </select>
-                     </div>
-                 </div>
-
-                 <?php if (isset($_GET['id_lop_hoc'])) : ?>
-                 <?php
-                                $id_lop_hoc = $_GET['id_lop_hoc'];
-                                $sinhvien__Get_All_Not_Exits = $sinhvien->sinhvien__Get_All_Not_Exits($id_lop_hoc);
-
-                                ?>
-
-                 <form action="quan-ly-tai-khoan/action.php?req=add_sv" method="post" enctype="multipart/form-data">
-                     <input type="hidden" name="id_phan_nhom" value="<?= $id_phan_nhom ?>">
-                     <input type="hidden" name="id_phan_quyen"
-                         value="<?= $phanquyen->phanquyen__Get_By_Cap_Bac(2)->id_phan_quyen ?>">
-                     <div class="card-body">
-                         <div class="form-group">
-                             <label for="">Chọn sinh viên <span class="color-crimson">(*)</span></label>
-                             <select class="duallistbox" multiple="multiple" name="id_nguoi_dung[]" required>
-                                 <?php foreach ($sinhvien__Get_All_Not_Exits as $item) : ?>
-                                 <option value="<?= $item->id_sinh_vien ?>">
-                                     <?= $item->ten_sinh_vien ?>
-                                 </option>
-                                 <?php endforeach; ?>
-                             </select>
-                         </div>
-                     </div>
-                     <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
-                     </div>
-                 </form>
-                 <?php endif ?>
-                 <?php endif ?>
-                 <!--END SINHVIEN -->
-
-                 <!-- BITHUDOANKHOA  -->
-                 <?php if ($phannhom->phannhom__Get_By_Id($id_phan_nhom)->cap_bac == 3) : ?>
-                 <div class="card-body">
-                     <div class="form-group">
-                         <label for="">Chọn khoa <span class="color-crimson">(*)</span></label>
-                         <select class="form-control" name="id_khoa" required onchange="location.href=this.value">
-                             <?php if (isset($_GET['id_khoa'])) : ?>
-                             <?php $id_khoa = $_GET['id_khoa']; ?>
-                             <option value="<?= $id_khoa ?>">
-                                 <?= $khoa->khoa__Get_By_Id($id_khoa)->ten_khoa ?>
-                             </option>
-                             <?php foreach ($khoa__Get_All as $item) : ?>
-                             <?php if ($item->id_khoa != $id_khoa) : ?>
-                             <option
-                                 value="?page=quan-ly-tai-khoan&id_phan_nhom=<?= $id_phan_nhom ?>&id_khoa=<?= $item->id_khoa ?>">
-                                 <?= $item->ten_khoa ?>
-                             </option>
-                             <?php endif ?>
-                             <?php endforeach; ?>
-                             <?php else : ?>
-                             <option value="">Chọn khoa</option>
-                             <?php foreach ($khoa__Get_All as $item) : ?>
-                             <option
-                                 value="?page=quan-ly-tai-khoan&id_phan_nhom=<?= $id_phan_nhom ?>&id_khoa=<?= $item->id_khoa ?>">
-                                 <?= $item->ten_khoa ?>
-                             </option>
-                             <?php endforeach; ?>
-                             <?php endif ?>
-
-                         </select>
-                     </div>
-                 </div>
-
-                 <?php if (isset($_GET['id_khoa'])) : ?>
-                 <?php
-                                $id_khoa = $_GET['id_khoa'];
-                                $bithudoankhoa__Get_All_Not_Exits = $bithudoankhoa->bithudoankhoa__Get_All_Not_Exits($id_khoa);
-
-                                ?>
-
-                 <form action="quan-ly-tai-khoan/action.php?req=add_btdk" method="post" enctype="multipart/form-data">
-                     <input type="hidden" name="id_phan_nhom" value="<?= $id_phan_nhom ?>">
-                     <input type="hidden" name="id_phan_quyen"
-                         value="<?= $phanquyen->phanquyen__Get_By_Cap_Bac(2)->id_phan_quyen ?>">
-                     <div class="card-body">
-                         <div class="form-group">
-                             <label for="">Chọn bí thư đoàn khoa <span class="color-crimson">(*)</span></label>
-                             <select class="duallistbox" multiple="multiple" name="id_nguoi_dung[]" required>
-                                 <?php foreach ($bithudoankhoa__Get_All_Not_Exits as $item) : ?>
-                                 <option value="<?= $item->id_bi_thu ?>">
-                                     <?= $item->ten_bi_thu ?>
-                                 </option>
-                                 <?php endforeach; ?>
-                             </select>
-                         </div>
-                     </div>
-                     <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
-                     </div>
-                 </form>
-                 <?php endif ?>
-                 <?php endif ?>
-                 <!-- END BITHUDOANKHOA -->
-
-                 <!-- COVANHOCTAP  -->
-                 <?php if ($phannhom->phannhom__Get_By_Id($id_phan_nhom)->cap_bac == 4) : ?>
-                 <div class="card-body">
-                     <div class="form-group">
-                         <label for="">Chọn lớp <span class="color-crimson">(*)</span></label>
-                         <select class="form-control" name="id_lop_hoc" required onchange="location.href=this.value">
-                             <?php if (isset($_GET['id_lop_hoc'])) : ?>
-                             <?php $id_lop_hoc = $_GET['id_lop_hoc']; ?>
-                             <option value="<?= $id_lop_hoc ?>">
-                                 <?= $lophoc->lophoc__Get_By_Id($id_lop_hoc)->ten_lop_hoc ?>
-                             </option>
-                             <?php foreach ($lophoc__Get_All as $item) : ?>
-                             <?php if ($item->id_lop_hoc != $id_lop_hoc) : ?>
-                             <option
-                                 value="?page=quan-ly-tai-khoan&id_phan_nhom=<?= $id_phan_nhom ?>&id_lop_hoc=<?= $item->id_lop_hoc ?>">
-                                 <?= $item->ten_lop_hoc ?>
-                             </option>
-                             <?php endif ?>
-                             <?php endforeach; ?>
-                             <?php else : ?>
-                             <option value="">Chọn Lớp</option>
-                             <?php foreach ($lophoc__Get_All as $item) : ?>
-                             <option
-                                 value="?page=quan-ly-tai-khoan&id_phan_nhom=<?= $id_phan_nhom ?>&id_lop_hoc=<?= $item->id_lop_hoc ?>">
-                                 <?= $item->ten_lop_hoc ?>
-                             </option>
-                             <?php endforeach; ?>
-                             <?php endif ?>
-
-                         </select>
-                     </div>
-                 </div>
-
-                 <?php if (isset($_GET['id_lop_hoc'])) : ?>
-                 <?php
-                                $id_lop_hoc = $_GET['id_lop_hoc'];
-                                $giangvien__Get_All_Not_Exits = $giangvien->giangvien__Get_All_Not_Exits($id_lop_hoc);
-
-                                ?>
-
-                 <!-- quân sửa: Trỏ form về đúng luồng add_gv và truyền thêm id_lop_hoc -->
-                 <form action="quan-ly-tai-khoan/action.php?req=add_gv" method="post" enctype="multipart/form-data">
-                     <input type="hidden" name="id_phan_nhom" value="<?= $id_phan_nhom ?>">
-                     <input type="hidden" name="id_lop_hoc" value="<?= $id_lop_hoc ?>">
-                     <input type="hidden" name="id_phan_quyen"
-                         value="<?= $phanquyen->phanquyen__Get_By_Cap_Bac(2)->id_phan_quyen ?>">
-                     <div class="card-body">
-                         <div class="form-group">
-                             <label for="">Chọn giảng viên <span class="color-crimson">(*)</span></label>
-                             <select class="duallistbox" multiple="multiple" name="id_nguoi_dung[]" required>
-                                 <?php foreach ($giangvien__Get_All_Not_Exits as $item) : ?>
-                                 <option value="<?= $item->id_giang_vien ?>">
-                                     <?= $item->ten_giang_vien ?>
-                                 </option>
-                                 <?php endforeach; ?>
-                             </select>
-                         </div>
-                     </div>
-                     <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
-                     </div>
-                 </form>
-                 <?php endif ?>
-                 <?php endif ?>
-                 <!-- END COVANHOCTAP -->
-
-
-                 <?php endif ?>
-
-             </div>
-             <!-- /.card -->
+             </form>
          </div>
      </section>
 
@@ -396,7 +214,10 @@ button.btn.removeall.btn-outline-secondary:before {
      </section>
 
      <section class="content">
-         <div class="card card-primary">
+         <div class="container-fluid">
+             <div class="row">
+                 <div class="col-12">
+                     <div class="card card-primary">
              <div class="card-header">
                  <h3 class="card-title">Danh sách [</h3>
                  <a href="?page=quan-ly-tai-khoan&view=view_all" type="button" class="btn btn-tool">
@@ -558,6 +379,9 @@ button.btn.removeall.btn-outline-secondary:before {
              </div>
              <!-- /.card-body -->
          </div>
+                 </div>
+             </div>
+         </div>
      </section>
 
  </div>
@@ -661,9 +485,9 @@ function toggle_add_form() {
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Tài khoản').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
@@ -674,7 +498,7 @@ function update_obj(id_tai_khoan) {
     }, function(data) {
         // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
         $('#div_add_form').slideUp(300);
-        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Tài khoản').removeClass('btn-secondary').addClass('btn-primary');
+        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         $('#div_update').html(data);
     });
 }
@@ -742,3 +566,90 @@ function send_mail_all(id_lop) {
     });
 }
  </script>
+<script>
+window.addEventListener("load", function() {
+    function updateFormLayout() {
+        var select = $('#id_phan_nhom_select');
+        var cap_bac = select.find(':selected').data('capbac');
+        var form = $('#form-add-taikhoan');
+
+        $('.block-admin-manager').hide();
+        $('.block-lop-hoc').hide();
+        $('.block-khoa').hide();
+        $('.block-duallistbox').hide();
+        
+        $('#email, #mat_khau, #id_lop_hoc_select, #id_khoa_select, #id_nguoi_dung_select').prop('required', false);
+
+        if (cap_bac == 0 || cap_bac == 1) {
+            $('.block-admin-manager').show();
+            $('#email, #mat_khau').prop('required', true);
+            form.attr('action', 'quan-ly-tai-khoan/action.php?req=add_admin');
+        } else if (cap_bac == 2) {
+            $('.block-lop-hoc').show();
+            $('#id_lop_hoc_select').prop('required', true);
+            $('#lbl-chon-nguoi-dung').html('Chọn sinh viên <span class="color-crimson">*</span>');
+            form.attr('action', 'quan-ly-tai-khoan/action.php?req=add_sv');
+        } else if (cap_bac == 3) {
+            $('.block-khoa').show();
+            $('#id_khoa_select').prop('required', true);
+            $('#lbl-chon-nguoi-dung').html('Chọn bí thư đoàn khoa <span class="color-crimson">*</span>');
+            form.attr('action', 'quan-ly-tai-khoan/action.php?req=add_btdk');
+        } else if (cap_bac == 4) {
+            $('.block-lop-hoc').show();
+            $('#id_lop_hoc_select').prop('required', true);
+            $('#lbl-chon-nguoi-dung').html('Chọn giảng viên <span class="color-crimson">*</span>');
+            form.attr('action', 'quan-ly-tai-khoan/action.php?req=add_gv');
+        }
+    }
+
+    $('#id_phan_nhom_select').on('change', function() {
+        updateFormLayout();
+        $('#id_lop_hoc_select').val('').trigger('change');
+        $('#id_khoa_select').val('').trigger('change');
+    });
+    
+    function loadUsers(req, paramName, paramValue) {
+        if (!paramValue) {
+            $('#id_nguoi_dung_select').empty();
+            $('.block-duallistbox').hide();
+            $('#id_nguoi_dung_select').prop('required', false);
+            $('#id_nguoi_dung_select').bootstrapDualListbox('refresh');
+            return;
+        }
+        
+        $.ajax({
+            url: 'quan-ly-tai-khoan/ajax_get_users.php',
+            data: { req: req, [paramName]: paramValue },
+            dataType: 'json',
+            success: function(data) {
+                var html = '';
+                $.each(data, function(i, item) {
+                    html += '<option value="' + item.id + '">' + item.name + '</option>';
+                });
+                $('#id_nguoi_dung_select').html(html);
+                $('.block-duallistbox').show();
+                $('#id_nguoi_dung_select').prop('required', true);
+                $('#id_nguoi_dung_select').bootstrapDualListbox('refresh');
+            }
+        });
+    }
+
+    $('#id_lop_hoc_select').on('change', function() {
+        var cap_bac = $('#id_phan_nhom_select').find(':selected').data('capbac');
+        if (cap_bac == 2) {
+            loadUsers('get_sv', 'id_lop_hoc', $(this).val());
+        } else if (cap_bac == 4) {
+            loadUsers('get_gv', 'id_lop_hoc', $(this).val());
+        }
+    });
+
+    $('#id_khoa_select').on('change', function() {
+        var cap_bac = $('#id_phan_nhom_select').find(':selected').data('capbac');
+        if (cap_bac == 3) {
+            loadUsers('get_btdk', 'id_khoa', $(this).val());
+        }
+    });
+
+    updateFormLayout();
+});
+</script>

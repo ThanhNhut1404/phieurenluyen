@@ -4,6 +4,28 @@
     $khoa__Get_All = $khoa->khoa__Get_All();
     if (isset($_GET['view'])) {
         $bithudoankhoa__Get_All = $bithudoankhoa->bithudoankhoa__Get_By_Id_Khoa($_GET['view']);
+        echo "<script>
+            document.querySelector('.btn-tool').click();
+            </script>";
+    }
+    
+    // Hàm escape và old_value
+    function bithu_escape($string) {
+        return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
+    }
+    
+    $bithu_old_input = $_SESSION['bithu_old_input'] ?? [];
+    // Nhựt sửa lỗi: chỉ giữ dữ liệu cũ cho form thêm đúng một lần rồi xóa để không bị dính lại khi quay trang.
+    if (isset($bithu_old_input['context']) && $bithu_old_input['context'] === 'add') {
+        unset($_SESSION['bithu_old_input']);
+    }
+    
+    function bithu_old_value($key, $context, $default = '') {
+        global $bithu_old_input;
+        if (isset($bithu_old_input['context']) && $bithu_old_input['context'] === $context && isset($bithu_old_input[$key])) {
+            return $bithu_old_input[$key];
+        }
+        return $default;
     }
     ?>
 
@@ -11,11 +33,11 @@
  <!-- Content Wrapper. Contains page content -->
  <div class="content-wrapper">
      <!-- Content Header (Page header) -->
-     <section class="content-header">
+     <section class="content-header pb-0">
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý bí thư đoàn khoa</h1>
+                     <h1>Quản lý Bí thư Đoàn khoa</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
@@ -27,129 +49,128 @@
          </div><!-- /.container-fluid -->
      </section>
 
+     <?php $is_add_error = isset($bithu_old_input['context']) && $bithu_old_input['context'] === 'add'; ?>
+
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
      <section class="content mb-2">
-         <div class="col-12">
-             <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-                 <i class="fas fa-plus"></i> Thêm mới Bí thư Đoàn khoa
-             </button>
-         </div>
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <i class="fas <?= $is_add_error ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_add_error ? '' : 'Thêm mới' ?>
+         </button>
      </section>
 
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add_form" style="display: none;">
+     <section class="content" id="div_add_form" style="<?= $is_add_error ? '' : 'display: none;' ?>">
          <form class="row form" action="quan-ly-bi-thu-doan-khoa/action.php?req=add" method="post"
              enctype="multipart/form-data">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Thêm mới</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title">Thêm mới Bí thư Đoàn khoa</h3>
                      </div>
                      <div class="card-body">
                          <div class="row">
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Tên bí thư đoàn khoa <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar" for="">Tên bí thư đoàn khoa <span class="color-crimson">*</span></label>
                                      <input type="text" id="ten_bi_thu" name="ten_bi_thu" class="form-control" required
-                                         placeholder="Nhập tên bí thư đoàn khoa">
+                                         placeholder="Nhập tên bí thư đoàn khoa" value="<?= htmlspecialchars(bithu_old_value('ten_bi_thu', 'add')) ?>">
                                  </div>
                                  <div class="form-group">
-                                     <label for="">Giới tính <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar" for="">Giới tính <span class="color-crimson">*</span></label>
                                      <select class="form-control" name="gioi_tinh" required>
                                          <option value="">Chọn giới tính</option>
-                                         <option value="0">Nữ</option>
-                                         <option value="1">Nam</option>
+                                         <option value="0" <?= bithu_old_value('gioi_tinh', 'add') === '0' ? 'selected' : '' ?>>Nữ</option>
+                                         <option value="1" <?= bithu_old_value('gioi_tinh', 'add') === '1' ? 'selected' : '' ?>>Nam</option>
                                      </select>
                                  </div>
                              </div>
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label for="">Ngày sinh <span class="color-crimson">(*)</span></label>
-                                     <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control" required
-                                         value="<?= date('Y-m-d', strtotime('-22 years')) ?>"
+                                     <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
+                                     <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                         value="<?= bithu_old_value('ngay_sinh', 'add', date('Y-m-d', strtotime('-22 years'))) ?>"
                                          min="<?= date('Y-m-d', strtotime('-100 years')) ?>"
                                          max="<?= date('Y-m-d', strtotime('-10 years')) ?>"
                                          placeholder="Nhập ngày sinh">
                                  </div>
                                  <div class="form-group">
-                                     <label for="">Email <span class="color-crimson">(*)</span></label>
-                                     <input type="email" id="email" name="email" class="form-control" required
-                                         placeholder="Nhập email">
+                                     <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
+                                     <input type="email" id="email" name="email" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-bithu') ? 'is-invalid' : '' ?>" required
+                                         placeholder="Nhập email" value="<?= htmlspecialchars(bithu_old_value('email', 'add')) ?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-bithu'): ?>
+                                         <small class="text-danger mt-1">Email bí thư đoàn khoa đã tồn tại.</small>
+                                     <?php endif; ?>
                                  </div>
                              </div>
-                              <div class="col-6">
-                                  <div class="form-group">
-                                      <label for="">Số điện thoại 1 <span class="color-crimson">(*)</span></label>
-                                      <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1"
-                                          pattern="0[0-9]{9,10}" class="form-control" required
-                                          title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1"
-                                          minlength="10" maxlength="11">
-                                  </div>
-                                  <div class="form-group">
-                                      <label for="">Số điện thoại 2 <span class="color-crimson">(*)</span></label>
-                                      <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2"
-                                          pattern="0[0-9]{9,10}" class="form-control" required
-                                          title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2"
-                                          minlength="10" maxlength="11">
-                                  </div>
-                              </div>
-
                              <div class="col-6">
                                  <!-- quân sửa: Chia nhỏ phần nhập địa chỉ thành 4 ô (Thêm mới) -->
                                  <div class="form-group">
-                                     <label for="">Địa chỉ liên lạc <span class="color-crimson">(*)</span></label>
+                                     <label class="label-sidebar" for="">Địa chỉ liên lạc <span class="color-crimson">*</span></label>
                                      <div class="row">
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_so_nha" class="form-control" required placeholder="Số nhà, đường">
+                                             <input type="text" name="dc_ll_so_nha" class="form-control" required placeholder="Số nhà, đường" value="<?= htmlspecialchars(bithu_old_value('dc_ll_so_nha', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_ap" class="form-control" required placeholder="Ấp / Khu phố">
+                                             <input type="text" name="dc_ll_ap" class="form-control" required placeholder="Ấp / Khu phố" value="<?= htmlspecialchars(bithu_old_value('dc_ll_ap', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_xa" class="form-control" required placeholder="Xã / Phường">
+                                             <input type="text" name="dc_ll_xa" class="form-control" required placeholder="Xã / Phường" value="<?= htmlspecialchars(bithu_old_value('dc_ll_xa', 'add')) ?>">
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
+                                             <input type="text" name="dc_ll_tinh" class="form-control" required placeholder="Tỉnh / Thành phố" value="<?= htmlspecialchars(bithu_old_value('dc_ll_tinh', 'add')) ?>">
                                          </div>
                                      </div>
                                  </div>
+                                  <div class="form-group">
+                                      <label class="label-sidebar" for="">Số điện thoại 1 <span class="color-crimson">*</span></label>
+                                      <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1"
+                                          pattern="0[0-9]{9,10}" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-sdt') ? 'is-invalid' : '' ?>" required
+                                          title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1"
+                                          minlength="10" maxlength="11" value="<?= htmlspecialchars(bithu_old_value('so_dien_thoai_1', 'add')) ?>">
+                                  </div>
                                  <div class="form-group">
-                                     <label for="">Địa chỉ thường trú <span class="color-crimson">(*)</span></label>
-                                     <div class="row">
-                                         <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_so_nha" class="form-control" required placeholder="Số nhà, đường">
-                                         </div>
-                                         <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_ap" class="form-control" required placeholder="Ấp / Khu phố">
-                                         </div>
-                                         <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_xa" class="form-control" required placeholder="Xã / Phường">
-                                         </div>
-                                         <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_tinh" class="form-control" required placeholder="Tỉnh / Thành phố">
-                                         </div>
-                                     </div>
-                                 </div>
-                                 <div class="form-group">
-                                     <label for="">Khoa <span class="color-crimson">(*)</span></label>
-                                     <select class="form-control" name="id_khoa" required>
+                                     <label class="label-sidebar" for="">Khoa <span class="color-crimson">*</span></label>
+                                     <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-khoa') ? 'is-invalid' : '' ?>" name="id_khoa" required>
                                          <option value="">Chọn Khoa</option>
                                          <?php foreach ($khoa__Get_All as $item) : ?>
-                                         <option value="<?= $item->id_khoa ?>"><?= $item->ten_khoa ?></option>
+                                         <option value="<?= $item->id_khoa ?>" <?= bithu_old_value('id_khoa', 'add') == $item->id_khoa ? 'selected' : '' ?>><?= $item->ten_khoa ?></option>
                                          <?php endforeach; ?>
                                      </select>
                                  </div>
                              </div>
+
+                              <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="">Địa chỉ thường trú <span class="color-crimson">*</span></label>
+                                     <div class="row">
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_so_nha" class="form-control" required placeholder="Số nhà, đường" value="<?= htmlspecialchars(bithu_old_value('dc_tt_so_nha', 'add')) ?>">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_ap" class="form-control" required placeholder="Ấp / Khu phố" value="<?= htmlspecialchars(bithu_old_value('dc_tt_ap', 'add')) ?>">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_xa" class="form-control" required placeholder="Xã / Phường" value="<?= htmlspecialchars(bithu_old_value('dc_tt_xa', 'add')) ?>">
+                                         </div>
+                                         <div class="col-6 mb-2">
+                                             <input type="text" name="dc_tt_tinh" class="form-control" required placeholder="Tỉnh / Thành phố" value="<?= htmlspecialchars(bithu_old_value('dc_tt_tinh', 'add')) ?>">
+                                         </div>
+                                     </div>
+                                 </div>
+                                  <div class="form-group">
+                                      <label class="label-sidebar" for="">Số điện thoại 2 <span class="color-crimson">*</span></label>
+                                      <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2"
+                                          pattern="0[0-9]{9,10}" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-sdt') ? 'is-invalid' : '' ?>" required
+                                          title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2"
+                                          minlength="10" maxlength="11" value="<?= htmlspecialchars(bithu_old_value('so_dien_thoai_2', 'add')) ?>">
+                                  </div>
+                              </div>
                          </div>
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -163,7 +184,7 @@
      <section class="content">
          <div class="card card-primary">
              <div class="card-header">
-                 <h3 class="card-title">Danh sách Bí thư đoàn khoa</h3>
+                 <h3 class="card-title">Danh sách Bí thư Đoàn khoa</h3>
                  <div class="card-tools">
                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                          <i class="fas fa-minus"></i>
@@ -227,8 +248,8 @@
                               </td>
 
                              <td>
-                                 <a href="#" type="button" class="btn  btn-warning m-2"
-                                     onclick="update_obj(<?= $item->id_bi_thu ?>)">
+                                 <a href="javascript:void(0)" type="button" class="btn  btn-warning m-2"
+                                     onclick="return update_obj(<?= $item->id_bi_thu ?>)">
                                      <i class="ri-edit-2-line"></i>
                                  </a>
                                  <a href="#" type="button" class="btn  btn-danger m-2"
@@ -347,25 +368,50 @@ function toggle_add_form() {
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới Bí thư Đoàn khoa').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
 
-function update_obj(id_bi_thu) {
-    $.post('quan-ly-bi-thu-doan-khoa/update.php', {
-        'id_bi_thu': id_bi_thu,
-    }, function(data) {
-        // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
-        $('#div_add_form').slideUp(300);
-        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới Bí thư Đoàn khoa').removeClass('btn-secondary').addClass('btn-primary');
-        $('#div_update').html(data);
+function update_obj(id_bi_thu, error_status = '') {
+    $.ajax({
+        url: 'quan-ly-bi-thu-doan-khoa/update.php',
+        method: 'POST',
+        data: { 'id_bi_thu': id_bi_thu, 'error_status': error_status },
+        success: function(data) {
+            // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
+            $('#div_add_form').slideUp(300);
+            $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
+            $('#div_update').html(data);
+        },
+        error: function(xhr) {
+            var title = 'Lỗi hệ thống';
+            var text = 'Không thể tải form cập nhật.';
+            if (xhr.status === 403) {
+                title = 'Không có quyền';
+                text = 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn.';
+            } else if (xhr.status === 404) {
+                title = 'Không tìm thấy';
+                text = 'Bí thư đoàn khoa cần sửa không tồn tại.';
+            } else if (xhr.status >= 500) {
+                title = 'Lỗi máy chủ';
+                text = 'Máy chủ đang gặp sự cố.';
+            }
+            Swal.fire(title, text, 'error');
+        }
     });
+    return false;
 }
 
 function cancel_update() {
     $("#div_update").html('');
 }
+
+<?php if (isset($bithu_old_input['context']) && $bithu_old_input['context'] === 'update' && isset($bithu_old_input['id_bi_thu'])): ?>
+window.addEventListener("load", function() {
+    update_obj(<?=(int)$bithu_old_input['id_bi_thu']?>, '<?=$_GET['status'] ?? ''?>');
+});
+<?php endif; ?>
  </script>
