@@ -182,4 +182,23 @@ class taikhoan extends Database
         }
         return $obj->fetchColumn() > 0;
     }
+
+    public function taikhoan__Update_Token($id_tai_khoan, $token)
+    {
+        $obj = $this->connect->prepare("UPDATE taikhoan SET api_token=? WHERE id_tai_khoan=?");
+        $obj->execute(array($token, $id_tai_khoan));
+        return $obj->rowCount();
+    }
+
+    public function taikhoan__Get_By_Token($token)
+    {
+        $obj = $this->connect->prepare("SELECT * FROM taikhoan WHERE api_token = ? AND trang_thai=1");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($token));
+        if ($obj->rowCount() > 0) {
+            return $obj->fetch();
+        } else {
+            return 0;
+        }
+    }
 }
