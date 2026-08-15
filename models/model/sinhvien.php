@@ -49,7 +49,13 @@ class sinhvien extends Database {
     public function sinhvien__Update($id_sinh_vien, $ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc) {
         $obj = $this->connect->prepare("UPDATE sinhvien SET ma_sinh_vien=?, ten_sinh_vien=?, gioi_tinh=?, ngay_sinh=?, email=?, so_dien_thoai_1=?, so_dien_thoai_2=?, dia_chi_lien_lac=?, dia_chi_thuong_tru=?, chuc_vu=?, id_lop_hoc=? WHERE id_sinh_vien=?");
         $obj->execute(array($ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc, $id_sinh_vien));
-        return $obj->rowCount();
+        $rowCount = $obj->rowCount();
+        
+        // Đồng bộ email sang bảng taikhoan
+        $obj_tk = $this->connect->prepare("UPDATE taikhoan SET email=? WHERE id_nguoi_dung=? AND id_phan_nhom=3");
+        $obj_tk->execute(array($email, $id_sinh_vien));
+        
+        return $rowCount;
     }
     
 

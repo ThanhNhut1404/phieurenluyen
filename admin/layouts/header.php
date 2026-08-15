@@ -41,6 +41,7 @@
             <a class="nav-link" href="index.php?page=thong-bao">
                 <i class="ri-notification-3-line"></i>
                 <?php
+                    require_once __DIR__ . '/../../models/getModel.php';
                     if (isset($yeucaukichhoat)) {
                         $pending_reqs = $yeucaukichhoat->yeucaukichhoat__Get_All_Pending();
                         $count_pending = count($pending_reqs);

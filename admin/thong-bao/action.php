@@ -29,7 +29,13 @@ function vietTatChuCaiDau($str) {
     $acronym = "";
     foreach ($words as $w) {
         if (trim($w) != "") {
-            $acronym .= mb_substr(trim($w), 0, 1, "UTF-8");
+            $word = trim($w);
+            // Nếu từ có chứa số (như 17A, 1), ta giữ nguyên cả từ đó
+            if (preg_match('/[0-9]/', $word)) {
+                $acronym .= $word;
+            } else {
+                $acronym .= mb_substr($word, 0, 1, "UTF-8");
+            }
         }
     }
     return strtoupper($acronym);
@@ -67,22 +73,25 @@ if (isset($_GET["req"]) && $_GET["req"] == 'tao_tai_khoan') {
         $ten_lop = $lh->ten_lop_hoc;
     }
 
-    $mat_khau_goc = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . $ten_lop . "#1234";
+    $mat_khau_goc = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
     $ghi_chu = date("Y-m-d H:i:s");
 
     $mat_khau_ma_hoa = $hashpassword->Encryption($mat_khau_goc);
 
-    // Kiểm tra xem tài khoản đã tồn tại chưa
-    if (!$taikhoan->taikhoan__Exists_Email($email)) {
+    // Kiểm tra xem sinh viên đã có tài khoản nào chưa (do data cũ có thể tạo tài khoản rác user284@gmail.com)
+    $tk_exist = $taikhoan->taikhoan__Get_By_Sinh_Vien($sv->id_sinh_vien);
+    
+    if (count($tk_exist) == 0) {
+        // Sinh viên chưa từng có tài khoản -> Tạo mới
         $status = $taikhoan->taikhoan__Add($email, $mat_khau_ma_hoa, $ghi_chu, $id_phan_quyen, $id_phan_nhom, $sv->id_sinh_vien);
         if ($status == 0) {
             echo json_encode(["status" => "error", "message" => "Lỗi khi tạo tài khoản."]);
             exit();
         }
     } else {
-        // Tài khoản đã tồn tại, ta chỉ reset lại mật khẩu để gửi mail
-        $tk_exist = $taikhoan->taikhoan__Get_By_Email($email);
-        $taikhoan->taikhoan__Reset($tk_exist->id_tai_khoan, $mat_khau_ma_hoa);
+        // Sinh viên đã có tài khoản (có thể là email cũ). Cập nhật lại email chính xác và reset password
+        $id_tai_khoan = $tk_exist[0]->id_tai_khoan;
+        $taikhoan->taikhoan__Update($id_tai_khoan, $email, $mat_khau_ma_hoa, $ghi_chu, $id_phan_quyen, $id_phan_nhom, $sv->id_sinh_vien);
     }
 
     // Đánh dấu yêu cầu đã xử lý

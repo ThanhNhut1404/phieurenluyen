@@ -37,7 +37,7 @@ class taikhoan extends Database
 
     public function taikhoan__Get_All_Phan_Nhom($cap_bac)
     {
-        $obj = $this->connect->prepare("SELECT * FROM taikhoan, phannhom WHERE taikhoan.id_phan_nhom = phannhom.id_phan_nhom AND phannhom.cap_bac = ?");
+        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan, phannhom WHERE taikhoan.id_phan_nhom = phannhom.id_phan_nhom AND phannhom.cap_bac = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($cap_bac));
         return $obj->fetchAll();
@@ -130,7 +130,7 @@ class taikhoan extends Database
 
     public function taikhoan__Get_By_Sinh_Vien($id_nguoi_dung)
     {
-        $obj = $this->connect->prepare("SELECT taikhoan.email as email * FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 3");
+        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 3 AND taikhoan.id_nguoi_dung = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_nguoi_dung));
         return $obj->fetchAll();
@@ -138,7 +138,7 @@ class taikhoan extends Database
 
     public function taikhoan__Get_By_Bi_Thu($id_nguoi_dung)
     {
-        $obj = $this->connect->prepare("SELECT * FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 4");
+        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 4 AND taikhoan.id_nguoi_dung = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_nguoi_dung));
         return $obj->fetchAll();
@@ -146,7 +146,7 @@ class taikhoan extends Database
 
     public function taikhoan__Get_By_Giang_Vien($id_nguoi_dung)
     {
-        $obj = $this->connect->prepare("SELECT * FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 5");
+        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 5 AND taikhoan.id_nguoi_dung = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_nguoi_dung));
         return $obj->fetchAll();
@@ -173,7 +173,7 @@ class taikhoan extends Database
 
     public function taikhoan__Get_By_Lop_Hoc($id_lop_hoc)
     {
-        $obj = $this->connect->prepare("SELECT * FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 3 AND sinhvien.id_lop_hoc = ?");
+        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 3 AND sinhvien.id_lop_hoc = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_lop_hoc));
         return $obj->fetchAll();
@@ -208,5 +208,27 @@ class taikhoan extends Database
         } else {
             return 0;
         }
+    }
+
+    public function taikhoan__Set_OTP($email, $otp_code, $expires_at)
+    {
+        $obj = $this->connect->prepare("UPDATE taikhoan SET otp_code = ?, otp_expires_at = ? WHERE email = ?");
+        $obj->execute(array($otp_code, $expires_at, $email));
+        return $obj->rowCount();
+    }
+
+    public function taikhoan__Verify_OTP($email, $otp_code)
+    {
+        $obj = $this->connect->prepare("SELECT * FROM taikhoan WHERE email = ? AND otp_code = ? AND otp_expires_at > NOW()");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($email, $otp_code));
+        return $obj->rowCount() > 0;
+    }
+
+    public function taikhoan__Reset_Password_By_Email($email, $mat_khau)
+    {
+        $obj = $this->connect->prepare("UPDATE taikhoan SET mat_khau = ?, otp_code = NULL, otp_expires_at = NULL WHERE email = ?");
+        $obj->execute(array($mat_khau, $email));
+        return $obj->rowCount();
     }
 }
