@@ -6,6 +6,10 @@
                 require "quan-ly-thong-ke/thong-ke.php";
                 break;
 
+            case "thong-bao":
+                require "thong-bao/index.php";
+                break;
+
             case "import-from-excel":
                 require "import-from-excel/index.php";
                 break;

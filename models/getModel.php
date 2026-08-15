@@ -25,6 +25,7 @@ require "model/taikhoan.php";
 require "model/trinhdo.php";
 require "model/xeploai.php";
 require "model/hashpassword.php";
+require "model/yeucaukichhoat.php";
 
 $bithudoankhoa = new bithudoankhoa();
 $bocauhoi = new bocauhoi();
@@ -52,3 +53,4 @@ $taikhoan = new taikhoan();
 $trinhdo = new trinhdo();
 $xeploai = new xeploai();
 $hashpassword = new hashpassword();
+$yeucaukichhoat = new yeucaukichhoat();

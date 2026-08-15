@@ -36,6 +36,22 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
+        <!-- Notification -->
+        <li class="nav-item">
+            <a class="nav-link" href="index.php?page=thong-bao">
+                <i class="ri-notification-3-line"></i>
+                <?php
+                    if (isset($yeucaukichhoat)) {
+                        $pending_reqs = $yeucaukichhoat->yeucaukichhoat__Get_All_Pending();
+                        $count_pending = count($pending_reqs);
+                        if ($count_pending > 0) {
+                            echo '<span class="badge badge-danger navbar-badge">' . $count_pending . '</span>';
+                        }
+                    }
+                ?>
+            </a>
+        </li>
+
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
                 <i class="ri-user-line"></i>

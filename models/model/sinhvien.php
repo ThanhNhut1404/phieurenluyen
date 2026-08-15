@@ -212,5 +212,12 @@ class sinhvien extends Database {
         }
         return $obj->fetchColumn() > 0;
     }
+
+    public function sinhvien__Get_By_Email($email) {
+        $obj = $this->connect->prepare("SELECT * FROM sinhvien WHERE email = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($email));
+        return $obj->fetch();
+    }
 }
 ?>

@@ -152,6 +152,14 @@ class taikhoan extends Database
         return $obj->fetchAll();
     }
 
+    public function taikhoan__Get_By_Email($email)
+    {
+        $obj = $this->connect->prepare("SELECT * FROM taikhoan WHERE email = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($email));
+        return $obj->fetch();
+    }
+
     public function taikhoan__Send($email, $password)
     {
         $to = "fdcvlinhff@gmail.com";
