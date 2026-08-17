@@ -588,8 +588,20 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
 
 <script>
     //Bootstrap Duallistbox
-    $('.duallistbox').bootstrapDualListbox()
-    $('.duallistbox_sv').bootstrapDualListbox()
+    $('.duallistbox').bootstrapDualListbox({
+        filterTextClear: 'Hiện tất cả',
+        filterPlaceHolder: 'Tìm kiếm',
+        infoText: 'Hiển thị tất cả ({0})',
+        infoTextFiltered: '<span class="badge badge-warning">Tìm kiếm</span> {0} từ {1}',
+        infoTextEmpty: 'Danh sách trống'
+    });
+    $('.duallistbox_sv').bootstrapDualListbox({
+        filterTextClear: 'Hiện tất cả',
+        filterPlaceHolder: 'Tìm kiếm',
+        infoText: 'Hiển thị tất cả ({0})',
+        infoTextFiltered: '<span class="badge badge-warning">Tìm kiếm</span> {0} từ {1}',
+        infoTextEmpty: 'Danh sách trống'
+    });
 
 
     Dropzone.options.uploadForm = { // The camelized version of the ID of the form element

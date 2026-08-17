@@ -59,7 +59,7 @@
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý phiếu chấm điểm </h1>
+                     <h1>Quản lý Phiếu chấm điểm </h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
@@ -71,7 +71,19 @@
          </div><!-- /.container-fluid -->
      </section>
 
-     <section class="content">
+     <?php 
+        $status = isset($_GET['status']) ? $_GET['status'] : '';
+        $is_open_form = isset($_GET['id_dot']) || $status != ''; 
+     ?>
+
+     <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
+     <section class="content mb-2">
+         <button type="button" class="btn <?= $is_open_form ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <i class="fas <?= $is_open_form ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_open_form ? '' : 'Xử lý Phiếu' ?>
+         </button>
+     </section>
+
+     <section class="content" id="div_add_form" <?= $is_open_form ? '' : 'style="display: none;"' ?>>
          <form class="row form" action="quan-ly-phieu-cham-diem/action.php?req=add" method="post"
              enctype="multipart/form-data">
              <input type="hidden" name="id_dot" value="<?=$id_dot?>">
@@ -81,51 +93,56 @@
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
-                         <h3 class="card-title">Xử lý phiếu chấm điểm</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
+                         <h3 class="card-title">Xử lý Phiếu chấm điểm</h3>
                      </div>
                      <div class="card-body">
                          <div class="row">
-                             <div class="col">
-                                 <label for="">Chọn đợt (<?=count($dotchamdiem__Get_All)?>)</label>
-                                 <select class="form-control" name="" required onchange="location.href=this.value">
-                                     <option value="">Chọn đợt</option>
-                                     <?php foreach ($dotchamdiem__Get_All as $item):?>
-                                     <option value="?page=quan-ly-phieu-cham-diem&id_dot=<?=$item->id_dot?>"
-                                         <?=$id_dot == $item->id_dot ? "selected" : ""?>>
-                                         <?=$item->ten_dot?>
-                                     </option>
-                                     <?php endforeach; ?>
-                                 </select>
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="id_dot_select">Chọn đợt (<?=count($dotchamdiem__Get_All)?>) <span class="color-crimson">*</span></label>
+                                     <select class="form-control <?= ($status != '' && !isset($_GET['id_dot'])) ? 'is-invalid' : '' ?>" id="id_dot_select" name="" required onchange="location.href=this.value">
+                                         <option value="">Chọn đợt</option>
+                                         <?php foreach ($dotchamdiem__Get_All as $item):?>
+                                         <option value="?page=quan-ly-phieu-cham-diem&id_dot=<?=$item->id_dot?>"
+                                             <?=$id_dot == $item->id_dot ? "selected" : ""?>>
+                                             <?=$item->ten_dot?>
+                                         </option>
+                                         <?php endforeach; ?>
+                                     </select>
+                                 </div>
                              </div>
 
-                             <div class="col">
+                             <div class="col-6">
                                  <?php if(isset($_GET['id_dot'])):?>
-                                 <label for="">Chọn lớp học (<?=count($lophoc__Get_All)?>)</label>
-                                 <select class="form-control" name="" required onchange="location.href=this.value">
-                                     <option value="">Chọn lớp học</option>
-                                     <?php foreach ($lophoc__Get_All as $item):?>
-                                     <option
-                                         value="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$item->id_lop_hoc?>&view=<?=$view?>"
-                                         <?=$id_lop_hoc == $item->id_lop_hoc ? "selected" : ""?>>
-                                         <?=$item->ten_lop_hoc?>
-                                     </option>
-                                     <?php endforeach; ?>
-                                 </select>
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="id_lop_hoc_select">Chọn lớp học (<?=count($lophoc__Get_All)?>) <span class="color-crimson">*</span></label>
+                                     <select class="form-control <?= ($status == 'invalid' || $status == 'incomplete-xep-loai' || $status == 'unscored-phieu') ? 'is-invalid' : '' ?>" id="id_lop_hoc_select" name="" required onchange="location.href=this.value">
+                                         <option value="">Chọn lớp học</option>
+                                         <?php foreach ($lophoc__Get_All as $item):?>
+                                         <option
+                                             value="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$item->id_lop_hoc?>&view=<?=$view?>"
+                                             <?=$id_lop_hoc == $item->id_lop_hoc ? "selected" : ""?>>
+                                             <?=$item->ten_lop_hoc?>
+                                         </option>
+                                         <?php endforeach; ?>
+                                     </select>
+                                     <?php if ($status == 'invalid'): ?>
+                                         <small class="text-danger mt-1">Vui lòng chọn đợt và lớp học hợp lệ.</small>
+                                     <?php elseif ($status == 'incomplete-xep-loai'): ?>
+                                         <small class="text-danger mt-1">Hệ thống chưa cấu hình đủ xếp loại. Vui lòng cập nhật trước khi xử lý.</small>
+                                     <?php elseif ($status == 'unscored-phieu'): ?>
+                                         <small class="text-danger mt-1">Lớp này còn phiếu chưa được Cố vấn học tập chấm điểm.</small>
+                                     <?php endif; ?>
+                                 </div>
                                  <?php endif; ?>
                              </div>
-
                          </div>
-
                      </div>
                      <!-- /.card-body -->
-                     <div class="card-footer">
-                         <input type="submit" value="Xử lý" class="btn btn-success float-right"
+                     <div class="card-footer py-2">
+                         <input type="submit" value="Xử lý" class="btn btn-success float-right font-weight-bold"
                              <?=isset($_GET['id_lop_hoc']) ? "" : "disabled"?>>
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
              </div>
@@ -139,25 +156,28 @@
          <div class="card card-primary">
              <div class="card-header">
                  <h3 class="card-title">Danh sách Phiếu chấm điểm</h3>
-                 <?php if(isset($_GET['id_lop_hoc'])):?>
-                 <div class="card-tools">
-                     <a class="btn btn-outline-primary"
+                 <div class="card-tools <?=isset($_GET['id_lop_hoc']) ? 'd-flex align-items-center' : ''?>">
+                     <?php if(isset($_GET['id_lop_hoc'])):?>
+                     <a class="btn btn-outline-primary btn-sm mr-1"
                          href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=xem-tat-ca">
                          Tất cả
                          (<?=count($sinhvien__Get_By_Id_Lop_Hoc_All)?>)
                      </a>
-                     <a class="btn btn-outline-primary"
+                     <a class="btn btn-outline-primary btn-sm mr-1"
                          href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=da-cham-diem">Cố
                          vấn đã
                          chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Da_Cham)?>)
                      </a>
-                     <a class="btn btn-outline-primary"
+                     <a class="btn btn-outline-primary btn-sm mr-2"
                          href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=chua-cham-diem">Cố
                          vấn chưa
                          chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham)?>)
                      </a>
+                     <?php endif; ?>
+                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                         <i class="fas fa-minus"></i>
+                     </button>
                  </div>
-                 <?php endif; ?>
              </div>
              <!-- /.card-header -->
              <div class="card-body">
@@ -210,7 +230,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -282,7 +302,26 @@ window.addEventListener("load", function() {
                 }
             ]
         }]
-    }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+    });
 
 });
+
+function toggle_add_form() {
+    var addForm = $('#div_add_form');
+    var btn = $('#btn-toggle-add');
+    
+    // Đóng form cập nhật nếu đang mở
+    $("#div_update").html('');
+    
+    addForm.slideToggle(300, function() {
+        if (addForm.is(':visible')) {
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
+        } else {
+            btn.html('<i class="fas fa-plus"></i> Xử lý phiếu chấm điểm').removeClass('btn-cancel-custom').addClass('btn-success');
+        }
+    });
+}
  </script>
+
+
+

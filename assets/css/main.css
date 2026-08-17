@@ -540,8 +540,9 @@ table#tablejs thead th {
 .dataTables_wrapper .dt-buttons {
     margin-right: 15px;
 }
-/* Style the main "Xuất dữ liệu" collection button to match the dark blue sidebar color as an outline button */
-.dataTables_wrapper .dt-buttons .buttons-collection {
+/* Style the main "Xuất dữ liệu" collection button and custom filter button to match the dark blue sidebar color as an outline button */
+.dataTables_wrapper .dt-buttons .buttons-collection,
+.dataTables_wrapper .dt-buttons .btn-custom-filter {
     background-color: transparent !important;
     border: 1px solid #0f2a5a !important;
     color: #0f2a5a !important;
@@ -554,7 +555,8 @@ table#tablejs thead th {
     display: inline-flex !important;
     align-items: center !important;
 }
-.dataTables_wrapper .dt-buttons .buttons-collection:hover {
+.dataTables_wrapper .dt-buttons .buttons-collection:hover,
+.dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
     background-color: #0f2a5a !important;
     border-color: #0f2a5a !important;
     color: #fff !important;

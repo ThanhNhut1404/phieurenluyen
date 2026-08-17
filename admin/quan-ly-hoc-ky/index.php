@@ -97,39 +97,43 @@
                         <h3 class="card-title">Thêm mới Học kỳ</h3>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label class="label-sidebar">Năm học <span class="color-crimson">*</span></label>
-                            <select class="form-control" name="id_nam_hoc" required>
-                                <option value="">Chọn năm học</option>
-                                <?php foreach ($namhoc__Get_All as $item):?>
-                                <option value="<?=(int)$item->id_nam_hoc?>" <?=((int)hocky_old_value('id_nam_hoc', 'add') === (int)$item->id_nam_hoc) ? 'selected' : ''?>><?=hocky_escape(hocky_format_namhoc_combobox($item))?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="label-sidebar">Tên học kỳ <span class="color-crimson">*</span></label>
-                            <input type="text" id="ten_hoc_ky" name="ten_hoc_ky" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'invalid-ten-hoc-ky'])) ? 'is-invalid' : '' ?>" required maxlength="50"
-                                value="<?=hocky_escape(hocky_old_value('ten_hoc_ky', 'add'))?>" placeholder="Nhập tên học kỳ">
-                            <?php if ($is_add_error && isset($_GET['status'])): ?>
-                                <?php if ($_GET['status'] == 'duplicate'): ?>
-                                    <small class="text-danger mt-1">Học kỳ này đã tồn tại trong năm học được chọn.</small>
-                                <?php elseif ($_GET['status'] == 'invalid-ten-hoc-ky'): ?>
-                                    <small class="text-danger mt-1">Tên học kỳ không được để trống và tối đa 50 ký tự.</small>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Năm học <span class="color-crimson">*</span></label>
+                                <select class="form-control" name="id_nam_hoc" required>
+                                    <option value="">Chọn năm học</option>
+                                    <?php foreach ($namhoc__Get_All as $item):?>
+                                    <option value="<?=(int)$item->id_nam_hoc?>" <?=((int)hocky_old_value('id_nam_hoc', 'add') === (int)$item->id_nam_hoc) ? 'selected' : ''?>><?=hocky_escape(hocky_format_namhoc_combobox($item))?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Tên học kỳ <span class="color-crimson">*</span></label>
+                                <input type="text" id="ten_hoc_ky" name="ten_hoc_ky" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'invalid-ten-hoc-ky'])) ? 'is-invalid' : '' ?>" required maxlength="50"
+                                    value="<?=hocky_escape(hocky_old_value('ten_hoc_ky', 'add'))?>" placeholder="Nhập tên học kỳ">
+                                <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                    <?php if ($_GET['status'] == 'duplicate'): ?>
+                                        <small class="text-danger mt-1">Học kỳ này đã tồn tại trong năm học được chọn.</small>
+                                    <?php elseif ($_GET['status'] == 'invalid-ten-hoc-ky'): ?>
+                                        <small class="text-danger mt-1">Tên học kỳ không được để trống và tối đa 50 ký tự.</small>
+                                    <?php endif; ?>
                                 <?php endif; ?>
-                            <?php endif; ?>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="label-sidebar">Ngày bắt đầu <span class="color-crimson">*</span></label>
-                            <input type="date" id="ngay_bat_dau" name="ngay_bat_dau" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                                value="<?=hocky_escape(hocky_old_value('ngay_bat_dau', 'add'))?>">
-                            <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ngay'): ?>
-                                <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
-                            <?php endif; ?>
-                        </div>
-                        <div class="form-group">
-                            <label class="label-sidebar">Ngày kết thúc <span class="color-crimson">*</span></label>
-                            <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                                value="<?=hocky_escape(hocky_old_value('ngay_ket_thuc', 'add'))?>">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Ngày bắt đầu <span class="color-crimson">*</span></label>
+                                <input type="date" id="ngay_bat_dau" name="ngay_bat_dau" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                    value="<?=hocky_escape(hocky_old_value('ngay_bat_dau', 'add'))?>">
+                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ngay'): ?>
+                                    <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
+                                <?php endif; ?>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Ngày kết thúc <span class="color-crimson">*</span></label>
+                                <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                    value="<?=hocky_escape(hocky_old_value('ngay_ket_thuc', 'add'))?>">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="label-sidebar">Ghi chú</label>
@@ -141,7 +145,7 @@
                         </div>
                     </div>
                     <!-- /.card-body -->
-                    <div class="card-footer">
+                    <div class="card-footer py-2">
                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                     </div>
@@ -213,7 +217,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -289,7 +293,162 @@ window.addEventListener("load", function() {
                     }
                 }
             ]
-        }]
+        },
+        {
+            "text": "<i class='fas fa-filter'></i>",
+            "titleAttr": "Bộ lọc",
+            "className": "btn btn-sm btn-custom-filter ml-1",
+            "attr": {
+                "id": "btn-filter-dropdown"
+            }
+        }],
+        "initComplete": function() {
+            var filterHtml = `
+            <style>
+            .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                background-color: #0f2a5a !important;
+                border: 1px solid #0f2a5a !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                background-color: transparent !important;
+                border-color: #0f2a5a !important;
+                color: #0f2a5a !important;
+            }
+            #custom-filter-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                margin-top: 5px;
+                width: 300px;
+                background: #fff;
+                border: 1px solid rgba(0,0,0,.15);
+                border-radius: .25rem;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                z-index: 1050;
+            }
+            </style>
+            <div id="custom-filter-menu" class="p-3">
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Năm học:</label>
+                    <select id="filter_nam_hoc" class="form-control form-control-sm">
+                        <option value="">-- Tất cả năm học --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Học kỳ:</label>
+                    <select id="filter_hoc_ky" class="form-control form-control-sm">
+                        <option value="">-- Tất cả học kỳ --</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                    <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                </div>
+            </div>`;
+            
+            var $btn = $('#btn-filter-dropdown');
+            $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+            $btn.parent().append(filterHtml);
+
+            var table = $('#tablejs').DataTable();
+
+            function updateCascadeDropdowns() {
+                var selectedNam = $('#filter_nam_hoc').val() || "";
+                var selectedHocKy = $('#filter_hoc_ky').val() || "";
+                
+                var namHocOptions = [];
+                var hocKyOptions = [];
+                
+                table.rows().every(function() {
+                    var data = this.data();
+                    var nam = $('<div>').html(data[2]).text().trim();
+                    var hocky = $('<div>').html(data[1]).text().trim();
+                    
+                    if (namHocOptions.indexOf(nam) === -1) namHocOptions.push(nam);
+                    
+                    if (selectedNam === "" || nam === selectedNam) {
+                        if (hocKyOptions.indexOf(hocky) === -1) hocKyOptions.push(hocky);
+                    }
+                });
+                
+                var select = $('#filter_nam_hoc');
+                select.empty().append('<option value="">-- Tất cả năm học --</option>');
+                namHocOptions.sort().forEach(function(opt) {
+                    select.append('<option value="'+opt+'">'+opt+'</option>');
+                });
+                if (namHocOptions.indexOf(selectedNam) !== -1) {
+                    select.val(selectedNam);
+                } else {
+                    select.val('');
+                }
+                
+                select = $('#filter_hoc_ky');
+                select.empty().append('<option value="">-- Tất cả học kỳ --</option>');
+                hocKyOptions.sort().forEach(function(opt) {
+                    select.append('<option value="'+opt+'">'+opt+'</option>');
+                });
+                if (hocKyOptions.indexOf(selectedHocKy) !== -1) {
+                    select.val(selectedHocKy);
+                } else {
+                    select.val('');
+                }
+            }
+
+            $('#filter_nam_hoc').on('change', function() {
+                $('#filter_hoc_ky').val(''); // Reset child
+                updateCascadeDropdowns();
+            });
+            $('#filter_hoc_ky').on('change', function() {
+                updateCascadeDropdowns();
+            });
+
+            // Initial population
+            updateCascadeDropdowns();
+
+            // Custom dropdown toggle logic
+            $btn.on('click', function(e) {
+                e.stopPropagation();
+                $('#custom-filter-menu').fadeToggle(200);
+            });
+
+            $('#custom-filter-menu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-apply-filter').on('click', function() {
+                var namVal = $('#filter_nam_hoc').val();
+                var hocKyVal = $('#filter_hoc_ky').val();
+                
+                table.column(2).search(namVal ? '^' + $.fn.dataTable.util.escapeRegex(namVal) + '$' : '', true, false)
+                     .column(1).search(hocKyVal ? '^' + $.fn.dataTable.util.escapeRegex(hocKyVal) + '$' : '', true, false)
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-cancel-filter').on('click', function() {
+                $('#filter_nam_hoc').val('');
+                $('#filter_hoc_ky').val('');
+                updateCascadeDropdowns();
+                table.column(2).search('')
+                     .column(1).search('')
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+        }
     });
 });
 
@@ -404,3 +563,6 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
 </script>
+
+
+

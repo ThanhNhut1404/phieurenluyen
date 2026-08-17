@@ -79,39 +79,43 @@
                 <h3 class="card-title">Cập nhật Học kỳ</h3>
             </div>
             <div class="card-body">
-                <div class="form-group">
-                    <label class="label-sidebar" for="">Năm học <span class="color-crimson">*</span></label>
-                    <select class="form-control" name="id_nam_hoc" required>
-                        <option value="">Chọn năm học</option>
-                        <?php foreach ($namhoc__Get_All as $item):?>
-                        <option value="<?=(int)$item->id_nam_hoc?>" <?=(int)hocky_update_old_value('id_nam_hoc', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->id_nam_hoc) === (int)$item->id_nam_hoc ? 'selected' : ''?>><?=hocky_update_escape(hocky_format_namhoc_combobox($item))?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="label-sidebar" for="ten_hoc_ky_update">Tên học kỳ <span class="color-crimson">*</span></label>
-                    <input type="text" id="ten_hoc_ky_update" name="ten_hoc_ky" class="form-control <?= ($is_update_error && in_array($status, ['duplicate', 'invalid-ten-hoc-ky'])) ? 'is-invalid' : '' ?>" required maxlength="50"
-                        placeholder="Nhập tên học kỳ" value="<?=hocky_update_escape(hocky_update_old_value('ten_hoc_ky', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->ten_hoc_ky))?>">
-                    <?php if ($is_update_error): ?>
-                        <?php if ($status == 'duplicate'): ?>
-                            <small class="text-danger mt-1">Học kỳ này đã tồn tại trong năm học được chọn.</small>
-                        <?php elseif ($status == 'invalid-ten-hoc-ky'): ?>
-                            <small class="text-danger mt-1">Tên học kỳ không được để trống và tối đa 50 ký tự.</small>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label class="label-sidebar" for="">Năm học <span class="color-crimson">*</span></label>
+                        <select class="form-control" name="id_nam_hoc" required>
+                            <option value="">Chọn năm học</option>
+                            <?php foreach ($namhoc__Get_All as $item):?>
+                            <option value="<?=(int)$item->id_nam_hoc?>" <?=(int)hocky_update_old_value('id_nam_hoc', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->id_nam_hoc) === (int)$item->id_nam_hoc ? 'selected' : ''?>><?=hocky_update_escape(hocky_format_namhoc_combobox($item))?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label class="label-sidebar" for="ten_hoc_ky_update">Tên học kỳ <span class="color-crimson">*</span></label>
+                        <input type="text" id="ten_hoc_ky_update" name="ten_hoc_ky" class="form-control <?= ($is_update_error && in_array($status, ['duplicate', 'invalid-ten-hoc-ky'])) ? 'is-invalid' : '' ?>" required maxlength="50"
+                            placeholder="Nhập tên học kỳ" value="<?=hocky_update_escape(hocky_update_old_value('ten_hoc_ky', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->ten_hoc_ky))?>">
+                        <?php if ($is_update_error): ?>
+                            <?php if ($status == 'duplicate'): ?>
+                                <small class="text-danger mt-1">Học kỳ này đã tồn tại trong năm học được chọn.</small>
+                            <?php elseif ($status == 'invalid-ten-hoc-ky'): ?>
+                                <small class="text-danger mt-1">Tên học kỳ không được để trống và tối đa 50 ký tự.</small>
+                            <?php endif; ?>
                         <?php endif; ?>
-                    <?php endif; ?>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="label-sidebar" for="ngay_bat_dau_update">Ngày bắt đầu <span class="color-crimson">*</span></label>
-                    <input type="date" id="ngay_bat_dau_update" name="ngay_bat_dau" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                        value="<?=hocky_update_escape(hocky_update_old_value('ngay_bat_dau', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->ngay_bat_dau))?>">
-                    <?php if ($is_update_error && $status == 'invalid-ngay'): ?>
-                        <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
-                    <?php endif; ?>
-                </div>
-                <div class="form-group">
-                    <label class="label-sidebar" for="ngay_ket_thuc_update">Ngày kết thúc <span class="color-crimson">*</span></label>
-                    <input type="date" id="ngay_ket_thuc_update" name="ngay_ket_thuc" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                        value="<?=hocky_update_escape(hocky_update_old_value('ngay_ket_thuc', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->ngay_ket_thuc))?>">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label class="label-sidebar" for="ngay_bat_dau_update">Ngày bắt đầu <span class="color-crimson">*</span></label>
+                        <input type="date" id="ngay_bat_dau_update" name="ngay_bat_dau" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                            value="<?=hocky_update_escape(hocky_update_old_value('ngay_bat_dau', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->ngay_bat_dau))?>">
+                        <?php if ($is_update_error && $status == 'invalid-ngay'): ?>
+                            <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label class="label-sidebar" for="ngay_ket_thuc_update">Ngày kết thúc <span class="color-crimson">*</span></label>
+                        <input type="date" id="ngay_ket_thuc_update" name="ngay_ket_thuc" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                            value="<?=hocky_update_escape(hocky_update_old_value('ngay_ket_thuc', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->ngay_ket_thuc))?>">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="label-sidebar" for="ghi_chu_update">Ghi chú</label>
@@ -122,7 +126,7 @@
                     <?php endif; ?>
                 </div>
             </div>
-            <div class="card-footer">
+            <div class="card-footer py-2">
                 <input type="submit" value="Cập nhật" class="btn btn-danger float-right font-weight-bold">
                 <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="cancel_update()">Hủy</button>
             </div>

@@ -3,6 +3,25 @@
     session_start();
     require '../../models/getModel.php';
 
+    function dotchamdiem_store_old_input($context, $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot = null) {
+        $_SESSION['dotchamdiem_old_input'] = array(
+            'context' => $context,
+            'ten_dot' => $ten_dot,
+            'ghi_chu' => $ghi_chu,
+            'thoi_gian_bat_dau' => $thoi_gian_bat_dau,
+            'thoi_gian_ket_thuc' => $thoi_gian_ket_thuc,
+            'id_nam_hoc' => $id_nam_hoc,
+            'id_hoc_ky' => $id_hoc_ky,
+            'id_mau_phieu' => $id_mau_phieu,
+            'id_lop_hoc' => is_array($id_lop_hoc) ? $id_lop_hoc : array(),
+            'id_dot' => $id_dot,
+        );
+    }
+
+    function dotchamdiem_clear_old_input() {
+        unset($_SESSION['dotchamdiem_old_input']);
+    }
+
     function dotchamdiem__Redirect($status) {
         // Nhựt sửa lỗi: Dùng chung redirect và dừng xử lý ngay sau header().
         header('location: ../index.php?page=quan-ly-dot-cham-diem&status=' . $status);
@@ -52,10 +71,10 @@
     function dotchamdiem__Validate_Hoc_Ky_Nam_Hoc($id_nam_hoc, $id_hoc_ky, $namhoc, $hocky) {
         // Nhựt sửa lỗi: Validate quan hệ Năm học - Học kỳ ở server, không chỉ dựa vào client.
         if (!dotchamdiem__Is_Positive_Integer($id_nam_hoc) || !dotchamdiem__Is_Positive_Integer($id_hoc_ky)) {
-            return 'invalid';
+            return 'invalid-namhoc';
         }
         if (!$namhoc->namhoc__Get_By_Id($id_nam_hoc) || !$hocky->hocky__Get_By_Id($id_hoc_ky)) {
-            return 'invalid';
+            return 'invalid-namhoc';
         }
         $hoc_ky = $hocky->hocky__Get_By_Id($id_hoc_ky);
         if (!$hoc_ky || $hoc_ky->id_nam_hoc != $id_nam_hoc) {
@@ -116,25 +135,31 @@
                 $id_mau_phieu = isset($_POST['id_mau_phieu']) ? trim($_POST['id_mau_phieu']) : "";
                 $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : array();
 
-                // Nhựt sửa lỗi: Validate server các dữ liệu bắt buộc trước khi thêm đợt chấm điểm.
-                if ($ten_dot == "" || !dotchamdiem__Is_Positive_Integer($id_mau_phieu) || !$mauphieu->mauphieu__Get_By_Id($id_mau_phieu)) {
-                    dotchamdiem__Redirect('invalid');
+                if ($ten_dot == "") {
+                    dotchamdiem_store_old_input('add', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc);
+                    dotchamdiem__Redirect('invalid-ten');
+                }
+                if (!dotchamdiem__Is_Positive_Integer($id_mau_phieu) || !$mauphieu->mauphieu__Get_By_Id($id_mau_phieu)) {
+                    dotchamdiem_store_old_input('add', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc);
+                    dotchamdiem__Redirect('invalid-mauphieu');
                 }
                 // Nhựt sửa lỗi: Kiểm tra Học kỳ phải thuộc Năm học đã chọn.
                 $validate_hoc_ky = dotchamdiem__Validate_Hoc_Ky_Nam_Hoc($id_nam_hoc, $id_hoc_ky, $namhoc, $hocky);
                 if ($validate_hoc_ky != 'valid') {
+                    dotchamdiem_store_old_input('add', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc);
                     dotchamdiem__Redirect($validate_hoc_ky);
                 }
                 // Nhựt sửa lỗi: Kiểm tra tất cả lớp áp dụng phải tồn tại và bỏ lớp trùng.
-                $id_lop_hoc = dotchamdiem__Validate_Lop_Hoc($id_lop_hoc, $lophoc);
-                if ($id_lop_hoc === false) {
-                    dotchamdiem__Redirect('invalid');
+                $id_lop_hoc_valid = dotchamdiem__Validate_Lop_Hoc($id_lop_hoc, $lophoc);
+                if ($id_lop_hoc_valid === false) {
+                    dotchamdiem_store_old_input('add', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc);
+                    dotchamdiem__Redirect('invalid-lop');
                 }
                 // Nhựt sửa lỗi: Validate thời gian Add ở server.
                 if (!dotchamdiem__Validate_Date($thoi_gian_bat_dau, $thoi_gian_ket_thuc)) {
+                    dotchamdiem_store_old_input('add', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc);
                     dotchamdiem__Redirect('invalid-date');
                 }
-                // Nhựt sửa lỗi: Không cho thời gian Đợt chấm điểm vượt ngoài khoảng Học kỳ đã chọn.
 
                 // Nhựt sửa lỗi: Dùng chung PDO connection để transaction bao phủ dotchamdiem, lopapdung và phieuchamdiem.
                 $lopapdung->connect = $dotchamdiem->connect;
@@ -151,7 +176,7 @@
                         throw new Exception('invalid-dot-id');
                     }
 
-                    foreach($id_lop_hoc as $item_1){
+                    foreach($id_lop_hoc_valid as $item_1){
                         $id_lop_ap_dung = $lopapdung->lopapdung__Add($id_dot, $id_mau_phieu, $item_1);
                         // Nhựt sửa lỗi: Nếu thêm lớp áp dụng không trả về id hợp lệ thì rollback.
                         if (!dotchamdiem__Is_Positive_Integer($id_lop_ap_dung)) {
@@ -171,6 +196,7 @@
 
                     // Nhựt sửa lỗi: Chỉ commit khi thêm đủ đợt, lớp áp dụng và phiếu chấm điểm.
                     $dotchamdiem->connect->commit();
+                    dotchamdiem_clear_old_input();
                     dotchamdiem__Rotate_Csrf_Token();
                     dotchamdiem__Redirect('success');
                 } catch (Throwable $e) {
@@ -178,6 +204,7 @@
                         // Nhựt sửa lỗi: Rollback toàn bộ khi Add lỗi giữa chừng.
                         $dotchamdiem->connect->rollBack();
                     }
+                    dotchamdiem_store_old_input('add', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc);
                     dotchamdiem__Redirect('failed');
                 }
                 
@@ -206,21 +233,25 @@
                 $has_data = $phieuchamdiem->phieuchamdiem__Has_Scored_Data_By_Id_Dot($id_dot) || $minhchung->minhchung__Has_By_Id_Dot($id_dot) || $ketquaxeploai->ketquaxeploai__Has_By_Id_Dot($id_dot);
 
                 if ($ten_dot == "") {
-                    dotchamdiem__Redirect('invalid');
+                    dotchamdiem_store_old_input('update', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot);
+                    dotchamdiem__Redirect('invalid-ten');
                 }
                 // Nhựt sửa lỗi: Kiểm tra Học kỳ cập nhật phải thuộc Năm học đã chọn.
                 $validate_hoc_ky = dotchamdiem__Validate_Hoc_Ky_Nam_Hoc($id_nam_hoc, $id_hoc_ky, $namhoc, $hocky);
                 if ($validate_hoc_ky != 'valid') {
+                    dotchamdiem_store_old_input('update', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot);
                     dotchamdiem__Redirect($validate_hoc_ky);
                 }
                 // Nhựt sửa lỗi: Validate thời gian Update ở server.
                 if (!dotchamdiem__Validate_Date($thoi_gian_bat_dau, $thoi_gian_ket_thuc)) {
+                    dotchamdiem_store_old_input('update', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot);
                     dotchamdiem__Redirect('invalid-date');
                 }
                 
                 $id_lop_hoc_valid = dotchamdiem__Validate_Lop_Hoc($id_lop_hoc, $lophoc);
                 if ($id_lop_hoc_valid === false) {
-                    dotchamdiem__Redirect('invalid');
+                    dotchamdiem_store_old_input('update', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot);
+                    dotchamdiem__Redirect('invalid-lop');
                 }
 
                 $lopapdung->connect = $dotchamdiem->connect;
@@ -236,7 +267,8 @@
                     } else {
                         if (!dotchamdiem__Is_Positive_Integer($id_mau_phieu) || !$mauphieu->mauphieu__Get_By_Id($id_mau_phieu)) {
                             $dotchamdiem->connect->rollBack();
-                            dotchamdiem__Redirect('invalid');
+                            dotchamdiem_store_old_input('update', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot);
+                            dotchamdiem__Redirect('invalid-mauphieu');
                         }
                     }
 
@@ -283,6 +315,7 @@
                     $dotchamdiem->dotchamdiem__Update_Trang_Thai($id_dot, $new_trang_thai);
                     
                     $dotchamdiem->connect->commit();
+                    dotchamdiem_clear_old_input();
                     dotchamdiem__Rotate_Csrf_Token();
                     
                     dotchamdiem__Redirect('success');
@@ -291,6 +324,7 @@
                     if ($dotchamdiem->connect->inTransaction()) {
                         $dotchamdiem->connect->rollBack();
                     }
+                    dotchamdiem_store_old_input('update', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot);
                     dotchamdiem__Redirect('failed');
                 }
                 
@@ -313,6 +347,7 @@
                 $status = $dotchamdiem->dotchamdiem__DeleteWithDependencies($id_dot);
                 
                 if ($status) {
+                    dotchamdiem__Rotate_Csrf_Token();
                     dotchamdiem__Redirect('success');
                 } else {
                     dotchamdiem__Redirect('failed');

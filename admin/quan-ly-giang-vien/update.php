@@ -43,14 +43,21 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
-                                <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_update_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required value="<?= giangvien_old_value_update('ngay_sinh', $giangvien__Get_By_Id->ngay_sinh) ?>" min="<?= date('Y-m-d', strtotime('-100 years')) ?>" max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
+                                <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
+                                <input type="email" id="email" name="email" class="form-control <?= ($is_update_error && ($_GET['status'] ?? '') == 'duplicate-giangvien') ? 'is-invalid' : '' ?>" required value="<?= htmlspecialchars(giangvien_old_value_update('email', $giangvien__Get_By_Id->email)) ?>" placeholder="Nhập email">
+                                <?php if ($is_update_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-giangvien'): ?>
+                                    <small class="text-danger mt-1">Email hoặc Mã giảng viên đã tồn tại.</small>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
                                 <label class="label-sidebar" for="">Tên giảng viên <span class="color-crimson">*</span></label>
                                 <input type="text" id="ten_giang_vien" name="ten_giang_vien" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('ten_giang_vien', $giangvien__Get_By_Id->ten_giang_vien)) ?>" placeholder="Nhập tên giảng viên">
+                            </div>
+                            <div class="form-group">
+                                <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
+                                <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_update_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required value="<?= giangvien_old_value_update('ngay_sinh', $giangvien__Get_By_Id->ngay_sinh) ?>" min="<?= date('Y-m-d', strtotime('-100 years')) ?>" max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
                             </div>
                             <div class="form-group">
                                 <label class="label-sidebar" for="">Trình độ <span class="color-crimson">*</span></label>
@@ -61,13 +68,6 @@
                                 </select>
                                 <?php if ($is_update_error && isset($_GET['status']) && $_GET['status'] == 'invalid'): ?>
                                     <small class="text-danger mt-1">Trình độ không hợp lệ.</small>
-                                <?php endif; ?>
-                            </div>
-                            <div class="form-group">
-                                <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
-                                <input type="email" id="email" name="email" class="form-control <?= ($is_update_error && ($_GET['status'] ?? '') == 'duplicate-giangvien') ? 'is-invalid' : '' ?>" required value="<?= htmlspecialchars(giangvien_old_value_update('email', $giangvien__Get_By_Id->email)) ?>" placeholder="Nhập email">
-                                <?php if ($is_update_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-giangvien'): ?>
-                                    <small class="text-danger mt-1">Email hoặc Mã giảng viên đã tồn tại.</small>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -151,7 +151,7 @@
                     </div>
                 </div>
                 <!-- /.card-body -->
-                 <div class="card-footer">
+                 <div class="card-footer py-2">
                      <button type="submit" class="btn btn-danger float-right font-weight-bold" style="font-weight: bold;">Cập nhật</button>
                      <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" style="font-weight: bold;" onclick="cancel_update()">Hủy</button>
                  </div>

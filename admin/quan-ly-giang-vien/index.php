@@ -87,11 +87,12 @@
                                      </select>
                                  </div>
                                  <div class="form-group">
-                                     <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
-                                     <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                                         value="<?= giangvien_old_value('ngay_sinh', 'add', date('Y-m-d', strtotime('-22 years'))) ?>"
-                                         min="<?= date('Y-m-d', strtotime('-100 years')) ?>"
-                                         max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
+                                     <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
+                                     <input type="email" id="email" name="email" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-giangvien') ? 'is-invalid' : '' ?>" required
+                                         placeholder="Nhập email" value="<?= htmlspecialchars(giangvien_old_value('email', 'add')) ?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-giangvien'): ?>
+                                         <small class="text-danger mt-1">Email hoặc Mã giảng viên đã tồn tại.</small>
+                                     <?php endif; ?>
                                  </div>
                              </div>
 
@@ -100,6 +101,13 @@
                                      <label class="label-sidebar" for="">Tên giảng viên <span class="color-crimson">*</span></label>
                                      <input type="text" id="ten_giang_vien" name="ten_giang_vien" class="form-control"
                                          required placeholder="Nhập tên giảng viên" value="<?= htmlspecialchars(giangvien_old_value('ten_giang_vien', 'add')) ?>">
+                                 </div>
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
+                                     <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                         value="<?= giangvien_old_value('ngay_sinh', 'add', date('Y-m-d', strtotime('-22 years'))) ?>"
+                                         min="<?= date('Y-m-d', strtotime('-100 years')) ?>"
+                                         max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
                                  </div>
                                  <div class="form-group">
                                      <label class="label-sidebar" for="">Trình độ <span class="color-crimson">*</span></label>
@@ -111,14 +119,6 @@
                                      </select>
                                      <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid'): ?>
                                          <small class="text-danger mt-1">Trình độ không hợp lệ.</small>
-                                     <?php endif; ?>
-                                 </div>
-                                 <div class="form-group">
-                                     <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
-                                     <input type="email" id="email" name="email" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'duplicate-giangvien') ? 'is-invalid' : '' ?>" required
-                                         placeholder="Nhập email" value="<?= htmlspecialchars(giangvien_old_value('email', 'add')) ?>">
-                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'duplicate-giangvien'): ?>
-                                         <small class="text-danger mt-1">Email hoặc Mã giảng viên đã tồn tại.</small>
                                      <?php endif; ?>
                                  </div>
                              </div>
@@ -180,7 +180,7 @@
                          </div>
                      </div>
                      <!-- /.card-body -->
-                     <div class="card-footer">
+                     <div class="card-footer py-2">
                          <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
@@ -205,7 +205,7 @@
              </div>
              <!-- /.card-header -->
              <div class="card-body">
-                 <div class="table-responsive">
+
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                          <thead>
                           <tr>
@@ -263,7 +263,7 @@
                          <?php endforeach ?>
                      </tbody>
                  </table>
-                 </div>
+
              </div>
              <!-- /.card-body -->
          </div>
@@ -280,7 +280,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -356,7 +356,135 @@ window.addEventListener("load", function() {
                     }
                 }
             ]
-        }]
+        },
+        {
+            "text": "<i class='fas fa-filter'></i>",
+            "titleAttr": "Bộ lọc",
+            "className": "btn btn-sm btn-custom-filter ml-1",
+            "attr": {
+                "id": "btn-filter-dropdown"
+            }
+        }],
+        "initComplete": function() {
+            var filterHtml = `
+            <style>
+            .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                background-color: #0f2a5a !important;
+                border: 1px solid #0f2a5a !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                background-color: transparent !important;
+                border-color: #0f2a5a !important;
+                color: #0f2a5a !important;
+            }
+            #custom-filter-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                margin-top: 5px;
+                width: 300px;
+                background: #fff;
+                border: 1px solid rgba(0,0,0,.15);
+                border-radius: .25rem;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                z-index: 1050;
+            }
+            </style>
+            <div id="custom-filter-menu" class="p-3">
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Trình độ:</label>
+                    <select id="filter_trinh_do" class="form-control form-control-sm">
+                        <option value="">-- Tất cả trình độ --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Giới tính:</label>
+                    <select id="filter_gioi_tinh" class="form-control form-control-sm">
+                        <option value="">-- Tất cả giới tính --</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                    <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                </div>
+            </div>`;
+            
+            var $btn = $('#btn-filter-dropdown');
+            $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+            $btn.parent().append(filterHtml);
+
+            var table = $('#tablejs').DataTable();
+
+            function updateCascadeDropdowns() {
+                var selectedTrinhDo = $('#filter_trinh_do').val() || "";
+                
+                var trinhDoOptions = [];
+                
+                table.rows().every(function() {
+                    var data = this.data();
+                    var trinhdo = $('<div>').html(data[7]).text().trim();
+                    
+                    if (trinhdo !== '' && trinhDoOptions.indexOf(trinhdo) === -1) trinhDoOptions.push(trinhdo);
+                });
+                
+                var select = $('#filter_trinh_do');
+                select.empty().append('<option value="">-- Tất cả trình độ --</option>');
+                trinhDoOptions.sort().forEach(function(opt) {
+                    select.append('<option value="'+opt+'" '+(opt === selectedTrinhDo ? 'selected' : '')+'>'+opt+'</option>');
+                });
+            }
+
+            $('#filter_trinh_do').on('change', function() {
+                updateCascadeDropdowns();
+            });
+
+            updateCascadeDropdowns();
+
+            $btn.on('click', function(e) {
+                e.stopPropagation();
+                $('#custom-filter-menu').fadeToggle(200);
+            });
+
+            $('#custom-filter-menu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-apply-filter').on('click', function() {
+                var trinhDoVal = $('#filter_trinh_do').val();
+                var gioiTinhVal = $('#filter_gioi_tinh').val();
+                
+                table.column(7).search(trinhDoVal ? '^' + $.fn.dataTable.util.escapeRegex(trinhDoVal) + '$' : '', true, false)
+                     .column(3).search(gioiTinhVal ? '^' + $.fn.dataTable.util.escapeRegex(gioiTinhVal) + '$' : '', true, false)
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-cancel-filter').on('click', function() {
+                $('#filter_trinh_do').val('');
+                $('#filter_gioi_tinh').val('');
+                updateCascadeDropdowns();
+                table.column(7).search('')
+                     .column(3).search('')
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+        }
     });
 });
 
@@ -392,3 +520,6 @@ function cancel_update() {
     $("#div_update").html('');
 }
  </script>
+
+
+

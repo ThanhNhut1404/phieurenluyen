@@ -75,45 +75,49 @@
                         <h3 class="card-title">Thêm mới Khóa học</h3>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label class="label-sidebar">Tên khóa học <span class="color-crimson">*</span></label>
-                            <input type="text" id="ten_khoa_hoc" name="ten_khoa_hoc" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'invalid-ten-khoa-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
-                                value="<?=khoahoc_escape(khoahoc_old_value('ten_khoa_hoc', 'add'))?>" placeholder="Nhập tên khóa học">
-                            <?php if ($is_add_error && isset($_GET['status'])): ?>
-                                <?php if ($_GET['status'] == 'duplicate'): ?>
-                                    <small class="text-danger mt-1">Tên khóa học đã tồn tại trong hệ thống.</small>
-                                <?php elseif ($_GET['status'] == 'invalid-ten-khoa-hoc'): ?>
-                                    <small class="text-danger mt-1">Tên khóa học không được để trống và tối đa 50 ký tự.</small>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Tên khóa học <span class="color-crimson">*</span></label>
+                                <input type="text" id="ten_khoa_hoc" name="ten_khoa_hoc" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'invalid-ten-khoa-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
+                                    value="<?=khoahoc_escape(khoahoc_old_value('ten_khoa_hoc', 'add'))?>" placeholder="Nhập tên khóa học">
+                                <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                    <?php if ($_GET['status'] == 'duplicate'): ?>
+                                        <small class="text-danger mt-1">Tên khóa học đã tồn tại trong hệ thống.</small>
+                                    <?php elseif ($_GET['status'] == 'invalid-ten-khoa-hoc'): ?>
+                                        <small class="text-danger mt-1">Tên khóa học không được để trống và tối đa 50 ký tự.</small>
+                                    <?php endif; ?>
                                 <?php endif; ?>
-                            <?php endif; ?>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Năm nhập học <span class="color-crimson">*</span></label>
+                                <input type="number" id="nam_nhap_hoc" name="nam_nhap_hoc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-nam') ? 'is-invalid' : '' ?>" required
+                                    min="2006" max="2099" value="<?=khoahoc_escape(khoahoc_old_value('nam_nhap_hoc', 'add'))?>" placeholder="Nhập năm nhập học">
+                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-nam'): ?>
+                                    <small class="text-danger mt-1">Năm nhập học không hợp lệ.</small>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="label-sidebar">Năm nhập học <span class="color-crimson">*</span></label>
-                            <input type="number" id="nam_nhap_hoc" name="nam_nhap_hoc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-nam') ? 'is-invalid' : '' ?>" required
-                                min="2006" max="2099" value="<?=khoahoc_escape(khoahoc_old_value('nam_nhap_hoc', 'add'))?>" placeholder="Nhập năm nhập học">
-                            <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-nam'): ?>
-                                <small class="text-danger mt-1">Năm nhập học không hợp lệ.</small>
-                            <?php endif; ?>
-                        </div>
-                        <div class="form-group">
-                            <label class="label-sidebar">Hệ đào tạo <span class="color-crimson">*</span></label>
-                            <input type="number" id="he_dao_tao" name="he_dao_tao" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-he') ? 'is-invalid' : '' ?>" required
-                                min="2" max="8" step="0.5" value="<?=khoahoc_escape(khoahoc_old_value('he_dao_tao', 'add'))?>" placeholder="Nhập số năm đào tạo">
-                            <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-he'): ?>
-                                <small class="text-danger mt-1">Hệ đào tạo không hợp lệ.</small>
-                            <?php endif; ?>
-                        </div>
-                        <div class="form-group">
-                            <label class="label-sidebar">Ghi chú</label>
-                            <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000"
-                                placeholder="Nhập ghi chú"><?=khoahoc_escape(khoahoc_old_value('ghi_chu', 'add'))?></textarea>
-                            <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
-                                <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
-                            <?php endif; ?>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Hệ đào tạo <span class="color-crimson">*</span></label>
+                                <input type="number" id="he_dao_tao" name="he_dao_tao" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-he') ? 'is-invalid' : '' ?>" required
+                                    min="2" max="8" step="0.5" value="<?=khoahoc_escape(khoahoc_old_value('he_dao_tao', 'add'))?>" placeholder="Nhập số năm đào tạo">
+                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-he'): ?>
+                                    <small class="text-danger mt-1">Hệ đào tạo không hợp lệ.</small>
+                                <?php endif; ?>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Ghi chú</label>
+                                <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000" rows="1"
+                                    placeholder="Nhập ghi chú"><?=khoahoc_escape(khoahoc_old_value('ghi_chu', 'add'))?></textarea>
+                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
+                                    <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-body -->
-                    <div class="card-footer">
+                    <div class="card-footer py-2">
                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                     </div>
@@ -182,7 +186,7 @@ window.addEventListener("load", function() {
         "responsive": true,
         "autoWidth": false,
         // Nhựt sửa lỗi: đồng bộ phân trang, tìm kiếm và hàng nút xuất dữ liệu như các màn quản lý khác.
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -354,3 +358,6 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
 </script>
+
+
+

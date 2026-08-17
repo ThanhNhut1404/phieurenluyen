@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <!-- /.card-body -->
-                 <div class="card-footer">
+                 <div class="card-footer py-2">
                      <button type="submit" class="btn btn-danger float-right font-weight-bold" style="font-weight: bold;">Cập nhật</button>
                      <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" style="font-weight: bold;" onclick="cancel_update()">Hủy</button>
                  </div>

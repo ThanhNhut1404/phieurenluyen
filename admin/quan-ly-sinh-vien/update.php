@@ -189,7 +189,7 @@
                          </div>
                      </div>
                      <!-- /.card-body -->
-                 <div class="card-footer">
+                 <div class="card-footer py-2">
                      <input type="submit" value="Cập nhật" class="btn btn-danger float-right font-weight-bold">
                      <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="cancel_update()">Hủy</button>
                  </div>

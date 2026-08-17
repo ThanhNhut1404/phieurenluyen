@@ -173,7 +173,7 @@ class taikhoan extends Database
 
     public function taikhoan__Get_By_Lop_Hoc($id_lop_hoc)
     {
-        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 3 AND sinhvien.id_lop_hoc = ?");
+        $obj = $this->connect->prepare("SELECT taikhoan.*, sinhvien.chuc_vu FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 3 AND sinhvien.id_lop_hoc = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_lop_hoc));
         return $obj->fetchAll();

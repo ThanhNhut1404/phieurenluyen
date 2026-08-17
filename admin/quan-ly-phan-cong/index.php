@@ -96,7 +96,7 @@
                          </div>
                      </div>
                      <!-- /.card-body -->
-                     <div class="card-footer">
+                     <div class="card-footer py-2">
                          <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold" style="font-weight: bold;">
                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" style="font-weight: bold;" onclick="toggle_add_form()">Hủy</button>
                      </div>
@@ -178,7 +178,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -254,7 +254,121 @@ window.addEventListener("load", function() {
                     }
                 }
             ]
-        }]
+        },
+        {
+            "text": "<i class='fas fa-filter'></i>",
+            "titleAttr": "Bộ lọc",
+            "className": "btn btn-sm btn-custom-filter ml-1",
+            "attr": {
+                "id": "btn-filter-dropdown"
+            }
+        }],
+        "initComplete": function() {
+            var filterHtml = `
+            <style>
+            .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                background-color: #0f2a5a !important;
+                border: 1px solid #0f2a5a !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                background-color: transparent !important;
+                border-color: #0f2a5a !important;
+                color: #0f2a5a !important;
+            }
+            #custom-filter-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                margin-top: 5px;
+                width: 300px;
+                background: #fff;
+                border: 1px solid rgba(0,0,0,.15);
+                border-radius: .25rem;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                z-index: 1050;
+            }
+            </style>
+            <div id="custom-filter-menu" class="p-3">
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Lớp học:</label>
+                    <select id="filter_lop_hoc" class="form-control form-control-sm">
+                        <option value="">-- Tất cả lớp học --</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                    <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                </div>
+            </div>`;
+            
+            var $btn = $('#btn-filter-dropdown');
+            $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+            $btn.parent().append(filterHtml);
+
+            var table = $('#tablejs').DataTable();
+
+            function updateCascadeDropdowns() {
+                var selectedLop = $('#filter_lop_hoc').val() || "";
+                var lopHocOptions = [];
+                
+                table.rows().every(function() {
+                    var data = this.data();
+                    var lophoc = $('<div>').html(data[2]).text().trim();
+                    
+                    if (lophoc !== '' && lopHocOptions.indexOf(lophoc) === -1) lopHocOptions.push(lophoc);
+                });
+                
+                var select = $('#filter_lop_hoc');
+                select.empty().append('<option value="">-- Tất cả lớp học --</option>');
+                lopHocOptions.sort().forEach(function(opt) {
+                    select.append('<option value="'+opt+'" '+(opt === selectedLop ? 'selected' : '')+'>'+opt+'</option>');
+                });
+            }
+
+            $('#filter_lop_hoc').on('change', function() {
+                updateCascadeDropdowns();
+            });
+
+            updateCascadeDropdowns();
+
+            $btn.on('click', function(e) {
+                e.stopPropagation();
+                $('#custom-filter-menu').fadeToggle(200);
+            });
+
+            $('#custom-filter-menu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-apply-filter').on('click', function() {
+                var lopVal = $('#filter_lop_hoc').val();
+                
+                table.column(2).search(lopVal ? '^' + $.fn.dataTable.util.escapeRegex(lopVal) + '$' : '', true, false)
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-cancel-filter').on('click', function() {
+                $('#filter_lop_hoc').val('');
+                updateCascadeDropdowns();
+                table.column(2).search('').draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+        }
     });
 });
 
@@ -288,3 +402,6 @@ function cancel_update() {
     $(".card.card-success").removeClass('collapsed-card');
 }
  </script>
+
+
+

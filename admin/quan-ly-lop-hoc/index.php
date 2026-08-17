@@ -73,54 +73,57 @@
                          <h3 class="card-title">Thêm mới Lớp học</h3>
                      </div>
                      <div class="card-body">
-                         <div class="form-group">
-                             <label class="label-sidebar">Khóa học <span class="color-crimson">*</span></label>
-                             <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-khoa-hoc') ? 'is-invalid' : '' ?>" name="id_khoa_hoc" required>
-                                 <option value="">Chọn khóa học</option>
-                                 <?php foreach ($khoahoc__Get_All as $item):?>
-                                 <option value="<?=(int)$item->id_khoa_hoc?>" <?=((int)lophoc_old_value('id_khoa_hoc', 'add') === (int)$item->id_khoa_hoc) ? 'selected' : ''?>><?=lophoc_escape($item->ten_khoa_hoc)?></option>
-                                 <?php endforeach; ?>
-                             </select>
-                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-khoa-hoc'): ?>
-                                 <small class="text-danger mt-1">Khóa học không hợp lệ.</small>
-                             <?php endif; ?>
-                         </div>
-                         <div class="form-group">
-                             <label class="label-sidebar">Ngành học <span class="color-crimson">*</span></label>
-                             <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-nganh-hoc') ? 'is-invalid' : '' ?>" name="id_nganh_hoc" required>
-                                 <option value="">Chọn ngành học</option>
-                                 <?php foreach ($nganhhoc__Get_All as $item):?>
-                                 <option value="<?=(int)$item->id_nganh_hoc?>" <?=((int)lophoc_old_value('id_nganh_hoc', 'add') === (int)$item->id_nganh_hoc) ? 'selected' : ''?>><?=lophoc_escape($item->ten_nganh_hoc)?></option>
-                                 <?php endforeach; ?>
-                             </select>
-                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-nganh-hoc'): ?>
-                                 <small class="text-danger mt-1">Ngành học không hợp lệ.</small>
-                             <?php endif; ?>
-                         </div>
-                         <div class="form-group">
-                             <label class="label-sidebar">Tên lớp học <span class="color-crimson">*</span></label>
-                             <input type="text" id="ten_lop_hoc" name="ten_lop_hoc" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate-lop-hoc', 'invalid-ten-lop-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
-                                 value="<?=lophoc_escape(lophoc_old_value('ten_lop_hoc', 'add'))?>" placeholder="Nhập tên lớp học">
-                             <?php if ($is_add_error && isset($_GET['status'])): ?>
-                                 <?php if ($_GET['status'] == 'duplicate-lop-hoc'): ?>
-                                     <small class="text-danger mt-1">Tên lớp học đã tồn tại trong khóa học và ngành học đã chọn.</small>
-                                 <?php elseif ($_GET['status'] == 'invalid-ten-lop-hoc'): ?>
-                                     <small class="text-danger mt-1">Tên lớp học không được để trống và tối đa 50 ký tự.</small>
+                         <div class="row">
+                             <div class="col-md-6 form-group">
+                                 <label class="label-sidebar">Khóa học <span class="color-crimson">*</span></label>
+                                 <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-khoa-hoc') ? 'is-invalid' : '' ?>" name="id_khoa_hoc" required>
+                                     <option value="">Chọn khóa học</option>
+                                     <?php foreach ($khoahoc__Get_All as $item):?>
+                                     <option value="<?=(int)$item->id_khoa_hoc?>" <?=((int)lophoc_old_value('id_khoa_hoc', 'add') === (int)$item->id_khoa_hoc) ? 'selected' : ''?>><?=lophoc_escape($item->ten_khoa_hoc)?></option>
+                                     <?php endforeach; ?>
+                                 </select>
+                                 <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-khoa-hoc'): ?>
+                                     <small class="text-danger mt-1">Khóa học không hợp lệ.</small>
                                  <?php endif; ?>
-                             <?php endif; ?>
+                             </div>
+                             <div class="col-md-6 form-group">
+                                 <label class="label-sidebar">Ngành học <span class="color-crimson">*</span></label>
+                                 <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-nganh-hoc') ? 'is-invalid' : '' ?>" name="id_nganh_hoc" required>
+                                     <option value="">Chọn ngành học</option>
+                                     <?php foreach ($nganhhoc__Get_All as $item):?>
+                                     <option value="<?=(int)$item->id_nganh_hoc?>" <?=((int)lophoc_old_value('id_nganh_hoc', 'add') === (int)$item->id_nganh_hoc) ? 'selected' : ''?>><?=lophoc_escape($item->ten_nganh_hoc)?></option>
+                                     <?php endforeach; ?>
+                                 </select>
+                                 <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-nganh-hoc'): ?>
+                                     <small class="text-danger mt-1">Ngành học không hợp lệ.</small>
+                                 <?php endif; ?>
+                             </div>
                          </div>
-
-                         <div class="form-group">
-                             <label class="label-sidebar">Ghi chú</label>
-                             <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000"
-                                 placeholder="Nhập ghi chú"><?=lophoc_escape(lophoc_old_value('ghi_chu', 'add'))?></textarea>
-                             <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
-                                 <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
-                             <?php endif; ?>
+                         <div class="row">
+                             <div class="col-md-6 form-group">
+                                 <label class="label-sidebar">Tên lớp học <span class="color-crimson">*</span></label>
+                                 <input type="text" id="ten_lop_hoc" name="ten_lop_hoc" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate-lop-hoc', 'invalid-ten-lop-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
+                                     value="<?=lophoc_escape(lophoc_old_value('ten_lop_hoc', 'add'))?>" placeholder="Nhập tên lớp học">
+                                 <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                     <?php if ($_GET['status'] == 'duplicate-lop-hoc'): ?>
+                                         <small class="text-danger mt-1">Tên lớp học đã tồn tại trong khóa học và ngành học đã chọn.</small>
+                                     <?php elseif ($_GET['status'] == 'invalid-ten-lop-hoc'): ?>
+                                         <small class="text-danger mt-1">Tên lớp học không được để trống và tối đa 50 ký tự.</small>
+                                     <?php endif; ?>
+                                 <?php endif; ?>
+                             </div>
+                             <div class="col-md-6 form-group">
+                                 <label class="label-sidebar">Ghi chú</label>
+                                 <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000" rows="1"
+                                     placeholder="Nhập ghi chú"><?=lophoc_escape(lophoc_old_value('ghi_chu', 'add'))?></textarea>
+                                 <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
+                                     <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
+                                 <?php endif; ?>
+                             </div>
                          </div>
                      </div>
                      <!-- /.card-body -->
-                     <div class="card-footer">
+                     <div class="card-footer py-2">
                          <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
@@ -193,7 +196,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -269,7 +272,178 @@ window.addEventListener("load", function() {
                     }
                 }
             ]
-        }]
+        },
+        {
+            "text": "<i class='fas fa-filter'></i>",
+            "titleAttr": "Bộ lọc",
+            "className": "btn btn-sm btn-custom-filter ml-1",
+            "attr": {
+                "id": "btn-filter-dropdown"
+            }
+        }],
+        "initComplete": function() {
+            var filterHtml = `
+            <style>
+            .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                background-color: #0f2a5a !important;
+                border: 1px solid #0f2a5a !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                background-color: transparent !important;
+                border-color: #0f2a5a !important;
+                color: #0f2a5a !important;
+            }
+            #custom-filter-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                margin-top: 5px;
+                width: 300px;
+                background: #fff;
+                border: 1px solid rgba(0,0,0,.15);
+                border-radius: .25rem;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                z-index: 1050;
+            }
+            </style>
+            <div id="custom-filter-menu" class="p-3">
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Khóa học:</label>
+                    <select id="filter_khoa_hoc" class="form-control form-control-sm">
+                        <option value="">-- Tất cả khóa học --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Ngành học:</label>
+                    <select id="filter_nganh_hoc" class="form-control form-control-sm">
+                        <option value="">-- Tất cả ngành học --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Lớp học:</label>
+                    <select id="filter_lop_hoc" class="form-control form-control-sm">
+                        <option value="">-- Tất cả lớp học --</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                    <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                </div>
+            </div>`;
+            
+            var $btn = $('#btn-filter-dropdown');
+            $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+            $btn.parent().append(filterHtml);
+
+            var table = $('#tablejs').DataTable();
+
+            function updateCascadeDropdowns() {
+                var selectedKhoaHoc = $('#filter_khoa_hoc').val() || "";
+                var selectedNganh = $('#filter_nganh_hoc').val() || "";
+                var selectedLop = $('#filter_lop_hoc').val() || "";
+                
+                var khoaHocOptions = [];
+                var nganhHocOptions = [];
+                var lopHocOptions = [];
+                
+                table.rows().every(function() {
+                    var data = this.data();
+                    var lophoc = $('<div>').html(data[3]).text().trim();
+                    var nganh = $('<div>').html(data[2]).text().trim();
+                    var khoahoc = $('<div>').html(data[1]).text().trim();
+                    
+                    if (khoahoc !== '' && khoaHocOptions.indexOf(khoahoc) === -1) khoaHocOptions.push(khoahoc);
+                    
+                    if (selectedKhoaHoc === "" || khoahoc === selectedKhoaHoc) {
+                        if (nganh !== '' && nganhHocOptions.indexOf(nganh) === -1) nganhHocOptions.push(nganh);
+                    }
+                    
+                    if ((selectedKhoaHoc === "" || khoahoc === selectedKhoaHoc) &&
+                        (selectedNganh === "" || nganh === selectedNganh)) {
+                        if (lophoc !== '' && lopHocOptions.indexOf(lophoc) === -1) lopHocOptions.push(lophoc);
+                    }
+                });
+                
+                function populate(selectId, options, currentValue, defaultText) {
+                    var select = $('#' + selectId);
+                    select.empty().append('<option value="">' + defaultText + '</option>');
+                    options.sort().forEach(function(opt) {
+                        select.append('<option value="'+opt+'">'+opt+'</option>');
+                    });
+                    if (options.indexOf(currentValue) !== -1) {
+                        select.val(currentValue);
+                    } else {
+                        select.val('');
+                    }
+                }
+                
+                populate('filter_khoa_hoc', khoaHocOptions, selectedKhoaHoc, '-- Tất cả khóa học --');
+                populate('filter_nganh_hoc', nganhHocOptions, selectedNganh, '-- Tất cả ngành học --');
+                populate('filter_lop_hoc', lopHocOptions, selectedLop, '-- Tất cả lớp học --');
+            }
+
+            $('#filter_khoa_hoc').on('change', function() {
+                $('#filter_nganh_hoc').val('');
+                $('#filter_lop_hoc').val('');
+                updateCascadeDropdowns();
+            });
+            $('#filter_nganh_hoc').on('change', function() {
+                $('#filter_lop_hoc').val('');
+                updateCascadeDropdowns();
+            });
+            $('#filter_lop_hoc').on('change', function() {
+                updateCascadeDropdowns();
+            });
+
+            updateCascadeDropdowns();
+
+            $btn.on('click', function(e) {
+                e.stopPropagation();
+                $('#custom-filter-menu').fadeToggle(200);
+            });
+
+            $('#custom-filter-menu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-apply-filter').on('click', function() {
+                var khoaHocVal = $('#filter_khoa_hoc').val();
+                var nganhVal = $('#filter_nganh_hoc').val();
+                var lopVal = $('#filter_lop_hoc').val();
+                
+                table.column(1).search(khoaHocVal ? '^' + $.fn.dataTable.util.escapeRegex(khoaHocVal) + '$' : '', true, false)
+                     .column(2).search(nganhVal ? '^' + $.fn.dataTable.util.escapeRegex(nganhVal) + '$' : '', true, false)
+                     .column(3).search(lopVal ? '^' + $.fn.dataTable.util.escapeRegex(lopVal) + '$' : '', true, false)
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-cancel-filter').on('click', function() {
+                $('#filter_khoa_hoc').val('');
+                $('#filter_nganh_hoc').val('');
+                $('#filter_lop_hoc').val('');
+                updateCascadeDropdowns();
+                table.column(1).search('')
+                     .column(2).search('')
+                     .column(3).search('')
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+        }
     });
 });
 
@@ -301,6 +475,9 @@ function update_obj(id_lop_hoc, error_status = '') {
             $('#div_add_form').slideUp(300);
             $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
             $('#div_update').html(data);
+            $('html, body').animate({
+                scrollTop: $("#div_top").offset().top
+            }, 500);
         },
         error: function(xhr) {
             var title = 'Lỗi hệ thống';
@@ -367,3 +544,6 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
  </script>
+
+
+

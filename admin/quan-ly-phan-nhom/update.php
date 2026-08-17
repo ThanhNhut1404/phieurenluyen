@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
+                <div class="card-footer py-2">
                     <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
                 </div>
             </div>

@@ -1,11 +1,38 @@
  <?php
     // require "../models/getModel.php";
-    $id_khoan_filter = isset($_GET['id_khoan']) ? $_GET['id_khoan'] : '';
-    if ($id_khoan_filter != '') {
-        $muc__Get_All = $muc->muc__Get_By_Id_Khoan($id_khoan_filter);
-    } else {
-        $muc__Get_All = $muc->muc__Get_All();
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
     }
+    if (empty($_SESSION['csrf_token'])) {
+        try {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        } catch (Throwable $e) {
+            $_SESSION['csrf_token'] = hash('sha256', session_id() . uniqid('', true));
+        }
+    }
+
+    $muc_old_input = isset($_SESSION['muc_old_input']) && is_array($_SESSION['muc_old_input']) ? $_SESSION['muc_old_input'] : array();
+    if (isset($muc_old_input['context']) && $muc_old_input['context'] === 'add') {
+        unset($_SESSION['muc_old_input']);
+    }
+
+    if (!function_exists('muc_escape')) {
+        function muc_escape($value) {
+            return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+        }
+    }
+
+    if (!function_exists('muc_old_value')) {
+        function muc_old_value($field, $context, $default = '') {
+            global $muc_old_input;
+            if (isset($muc_old_input['context']) && $muc_old_input['context'] === $context && isset($muc_old_input[$field])) {
+                return $muc_old_input[$field];
+            }
+            return $default;
+        }
+    }
+
+    $muc__Get_All = $muc->muc__Get_All();
     $khoan__Get_All = $khoan->khoan__Get_All();
  ?>
 
@@ -52,91 +79,117 @@
          </div><!-- /.container-fluid -->
      </section>
 
+     <?php $is_add_error = isset($muc_old_input['context']) && $muc_old_input['context'] === 'add'; ?>
+
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
      <section class="content mb-2">
-         <button type="button" class="btn btn-primary" id="btn-toggle-add" onclick="toggle_add_form()">
-             <i class="fas fa-plus"></i> Thêm mới
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <i class="fas <?= $is_add_error ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_add_error ? '' : 'Thêm mới' ?>
          </button>
      </section>
 
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
-     <section class="content" id="div_add_form" style="display: none;">
+     <section class="content" id="div_add_form" <?= $is_add_error ? '' : 'style="display: none;"' ?>>
          <form class="row form" action="quan-ly-muc/action.php?req=add" method="post" enctype="multipart/form-data">
+             <input type="hidden" name="csrf_token" value="<?=muc_escape($_SESSION['csrf_token'])?>">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
                          <h3 class="card-title">Thêm mới Mục</h3>
-                         <div class="card-tools">
-                             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                 <i class="fas fa-minus"></i>
-                             </button>
-                         </div>
                      </div>
                      <div class="card-body">
-                         <div class="form-group">
-                             <label for="">Khoản <span class="color-crimson">(*)</span></label>
-                             <select class="form-control" name="id_khoan" id="id_khoan_add" required onchange="loadThuTu(this.value)">
-                                 <option value="">-- Chọn Khoản --</option>
-                                 <?php foreach ($khoan__Get_All as $item):?>
-                                 <option value="<?=$item->id_khoan?>"><?=$item->ten_khoan?> -
-                                     <?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?></option>
-                                 <?php endforeach; ?>
-                             </select>
+                         <div class="row">
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="id_khoan_add">Khoản <span class="color-crimson">*</span></label>
+                                     <select class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-khoan') ? 'is-invalid' : '' ?>" name="id_khoan" id="id_khoan_add" required onchange="loadThuTu(this.value, '<?=muc_escape(muc_old_value('thu_tu', 'add'))?>')">
+                                         <option value="">-- Chọn Khoản --</option>
+                                         <?php $old_khoan = muc_old_value('id_khoan', 'add'); ?>
+                                         <?php foreach ($khoan__Get_All as $item):?>
+                                         <option value="<?=$item->id_khoan?>" <?= $old_khoan == $item->id_khoan ? 'selected' : '' ?>><?=$item->ten_khoan?> -
+                                             <?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?></option>
+                                         <?php endforeach; ?>
+                                     </select>
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-khoan'): ?>
+                                         <small class="text-danger mt-1">Khoản không hợp lệ.</small>
+                                     <?php endif; ?>
+                                 </div>
+                             </div>
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="ten_muc">Tên mục <span class="color-crimson">*</span></label>
+                                     <input type="text" id="ten_muc" name="ten_muc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ten') ? 'is-invalid' : '' ?>" required
+                                         placeholder="Nhập tên mục" value="<?=muc_escape(muc_old_value('ten_muc', 'add'))?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ten'): ?>
+                                         <small class="text-danger mt-1">Tên mục không được để trống.</small>
+                                     <?php endif; ?>
+                                 </div>
+                             </div>
                          </div>
-                         <div class="form-group">
-                             <label for="">Tên mục <span class="color-crimson">(*)</span></label>
-                             <input type="text" id="ten_muc" name="ten_muc" class="form-control" required
-                                 placeholder="Nhập tên mục">
+                         
+                         <div class="row">
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <!-- quân sửa: Đổi thành thẻ select để chọn thứ tự linh động thông qua AJAX -->
+                                     <label class="label-sidebar" for="thu_tu">Thứ tự <span class="color-crimson">*</span></label>
+                                     <select id="thu_tu" name="thu_tu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-thutu') ? 'is-invalid' : '' ?>" required>
+                                         <option value="">-- Vui lòng chọn Khoản trước --</option>
+                                     </select>
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-thutu'): ?>
+                                         <small class="text-danger mt-1">Thứ tự không hợp lệ.</small>
+                                     <?php endif; ?>
+                                 </div>
+                             </div>
+                             <div class="col-6">
+                                 <!-- quân sửa: Thêm ô nhập Điểm tối đa cho Mục -->
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="diem_toi_da">Điểm tối đa <span class="color-crimson">*</span></label>
+                                     <input type="number" id="diem_toi_da" name="diem_toi_da" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-diem') ? 'is-invalid' : '' ?>" required
+                                         placeholder="Nhập điểm tối đa của mục" min="0" value="<?=muc_escape(muc_old_value('diem_toi_da', 'add', '0'))?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-diem'): ?>
+                                         <small class="text-danger mt-1">Điểm tối đa không hợp lệ.</small>
+                                     <?php endif; ?>
+                                 </div>
+                             </div>
                          </div>
+
                          <div class="form-group">
-                             <label for="">Nội dung chi tiết</label>
+                             <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết</label>
                              <textarea id="ghi_chu" name="ghi_chu" class="form-control" required
-                                 placeholder="Nhập nội dung chi tiết"></textarea>
+                                 placeholder="Nhập nội dung chi tiết"><?=muc_escape(muc_old_value('ghi_chu', 'add'))?></textarea>
                          </div>
-                         <div class="form-group">
-                             <!-- quân sửa: Đổi thành thẻ select để chọn thứ tự linh động thông qua AJAX -->
-                             <label for="">Thứ tự <span class="color-crimson">(*)</span></label>
-                             <select id="thu_tu" name="thu_tu" class="form-control" required>
-                                 <option value="">-- Vui lòng chọn Khoản trước --</option>
-                             </select>
-                         </div>
-                         <!-- quân sửa: Thêm ô nhập Điểm tối đa cho Mục -->
-                         <div class="form-group">
-                             <label for="">Điểm tối đa <span class="color-crimson">(*)</span></label>
-                             <input type="number" id="diem_toi_da" name="diem_toi_da" class="form-control" required
-                                 placeholder="Nhập điểm tối đa của mục" min="0">
-                         </div>
+                         
                          <!-- quân sửa: Thêm tuỳ chọn Yêu cầu minh chứng -->
                          <div class="form-group">
                              <div class="icheck-danger d-inline">
-                                 <input type="checkbox" id="co_minh_chung" name="co_minh_chung" value="1">
+                                 <input type="checkbox" id="co_minh_chung" name="co_minh_chung" value="1" <?= muc_old_value('co_minh_chung', 'add', 0) == 1 ? 'checked' : '' ?>>
                                  <label for="co_minh_chung" class="text-danger">Yêu cầu sinh viên nộp minh chứng cho Mục này</label>
                              </div>
                          </div>
                          <div class="form-group">
-                             <label for="">Quyền chấm điểm</label>
+                             <label class="label-sidebar">Quyền chấm điểm</label>
                              <div class="row">
-                                 <div class="col-md-3">
+                                 <div class="col-md-3 text-center">
                                      <div class="icheck-primary d-inline">
-                                         <input type="checkbox" id="quyen_sv" name="quyen_sv" value="1" checked>
+                                         <input type="checkbox" id="quyen_sv" name="quyen_sv" value="1" <?= (!$is_add_error || muc_old_value('quyen_sv', 'add', 0) == 1) ? 'checked' : '' ?>>
                                          <label for="quyen_sv">Sinh viên</label>
                                      </div>
                                  </div>
-                                 <div class="col-md-3">
+                                 <div class="col-md-3 text-center">
                                      <div class="icheck-primary d-inline">
-                                         <input type="checkbox" id="quyen_lt" name="quyen_lt" value="1" checked>
+                                         <input type="checkbox" id="quyen_lt" name="quyen_lt" value="1" <?= (!$is_add_error || muc_old_value('quyen_lt', 'add', 0) == 1) ? 'checked' : '' ?>>
                                          <label for="quyen_lt">Lớp trưởng/BCS</label>
                                      </div>
                                  </div>
-                                 <div class="col-md-3">
+                                 <div class="col-md-3 text-center">
                                      <div class="icheck-primary d-inline">
-                                         <input type="checkbox" id="quyen_btdk" name="quyen_btdk" value="1" checked>
+                                         <input type="checkbox" id="quyen_btdk" name="quyen_btdk" value="1" <?= (!$is_add_error || muc_old_value('quyen_btdk', 'add', 0) == 1) ? 'checked' : '' ?>>
                                          <label for="quyen_btdk">Bí thư đoàn khoa</label>
                                      </div>
                                  </div>
-                                 <div class="col-md-3">
+                                 <div class="col-md-3 text-center">
                                      <div class="icheck-primary d-inline">
-                                         <input type="checkbox" id="quyen_gv" name="quyen_gv" value="1" checked>
+                                         <input type="checkbox" id="quyen_gv" name="quyen_gv" value="1" <?= (!$is_add_error || muc_old_value('quyen_gv', 'add', 0) == 1) ? 'checked' : '' ?>>
                                          <label for="quyen_gv">Giảng viên/CVHT</label>
                                      </div>
                                  </div>
@@ -145,8 +198,9 @@
                         
                      </div>
                      <!-- /.card-body -->
-                     <div class="card-footer">
-                         <input type="submit" value="Thêm mới" class="btn btn-success float-right">
+                     <div class="card-footer py-2">
+                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
+                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
                  <!-- /.card -->
@@ -169,21 +223,6 @@
              </div>
              <!-- /.card-header -->
              <div class="card-body">
-                 <form action="" method="GET" class="mb-4">
-                     <input type="hidden" name="page" value="quan-ly-muc">
-                     <div class="row">
-                         <div class="col-md-4">
-                             <select name="id_khoan" class="form-control" onchange="this.form.submit()">
-                                 <option value="">-- Xem tất cả các khoản --</option>
-                                 <?php foreach ($khoan__Get_All as $item): ?>
-                                     <option value="<?=$item->id_khoan?>" <?=($id_khoan_filter == $item->id_khoan) ? 'selected' : ''?>>
-                                         <?=$item->ten_khoan?>
-                                     </option>
-                                 <?php endforeach; ?>
-                             </select>
-                         </div>
-                     </div>
-                 </form>
                  <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                      <thead>
                          <tr>
@@ -253,7 +292,7 @@
       $("#tablejs").DataTable({
           "responsive": true,
           "autoWidth": false,
-          "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+          "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
           "pagingType": "full_numbers",
           "pageLength": 10,
           "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -324,7 +363,190 @@
                       }
                   }
               ]
-          }]
+          }, {
+              "text": "<i class='fas fa-filter'></i>",
+              "titleAttr": "Bộ lọc",
+              "className": "btn btn-sm btn-custom-filter ml-1",
+              "attr": {
+                  "id": "btn-filter-dropdown"
+              }
+          }],
+          "initComplete": function() {
+              var filterHtml = `
+              <style>
+              .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                  background-color: #0f2a5a !important;
+                  border: 1px solid #0f2a5a !important;
+                  color: #fff !important;
+                  border-radius: 4px !important;
+                  padding: 6px 12px !important;
+                  font-size: 14px !important;
+                  font-weight: 500 !important;
+                  box-shadow: none !important;
+                  transition: all 0.15s ease-in-out !important;
+                  display: inline-flex !important;
+                  align-items: center !important;
+              }
+              .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                  background-color: transparent !important;
+                  border-color: #0f2a5a !important;
+                  color: #0f2a5a !important;
+              }
+              #custom-filter-menu {
+                  display: none;
+                  position: absolute;
+                  right: 0;
+                  top: 100%;
+                  margin-top: 5px;
+                  width: 320px;
+                  background: #fff;
+                  border: 1px solid rgba(0,0,0,.15);
+                  border-radius: .25rem;
+                  box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                  z-index: 1050;
+              }
+              </style>
+              <div id="custom-filter-menu" class="p-3 text-left">
+                  <div class="form-group mb-2">
+                      <label class="label-sidebar">Điều:</label>
+                      <select id="filter_dieu" class="form-control form-control-sm">
+                          <option value="">-- Tất cả Điều --</option>
+                      </select>
+                  </div>
+                  <div class="form-group mb-2">
+                      <label class="label-sidebar">Khoản:</label>
+                      <select id="filter_khoan" class="form-control form-control-sm">
+                          <option value="">-- Tất cả Khoản --</option>
+                      </select>
+                  </div>
+                  <div class="form-group mb-2">
+                      <label class="label-sidebar">Mục:</label>
+                      <select id="filter_muc" class="form-control form-control-sm">
+                          <option value="">-- Tất cả Mục --</option>
+                      </select>
+                  </div>
+                  <div class="form-group mb-2">
+                      <label class="label-sidebar">Minh chứng:</label>
+                      <select id="filter_minh_chung" class="form-control form-control-sm">
+                          <option value="">-- Tất cả --</option>
+                          <option value="Có">Có</option>
+                          <option value="Không">Không</option>
+                      </select>
+                  </div>
+                  <div class="d-flex justify-content-end mt-3">
+                      <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                      <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                  </div>
+              </div>`;
+              
+              var $btn = $('#btn-filter-dropdown');
+              $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+              $btn.parent().append(filterHtml);
+
+              var table = $('#tablejs').DataTable();
+
+              function updateCascadeDropdowns() {
+                  var selectedDieu = $('#filter_dieu').val() || "";
+                  var selectedKhoan = $('#filter_khoan').val() || "";
+                  var selectedMuc = $('#filter_muc').val() || "";
+                  
+                  var dieuOptions = [];
+                  var khoanOptions = [];
+                  var mucOptions = [];
+                  
+                  table.rows().every(function() {
+                      var data = this.data();
+                      var dieu = $('<div>').html(data[1]).text().trim();
+                      var khoan = $('<div>').html(data[2]).text().trim();
+                      var muc = $('<div>').html(data[3]).text().trim();
+                      
+                      if (dieu !== '' && dieuOptions.indexOf(dieu) === -1) dieuOptions.push(dieu);
+                      
+                      if (selectedDieu === "" || dieu === selectedDieu) {
+                          if (khoan !== '' && khoanOptions.indexOf(khoan) === -1) khoanOptions.push(khoan);
+                      }
+                      
+                      if ((selectedDieu === "" || dieu === selectedDieu) && (selectedKhoan === "" || khoan === selectedKhoan)) {
+                          if (muc !== '' && mucOptions.indexOf(muc) === -1) mucOptions.push(muc);
+                      }
+                  });
+                  
+                  function populate(selectId, options, currentValue, defaultText) {
+                      var select = $('#' + selectId);
+                      select.empty().append('<option value="">' + defaultText + '</option>');
+                      options.sort().forEach(function(opt) {
+                          select.append('<option value="'+opt+'">'+opt+'</option>');
+                      });
+                      if (options.indexOf(currentValue) !== -1) {
+                          select.val(currentValue);
+                      } else {
+                          select.val('');
+                      }
+                  }
+                  
+                  populate('filter_dieu', dieuOptions, selectedDieu, '-- Tất cả Điều --');
+                  populate('filter_khoan', khoanOptions, selectedKhoan, '-- Tất cả Khoản --');
+                  populate('filter_muc', mucOptions, selectedMuc, '-- Tất cả Mục --');
+              }
+
+              $('#filter_dieu').on('change', function() {
+                  $('#filter_khoan').val('');
+                  $('#filter_muc').val('');
+                  updateCascadeDropdowns();
+              });
+
+              $('#filter_khoan').on('change', function() {
+                  $('#filter_muc').val('');
+                  updateCascadeDropdowns();
+              });
+              
+              $('#filter_muc').on('change', function() {
+                  updateCascadeDropdowns();
+              });
+
+              updateCascadeDropdowns();
+
+              $btn.on('click', function(e) {
+                  e.stopPropagation();
+                  $('#custom-filter-menu').fadeToggle(200);
+              });
+
+              $('#custom-filter-menu').on('click', function(e) {
+                  e.stopPropagation();
+              });
+
+              $(document).on('click', function() {
+                  $('#custom-filter-menu').fadeOut(200);
+              });
+
+              $('#btn-apply-filter').on('click', function() {
+                  var dieuVal = $('#filter_dieu').val();
+                  var khoanVal = $('#filter_khoan').val();
+                  var mucVal = $('#filter_muc').val();
+                  var mcVal = $('#filter_minh_chung').val();
+                  
+                  table.column(1).search(dieuVal ? '^' + $.fn.dataTable.util.escapeRegex(dieuVal) + '$' : '', true, false)
+                       .column(2).search(khoanVal ? '^' + $.fn.dataTable.util.escapeRegex(khoanVal) + '$' : '', true, false)
+                       .column(3).search(mucVal ? '^' + $.fn.dataTable.util.escapeRegex(mucVal) + '$' : '', true, false)
+                       .column(5).search(mcVal ? $.fn.dataTable.util.escapeRegex(mcVal) : '', true, false)
+                       .draw();
+                  $('#custom-filter-menu').fadeOut(200);
+              });
+
+              $('#btn-cancel-filter').on('click', function() {
+                  $('#filter_dieu').val('');
+                  $('#filter_khoan').val('');
+                  $('#filter_muc').val('');
+                  $('#filter_minh_chung').val('');
+                  updateCascadeDropdowns();
+                  table.column(1).search('')
+                       .column(2).search('')
+                       .column(3).search('')
+                       .column(5).search('')
+                       .draw();
+                  $('#custom-filter-menu').fadeOut(200);
+              });
+          }
       });
   });
 
@@ -338,9 +560,9 @@ function toggle_add_form() {
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
         } else {
-            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-secondary').addClass('btn-primary');
+            btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         }
     });
 }
@@ -351,7 +573,7 @@ function update_obj(id_muc) {
     }, function(data) {
         // Nhựt sửa: Ẩn form thêm mới khi mở form cập nhật
         $('#div_add_form').slideUp(300);
-        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-secondary').addClass('btn-primary');
+        $('#btn-toggle-add').html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-cancel-custom').addClass('btn-success');
         $('#div_update').html(data);
     });
 }
@@ -382,3 +604,6 @@ function cancel_update() {
      }
  });
  </script>
+
+
+

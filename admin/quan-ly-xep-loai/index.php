@@ -93,6 +93,13 @@
                                      <input type="number" id="can_duoi" name="can_duoi"
                                          class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['invalid-diem', 'overlap-xep-loai'])) ? 'is-invalid' : '' ?>" required title="Thấp nhất là 0, lớn nhất là 100"
                                          placeholder="Nhập điểm tối thiểu" min="0" max="100" step="1" value="<?=xep_loai_escape(xep_loai_old_value('can_duoi', 'add'))?>">
+                                     <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                         <?php if ($_GET['status'] == 'invalid-diem'): ?>
+                                             <small class="text-danger mt-1">Điểm không hợp lệ (từ 0 đến 100, tối thiểu <= tối đa).</small>
+                                         <?php elseif ($_GET['status'] == 'overlap-xep-loai'): ?>
+                                             <small class="text-danger mt-1">Khoảng điểm bị trùng lặp với xếp loại khác.</small>
+                                         <?php endif; ?>
+                                     <?php endif; ?>
                                  </div>
                              </div>
                              <div class="col-6">
@@ -101,17 +108,15 @@
                                      <input type="number" id="can_tren" name="can_tren"
                                          class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['invalid-diem', 'overlap-xep-loai'])) ? 'is-invalid' : '' ?>" required title="Thấp nhất là 0, lớn nhất là 100"
                                          placeholder="Nhập điểm tối đa" min="0" max="100" step="1" value="<?=xep_loai_escape(xep_loai_old_value('can_tren', 'add'))?>">
+                                     <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                         <?php if ($_GET['status'] == 'invalid-diem'): ?>
+                                             <small class="text-danger mt-1">Điểm không hợp lệ (từ 0 đến 100, tối thiểu <= tối đa).</small>
+                                         <?php elseif ($_GET['status'] == 'overlap-xep-loai'): ?>
+                                             <small class="text-danger mt-1">Khoảng điểm bị trùng lặp với xếp loại khác.</small>
+                                         <?php endif; ?>
+                                     <?php endif; ?>
                                  </div>
                              </div>
-                             <?php if ($is_add_error && isset($_GET['status'])): ?>
-                                 <div class="col-12">
-                                 <?php if ($_GET['status'] == 'invalid-diem'): ?>
-                                     <small class="text-danger mt-1">Điểm không hợp lệ (từ 0 đến 100, tối thiểu <= tối đa).</small>
-                                 <?php elseif ($_GET['status'] == 'overlap-xep-loai'): ?>
-                                     <small class="text-danger mt-1">Khoảng điểm bị trùng lặp với xếp loại khác.</small>
-                                 <?php endif; ?>
-                                 </div>
-                             <?php endif; ?>
                          </div>
                          <div class="row">
                              <div class="col-6">
@@ -135,7 +140,7 @@
                          </div>
                      </div>
                      <!-- /.card-body -->
-                     <div class="card-footer">
+                     <div class="card-footer py-2">
                          <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
@@ -212,7 +217,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -351,3 +356,6 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
  </script>
+
+
+

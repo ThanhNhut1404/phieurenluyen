@@ -100,7 +100,13 @@ if (!isset($_SESSION['admin'])) {
         };
     });
     //Bootstrap Duallistbox
-    $('.duallistbox').bootstrapDualListbox()
+    $('.duallistbox').bootstrapDualListbox({
+        filterTextClear: 'Hiện tất cả',
+        filterPlaceHolder: 'Tìm kiếm',
+        infoText: 'Hiển thị tất cả ({0})',
+        infoTextFiltered: '<span class="badge badge-warning">Tìm kiếm</span> {0} từ {1}',
+        infoTextEmpty: 'Danh sách trống'
+    });
 
     function confirm_sweet_chi_tiet(url) {
         Swal.fire({

@@ -89,6 +89,13 @@
                                     value="<?=xep_loai_update_escape(xep_loai_update_old_value('can_duoi', $xeploai__Get_By_Id->id_xep_loai, abs($xeploai__Get_By_Id->can_duoi)))?>" class="form-control <?= ($is_update_error && in_array($status, ['invalid-diem', 'overlap-xep-loai'])) ? 'is-invalid' : '' ?>" required
                                     title="Thấp nhất là 0, lớn nhất là 100" placeholder="Nhập điểm tối thiểu" min="0" max="100"
                                     step="1">
+                                <?php if ($is_update_error && in_array($status, ['invalid-diem', 'overlap-xep-loai'])): ?>
+                                    <?php if ($status == 'invalid-diem'): ?>
+                                        <small class="text-danger mt-1">Điểm không hợp lệ (từ 0 đến 100, tối thiểu <= tối đa).</small>
+                                    <?php elseif ($status == 'overlap-xep-loai'): ?>
+                                        <small class="text-danger mt-1">Khoảng điểm bị trùng lặp với xếp loại khác.</small>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="col-6">
@@ -98,17 +105,15 @@
                                     value="<?=xep_loai_update_escape(xep_loai_update_old_value('can_tren', $xeploai__Get_By_Id->id_xep_loai, abs($xeploai__Get_By_Id->can_tren)))?>" class="form-control <?= ($is_update_error && in_array($status, ['invalid-diem', 'overlap-xep-loai'])) ? 'is-invalid' : '' ?>" required
                                     title="Thấp nhất là 0, lớn nhất là 100" placeholder="Nhập điểm tối đa" min="0" max="100"
                                     step="1">
+                                <?php if ($is_update_error && in_array($status, ['invalid-diem', 'overlap-xep-loai'])): ?>
+                                    <?php if ($status == 'invalid-diem'): ?>
+                                        <small class="text-danger mt-1">Điểm không hợp lệ (từ 0 đến 100, tối thiểu <= tối đa).</small>
+                                    <?php elseif ($status == 'overlap-xep-loai'): ?>
+                                        <small class="text-danger mt-1">Khoảng điểm bị trùng lặp với xếp loại khác.</small>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        <?php if ($is_update_error && in_array($status, ['invalid-diem', 'overlap-xep-loai'])): ?>
-                            <div class="col-12">
-                            <?php if ($status == 'invalid-diem'): ?>
-                                <small class="text-danger mt-1">Điểm không hợp lệ (từ 0 đến 100, tối thiểu <= tối đa).</small>
-                            <?php elseif ($status == 'overlap-xep-loai'): ?>
-                                <small class="text-danger mt-1">Khoảng điểm bị trùng lặp với xếp loại khác.</small>
-                            <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
                     </div>
                     <div class="row">
                         <div class="col-6">
@@ -134,7 +139,7 @@
                     </div>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
+                <div class="card-footer py-2">
                     <input type="submit" value="Cập nhật" class="btn btn-danger float-right font-weight-bold">
                     <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="cancel_update()">Hủy</button>
                 </div>

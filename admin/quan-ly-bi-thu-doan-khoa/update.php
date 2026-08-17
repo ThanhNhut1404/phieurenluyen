@@ -59,6 +59,12 @@
                                 <input type="text" id="ten_bi_thu" name="ten_bi_thu" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('ten_bi_thu', $bithudoankhoa__Get_By_Id->id_bi_thu, $bithudoankhoa__Get_By_Id->ten_bi_thu)) ?>" placeholder="Nhập tên bí thư">
                             </div>
                             <div class="form-group">
+                                <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
+                                <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required value="<?= bithu_update_escape(bithu_old_value_update('ngay_sinh', $bithudoankhoa__Get_By_Id->id_bi_thu, $bithudoankhoa__Get_By_Id->ngay_sinh)) ?>" min="<?= date('Y-m-d', strtotime('-100 years')) ?>" max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
                                 <label class="label-sidebar" for="">Giới tính <span class="color-crimson">*</span></label>
                                 <select class="form-control" name="gioi_tinh" required>
                                     <option value="0" <?= bithu_old_value_update('gioi_tinh', $bithudoankhoa__Get_By_Id->id_bi_thu, $bithudoankhoa__Get_By_Id->gioi_tinh) == '0' ? "selected" : "" ?>>
@@ -68,12 +74,6 @@
                                         Nam
                                     </option>
                                 </select>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
-                                <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required value="<?= bithu_update_escape(bithu_old_value_update('ngay_sinh', $bithudoankhoa__Get_By_Id->id_bi_thu, $bithudoankhoa__Get_By_Id->ngay_sinh)) ?>" min="<?= date('Y-m-d', strtotime('-100 years')) ?>" max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
                             </div>
                             <div class="form-group">
                                 <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
@@ -172,7 +172,7 @@
                     </div>
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
+                <div class="card-footer py-2">
                     <input type="submit" value="Cập nhật" class="btn btn-danger float-right font-weight-bold">
                     <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="cancel_update()">Hủy</button>
                 </div>

@@ -4,6 +4,14 @@
         session_start();
     }
 
+    if (empty($_SESSION['csrf_token'])) {
+        try {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        } catch (Throwable $e) {
+            $_SESSION['csrf_token'] = hash('sha256', session_id() . uniqid('', true));
+        }
+    }
+
     $dieu_old_input = isset($_SESSION['dieu_old_input']) && is_array($_SESSION['dieu_old_input']) ? $_SESSION['dieu_old_input'] : array();
     if (isset($dieu_old_input['context']) && $dieu_old_input['context'] === 'add') {
         unset($_SESSION['dieu_old_input']);
@@ -77,40 +85,50 @@
      <!-- Nhựt sửa: Ẩn form thêm mới mặc định -->
      <section class="content" id="div_add_form" <?= $is_add_error ? '' : 'style="display: none;"' ?>>
          <form class="row form" action="quan-ly-dieu/action.php?req=add" method="post" enctype="multipart/form-data">
+             <input type="hidden" name="csrf_token" value="<?=dieu_escape($_SESSION['csrf_token'] ?? '')?>">
              <div class="col-12">
                  <div class="card card-success">
                      <div class="card-header">
                          <h3 class="card-title">Thêm mới Điều</h3>
                      </div>
                      <div class="card-body">
-                         <div class="form-group">
-                             <label class="label-sidebar" for="ten_dieu">Tên điều <span class="color-crimson">*</span></label>
-                             <input type="text" id="ten_dieu" name="ten_dieu" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate-name', 'invalid'])) ? 'is-invalid' : '' ?>" required
-                                 placeholder="Nhập tên điều" value="<?=dieu_escape(dieu_old_value('ten_dieu', 'add'))?>">
-                             <?php if ($is_add_error && isset($_GET['status'])): ?>
-                                 <?php if ($_GET['status'] == 'duplicate-name'): ?>
-                                     <small class="text-danger mt-1">Tên điều đã tồn tại trong hệ thống.</small>
-                                 <?php elseif ($_GET['status'] == 'invalid'): ?>
-                                     <small class="text-danger mt-1">Tên điều không được để trống.</small>
-                                 <?php endif; ?>
-                             <?php endif; ?>
+                         <div class="row">
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="ten_dieu">Tên điều <span class="color-crimson">*</span></label>
+                                     <input type="text" id="ten_dieu" name="ten_dieu" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate-name', 'invalid'])) ? 'is-invalid' : '' ?>" required
+                                         placeholder="Nhập tên điều" value="<?=dieu_escape(dieu_old_value('ten_dieu', 'add'))?>">
+                                     <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                         <?php if ($_GET['status'] == 'duplicate-name'): ?>
+                                             <small class="text-danger mt-1">Tên điều đã tồn tại trong hệ thống.</small>
+                                         <?php elseif ($_GET['status'] == 'invalid'): ?>
+                                             <small class="text-danger mt-1">Tên điều không được để trống.</small>
+                                         <?php endif; ?>
+                                     <?php endif; ?>
+                                 </div>
+                             </div>
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <!-- quân sửa: Cập nhật lời nhắc Thứ tự tự động -->
+                                     <label class="label-sidebar" for="thu_tu">Thứ tự</label>
+                                     <input type="number" id="thu_tu" name="thu_tu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-thutu') ? 'is-invalid' : '' ?>" min="1"
+                                         max="<?=$dieu__Max_Thu_Tu + 1?>" step="1"
+                                         placeholder="Nhập thứ tự (Có thể để trống)" value="<?=dieu_escape(dieu_old_value('thu_tu', 'add'))?>">
+                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-thutu'): ?>
+                                         <small class="text-danger mt-1">Thứ tự không hợp lệ.</small><br/>
+                                     <?php endif; ?>
+                                     <small class="form-text text-muted">Mẹo: Để trống hệ thống sẽ tự động xếp cuối. Nếu nhập trùng, hệ thống sẽ tự động hoán đổi.</small>
+                                 </div>
+                             </div>
                          </div>
                          <div class="form-group">
                              <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết</label>
                              <textarea id="ghi_chu" name="ghi_chu" class="form-control" required
                                  placeholder="Nhập nội dung chi tiết"><?=dieu_escape(dieu_old_value('ghi_chu', 'add'))?></textarea>
                          </div>
-                         <div class="form-group">
-                             <!-- quân sửa: Cập nhật lời nhắc Thứ tự tự động -->
-                             <label class="label-sidebar" for="thu_tu">Thứ tự</label>
-                             <input type="number" id="thu_tu" name="thu_tu" class="form-control" min="1"
-                                 max="<?=$dieu__Max_Thu_Tu + 1?>" step="1"
-                                 placeholder="Nhập thứ tự (Có thể để trống)" value="<?=dieu_escape(dieu_old_value('thu_tu', 'add'))?>">
-                             <small class="form-text text-muted">Mẹo: Để trống hệ thống sẽ tự động xếp cuối. Nếu nhập trùng, hệ thống sẽ tự động hoán đổi.</small>
-                         </div>
                      </div>
                      <!-- /.card-body -->
-                     <div class="card-footer">
+                     <div class="card-footer py-2">
                          <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
@@ -189,7 +207,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -339,3 +357,6 @@ function confirm_delete_dieu(url) {
     })
 }
  </script>
+
+
+

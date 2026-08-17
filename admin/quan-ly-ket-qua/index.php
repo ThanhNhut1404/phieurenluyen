@@ -36,67 +36,78 @@
          <div class="container-fluid">
              <div class="row mb-2">
                  <div class="col-sm-6">
-                     <h1>Quản lý kết quả xếp loại</h1>
+                     <h1>Quản lý Kết quả xếp loại</h1>
                  </div>
                  <div class="col-sm-6">
                      <ol class="breadcrumb float-sm-right">
                          <li class="breadcrumb-item"><a href="index.php?page=thong-ke">Home</a></li>
-                         <li class="breadcrumb-item active">Quản lý kết quả xếp loại</li>
+                         <li class="breadcrumb-item active">Quản lý Kết quả xếp loại</li>
                      </ol>
                  </div>
              </div>
          </div><!-- /.container-fluid -->
      </section>
 
-     <section class="content">
+     <?php 
+        $status = isset($_GET['status']) ? $_GET['status'] : '';
+        $is_open_form = isset($_GET['id_dot']) || $status != ''; 
+     ?>
+
+     <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
+     <section class="content mb-2">
+         <button type="button" class="btn <?= $is_open_form ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+             <i class="fas <?= $is_open_form ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_open_form ? '' : 'Xử lý Phiếu' ?>
+         </button>
+     </section>
+
+     <section class="content" id="div_add_form" <?= $is_open_form ? '' : 'style="display: none;"' ?>>
          <div class="col-12">
              <div class="card card-success">
                  <div class="card-header">
-                     <h3 class="card-title">Xử lý phiếu chấm điểm</h3>
-                     <div class="card-tools">
-                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                             <i class="fas fa-minus"></i>
-                         </button>
-                     </div>
+                     <h3 class="card-title">Xử lý Phiếu chấm điểm</h3>
                  </div>
                  <div class="card-body">
                      <div class="row">
-                         <div class="col">
-                             <label for="">Chọn đợt (<?=count($dotchamdiem__Get_All)?>)</label>
-                             <select class="form-control" name="" required onchange="location.href=this.value">
-                                 <option value="">Chọn đợt</option>
-                                 <?php foreach ($dotchamdiem__Get_All as $item):?>
-                                 <option value="?page=quan-ly-ket-qua&id_dot=<?=$item->id_dot?>"
-                                     <?=$id_dot == $item->id_dot ? "selected" : ""?>>
-                                     <?=$item->ten_dot?>
-                                 </option>
-                                 <?php endforeach; ?>
-                             </select>
+                         <div class="col-6">
+                             <div class="form-group">
+                                 <label class="label-sidebar" for="id_dot_select">Chọn đợt (<?=count($dotchamdiem__Get_All)?>) <span class="color-crimson">*</span></label>
+                                 <select class="form-control" id="id_dot_select" name="" required onchange="location.href=this.value">
+                                     <option value="">Chọn đợt</option>
+                                     <?php foreach ($dotchamdiem__Get_All as $item):?>
+                                     <option value="?page=quan-ly-ket-qua&id_dot=<?=$item->id_dot?>"
+                                         <?=$id_dot == $item->id_dot ? "selected" : ""?>>
+                                         <?=$item->ten_dot?>
+                                     </option>
+                                     <?php endforeach; ?>
+                                 </select>
+                             </div>
                          </div>
 
-                         <div class="col">
+                         <div class="col-6">
                              <?php if(isset($_GET['id_dot'])):?>
-                             <label for="">Chọn lớp học (<?=count($lophoc__Get_All)?>)</label>
-                             <select class="form-control" name="" required onchange="location.href=this.value">
-                                 <option value="">Chọn lớp học</option>
-                                 <?php foreach ($lophoc__Get_All as $item):?>
-                                 <option
-                                     value="?page=quan-ly-ket-qua&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$item->id_lop_hoc?>"
-                                     <?=$id_lop_hoc == $item->id_lop_hoc ? "selected" : ""?>>
-                                     <?=$item->ten_lop_hoc?>
-                                 </option>
-                                 <?php endforeach; ?>
-                             </select>
+                             <div class="form-group">
+                                 <label class="label-sidebar" for="id_lop_hoc_select">Chọn lớp học (<?=count($lophoc__Get_All)?>) <span class="color-crimson">*</span></label>
+                                 <select class="form-control <?= ($status == 'duplicate-ket-qua') ? 'is-invalid' : '' ?>" id="id_lop_hoc_select" name="" required onchange="location.href=this.value">
+                                     <option value="">Chọn lớp học</option>
+                                     <?php foreach ($lophoc__Get_All as $item):?>
+                                     <option
+                                         value="?page=quan-ly-ket-qua&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$item->id_lop_hoc?>"
+                                         <?=$id_lop_hoc == $item->id_lop_hoc ? "selected" : ""?>>
+                                         <?=$item->ten_lop_hoc?>
+                                     </option>
+                                     <?php endforeach; ?>
+                                 </select>
+                                 <?php if ($status == 'duplicate-ket-qua'): ?>
+                                     <small class="text-danger mt-1">Kết quả xếp loại cho đợt và lớp này đã được xử lý từ trước.</small>
+                                 <?php endif; ?>
+                             </div>
                              <?php endif; ?>
                          </div>
-
                      </div>
-
                  </div>
                  <!-- /.card-body -->
-                 <div class="card-footer">
-                     <!-- <input type="submit" value="Xử lý" class="btn btn-success float-right"
-                         <?=isset($_GET['id_lop_hoc']) ? "" : "disabled"?>> -->
+                 <div class="card-footer py-2">
+                     <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                  </div>
              </div>
          </div>
@@ -110,17 +121,39 @@
              <div class="card-header">
                  <h3 class="card-title">Danh sách Kết quả</h3>
 
-                 <div class="card-tools">
+                 <?php
+                 $sum_1 = $sum_2 = $sum_3 = $sum_4 = $sum_5 = $sum_6 = 0;
+                 foreach($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot as $item) {
+                     if ($item->xep_loai == "Xuất sắc") $sum_1++;
+                     elseif ($item->xep_loai == "Giỏi") $sum_2++;
+                     elseif ($item->xep_loai == "Khá") $sum_3++;
+                     elseif ($item->xep_loai == "Trung bình") $sum_4++;
+                     elseif ($item->xep_loai == "Yếu") $sum_5++;
+                     elseif ($item->xep_loai == "Kém") $sum_6++;
+                 }
+                 ?>
+                 <div class="card-tools d-flex align-items-center">
+                     <span class="mr-3 font-weight-bold" style="font-size: 0.9rem;">
+                         Xuất sắc: <span class="text-success"><?=$sum_1?></span> | 
+                         Giỏi: <span class="text-primary"><?=$sum_2?></span> | 
+                         Khá: <span class="text-info"><?=$sum_3?></span> | 
+                         Trung bình: <span class="text-warning"><?=$sum_4?></span> | 
+                         Yếu: <span class="text-danger"><?=$sum_5?></span> | 
+                         Kém: <span class="text-danger"><?=$sum_6?></span>
+                     </span>
                       <!-- Nhựt sửa lỗi: Ẩn nút EXPORT khi chưa chọn Lớp học & Đợt chấm hợp lệ. -->
                      <?php if ($id_lop_hoc > 0 && $id_dot > 0): ?>
-                     <form action="./quan-ly-thong-ke/action.php?req=export" method="post">
+                     <form action="./quan-ly-thong-ke/action.php?req=export" method="post" class="mr-2 mb-0">
                          <input type="hidden" name="id_lop_hoc" value="<?=$id_lop_hoc?>">
                          <input type="hidden" name="id_dot" value="<?=$id_dot?>">
-                         <button type="submit" class="btn btn-primary">
+                         <button type="submit" class="btn btn-primary btn-sm">
                              <i class="fas fa-print"></i> EXPORT
                          </button>
                      </form>
                      <?php endif; ?>
+                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                         <i class="fas fa-minus"></i>
+                     </button>
                  </div>
              </div>
          <!-- /.card-header -->
@@ -142,26 +175,10 @@
                   </thead>
                  <tbody>
                      <?php $num = 0;?>
-                     <?php $sum_1 = 0;?>
-                     <?php $sum_2 = 0;?>
-                     <?php $sum_3 = 0;?>
-                     <?php $sum_4 = 0;?>
-                     <?php $sum_5 = 0;?>
-                     <?php $sum_6 = 0;?>
                      <?php foreach($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot as $item):?>
                       <!-- Nhựt sửa lỗi: Truyền thêm csrf_token qua GET request để bảo mật hành động hạ bậc. -->
                      <tr
                          ondblclick="return confirm_sweet_ha_bac('quan-ly-ket-qua/action.php?req=update&id_ket_qua=<?=$item->id_ket_qua?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
-                         <?php 
-
-                                $item->xep_loai == "Xuất sắc" ? $sum_1++ : "";
-                                $item->xep_loai == "Giỏi" ? $sum_2++ : "";
-                                $item->xep_loai == "Khá" ? $sum_3++ : "";
-                                $item->xep_loai == "Trung bình" ? $sum_4++ : "";
-                                $item->xep_loai == "Yếu" ? $sum_5++ : "";
-                                $item->xep_loai == "Kém" ? $sum_6++ : "";
-                            
-                            ?>
                          <td><?=++$num?></td>
                          <td><?=htmlspecialchars($item->ma_sinh_vien ?? "", ENT_QUOTES, 'UTF-8')?></td>
                          <td><?=htmlspecialchars($item->ten_sinh_vien ?? "", ENT_QUOTES, 'UTF-8')?></td>
@@ -174,12 +191,6 @@
                      </tr>
                      <?php endforeach?>
                  </tbody>
-                 <tfoot>
-                     <b>
-                         Xuất sắc: <?=$sum_1?> | Giỏi: <?=$sum_2?> | Khá: <?=$sum_3?> | Trung bình: <?=$sum_4?>
-                         | Yếu: <?=$sum_5?> | Kém: <?=$sum_6?>
-                     </b>
-                 </tfoot>
              </table>
          </div>
          <!-- /.card-body -->
@@ -203,7 +214,7 @@ window.addEventListener("load", function() {
     $('#tablejs').DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -231,63 +242,205 @@ window.addEventListener("load", function() {
                 "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
             }
         },
-        // Nhựt sửa: Cấu hình dropdown "Xuất dữ liệu" đầy đủ (Copy, CSV, Excel, PDF, Print) thay vì chỉ xuất Excel
-        buttons: [{
+        buttons: [
+            {
+                extend: 'colvis',
+                text: '<i class="fas fa-columns"></i>',
+                titleAttr: 'Ẩn/Hiện cột',
+                className: 'btn btn-sm btn-custom-filter mr-1'
+            },
+            {
                 extend: "collection",
                 text: "<i class='fas fa-file-export'></i> Xuất dữ liệu",
                 className: "btn btn-sm btn-primary",
                 align: "button-right",
                 buttons: [
-                    {
-                        extend: "copy",
-                        text: "<i class='far fa-copy'></i> Copy",
-                        exportOptions: {
-                            columns: ":visible"
-                        }
-                    },
-                    {
-                        extend: "csv",
-                        text: "<i class='fas fa-file-csv'></i> CSV",
-                        bom: true,
-                        exportOptions: {
-                            columns: ":visible"
-                        }
-                    },
-                    {
-                        extend: "excel",
-                        text: "<i class='far fa-file-excel'></i> Excel",
-                        exportOptions: {
-                            columns: ":visible"
-                        }
-                    },
-                    {
-                        extend: "pdf",
-                        text: "<i class='far fa-file-pdf'></i> PDF",
-                        exportOptions: {
-                            columns: ":visible"
-                        }
-                    },
-                    {
-                        extend: "print",
-                        text: "<i class='fas fa-print'></i> In",
-                        exportOptions: {
-                            columns: ":visible"
-                        }
-                    }
+                    { extend: "copy", text: "<i class='far fa-copy'></i> Copy", exportOptions: { columns: ":visible" } },
+                    { extend: "csv", text: "<i class='fas fa-file-csv'></i> CSV", bom: true, exportOptions: { columns: ":visible" } },
+                    { extend: "excel", text: "<i class='far fa-file-excel'></i> Excel", exportOptions: { columns: ":visible" } },
+                    { extend: "pdf", text: "<i class='far fa-file-pdf'></i> PDF", exportOptions: { columns: ":visible" } },
+                    { extend: "print", text: "<i class='fas fa-print'></i> In", exportOptions: { columns: ":visible" } }
                 ]
             },
-            // Nhựt sửa: Đổi tên nút Column visibility thành Ẩn/Hiện cột
             {
-                extend: 'colvis',
-                text: 'Ẩn/Hiện cột'
+                text: "<i class='fas fa-filter'></i>",
+                titleAttr: "Bộ lọc",
+                className: "btn btn-sm btn-custom-filter ml-1",
+                attr: {
+                    id: "btn-filter-dropdown"
+                }
             }
         ],
         columnDefs: [{
             targets: -1,
             visible: false
-        }]
-    }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+        }],
+        initComplete: function() {
+            var filterHtml = `
+            <style>
+            .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                background-color: #0f2a5a !important;
+                border: 1px solid #0f2a5a !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                background-color: transparent !important;
+                border-color: #0f2a5a !important;
+                color: #0f2a5a !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter.dropdown-toggle::after {
+                display: none !important;
+            }
+            .dataTables_wrapper .dt-buttons .dt-button-down-arrow {
+                display: none !important;
+            }
+            #custom-filter-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                margin-top: 5px;
+                width: 320px;
+                background: #fff;
+                border: 1px solid rgba(0,0,0,.15);
+                border-radius: .25rem;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                z-index: 1050;
+            }
+            </style>
+            <div id="custom-filter-menu" class="p-3 text-left">
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Lớp học:</label>
+                    <select id="filter_lop" class="form-control form-control-sm">
+                        <option value="">-- Tất cả Lớp --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Kết quả xếp loại:</label>
+                    <select id="filter_xep_loai" class="form-control form-control-sm">
+                        <option value="">-- Tất cả Kết quả --</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                    <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                </div>
+            </div>`;
+            
+            var $btn = $('#btn-filter-dropdown');
+            $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+            $btn.parent().append(filterHtml);
+
+            var table = $('#tablejs').DataTable();
+
+            function updateCascadeDropdowns() {
+                var selectedLop = $('#filter_lop').val() || "";
+                var selectedXepLoai = $('#filter_xep_loai').val() || "";
+                
+                var lopOptions = [];
+                var xepLoaiOptions = [];
+                
+                table.rows({ search: 'applied' }).every(function() {
+                    var data = this.data();
+                    var lop = $('<div>').html(data[3]).text().trim();
+                    var xepLoai = $('<div>').html(data[5]).text().trim();
+                    
+                    if (lop !== '' && lopOptions.indexOf(lop) === -1) lopOptions.push(lop);
+                    
+                    if (selectedLop === "" || lop === selectedLop) {
+                        if (xepLoai !== '' && xepLoaiOptions.indexOf(xepLoai) === -1) xepLoaiOptions.push(xepLoai);
+                    }
+                });
+                
+                function populate(selectId, options, currentValue, defaultText) {
+                    var select = $('#' + selectId);
+                    select.empty().append('<option value="">' + defaultText + '</option>');
+                    options.sort().forEach(function(opt) {
+                        select.append('<option value="'+opt+'">'+opt+'</option>');
+                    });
+                    if (options.indexOf(currentValue) !== -1) {
+                        select.val(currentValue);
+                    } else {
+                        select.val('');
+                    }
+                }
+                
+                populate('filter_lop', lopOptions, selectedLop, '-- Tất cả Lớp --');
+                populate('filter_xep_loai', xepLoaiOptions, selectedXepLoai, '-- Tất cả Kết quả --');
+            }
+
+            $('#filter_lop').on('change', function() {
+                $('#filter_xep_loai').val('');
+                updateCascadeDropdowns();
+            });
+
+            $('#filter_xep_loai').on('change', function() {
+                updateCascadeDropdowns();
+            });
+
+            updateCascadeDropdowns();
+
+            $btn.on('click', function(e) {
+                e.stopPropagation();
+                $('#custom-filter-menu').fadeToggle(200);
+            });
+
+            $('#custom-filter-menu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-apply-filter').on('click', function() {
+                var lopVal = $('#filter_lop').val();
+                var xepLoaiVal = $('#filter_xep_loai').val();
+                
+                table.column(3).search(lopVal ? '^' + $.fn.dataTable.util.escapeRegex(lopVal) + '$' : '', true, false)
+                     .column(5).search(xepLoaiVal ? '^' + $.fn.dataTable.util.escapeRegex(xepLoaiVal) + '$' : '', true, false)
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-cancel-filter').on('click', function() {
+                $('#filter_lop').val('');
+                $('#filter_xep_loai').val('');
+                updateCascadeDropdowns();
+                table.column(3).search('')
+                     .column(5).search('')
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+        }
+    });
 
 
 });
+
+function toggle_add_form() {
+    var addForm = $('#div_add_form');
+    var btn = $('#btn-toggle-add');
+    
+    // Đóng form cập nhật nếu đang mở
+    $("#div_update").html('');
+    
+    addForm.slideToggle(300, function() {
+        if (addForm.is(':visible')) {
+            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
+        } else {
+            btn.html('<i class="fas fa-plus"></i> Xử lý phiếu chấm điểm').removeClass('btn-cancel-custom').addClass('btn-success');
+        }
+    });
+}
  </script>
+
+

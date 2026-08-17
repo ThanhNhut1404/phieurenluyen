@@ -24,12 +24,17 @@
         <div class="card card-primary mt-3">
             <div class="card-header">
                 <h3 class="card-title">Danh sách Thông báo</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <?php if(count($danh_sach_yeu_cau) == 0): ?>
                     <p class="text-center text-muted my-4">Hiện tại chưa có yêu cầu kích hoạt nào.</p>
                 <?php else: ?>
-                    <div class="table-responsive">
+
                         <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                             <thead>
                                 <tr>
@@ -64,7 +69,7 @@
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
-                    </div>
+
                 <?php endif; ?>
             </div>
         </div>
@@ -77,7 +82,7 @@ window.addEventListener("load", function() {
         $("#tablejs").DataTable({
             "responsive": true,
             "autoWidth": false,
-            "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+            "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
             "pagingType": "full_numbers",
             "pageLength": 10,
             "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -199,3 +204,6 @@ function gui_mail_kich_hoat(id_yeu_cau, email) {
     return false;
 }
 </script>
+
+
+

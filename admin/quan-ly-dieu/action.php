@@ -35,10 +35,34 @@
         unset($_SESSION['dieu_old_input']);
     }
 
+    function dieu__Valid_Csrf() {
+        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+        return isset($_POST['csrf_token'], $_SESSION['csrf_token'])
+            && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token']);
+    }
+
+    function dieu__Valid_Csrf_Get() {
+        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+        return isset($_GET['csrf_token'], $_SESSION['csrf_token'])
+            && hash_equals($_SESSION['csrf_token'], $_GET['csrf_token']);
+    }
+
+    function dieu__Rotate_Csrf_Token() {
+        if (session_status() == PHP_SESSION_NONE) { session_start(); }
+        try {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        } catch (Throwable $e) {
+            $_SESSION['csrf_token'] = hash('sha256', session_id() . uniqid('', true));
+        }
+    }
+
     
     if (isset($_GET['req'])){
         switch($_GET['req']){
             case 'add':
+                if (!dieu__Valid_Csrf()) {
+                    dieu__Redirect('csrf');
+                }
 
                 // Nhựt sửa lỗi: Request thiếu field vẫn phải xử lý an toàn, không đọc trực tiếp $_POST gây warning.
                 $ten_dieu = isset($_POST['ten_dieu']) ? trim($_POST['ten_dieu']) : "";
@@ -72,6 +96,7 @@
                     if ($thu_tu == "") {
                         $thu_tu = $max_thu_tu + 1;
                     } else if (!dieu__Is_Positive_Integer($thu_tu) || (int)$thu_tu > $max_thu_tu + 1) {
+                        $error_status = 'invalid-thutu';
                         throw new Exception("Thu tu them khong hop le");
                     } else {
                         $thu_tu = (int)$thu_tu;
@@ -91,6 +116,7 @@
 
                     $dieu->connect->commit();
                     dieu_clear_old_input();
+                    dieu__Rotate_Csrf_Token();
                     dieu__Redirect('success');
                 } catch (Exception $e) {
                     // Nhựt sửa lỗi: Có lỗi trong quá trình swap/thêm thì rollback toàn bộ.
@@ -103,6 +129,9 @@
                 
                 break;
             case 'update':
+                if (!dieu__Valid_Csrf()) {
+                    dieu__Redirect('csrf');
+                }
 
                 // Nhựt sửa lỗi: Request update thiếu field vẫn phải xử lý an toàn, không đọc trực tiếp $_POST gây warning.
                 $id_dieu = isset($_POST['id_dieu']) ? trim($_POST['id_dieu']) : "";
@@ -156,6 +185,7 @@
                     if ($thu_tu == "") {
                         $thu_tu = (int)$old_dieu->thu_tu;
                     } else if (!dieu__Is_Positive_Integer($thu_tu) || (int)$thu_tu > $max_thu_tu) {
+                        $error_status = 'invalid-thutu';
                         throw new Exception("Thu tu cap nhat khong hop le");
                     } else {
                         $thu_tu = (int)$thu_tu;
@@ -178,6 +208,7 @@
 
                     $dieu->connect->commit();
                     dieu_clear_old_input();
+                    dieu__Rotate_Csrf_Token();
                     dieu__Redirect('success');
                 } catch (Exception $e) {
                     // Nhựt sửa lỗi: Có lỗi trong quá trình swap/update thì rollback toàn bộ.
@@ -191,6 +222,9 @@
                 break;
 
             case 'delete':
+                if (!dieu__Valid_Csrf_Get()) {
+                    dieu__Redirect('csrf');
+                }
 
                 // Nhựt sửa lỗi: Request delete thiếu id_dieu vẫn phải xử lý an toàn.
                 $id_dieu = isset($_GET['id_dieu']) ? trim($_GET['id_dieu']) : "";
@@ -234,6 +268,7 @@
                     }
 
                     $dieu->connect->commit();
+                    dieu__Rotate_Csrf_Token();
                     dieu__Redirect('success');
                 } catch (Exception $e) {
                     // Nhựt sửa lỗi: Có lỗi trong quá trình đổi thứ tự/xóa thì rollback toàn bộ.

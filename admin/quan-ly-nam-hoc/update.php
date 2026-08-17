@@ -78,18 +78,20 @@
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
-                <div class="form-group">
-                    <label class="label-sidebar" for="ngay_bat_dau_update">Ngày bắt đầu <span class="color-crimson">*</span></label>
-                    <input type="date" id="ngay_bat_dau_update" name="ngay_bat_dau" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                        value="<?=namhoc_update_escape(namhoc_update_old_value('ngay_bat_dau', $namhoc__Get_By_Id->id_nam_hoc, $namhoc__Get_By_Id->ngay_bat_dau))?>">
-                    <?php if ($is_update_error && $status == 'invalid-ngay'): ?>
-                        <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
-                    <?php endif; ?>
-                </div>
-                <div class="form-group">
-                    <label class="label-sidebar" for="ngay_ket_thuc_update">Ngày kết thúc <span class="color-crimson">*</span></label>
-                    <input type="date" id="ngay_ket_thuc_update" name="ngay_ket_thuc" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                        value="<?=namhoc_update_escape(namhoc_update_old_value('ngay_ket_thuc', $namhoc__Get_By_Id->id_nam_hoc, $namhoc__Get_By_Id->ngay_ket_thuc))?>">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label class="label-sidebar" for="ngay_bat_dau_update">Ngày bắt đầu <span class="color-crimson">*</span></label>
+                        <input type="date" id="ngay_bat_dau_update" name="ngay_bat_dau" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                            value="<?=namhoc_update_escape(namhoc_update_old_value('ngay_bat_dau', $namhoc__Get_By_Id->id_nam_hoc, $namhoc__Get_By_Id->ngay_bat_dau))?>">
+                        <?php if ($is_update_error && $status == 'invalid-ngay'): ?>
+                            <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label class="label-sidebar" for="ngay_ket_thuc_update">Ngày kết thúc <span class="color-crimson">*</span></label>
+                        <input type="date" id="ngay_ket_thuc_update" name="ngay_ket_thuc" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                            value="<?=namhoc_update_escape(namhoc_update_old_value('ngay_ket_thuc', $namhoc__Get_By_Id->id_nam_hoc, $namhoc__Get_By_Id->ngay_ket_thuc))?>">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="label-sidebar" for="ghi_chu_update">Ghi chú</label>
@@ -100,7 +102,7 @@
                     <?php endif; ?>
                 </div>
             </div>
-            <div class="card-footer">
+            <div class="card-footer py-2">
                 <input type="submit" value="Cập nhật" class="btn btn-danger float-right font-weight-bold">
                 <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="cancel_update()">Hủy</button>
             </div>

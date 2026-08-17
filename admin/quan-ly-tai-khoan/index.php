@@ -47,37 +47,122 @@
     }
     if (isset($_GET['view_by_lop'])) {
         $taikhoan__Get_All = $taikhoan->taikhoan__Get_By_Lop_Hoc($_GET['view_by_lop']);
+        
+        $count_lop_truong = 0;
+        $count_bi_thu = 0;
+        foreach ($taikhoan__Get_All as $item) {
+            if (isset($item->chuc_vu)) {
+                if ($item->chuc_vu == 1) $count_lop_truong++;
+                if ($item->chuc_vu == 2) $count_bi_thu++;
+            }
+        }
+        
+        if (isset($_GET['view_chuc_vu'])) {
+            $filtered = [];
+            foreach ($taikhoan__Get_All as $item) {
+                if (isset($item->chuc_vu) && $item->chuc_vu == $_GET['view_chuc_vu']) {
+                    $filtered[] = $item;
+                }
+            }
+            $taikhoan__Get_All = $filtered;
+        }
     }
     ?>
 
 
  <style>
+/* Style for the select boxes */
 select#bootstrap-duallistbox-nonselected-list_id_nguoi_dung\[\],
 select#bootstrap-duallistbox-nonselected-list_,
 select#bootstrap-duallistbox-selected-list_id_nguoi_dung\[\],
 select#bootstrap-duallistbox-selected-list_ {
     display: block;
     width: 100%;
-    height: calc(2.25rem + 2px);
+    height: 200px !important;
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
     color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
+    background-color: #f8f9fa;
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
-    box-shadow: inset 0 0 0 transparent;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.075);
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
-button.btn.moveall.btn-outline-secondary:before {
-    content: 'Chưa chọn (Click chọn tất cả)';
+select#bootstrap-duallistbox-nonselected-list_id_nguoi_dung\[\] option,
+select#bootstrap-duallistbox-nonselected-list_ option,
+select#bootstrap-duallistbox-selected-list_id_nguoi_dung\[\] option,
+select#bootstrap-duallistbox-selected-list_ option {
+    padding: 5px 8px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
+select#bootstrap-duallistbox-nonselected-list_id_nguoi_dung\[\] option:hover,
+select#bootstrap-duallistbox-nonselected-list_ option:hover,
+select#bootstrap-duallistbox-selected-list_id_nguoi_dung\[\] option:hover,
+select#bootstrap-duallistbox-selected-list_ option:hover {
+    background-color: #e9ecef;
+}
+
+select#bootstrap-duallistbox-nonselected-list_id_nguoi_dung\[\] option:checked,
+select#bootstrap-duallistbox-nonselected-list_ option:checked,
+select#bootstrap-duallistbox-selected-list_id_nguoi_dung\[\] option:checked,
+select#bootstrap-duallistbox-selected-list_ option:checked {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Move All Button */
+button.btn.moveall.btn-outline-secondary {
+    font-size: 0; /* Hide default text >> */
+    background-color: #28a745;
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-top: 5px;
+    transition: background-color 0.3s;
+}
+button.btn.moveall.btn-outline-secondary:hover {
+    background-color: #218838;
+}
+button.btn.moveall.btn-outline-secondary:before {
+    content: 'Chưa chọn (Click chọn tất cả)';
+    font-size: 1rem;
+}
+
+/* Remove All Button */
+button.btn.removeall.btn-outline-secondary {
+    font-size: 0; /* Hide default text << */
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-top: 5px;
+    transition: background-color 0.3s;
+}
+button.btn.removeall.btn-outline-secondary:hover {
+    background-color: #c82333;
+}
 button.btn.removeall.btn-outline-secondary:before {
     content: 'Đã chọn (Click bỏ chọn tất cả)';
+    font-size: 1rem;
+}
+
+/* Info Text */
+.bootstrap-duallistbox-container .info-container {
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 5px;
 }
  </style>
  <!-- Content Wrapper. Contains page content -->
@@ -152,8 +237,15 @@ button.btn.removeall.btn-outline-secondary:before {
                                      <div class="col-6 block-admin-manager">
                                          <div class="form-group">
                                              <label class="label-sidebar" for="">Mật khẩu <span class="color-crimson">*</span></label>
-                                             <input type="password" id="mat_khau" name="mat_khau" class="form-control" 
-                                                 placeholder="Nhập mật khẩu" value="<?= htmlspecialchars(taikhoan_old_value('mat_khau', 'add')) ?>">
+                                             <div class="input-group">
+                                                 <input type="password" id="mat_khau" name="mat_khau" class="form-control" 
+                                                     placeholder="Nhập mật khẩu" value="<?= htmlspecialchars(taikhoan_old_value('mat_khau', 'add')) ?>">
+                                                 <div class="input-group-append">
+                                                     <span class="input-group-text bg-white" onclick="togglePasswordVisibility('mat_khau', this)" style="cursor: pointer;">
+                                                         <i class="fas fa-eye text-secondary"></i>
+                                                     </span>
+                                                 </div>
+                                             </div>
                                          </div>
                                      </div>
 
@@ -199,7 +291,7 @@ button.btn.removeall.btn-outline-secondary:before {
                                  </div>
 
                              </div>
-                             <div class="card-footer">
+                             <div class="card-footer py-2">
                                  <button type="submit" class="btn btn-success float-right font-weight-bold" style="font-weight: bold;">Thêm mới</button>
                                  <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" style="font-weight: bold;" onclick="toggle_add_form()">Hủy</button>
                              </div>
@@ -219,26 +311,36 @@ button.btn.removeall.btn-outline-secondary:before {
                  <div class="col-12">
                      <div class="card card-primary">
              <div class="card-header">
-                 <h3 class="card-title">Danh sách [</h3>
-                 <a href="?page=quan-ly-tai-khoan&view=view_all" type="button" class="btn btn-tool">
-                     Tất cả <?= count($taikhoan__Get_All_All) ?>
-                 </a> |
-                 <a href="?page=quan-ly-tai-khoan&view=view_admin" type="button" class="btn btn-tool">
-                     Admin <?= count($taikhoan__Get_All_Admin) ?>
-                 </a> |
-                 <a href="?page=quan-ly-tai-khoan&view=view_manager" type="button" class="btn btn-tool">
-                     Manager <?= count($taikhoan__Get_All_Manager) ?>
-                 </a> |
-                 <a href="?page=quan-ly-tai-khoan&view=view_sv" type="button" class="btn btn-tool">
-                     Sinh viên <?= count($taikhoan__Get_All_Sv) ?>
-                 </a>|
-                 <a href="?page=quan-ly-tai-khoan&view=view_btdk" type="button" class="btn btn-tool">
-                     Bí thư đoàn khoa <?= count($taikhoan__Get_All_Btdk) ?>
-                 </a>|
-                 <a href="?page=quan-ly-tai-khoan&view=view_cvht" type="button" class="btn btn-tool">
-                     Cố vấn <?= count($taikhoan__Get_All_Cvht) ?>
-                 </a>]
+                 <h3 class="card-title">Danh sách Tài khoản</h3>
                  <div class="card-tools">
+                     <span class="mr-2">
+                         <a href="?page=quan-ly-tai-khoan&view=view_all" type="button" class="btn btn-tool">
+                             Tất cả <?= count($taikhoan__Get_All_All) ?>
+                         </a> |
+                         <a href="?page=quan-ly-tai-khoan&view=view_admin" type="button" class="btn btn-tool">
+                             Admin <?= count($taikhoan__Get_All_Admin) ?>
+                         </a> |
+                         <a href="?page=quan-ly-tai-khoan&view=view_manager" type="button" class="btn btn-tool">
+                             Manager <?= count($taikhoan__Get_All_Manager) ?>
+                         </a> |
+                         <a href="?page=quan-ly-tai-khoan&view=view_btdk" type="button" class="btn btn-tool">
+                             Bí thư đoàn khoa <?= count($taikhoan__Get_All_Btdk) ?>
+                         </a> |
+                         <a href="?page=quan-ly-tai-khoan&view=view_cvht" type="button" class="btn btn-tool">
+                             Cố vấn <?= count($taikhoan__Get_All_Cvht) ?>
+                         </a>
+                         <?php if (isset($_GET['view_by_lop'])) : ?>
+                         | <a href="?page=quan-ly-tai-khoan&view_by_lop=<?= $_GET['view_by_lop'] ?>&view_chuc_vu=2" type="button" class="btn btn-tool">
+                             Bí thư chi đoàn <?= $count_bi_thu ?>
+                         </a> |
+                         <a href="?page=quan-ly-tai-khoan&view_by_lop=<?= $_GET['view_by_lop'] ?>&view_chuc_vu=1" type="button" class="btn btn-tool">
+                             Lớp trưởng <?= $count_lop_truong ?>
+                         </a>
+                         <?php endif; ?>
+                         | <a href="?page=quan-ly-tai-khoan&view=view_sv" type="button" class="btn btn-tool">
+                             Sinh viên <?= count($taikhoan__Get_All_Sv) ?>
+                         </a>
+                     </span>
                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                          <i class="fas fa-minus"></i>
                      </button>
@@ -251,30 +353,10 @@ button.btn.removeall.btn-outline-secondary:before {
              <div class="card-body">
                  <div class="row">
                      <div class="col-6">
-                         <div class="form-group">
-                             <select name="" id="" class="form-control" onchange="location.href=this.value">
-                                 <option value="?page=quan-ly-tai-khoan">Xem tất cả</option>
-                                 <?php foreach ($lophoc__Get_All as $item) : ?>
-                                 <option value="?page=quan-ly-tai-khoan&view_by_lop=<?= $item->id_lop_hoc ?>"
-                                     <?= isset($_GET['view_by_lop']) && $_GET['view_by_lop'] == $item->id_lop_hoc ? 'selected' : '' ?>>
-                                     <?= $item->ten_lop_hoc ?>
-                                 </option>
-                                 <?php endforeach; ?>
-                             </select>
-                         </div>
                      </div>
-                     <?php if (isset($_GET['view_by_lop'])) : ?>
-                     <div class="col-6">
-                         <a href="#" type="button" class="btn  btn-primary"
-                             onclick="return send_mail_all(<?= $_GET['view_by_lop'] ?>)">
-                             <i class="fas fa-paper-plane"></i> Gửi mail tài khoản
-                         </a>
-                     </div>
-                     <?php endif ?>
-
                  </div>
 
-                 <div class="table-responsive">
+                  
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%" style="font-size: 13px;">
                      <thead style="font-size: 13px;">
                           <tr>
@@ -375,7 +457,7 @@ button.btn.removeall.btn-outline-secondary:before {
                          <?php endforeach ?>
                      </tbody>
                  </table>
-                 </div>
+
              </div>
              <!-- /.card-body -->
          </div>
@@ -395,7 +477,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -428,7 +510,17 @@ window.addEventListener("load", function() {
             "orderable": false,
             "searchable": false
         }],
-        "buttons": [{
+        "buttons": [
+            <?php if (isset($_GET['view_by_lop'])) : ?>
+            {
+                "text": "<i class='ri-mail-send-line'></i> Gửi mail toàn lớp",
+                "className": "btn btn-sm btn-custom-mail mr-1",
+                "action": function ( e, dt, node, config ) {
+                    send_mail_all(<?= $_GET['view_by_lop'] ?>);
+                }
+            },
+            <?php endif; ?>
+            {
             "extend": "collection",
             "text": "<i class='fas fa-file-export'></i> Xuất dữ liệu",
             "className": "btn btn-sm btn-primary",
@@ -471,9 +563,252 @@ window.addEventListener("load", function() {
                     }
                 }
             ]
-        }]
+        },
+        {
+            "text": "<i class='fas fa-filter'></i>",
+            "titleAttr": "Bộ lọc",
+            "className": "btn btn-sm btn-custom-filter ml-1",
+            "attr": {
+                "id": "btn-filter-dropdown"
+            }
+        }],
+        "initComplete": function() {
+            var filterHtml = `
+            <style>
+            .dataTables_wrapper .dt-buttons {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                background-color: #0f2a5a !important;
+                border: 1px solid #0f2a5a !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                white-space: nowrap !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                background-color: transparent !important;
+                border-color: #0f2a5a !important;
+                color: #0f2a5a !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-mail {
+                background-color: #0d6efd !important;
+                border: 1px solid #0d6efd !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                white-space: nowrap !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-mail:hover {
+                background-color: transparent !important;
+                border-color: #0d6efd !important;
+                color: #0d6efd !important;
+            }
+            #custom-filter-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                margin-top: 5px;
+                width: 300px;
+                background: #fff;
+                border: 1px solid rgba(0,0,0,.15);
+                border-radius: .25rem;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                z-index: 1050;
+            }
+            </style>
+            <div id="custom-filter-menu" class="p-3">
+                <div class="form-group mb-2 text-left">
+                    <label class="label-sidebar">Lớp học:</label>
+                    <select id="filter_lop_hoc_reload" class="form-control form-control-sm">
+                        <option value="?page=quan-ly-tai-khoan">-- Tất cả lớp học --</option>
+                        <?php foreach ($lophoc__Get_All as $item) : ?>
+                        <option value="?page=quan-ly-tai-khoan&view_by_lop=<?= $item->id_lop_hoc ?>"
+                            <?= isset($_GET['view_by_lop']) && $_GET['view_by_lop'] == $item->id_lop_hoc ? 'selected' : '' ?>>
+                            <?= $item->ten_lop_hoc ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group mb-2 text-left">
+                    <label class="label-sidebar">Phân nhóm:</label>
+                    <select id="filter_phan_nhom" class="form-control form-control-sm">
+                        <option value="">-- Tất cả phân nhóm --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2 text-left">
+                    <label class="label-sidebar">Phân quyền:</label>
+                    <select id="filter_phan_quyen" class="form-control form-control-sm">
+                        <option value="">-- Tất cả phân quyền --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2 text-left">
+                    <label class="label-sidebar">Trạng thái:</label>
+                    <select id="filter_trang_thai" class="form-control form-control-sm">
+                        <option value="">-- Tất cả trạng thái --</option>
+                        <option value="ri-checkbox-circle-line">Hoạt động</option>
+                        <option value="ri-forbid-line">Bị khóa</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                    <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                </div>
+            </div>`;
+            
+            var $btn = $('#btn-filter-dropdown');
+            $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+            $btn.parent().append(filterHtml);
+
+            var table = $('#tablejs').DataTable();
+
+            function updateCascadeDropdowns() {
+                var selectedNhom = $('#filter_phan_nhom').val() || "";
+                var selectedQuyen = $('#filter_phan_quyen').val() || "";
+                
+                var nhomOptions = [];
+                var quyenOptions = [];
+                
+                table.rows().every(function() {
+                    var data = this.data();
+                    var nhom = $('<div>').html(data[3]).text().trim();
+                    var quyen = $('<div>').html(data[4]).text().trim();
+                    
+                    if (nhom !== '' && nhom !== 'Chưa xác định' && nhomOptions.indexOf(nhom) === -1) nhomOptions.push(nhom);
+                    
+                    if (selectedNhom === "" || nhom === selectedNhom) {
+                        if (quyen !== '' && quyen !== 'Chưa xác định' && quyenOptions.indexOf(quyen) === -1) quyenOptions.push(quyen);
+                    }
+                });
+                
+                var selectNhom = $('#filter_phan_nhom');
+                selectNhom.empty().append('<option value="">-- Tất cả phân nhóm --</option>');
+                nhomOptions.sort().forEach(function(opt) {
+                    selectNhom.append('<option value="'+opt+'" '+(opt === selectedNhom ? 'selected' : '')+'>'+opt+'</option>');
+                });
+                
+                var selectQuyen = $('#filter_phan_quyen');
+                selectQuyen.empty().append('<option value="">-- Tất cả phân quyền --</option>');
+                quyenOptions.sort().forEach(function(opt) {
+                    selectQuyen.append('<option value="'+opt+'" '+(opt === selectedQuyen ? 'selected' : '')+'>'+opt+'</option>');
+                });
+            }
+
+            $('#filter_phan_nhom').on('change', function() {
+                $('#filter_phan_quyen').val('');
+                updateCascadeDropdowns();
+            });
+
+            updateCascadeDropdowns();
+            
+            var pendingNhom = sessionStorage.getItem('pending_filter_nhom');
+            var pendingQuyen = sessionStorage.getItem('pending_filter_quyen');
+            var pendingTrangThai = sessionStorage.getItem('pending_filter_trangthai');
+            
+            if (pendingNhom !== null || pendingQuyen !== null || pendingTrangThai !== null) {
+                if (pendingNhom) $('#filter_phan_nhom').val(pendingNhom);
+                if (pendingQuyen) $('#filter_phan_quyen').val(pendingQuyen);
+                if (pendingTrangThai) $('#filter_trang_thai').val(pendingTrangThai);
+                
+                updateCascadeDropdowns();
+                
+                table.column(3).search(pendingNhom ? '^' + $.fn.dataTable.util.escapeRegex(pendingNhom) + '$' : '', true, false)
+                     .column(4).search(pendingQuyen ? '^' + $.fn.dataTable.util.escapeRegex(pendingQuyen) + '$' : '', true, false)
+                     .column(5).search(pendingTrangThai ? pendingTrangThai : '', true, false)
+                     .draw();
+                     
+                sessionStorage.removeItem('pending_filter_nhom');
+                sessionStorage.removeItem('pending_filter_quyen');
+                sessionStorage.removeItem('pending_filter_trangthai');
+            }
+
+            $btn.on('click', function(e) {
+                e.stopPropagation();
+                $('#custom-filter-menu').fadeToggle(200);
+            });
+
+            $('#custom-filter-menu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-apply-filter').on('click', function() {
+                var nhomVal = $('#filter_phan_nhom').val() || "";
+                var quyenVal = $('#filter_phan_quyen').val() || "";
+                var trangThaiVal = $('#filter_trang_thai').val() || "";
+                
+                var lopHocUrl = $('#filter_lop_hoc_reload').val();
+                var selectedLopHoc = new URLSearchParams(lopHocUrl.split('?')[1]).get('view_by_lop');
+                var currentLopHoc = new URLSearchParams(window.location.search).get('view_by_lop');
+                
+                if (selectedLopHoc !== currentLopHoc) {
+                    sessionStorage.setItem('pending_filter_nhom', nhomVal);
+                    sessionStorage.setItem('pending_filter_quyen', quyenVal);
+                    sessionStorage.setItem('pending_filter_trangthai', trangThaiVal);
+                    window.location.href = lopHocUrl;
+                    return;
+                }
+                
+                table.column(3).search(nhomVal ? '^' + $.fn.dataTable.util.escapeRegex(nhomVal) + '$' : '', true, false)
+                     .column(4).search(quyenVal ? '^' + $.fn.dataTable.util.escapeRegex(quyenVal) + '$' : '', true, false)
+                     .column(5).search(trangThaiVal ? trangThaiVal : '', true, false)
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-cancel-filter').on('click', function() {
+                var urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('view_by_lop')) {
+                    window.location.href = '?page=quan-ly-tai-khoan';
+                    return;
+                }
+                
+                $('#filter_lop_hoc_reload').val('?page=quan-ly-tai-khoan');
+                $('#filter_phan_nhom').val('');
+                $('#filter_phan_quyen').val('');
+                $('#filter_trang_thai').val('');
+                updateCascadeDropdowns();
+                table.column(3).search('')
+                     .column(4).search('')
+                     .column(5).search('')
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+        }
     });
 });
+
+function togglePasswordVisibility(inputId, iconSpan) {
+    var input = document.getElementById(inputId);
+    var icon = iconSpan.querySelector('i');
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = "password";
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
 
 // Nhựt sửa: Hàm bật/tắt hiển thị form thêm mới
 function toggle_add_form() {
@@ -653,3 +988,6 @@ window.addEventListener("load", function() {
     updateFormLayout();
 });
 </script>
+
+
+

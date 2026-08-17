@@ -76,29 +76,31 @@
                           <h3 class="card-title">Thêm mới Khoa</h3>
                       </div>
                       <div class="card-body">
-                          <div class="form-group">
-                               <label class="label-sidebar">Tên khoa <span class="color-crimson">*</span></label>
-                               <input type="text" id="ten_khoa" name="ten_khoa" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'invalid-ten-khoa'])) ? 'is-invalid' : '' ?>" required maxlength="50"
-                                      value="<?=khoa_escape(khoa_old_value('ten_khoa', 'add'))?>" placeholder="Nhập tên khoa">
-                              <?php if ($is_add_error && isset($_GET['status'])): ?>
-                                  <?php if ($_GET['status'] == 'duplicate'): ?>
-                                      <small class="text-danger mt-1">Tên khoa đã tồn tại trong hệ thống.</small>
-                                  <?php elseif ($_GET['status'] == 'invalid-ten-khoa'): ?>
-                                      <small class="text-danger mt-1">Tên khoa không được để trống và tối đa 50 ký tự.</small>
+                          <div class="row">
+                              <div class="col-md-6 form-group">
+                                   <label class="label-sidebar">Tên khoa <span class="color-crimson">*</span></label>
+                                   <input type="text" id="ten_khoa" name="ten_khoa" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'invalid-ten-khoa'])) ? 'is-invalid' : '' ?>" required maxlength="50"
+                                          value="<?=khoa_escape(khoa_old_value('ten_khoa', 'add'))?>" placeholder="Nhập tên khoa">
+                                  <?php if ($is_add_error && isset($_GET['status'])): ?>
+                                      <?php if ($_GET['status'] == 'duplicate'): ?>
+                                          <small class="text-danger mt-1">Tên khoa đã tồn tại trong hệ thống.</small>
+                                      <?php elseif ($_GET['status'] == 'invalid-ten-khoa'): ?>
+                                          <small class="text-danger mt-1">Tên khoa không được để trống và tối đa 50 ký tự.</small>
+                                      <?php endif; ?>
                                   <?php endif; ?>
-                              <?php endif; ?>
-                          </div>
-                          <div class="form-group">
-                               <label class="label-sidebar">Ghi chú</label>
-                              <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000"
-                                        placeholder="Nhập ghi chú"><?=khoa_escape(khoa_old_value('ghi_chu', 'add'))?></textarea>
-                              <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
-                                  <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
-                              <?php endif; ?>
+                              </div>
+                              <div class="col-md-6 form-group">
+                                   <label class="label-sidebar">Ghi chú</label>
+                                  <textarea id="ghi_chu" name="ghi_chu" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ghichu') ? 'is-invalid' : '' ?>" maxlength="2000" rows="1"
+                                            placeholder="Nhập ghi chú"><?=khoa_escape(khoa_old_value('ghi_chu', 'add'))?></textarea>
+                                  <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ghichu'): ?>
+                                      <small class="text-danger mt-1">Ghi chú không được vượt quá 2000 ký tự.</small>
+                                  <?php endif; ?>
+                              </div>
                           </div>
                       </div>
                       <!-- /.card-body -->
-                      <div class="card-footer">
+                      <div class="card-footer py-2">
                           <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                           <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                       </div>
@@ -169,7 +171,7 @@
      $("#tablejs").DataTable({
          "responsive": true,
          "autoWidth": false,
-         "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+         "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
          "pagingType": "full_numbers",
          "pageLength": 10,
          "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -342,3 +344,6 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
  </script>
+
+
+

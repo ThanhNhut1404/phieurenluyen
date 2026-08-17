@@ -19,7 +19,21 @@
             return dotchamdiem_update_escape($title);
         }
 
-        $id_dot = isset($_POST['id_dot']) ? trim($_POST['id_dot']) : "";
+        $dotchamdiem_old_input = isset($_SESSION['dotchamdiem_old_input']) && is_array($_SESSION['dotchamdiem_old_input']) ? $_SESSION['dotchamdiem_old_input'] : array();
+        
+        if (!function_exists('dotchamdiem_update_old_value')) {
+            function dotchamdiem_update_old_value($field, $id_dot, $default = '') {
+                global $dotchamdiem_old_input;
+                if (isset($dotchamdiem_old_input['context']) && $dotchamdiem_old_input['context'] === 'update' && 
+                    isset($dotchamdiem_old_input['id_dot']) && $dotchamdiem_old_input['id_dot'] == $id_dot && 
+                    isset($dotchamdiem_old_input[$field])) {
+                    return $dotchamdiem_old_input[$field];
+                }
+                return $default;
+            }
+        }
+
+        $id_dot = isset($_POST['id_dot']) ? trim($_POST['id_dot']) : (isset($dotchamdiem_old_input['id_dot']) ? $dotchamdiem_old_input['id_dot'] : "");
         // Nhựt sửa lỗi: Ajax update thiếu id_dot hoặc id sai kiểu thì quay về danh sách.
         if (!preg_match('/^[1-9][0-9]*$/', $id_dot)) {
             echo "<script>location.href = 'index.php?page=quan-ly-dot-cham-diem&status=not-found'</script>";
@@ -44,6 +58,9 @@
         
         $has_data = $phieuchamdiem->phieuchamdiem__Has_Scored_Data_By_Id_Dot($id_dot) || $minhchung->minhchung__Has_By_Id_Dot($id_dot) || $ketquaxeploai->ketquaxeploai__Has_By_Id_Dot($id_dot);
         $id_nam_hoc_hien_tai = $dotchamdiem__Get_By_Id->id_nam_hoc;
+
+        $is_update_error = isset($dotchamdiem_old_input['context']) && $dotchamdiem_old_input['context'] === 'update' && $dotchamdiem_old_input['id_dot'] == $id_dot;
+        $status = isset($_GET['status']) ? $_GET['status'] : '';
     ?>
 
     <form class="row form" action="quan-ly-dot-cham-diem/action.php?req=update" method="post"
@@ -64,86 +81,123 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-6">
-                    <div class="form-group">
-                        <label for="">Tên đợt <span class="color-crimson">(*)</span></label>
-                        <?php // Nhựt sửa lỗi: Đổi id form cập nhật sang hậu tố _up và sửa placeholder sai "tên điều". ?>
-                        <input type="text" id="ten_dot_up" name="ten_dot" class="form-control" required
-                            placeholder="Nhập tên đợt chấm điểm" value="<?=dotchamdiem_update_escape($dotchamdiem__Get_By_Id->ten_dot)?>">
+                            <div class="form-group">
+                                <label class="label-sidebar" for="ten_dot_up">Tên đợt <span class="color-crimson">*</span></label>
+                                <input type="text" id="ten_dot_up" name="ten_dot" class="form-control <?= ($is_update_error && $status == 'invalid-ten') ? 'is-invalid' : '' ?>" required
+                                    placeholder="Nhập tên đợt chấm điểm" value="<?=dotchamdiem_update_escape(dotchamdiem_update_old_value('ten_dot', $id_dot, $dotchamdiem__Get_By_Id->ten_dot))?>">
+                                <?php if ($is_update_error && $status == 'invalid-ten'): ?>
+                                    <small class="text-danger mt-1">Tên đợt không được để trống.</small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="label-sidebar" for="id_mau_phieu_up">Mẫu phiếu <span class="color-crimson">*</span></label>
+                                <?php if ($has_data): ?>
+                                    <input type="hidden" name="id_mau_phieu" value="<?=$id_mau_phieu_hien_tai?>">
+                                <?php endif; ?>
+                                <select class="form-control <?= ($is_update_error && $status == 'invalid-mauphieu') ? 'is-invalid' : '' ?>" name="id_mau_phieu" id="id_mau_phieu_up" required <?= $has_data ? 'disabled' : '' ?>>
+                                    <option value="">Chọn Mẫu phiếu</option>
+                                    <?php $old_mau_phieu_up = dotchamdiem_update_old_value('id_mau_phieu', $id_dot, $id_mau_phieu_hien_tai); ?>
+                                    <?php foreach ($mauphieu__Get_All as $item):?>
+                                    <option value="<?=$item->id_mau_phieu?>" <?= $item->id_mau_phieu == $old_mau_phieu_up ? 'selected' : '' ?>><?=$item->ten_mau_phieu?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <?php if ($has_data): ?>
+                                    <small class="text-danger mt-1">Đã phát sinh dữ liệu, không thể thay đổi mẫu phiếu.</small>
+                                <?php elseif ($is_update_error && $status == 'invalid-mauphieu'): ?>
+                                    <small class="text-danger mt-1">Mẫu phiếu không hợp lệ.</small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="">Thời gian bắt đầu<span class="color-crimson">(*)</span></label>
-                        <input type="date" id="thoi_gian_bat_dau_up" name="thoi_gian_bat_dau" class="form-control"
-                            required placeholder="Nhập thời gian bắt đầu"
-                            value="<?=dotchamdiem_update_escape($dotchamdiem__Get_By_Id->thoi_gian_bat_dau)?>">
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="label-sidebar" for="id_nam_hoc_up">Năm học <span class="color-crimson">*</span></label>
+                                <select class="form-control <?= ($is_update_error && $status == 'invalid-namhoc') ? 'is-invalid' : '' ?>" id="id_nam_hoc_up" name="id_nam_hoc" required>
+                                    <option value="">Chọn năm học</option>
+                                    <?php $old_nam_hoc_up = dotchamdiem_update_old_value('id_nam_hoc', $id_dot, $id_nam_hoc_hien_tai); ?>
+                                    <?php foreach ($namhoc__Get_All as $item):?>
+                                    <option value="<?=$item->id_nam_hoc?>" <?=$item->id_nam_hoc == $old_nam_hoc_up ? "selected" : ""?>><?=dotchamdiem_update_format_range_label($item->ten_nam_hoc, $item->ngay_bat_dau, $item->ngay_ket_thuc)?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <?php if ($is_update_error && $status == 'invalid-namhoc'): ?>
+                                    <small class="text-danger mt-1">Năm học không hợp lệ.</small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="label-sidebar" for="id_hoc_ky_up">Học kỳ <span class="color-crimson">*</span></label>
+                                <select class="form-control <?= ($is_update_error && $status == 'invalid-semester') ? 'is-invalid' : '' ?>" id="id_hoc_ky_up" name="id_hoc_ky" required disabled>
+                                    <option value="">--- Chọn học kỳ ---</option>
+                                </select>
+                                <?php if ($is_update_error && $status == 'invalid-semester'): ?>
+                                    <small class="text-danger mt-1">Học kỳ không hợp lệ.</small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="">Thời gian kết thúc<span class="color-crimson">(*)</span></label>
-                        <input type="date" id="thoi_gian_ket_thuc_up" name="thoi_gian_ket_thuc" class="form-control"
-                            required placeholder="Nhập thời gian kết thúc"
-                            value="<?=dotchamdiem_update_escape($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc)?>">
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="label-sidebar" for="thoi_gian_bat_dau_up">Thời gian bắt đầu <span class="color-crimson">*</span></label>
+                                <input type="date" id="thoi_gian_bat_dau_up" name="thoi_gian_bat_dau" class="form-control <?= ($is_update_error && $status == 'invalid-date') ? 'is-invalid' : '' ?>"
+                                    required placeholder="Nhập thời gian bắt đầu"
+                                    value="<?=dotchamdiem_update_escape(dotchamdiem_update_old_value('thoi_gian_bat_dau', $id_dot, $dotchamdiem__Get_By_Id->thoi_gian_bat_dau))?>">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="label-sidebar" for="thoi_gian_ket_thuc_up">Thời gian kết thúc <span class="color-crimson">*</span></label>
+                                <input type="date" id="thoi_gian_ket_thuc_up" name="thoi_gian_ket_thuc" class="form-control <?= ($is_update_error && $status == 'invalid-date') ? 'is-invalid' : '' ?>"
+                                    required placeholder="Nhập thời gian kết thúc"
+                                    value="<?=dotchamdiem_update_escape(dotchamdiem_update_old_value('thoi_gian_ket_thuc', $id_dot, $dotchamdiem__Get_By_Id->thoi_gian_ket_thuc))?>">
+                                <?php if ($is_update_error && $status == 'invalid-date'): ?>
+                                    <small class="text-danger mt-1">Thời gian không hợp lệ (Bắt đầu phải nhỏ hơn hoặc bằng Kết thúc).</small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="">Năm học <span class="color-crimson">(*)</span></label>
-                        <?php // Nhựt sửa lỗi: Thêm Năm học trong form cập nhật để chọn Học kỳ theo đúng Năm học. ?>
-                        <select class="form-control" id="id_nam_hoc_up" name="id_nam_hoc" required>
-                            <option value="">Chọn năm học</option>
-                            <?php foreach ($namhoc__Get_All as $item):?>
-                            <option value="<?=$item->id_nam_hoc?>" <?=$item->id_nam_hoc == $id_nam_hoc_hien_tai ? "selected" : ""?>><?=dotchamdiem_update_format_range_label($item->ten_nam_hoc, $item->ngay_bat_dau, $item->ngay_ket_thuc)?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Học kỳ <span class="color-crimson">(*)</span></label>
-                        <?php // Nhựt sửa lỗi: Học kỳ form cập nhật chỉ hiển thị theo Năm học đang chọn. ?>
-                        <select class="form-control" id="id_hoc_ky_up" name="id_hoc_ky" required disabled>
-                            <option value="">--- Chọn học kỳ ---</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Ghi chú</label>
-                        <?php // Nhựt sửa lỗi: Đổi id ghi chú form cập nhật sang hậu tố _up để tránh trùng DOM. ?>
-                        <textarea id="ghi_chu_up" name="ghi_chu" class="form-control"
-                            placeholder="Nhập Ghi chú"><?=dotchamdiem_update_escape($dotchamdiem__Get_By_Id->ghi_chu)?></textarea>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="label-sidebar" for="id_lop_hoc_up">Lớp áp dụng <span class="color-crimson">*</span></label>
+                                <?php $old_lop_hoc_up = dotchamdiem_update_old_value('id_lop_hoc', $id_dot, $arr_id_lop_hoc_hien_tai); ?>
+                                <select class="duallistbox <?= ($is_update_error && $status == 'invalid-lop') ? 'is-invalid' : '' ?>" multiple="multiple" name="id_lop_hoc[]" id="id_lop_hoc_up" required>
+                                    <?php foreach ($lophoc__Get_All as $item):?>
+                                    <option value="<?=$item->id_lop_hoc?>" <?= in_array($item->id_lop_hoc, $old_lop_hoc_up) ? 'selected' : '' ?>><?=$item->ten_lop_hoc?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <?php if ($has_data): ?>
+                                    <small class="text-danger mt-1">Lớp đã phát sinh dữ liệu sẽ được giữ lại khi cập nhật.</small>
+                                <?php elseif ($is_update_error && $status == 'invalid-lop'): ?>
+                                    <small class="text-danger mt-1">Lớp áp dụng không hợp lệ.</small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="label-sidebar" for="ghi_chu_up">Ghi chú</label>
+                                <textarea id="ghi_chu_up" name="ghi_chu" class="form-control" rows="2"
+                                    placeholder="Nhập Ghi chú"><?=dotchamdiem_update_escape(dotchamdiem_update_old_value('ghi_chu', $id_dot, $dotchamdiem__Get_By_Id->ghi_chu))?></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-6">
-                    <div class="form-group">
-                        <label for="">Mẫu phiếu <span class="color-crimson">(*)</span></label>
-                        <?php if ($has_data): ?>
-                            <input type="hidden" name="id_mau_phieu" value="<?=$id_mau_phieu_hien_tai?>">
-                        <?php endif; ?>
-                        <select class="form-control" name="id_mau_phieu" required <?= $has_data ? 'disabled' : '' ?>>
-                            <option value="">Chọn Mẫu phiếu</option>
-                            <?php foreach ($mauphieu__Get_All as $item):?>
-                            <option value="<?=$item->id_mau_phieu?>" <?= $item->id_mau_phieu == $id_mau_phieu_hien_tai ? 'selected' : '' ?>><?=$item->ten_mau_phieu?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <?php if ($has_data): ?>
-                            <small class="text-danger">Đã phát sinh dữ liệu, không thể thay đổi mẫu phiếu.</small>
-                        <?php endif; ?>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Lớp áp dụng <span class="color-crimson">(*)</span></label>
-                        <select class="duallistbox" multiple="multiple" name="id_lop_hoc[]" required>
-                            <?php foreach ($lophoc__Get_All as $item):?>
-                            <option value="<?=$item->id_lop_hoc?>" <?= in_array($item->id_lop_hoc, $arr_id_lop_hoc_hien_tai) ? 'selected' : '' ?>><?=$item->ten_lop_hoc?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <?php if ($has_data): ?>
-                            <small class="text-danger">Lớp đã phát sinh dữ liệu sẽ được giữ lại khi cập nhật.</small>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                <!-- /.card-body -->
+                 <div class="card-footer py-2">
+                     <input type="submit" value="Cập nhật" class="btn btn-warning float-right font-weight-bold" style="color: #fff;">
+                     <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="cancel_update()">Hủy</button>
+                 </div>
             </div>
-                    <!-- /.card-body -->
-                     <div class="card-footer">
-                         <input type="submit" value="Cập nhật" class="btn btn-danger float-right">
-                         <button type="button" class="btn btn-default float-right mr-2" onclick="cancel_update()">Hủy</button>
-                     </div>
-                </div>
-                <!-- /.card -->
-            </div>
-    </form>
+            <!-- /.card -->
+        </div>
+</form>
 
     <script>
 thoi_gian_bat_dau_up = document.getElementById('thoi_gian_bat_dau_up');
@@ -166,5 +220,11 @@ $("#id_nam_hoc_up").change(function() {
 });
 
 // Init duallistbox for update form
-$('.duallistbox').bootstrapDualListbox();
+$('.duallistbox').bootstrapDualListbox({
+    filterTextClear: 'Hiện tất cả',
+    filterPlaceHolder: 'Tìm kiếm',
+    infoText: 'Hiển thị tất cả ({0})',
+    infoTextFiltered: '<span class="badge badge-warning">Tìm kiếm</span> {0} từ {1}',
+    infoTextEmpty: 'Danh sách trống'
+});
     </script>

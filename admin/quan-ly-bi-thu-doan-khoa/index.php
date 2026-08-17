@@ -1,13 +1,8 @@
- <?php
+<?php
     // require "../models/getModel.php";
     $bithudoankhoa__Get_All = $bithudoankhoa->bithudoankhoa__Get_All();
     $khoa__Get_All = $khoa->khoa__Get_All();
-    if (isset($_GET['view'])) {
-        $bithudoankhoa__Get_All = $bithudoankhoa->bithudoankhoa__Get_By_Id_Khoa($_GET['view']);
-        echo "<script>
-            document.querySelector('.btn-tool').click();
-            </script>";
-    }
+
     
     // Hàm escape và old_value
     function bithu_escape($string) {
@@ -76,22 +71,22 @@
                                          placeholder="Nhập tên bí thư đoàn khoa" value="<?= htmlspecialchars(bithu_old_value('ten_bi_thu', 'add')) ?>">
                                  </div>
                                  <div class="form-group">
-                                     <label class="label-sidebar" for="">Giới tính <span class="color-crimson">*</span></label>
-                                     <select class="form-control" name="gioi_tinh" required>
-                                         <option value="">Chọn giới tính</option>
-                                         <option value="0" <?= bithu_old_value('gioi_tinh', 'add') === '0' ? 'selected' : '' ?>>Nữ</option>
-                                         <option value="1" <?= bithu_old_value('gioi_tinh', 'add') === '1' ? 'selected' : '' ?>>Nam</option>
-                                     </select>
-                                 </div>
-                             </div>
-                             <div class="col-6">
-                                 <div class="form-group">
                                      <label class="label-sidebar" for="">Ngày sinh <span class="color-crimson">*</span></label>
                                      <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
                                          value="<?= bithu_old_value('ngay_sinh', 'add', date('Y-m-d', strtotime('-22 years'))) ?>"
                                          min="<?= date('Y-m-d', strtotime('-100 years')) ?>"
                                          max="<?= date('Y-m-d', strtotime('-10 years')) ?>"
                                          placeholder="Nhập ngày sinh">
+                                 </div>
+                             </div>
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="">Giới tính <span class="color-crimson">*</span></label>
+                                     <select class="form-control" name="gioi_tinh" required>
+                                         <option value="">Chọn giới tính</option>
+                                         <option value="0" <?= bithu_old_value('gioi_tinh', 'add') === '0' ? 'selected' : '' ?>>Nữ</option>
+                                         <option value="1" <?= bithu_old_value('gioi_tinh', 'add') === '1' ? 'selected' : '' ?>>Nam</option>
+                                     </select>
                                  </div>
                                  <div class="form-group">
                                      <label class="label-sidebar" for="">Email <span class="color-crimson">*</span></label>
@@ -168,7 +163,7 @@
                          </div>
                      </div>
                      <!-- /.card-body -->
-                     <div class="card-footer">
+                     <div class="card-footer py-2">
                          <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
@@ -193,20 +188,8 @@
              </div>
              <!-- /.card-header -->
              <div class="card-body">
-                 <div class="col-6">
-                     <div class="form-group">
-                         <label for="">Lớp khoa</label>
-                         <select class="form-control" name="id_khoa" required onchange="location.href=this.value">
-                             <option value="?page=quan-ly-bi-thu-doan-khoa">Xem tất cả</option>
-                             <?php foreach ($khoa__Get_All as $item) : ?>
-                             <option value="?page=quan-ly-bi-thu-doan-khoa&view=<?= $item->id_khoa ?>"
-                                 <?= isset($_GET['view']) && $_GET['view'] == $item->id_khoa ? 'selected' : '' ?>>
-                                 <?= $item->ten_khoa ?></option>
-                             <?php endforeach; ?>
-                         </select>
-                     </div>
-                 </div>
-                 <div class="table-responsive">
+
+
                      <table id="tablejs" class="table table-bordered table-striped display responsive" width="100%">
                          <thead>
                            <tr>
@@ -261,7 +244,7 @@
                          <?php endforeach ?>
                      </tbody>
                  </table>
-                 </div>
+
              </div>
              <!-- /.card-body -->
          </div>
@@ -278,7 +261,7 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'Bf>>rtip",
+        "dom": "<'row'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -354,7 +337,145 @@ window.addEventListener("load", function() {
                     }
                 }
             ]
-        }]
+        },
+        {
+            "text": "<i class='fas fa-filter'></i>",
+            "titleAttr": "Bộ lọc",
+            "className": "btn btn-sm btn-custom-filter ml-1",
+            "attr": {
+                "id": "btn-filter-dropdown"
+            }
+        }],
+        "initComplete": function() {
+            var filterHtml = `
+            <style>
+            .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                background-color: #0f2a5a !important;
+                border: 1px solid #0f2a5a !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                background-color: transparent !important;
+                border-color: #0f2a5a !important;
+                color: #0f2a5a !important;
+            }
+            #custom-filter-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                margin-top: 5px;
+                width: 300px;
+                background: #fff;
+                border: 1px solid rgba(0,0,0,.15);
+                border-radius: .25rem;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                z-index: 1050;
+            }
+            </style>
+            <div id="custom-filter-menu" class="p-3">
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Khoa:</label>
+                    <select id="filter_khoa" class="form-control form-control-sm">
+                        <option value="">-- Tất cả khoa --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Giới tính:</label>
+                    <select id="filter_gioi_tinh" class="form-control form-control-sm">
+                        <option value="">-- Tất cả giới tính --</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                    <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                </div>
+            </div>`;
+            
+            var $btn = $('#btn-filter-dropdown');
+            $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+            $btn.parent().append(filterHtml);
+
+            var table = $('#tablejs').DataTable();
+
+            function updateCascadeDropdowns() {
+                var selectedKhoa = $('#filter_khoa').val() || "";
+                
+                var khoaOptions = [];
+                
+                table.rows().every(function() {
+                    var data = this.data();
+                    var khoa = $('<div>').html(data[2]).text().trim();
+                    
+                    if (khoa !== '' && khoaOptions.indexOf(khoa) === -1) khoaOptions.push(khoa);
+                });
+                
+                function populate(selectId, options, currentValue, defaultText) {
+                    var select = $('#' + selectId);
+                    select.empty().append('<option value="">' + defaultText + '</option>');
+                    options.sort().forEach(function(opt) {
+                        select.append('<option value="'+opt+'">'+opt+'</option>');
+                    });
+                    if (options.indexOf(currentValue) !== -1) {
+                        select.val(currentValue);
+                    } else {
+                        select.val('');
+                    }
+                }
+                
+                populate('filter_khoa', khoaOptions, selectedKhoa, '-- Tất cả khoa --');
+            }
+
+            $('#filter_khoa').on('change', function() {
+                updateCascadeDropdowns();
+            });
+
+            updateCascadeDropdowns();
+
+            // Custom dropdown toggle logic
+            $btn.on('click', function(e) {
+                e.stopPropagation();
+                $('#custom-filter-menu').fadeToggle(200);
+            });
+
+            $('#custom-filter-menu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-apply-filter').on('click', function() {
+                var khoaVal = $('#filter_khoa').val();
+                var gioiTinhVal = $('#filter_gioi_tinh').val();
+                
+                table.column(2).search(khoaVal ? '^' + $.fn.dataTable.util.escapeRegex(khoaVal) + '$' : '', true, false)
+                     .column(3).search(gioiTinhVal ? '^' + $.fn.dataTable.util.escapeRegex(gioiTinhVal) + '$' : '', true, false)
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-cancel-filter').on('click', function() {
+                $('#filter_khoa').val('');
+                $('#filter_gioi_tinh').val('');
+                updateCascadeDropdowns();
+                table.column(2).search('')
+                     .column(3).search('')
+                     .draw();
+                $('#custom-filter-menu').fadeOut(200);
+            });
+        }
     });
 });
 
@@ -415,3 +536,6 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
  </script>
+
+
+

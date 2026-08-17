@@ -98,18 +98,20 @@
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
-                        <div class="form-group">
-                            <label class="label-sidebar">Ngày bắt đầu <span class="color-crimson">*</span></label>
-                            <input type="date" id="ngay_bat_dau" name="ngay_bat_dau" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                                value="<?=namhoc_escape(namhoc_old_value('ngay_bat_dau', 'add'))?>">
-                            <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ngay'): ?>
-                                <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
-                            <?php endif; ?>
-                        </div>
-                        <div class="form-group">
-                            <label class="label-sidebar">Ngày kết thúc <span class="color-crimson">*</span></label>
-                            <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
-                                value="<?=namhoc_escape(namhoc_old_value('ngay_ket_thuc', 'add'))?>">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Ngày bắt đầu <span class="color-crimson">*</span></label>
+                                <input type="date" id="ngay_bat_dau" name="ngay_bat_dau" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                    value="<?=namhoc_escape(namhoc_old_value('ngay_bat_dau', 'add'))?>">
+                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ngay'): ?>
+                                    <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
+                                <?php endif; ?>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="label-sidebar">Ngày kết thúc <span class="color-crimson">*</span></label>
+                                <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                    value="<?=namhoc_escape(namhoc_old_value('ngay_ket_thuc', 'add'))?>">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="label-sidebar">Ghi chú</label>
@@ -121,7 +123,7 @@
                         </div>
                     </div>
                     <!-- /.card-body -->
-                    <div class="card-footer">
+                    <div class="card-footer py-2">
                         <input type="submit" value="Thêm mới" class="btn btn-success float-right font-weight-bold">
                         <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                     </div>
@@ -195,7 +197,7 @@ window.addEventListener("load", function() {
         "responsive": true,
         "autoWidth": false,
         // Nhựt sửa lỗi: đưa dropdown chọn số dòng lên hàng riêng phía trên các nút xuất dữ liệu.
-        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rtip",
+        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -369,3 +371,6 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
 </script>
+
+
+
