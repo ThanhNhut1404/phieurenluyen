@@ -158,20 +158,17 @@
                  <h3 class="card-title">Danh sách Phiếu chấm điểm</h3>
                  <div class="card-tools <?=isset($_GET['id_lop_hoc']) ? 'd-flex align-items-center' : ''?>">
                      <?php if(isset($_GET['id_lop_hoc'])):?>
-                     <a class="btn btn-outline-primary btn-sm mr-1"
+                     <a class="btn btn-tool"
                          href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=xem-tat-ca">
-                         Tất cả
-                         (<?=count($sinhvien__Get_By_Id_Lop_Hoc_All)?>)
-                     </a>
-                     <a class="btn btn-outline-primary btn-sm mr-1"
-                         href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=da-cham-diem">Cố
-                         vấn đã
-                         chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Da_Cham)?>)
-                     </a>
-                     <a class="btn btn-outline-primary btn-sm mr-2"
-                         href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=chua-cham-diem">Cố
-                         vấn chưa
-                         chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham)?>)
+                         Tất cả (<?=count($sinhvien__Get_By_Id_Lop_Hoc_All)?>)
+                     </a> |
+                     <a class="btn btn-tool"
+                         href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=da-cham-diem">
+                         Cố vấn đã chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Da_Cham)?>)
+                     </a> |
+                     <a class="btn btn-tool mr-2"
+                         href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=chua-cham-diem">
+                         Cố vấn chưa chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham)?>)
                      </a>
                      <?php endif; ?>
                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

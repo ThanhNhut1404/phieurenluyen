@@ -106,7 +106,7 @@
                                      <i class="ri-edit-2-line"></i>
                                  </a>
                                  <a href="#" type="button" class="btn  btn-danger m-2"
-                                     onclick="return confirm_sweet('quan-ly-phan-nhom/action.php?req=delete&id_phan_nhom=<?=$item->id_phan_nhom?>')">
+                                     onclick="return confirm_delete_sweet('quan-ly-phan-nhom/action.php?req=delete&id_phan_nhom=<?=$item->id_phan_nhom?>', 'Phân nhóm')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>

@@ -1,4 +1,4 @@
-﻿ <?php
+ <?php
     // require "../models/getModel.php";
     if (empty($_SESSION['csrf_token'])) {
         try {

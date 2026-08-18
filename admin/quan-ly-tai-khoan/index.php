@@ -430,7 +430,7 @@ button.btn.removeall.btn-outline-secondary:before {
                              <td class="text-center" style="text-align: center !important;"><?= $pn ? htmlspecialchars($pn->ten_phan_nhom) : '<span class="text-danger">Chưa xác định</span>' ?></td>
                              <td class="text-center" style="text-align: center !important;"><?= $pq ? htmlspecialchars($pq->ten_phan_quyen) : '<span class="text-danger">Chưa xác định</span>' ?></td>
                              <td class="text-center" style="text-align: center !important;"
-                                 onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=active&id_tai_khoan=<?= $item->id_tai_khoan ?>&trang_thai=<?= $item->trang_thai ?>')">
+                                 onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=active&id_tai_khoan=<?= $item->id_tai_khoan ?>&trang_thai=<?= $item->trang_thai ?>', '<?= $item->trang_thai == 1 ? 'Khóa tài khoản này?' : 'Kích hoạt tài khoản này?' ?>', 'status')">
                                  <?= $item->trang_thai == 1 ? "<a href='#' class='btn btn-sm btn-success'><i class='ri-checkbox-circle-line'></i></a>" : "<a href='#' class='btn btn-sm btn-danger'><i class='ri-forbid-line'></i></a>" ?>
 
                              </td>
@@ -442,13 +442,13 @@ button.btn.removeall.btn-outline-secondary:before {
                              </td>
                              <td class="text-center" style="text-align: center !important;">
                                  <a href="#" type="button" class="btn btn-sm btn-info"
-                                     onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=reset&id_tai_khoan=<?= $item->id_tai_khoan ?>')">
+                                     onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=reset&id_tai_khoan=<?= $item->id_tai_khoan ?>', 'Khôi phục mật khẩu tài khoản này về mặc định?', 'reset')">
                                      <i class="ri-key-2-line"></i>
                                  </a>
                              </td>
                              <td class="text-center" style="text-align: center !important;">
                                  <a href="#" type="button" class="btn btn-sm btn-danger"
-                                     onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=delete&id_tai_khoan=<?= $item->id_tai_khoan ?>')">
+                                     onclick="return confirm_delete_sweet('quan-ly-tai-khoan/action.php?req=delete&id_tai_khoan=<?= $item->id_tai_khoan ?>', 'Tài khoản')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
@@ -845,8 +845,8 @@ function cancel_update() {
 function send_mail(email, password) {
 
     Swal.fire({
-        title: 'Sending Email!',
-        html: 'Email will be sent in seconds',
+        title: 'Đang gửi Email...',
+        html: 'Vui lòng chờ trong giây lát.',
         timerProgressBar: true,
         didOpen: () => {
             Swal.showLoading()
@@ -864,19 +864,23 @@ function send_mail(email, password) {
         'password': password,
     }, function(data) {
         Swal.DismissReason.timer;
-        Swal.fire(
-            'Good job!',
-            'The email is sent!',
-            'success'
-        )
+        Swal.fire({
+            title: 'Thành công!',
+            text: 'Email đã được gửi thành công.',
+            icon: 'success',
+            confirmButtonText: 'Đóng',
+            customClass: {
+                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2'
+            }
+        });
     });
 }
 
 function send_mail_all(id_lop) {
 
     Swal.fire({
-        title: 'Sending Email!',
-        html: 'Email will be sent in seconds',
+        title: 'Đang gửi Email...',
+        html: 'Vui lòng chờ trong giây lát.',
         timerProgressBar: true,
         didOpen: () => {
             Swal.showLoading()
@@ -893,11 +897,15 @@ function send_mail_all(id_lop) {
         'id_lop': id_lop,
     }, function(data) {
         Swal.DismissReason.timer;
-        Swal.fire(
-            'Good job!',
-            'The email is sent!',
-            'success'
-        )
+        Swal.fire({
+            title: 'Thành công!',
+            text: 'Tất cả Email đã được gửi thành công.',
+            icon: 'success',
+            confirmButtonText: 'Đóng',
+            customClass: {
+                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2'
+            }
+        });
     });
 }
  </script>

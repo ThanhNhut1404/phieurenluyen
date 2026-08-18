@@ -1,4 +1,4 @@
-﻿ <?php
+ <?php
     // require "../models/getModel.php";
     // Nhựt sửa lỗi: tạo CSRF token cho các thao tác thêm/sửa/xóa ngành học.
     if (empty($_SESSION['csrf_token'])) {

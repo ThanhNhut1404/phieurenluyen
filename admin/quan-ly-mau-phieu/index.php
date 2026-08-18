@@ -265,7 +265,7 @@ button.btn.removeall.btn-outline-secondary:before {
                                  <?php endif; ?>
 
                                  <a href="#" type="button" class="btn  btn-danger m-2"
-                                     onclick="return confirm_sweet('quan-ly-mau-phieu/action.php?req=delete&id_mau_phieu=<?=$item->id_mau_phieu?>')">
+                                     onclick="return confirm_delete_sweet('quan-ly-mau-phieu/action.php?req=delete&id_mau_phieu=<?=$item->id_mau_phieu?>', 'Mẫu phiếu')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>

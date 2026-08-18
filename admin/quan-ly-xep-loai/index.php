@@ -193,7 +193,7 @@
                                      <i class="ri-edit-2-line"></i>
                                  </a>
                                  <a href="javascript:void(0)" class="btn btn-danger m-2"
-                                     onclick="confirm_sweet('quan-ly-xep-loai/action.php?req=delete&id_xep_loai=<?=$item->id_xep_loai?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
+                                     onclick="return confirm_delete_sweet('quan-ly-xep-loai/action.php?req=delete&id_xep_loai=<?=$item->id_xep_loai?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>', 'Xếp loại')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>

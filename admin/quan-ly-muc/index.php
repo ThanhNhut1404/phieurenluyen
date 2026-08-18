@@ -269,7 +269,7 @@
                                      </a>
                                  <?php endif; ?>
                                  <a href="#" type="button" class="btn btn-danger"
-                                     onclick="return confirm_sweet('quan-ly-muc/action.php?req=delete&id_muc=<?=$item->id_muc?>')">
+                                     onclick="return confirm_delete_sweet('quan-ly-muc/action.php?req=delete&id_muc=<?=$item->id_muc?>', 'Mục')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>

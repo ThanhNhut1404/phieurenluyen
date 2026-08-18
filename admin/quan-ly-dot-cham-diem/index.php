@@ -384,7 +384,7 @@ button.btn.removeall.btn-outline-secondary:before {
                                  </a>
                                  <?php // Nhựt sửa lỗi: Thêm CSRF token vào URL xóa Đợt chấm điểm. ?>
                                  <a href="#" type="button" class="btn  btn-danger m-2"
-                                     onclick="return confirm_sweet('quan-ly-dot-cham-diem/action.php?req=delete&id_dot=<?=$item->id_dot?>&csrf_token=<?=dotchamdiem_escape($_SESSION['csrf_token'])?>')">
+                                     onclick="return confirm_delete_sweet('quan-ly-dot-cham-diem/action.php?req=delete&id_dot=<?=$item->id_dot?>&csrf_token=<?=dotchamdiem_escape($_SESSION['csrf_token'])?>', 'Đợt chấm điểm')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>

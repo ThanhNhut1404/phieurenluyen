@@ -111,47 +111,98 @@ if (!isset($_SESSION['admin'])) {
     function confirm_sweet_chi_tiet(url) {
         Swal.fire({
             title: 'Xem chi tiết phiếu?',
-            icon: 'info',
+            text: 'Hệ thống sẽ mở chi tiết phiếu trong một tab mới.',
+            icon: 'warning',
+            width: '36em',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Hủy',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+                cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 window.open(url, '_blank');
             }
-        })
+        });
+        return false;
     }
 
-    function confirm_sweet(url) {
+    function confirm_sweet(url, message = "Bạn chắc chắn thực hiện thao tác này?", actionType = "default") {
+        let titleColor = "#0f2a5a";
+        if (actionType === "status") {
+            titleColor = "#28a745"; // green
+        } else if (actionType === "reset") {
+            titleColor = "#ffc107"; // yellow
+        } else if (actionType === "delete") {
+            titleColor = "#dc3545"; // red
+        }
+
         Swal.fire({
-            title: 'Xác nhận thao tác?',
-            text: "Bạn chắc chắn thực hiện thao tác này",
+            title: `<span style="color: ${titleColor} !important">Xác nhận thao tác?</span>`,
+            text: message,
             icon: 'warning',
+            width: '36em',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Hủy',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+                cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 location.href = url;
             }
-        })
+        });
+        return false;
+    }
+
+    function confirm_delete_sweet(url) {
+        Swal.fire({
+            title: '<span style="color: #dc3545 !important">Xác nhận xóa?</span>',
+            text: 'Hệ thống sẽ tiến hành xóa dữ liệu này.',
+            icon: 'warning',
+            width: '36em',
+            showCancelButton: true,
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Hủy',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-danger font-weight-bold mx-2 px-4 py-2',
+                cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.href = url;
+            }
+        });
+        return false;
     }
 
     function confirm_sweet_ha_bac(url) {
         Swal.fire({
             title: 'Xác nhận hạ bậc?',
-            icon: 'info',
+            text: 'Bạn có chắc chắn muốn hạ bậc rèn luyện của sinh viên này?',
+            icon: 'warning',
+            width: '36em',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Hủy',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+                cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+            }
         }).then((result) => {
             if (result.isConfirmed) {
                 location.href = url;
             }
-        })
+        });
+        return false;
     }
     const Toast = Swal.mixin({
         toast: true,
@@ -407,6 +458,19 @@ if (!isset($_SESSION['admin'])) {
         }
     </style>
     <script>
+        // Cấu hình ngôn ngữ mặc định cho DataTable (đặc biệt là thông báo Copy)
+        $.extend(true, $.fn.dataTable.defaults, {
+            language: {
+                buttons: {
+                    copyTitle: 'Sao chép thành công',
+                    copySuccess: {
+                        _: 'Đã sao chép %d dòng vào bộ nhớ tạm',
+                        1: 'Đã sao chép 1 dòng vào bộ nhớ tạm'
+                    }
+                }
+            }
+        });
+
         // Nhựt sửa: Tự động kết nối ô tìm kiếm ở Header với DataTable hiện tại trên trang
         window.addEventListener('load', function() {
             var tableEl = $('#tablejs');

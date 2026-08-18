@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     // Nhựt sửa lỗi: tạo CSRF token cho thao tác thêm/sửa/xóa học kỳ.
     if (empty($_SESSION['csrf_token'])) {
         try {

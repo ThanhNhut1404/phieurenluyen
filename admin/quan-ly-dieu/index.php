@@ -1,4 +1,4 @@
-﻿ <?php
+ <?php
     // require "../models/getModel.php";
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
@@ -342,11 +342,11 @@ function cancel_update() {
 // Quân sửa: Thêm hàm xác nhận xóa Điều với thông báo cảnh báo xóa toàn bộ dữ liệu con
 function confirm_delete_dieu(url) {
     Swal.fire({
-        title: 'Bạn có chắc muốn xóa điều này?',
+        title: 'Xác nhận xóa?',
         html: "Toàn bộ khoản và mục thuộc <b>Điều</b> này<br>cũng sẽ bị xóa và không thể khôi phục!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Đồng ý xóa',
+        confirmButtonText: 'Xóa',
         cancelButtonText: 'Hủy',
         customClass: {
             confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',

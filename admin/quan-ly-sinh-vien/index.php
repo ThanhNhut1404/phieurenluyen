@@ -320,7 +320,7 @@
                                      <a href="#" type="button" class="btn  btn-warning m-2" onclick="update_obj(<?= (int)$item->id_sinh_vien ?>)">
                                          <i class="ri-edit-2-line"></i>
                                      </a>
-                                     <a href="#" type="button" class="btn  btn-danger m-2" onclick="return confirm_sweet('quan-ly-sinh-vien/action.php?req=delete&id_sinh_vien=<?= (int)$item->id_sinh_vien ?>')">
+                                     <a href="#" type="button" class="btn  btn-danger m-2" onclick="return confirm_delete_sweet('quan-ly-sinh-vien/action.php?req=delete&id_sinh_vien=<?= (int)$item->id_sinh_vien ?>', 'Sinh viên')">
                                          <i class="ri-delete-bin-line"></i>
                                      </a>
                                  </td>
