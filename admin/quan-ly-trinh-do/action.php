@@ -102,7 +102,7 @@
                 $status = $trinhdo->trinhdo__Add($ten_trinh_do, $ghi_chu);
                 trinhdo_clear_old_input();
                 trinhdo_rotate_csrf_token();
-                trinhdo_redirect($status != 0 ? 'success' : 'failed');
+                trinhdo_redirect($status != 0 ? 'add-success' : 'add-failed');
 
                 break;
 
@@ -142,7 +142,7 @@
                 $trinhdo->connect->commit();
                 trinhdo_clear_old_input();
                 trinhdo_rotate_csrf_token();
-                trinhdo_redirect($status !== false ? 'success' : 'failed');
+                trinhdo_redirect($status !== false ? 'update-success' : 'update-failed');
 
                 break;
 
@@ -166,7 +166,7 @@
                 $status = $trinhdo->trinhdo__Delete($id_trinh_do);
                 $trinhdo->connect->commit();
                 trinhdo_rotate_csrf_token();
-                trinhdo_redirect($status != 0 ? 'success' : 'failed');
+                trinhdo_redirect($status != 0 ? 'delete-success' : 'delete-failed');
 
                 break;
 

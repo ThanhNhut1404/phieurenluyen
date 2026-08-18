@@ -121,7 +121,7 @@
                 $status = $nganhhoc->nganhhoc__Add($ten_nganh_hoc, $ghi_chu, $id_khoa);
                 nganhhoc_clear_old_input();
                 nganhhoc_rotate_csrf_token();
-                nganhhoc_redirect($status != 0 ? 'success' : 'failed');
+                nganhhoc_redirect($status != 0 ? 'add-success' : 'add-failed');
                 
                 break;
             case 'update':
@@ -168,7 +168,7 @@
                 $nganhhoc->connect->commit();
                 nganhhoc_clear_old_input();
                 nganhhoc_rotate_csrf_token();
-                nganhhoc_redirect($status !== false ? 'success' : 'failed');
+                nganhhoc_redirect($status !== false ? 'update-success' : 'update-failed');
                 
                 break;
 
@@ -195,7 +195,7 @@
                 $status = $nganhhoc->nganhhoc__Delete($id_nganh_hoc);
                 $nganhhoc->connect->commit();
                 nganhhoc_rotate_csrf_token();
-                nganhhoc_redirect($status != 0 ? 'success' : 'failed');
+                nganhhoc_redirect($status != 0 ? 'delete-success' : 'delete-failed');
                 
                 break;
             default:

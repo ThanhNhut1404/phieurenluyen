@@ -109,7 +109,7 @@
                 $status = $khoa->khoa__Add($ten_khoa, $ghi_chu);
                 khoa_clear_old_input();
                 khoa_rotate_csrf_token();
-                khoa_redirect($status != 0 ? 'success' : 'failed');
+                khoa_redirect($status != 0 ? 'add-success' : 'add-failed');
                 
                 break;
             case 'update':
@@ -151,7 +151,7 @@
                 $khoa->connect->commit();
                 khoa_clear_old_input();
                 khoa_rotate_csrf_token();
-                khoa_redirect($status !== false ? 'success' : 'failed');
+                khoa_redirect($status !== false ? 'update-success' : 'update-failed');
                 
                 break;
 
@@ -178,7 +178,7 @@
                 $status = $khoa->khoa__Delete($id_khoa);
                 $khoa->connect->commit();
                 khoa_rotate_csrf_token();
-                khoa_redirect($status != 0 ? 'success' : 'failed');
+                khoa_redirect($status != 0 ? 'delete-success' : 'delete-failed');
                 
                 break;
             default:

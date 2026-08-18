@@ -133,7 +133,7 @@
                 $status = $lophoc->lophoc__Add($ten_lop_hoc, $ghi_chu, $id_khoa_hoc, $id_nganh_hoc);
                 lophoc_clear_old_input();
                 lophoc_rotate_csrf_token();
-                lophoc_redirect($status != 0 ? 'success' : 'failed');
+                lophoc_redirect($status != 0 ? 'add-success' : 'add-failed');
                 
                 break;
             case 'update':
@@ -186,7 +186,7 @@
                 $lophoc->connect->commit();
                 lophoc_clear_old_input();
                 lophoc_rotate_csrf_token();
-                lophoc_redirect($status !== false ? 'success' : 'failed');
+                lophoc_redirect($status !== false ? 'update-success' : 'update-failed');
                 
                 break;
 
@@ -213,7 +213,7 @@
                 $status = $lophoc->lophoc__Delete($id_lop_hoc);
                 $lophoc->connect->commit();
                 lophoc_rotate_csrf_token();
-                lophoc_redirect($status != 0 ? 'success' : 'failed');
+                lophoc_redirect($status != 0 ? 'delete-success' : 'delete-failed');
                 
                 break;
             default:

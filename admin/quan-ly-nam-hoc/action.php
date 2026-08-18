@@ -138,7 +138,7 @@
                 $status = $namhoc->namhoc__Add($ten_nam_hoc, $ngay_bat_dau, $ngay_ket_thuc, $ghi_chu);
                 namhoc_clear_old_input();
                 namhoc_rotate_csrf_token();
-                namhoc_redirect($status != 0 ? 'success' : 'failed');
+                namhoc_redirect($status != 0 ? 'add-success' : 'add-failed');
 
                 break;
 
@@ -202,7 +202,7 @@
                 $namhoc->connect->commit();
                 namhoc_clear_old_input();
                 namhoc_rotate_csrf_token();
-                namhoc_redirect($status !== false ? 'success' : 'failed');
+                namhoc_redirect($status !== false ? 'update-success' : 'update-failed');
 
                 break;
 
@@ -226,7 +226,7 @@
                 $status = $namhoc->namhoc__Delete($id_nam_hoc);
                 $namhoc->connect->commit();
                 namhoc_rotate_csrf_token();
-                namhoc_redirect($status != 0 ? 'success' : 'failed');
+                namhoc_redirect($status != 0 ? 'delete-success' : 'delete-failed');
 
                 break;
 

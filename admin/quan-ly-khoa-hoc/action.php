@@ -130,7 +130,7 @@
                 $status = $khoahoc->khoahoc__Add($ten_khoa_hoc, (int)$nam_nhap_hoc, (float)$he_dao_tao, $ghi_chu);
                 khoahoc_clear_old_input();
                 khoahoc_rotate_csrf_token();
-                khoahoc_redirect($status != 0 ? 'success' : 'failed');
+                khoahoc_redirect($status != 0 ? 'add-success' : 'add-failed');
 
                 break;
 
@@ -182,7 +182,7 @@
                 $khoahoc->connect->commit();
                 khoahoc_clear_old_input();
                 khoahoc_rotate_csrf_token();
-                khoahoc_redirect($status !== false ? 'success' : 'failed');
+                khoahoc_redirect($status !== false ? 'update-success' : 'update-failed');
 
                 break;
 
@@ -206,7 +206,7 @@
                 $status = $khoahoc->khoahoc__Delete($id_khoa_hoc);
                 $khoahoc->connect->commit();
                 khoahoc_rotate_csrf_token();
-                khoahoc_redirect($status != 0 ? 'success' : 'failed');
+                khoahoc_redirect($status != 0 ? 'delete-success' : 'delete-failed');
 
                 break;
 

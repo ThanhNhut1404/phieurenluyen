@@ -161,9 +161,9 @@
                 $status .= unlink($file);
 
                 if($status == 0){
-                    header("location:../index.php?page=thong-kel&status=fail");
+                    header("location:../index.php?page=quan-ly-thong-ke&status=export-failed");
                 }else{
-                    header("location:../index.php?page=thong-kel&status=success");
+                    header("location:../index.php?page=quan-ly-thong-ke&status=export-success");
                 }
                 
                 break;

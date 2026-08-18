@@ -161,7 +161,7 @@
                 $hocky->connect->commit();
                 hocky_clear_old_input();
                 hocky_rotate_csrf_token();
-                hocky_redirect($status != 0 ? 'success' : 'failed');
+                hocky_redirect($status != 0 ? 'add-success' : 'add-failed');
 
                 break;
 
@@ -244,7 +244,7 @@
                 $hocky->connect->commit();
                 hocky_clear_old_input();
                 hocky_rotate_csrf_token();
-                hocky_redirect($status !== false ? 'success' : 'failed');
+                hocky_redirect($status !== false ? 'update-success' : 'update-failed');
 
                 break;
 
@@ -268,7 +268,7 @@
                 $status = $hocky->hocky__Delete($id_hoc_ky);
                 $hocky->connect->commit();
                 hocky_rotate_csrf_token();
-                hocky_redirect($status != 0 ? 'success' : 'failed');
+                hocky_redirect($status != 0 ? 'delete-success' : 'delete-failed');
 
                 break;
 

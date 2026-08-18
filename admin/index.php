@@ -153,6 +153,17 @@ if (!isset($_SESSION['admin'])) {
             }
         })
     }
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
     </script>
     <?php
     if (isset($_GET['status'])) {
@@ -246,19 +257,19 @@ if (!isset($_SESSION['admin'])) {
 
         if ($_GET['status'] == "locked-dot") {
             // Nhựt sửa lỗi: Không cho cập nhật Đợt đã phát sinh dữ liệu chấm hoặc kết quả xếp loại.
-            echo "<script>Swal.fire(" . json_encode("Không thể cập nhật") . ", " . json_encode("Đợt chấm điểm đã phát sinh dữ liệu chấm hoặc kết quả xếp loại nên không thể cập nhật.") . ", " . json_encode("error") . ")</script>";
+            echo "<script>Toast.fire(" . json_encode("Không thể cập nhật") . ", " . json_encode("Đợt chấm điểm đã phát sinh dữ liệu chấm hoặc kết quả xếp loại nên không thể cập nhật.") . ", " . json_encode("error") . ")</script>";
         }
         if ($_GET['status'] == "unscored-phieu") {
             // Nhựt sửa lỗi: Không cho tổng kết khi còn Phiếu chưa có kết quả cố vấn.
-            echo "<script>Swal.fire(" . json_encode("Chưa thể tổng kết") . ", " . json_encode("Vẫn còn Phiếu chấm điểm chưa có kết quả cố vấn. Vui lòng kiểm tra lại.") . ", " . json_encode("error") . ")</script>";
+            echo "<script>Toast.fire(" . json_encode("Chưa thể tổng kết") . ", " . json_encode("Vẫn còn Phiếu chấm điểm chưa có kết quả cố vấn. Vui lòng kiểm tra lại.") . ", " . json_encode("error") . ")</script>";
         }
 
         if (isset($_GET['page']) && $_GET['page'] == "quan-ly-dot-cham-diem" && $_GET['status'] == "not-found") {
             // Nhựt sửa lỗi: Thông báo riêng khi đợt chấm điểm không tồn tại hoặc request sai.
-            echo "<script>Swal.fire(" . json_encode("Không tìm thấy dữ liệu") . ", " . json_encode("Đợt chấm điểm không tồn tại hoặc dữ liệu yêu cầu không hợp lệ.") . ", " . json_encode("error") . ")</script>";
+            echo "<script>Toast.fire(" . json_encode("Không tìm thấy dữ liệu") . ", " . json_encode("Đợt chấm điểm không tồn tại hoặc dữ liệu yêu cầu không hợp lệ.") . ", " . json_encode("error") . ")</script>";
         } else if (isset($_GET['page']) && $_GET['page'] == "quan-ly-xep-loai" && $_GET['status'] == "duplicate-name") {
             // Nhựt sửa lỗi: Thông báo riêng khi tên xếp loại bị trùng.
-            echo "<script>Swal.fire(" . json_encode("Trùng tên xếp loại") . ", " . json_encode("Tên xếp loại đã tồn tại. Vui lòng nhập tên khác.") . ", " . json_encode("error") . ")</script>";
+            echo "<script>Toast.fire(" . json_encode("Trùng tên xếp loại") . ", " . json_encode("Tên xếp loại đã tồn tại. Vui lòng nhập tên khác.") . ", " . json_encode("error") . ")</script>";
         }
         
         $inline_error_pages = ['quan-ly-khoa', 'quan-ly-hoc-ky', 'quan-ly-nam-hoc', 'quan-ly-khoa-hoc', 'quan-ly-nganh-hoc', 'quan-ly-trinh-do', 'quan-ly-lop-hoc', 'quan-ly-sinh-vien', 'quan-ly-bi-thu-doan-khoa', 'quan-ly-giang-vien', 'quan-ly-phan-cong', 'quan-ly-tai-khoan'];
@@ -268,36 +279,79 @@ if (!isset($_SESSION['admin'])) {
         if (!$is_inline_error) {
             if (isset($_GET['page']) && $_GET['status'] == "invalid" && isset($invalid_alerts[$_GET['page']])) {
                 $alert = $invalid_alerts[$_GET['page']];
-                echo "<script>Swal.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
+                echo "<script>Toast.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
             } else if (isset($alerts[$_GET['status']])) {
                 $alert = $alerts[$_GET['status']];
-                echo "<script>Swal.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
+                echo "<script>Toast.fire(" . json_encode($alert[0]) . ", " . json_encode($alert[1]) . ", " . json_encode($alert[2]) . ")</script>";
             }
 
             // Nhựt sửa lỗi: bổ sung thông báo riêng cho quản lý ngành học để không dùng nhầm nội dung của khoa.
             if ($_GET['status'] == "duplicate-nganh-hoc") {
-                echo "<script>Swal.fire(" . json_encode("Dữ liệu bị trùng!") . ", " . json_encode("Tên ngành học đã tồn tại trong khoa đã chọn.") . ", " . json_encode("error") . ")</script>";
+                echo "<script>Toast.fire(" . json_encode("Dữ liệu bị trùng!") . ", " . json_encode("Tên ngành học đã tồn tại trong khoa đã chọn.") . ", " . json_encode("error") . ")</script>";
             }
         }
         if ($_GET['status'] == "related-nganh-hoc") {
-            echo "<script>Swal.fire(" . json_encode("Không thể xóa!") . ", " . json_encode("Ngành học này đang được sử dụng bởi lớp học.") . ", " . json_encode("error") . ")</script>";
+            echo "<script>Toast.fire(" . json_encode("Không thể xóa!") . ", " . json_encode("Ngành học này đang được sử dụng bởi lớp học.") . ", " . json_encode("error") . ")</script>";
         }
 
+        $page_to_name = [
+            'quan-ly-khoa' => 'Khoa',
+            'quan-ly-hoc-ky' => 'Học kỳ',
+            'quan-ly-nam-hoc' => 'Năm học',
+            'quan-ly-khoa-hoc' => 'Khóa học',
+            'quan-ly-nganh-hoc' => 'Ngành học',
+            'quan-ly-trinh-do' => 'Trình độ',
+            'quan-ly-lop-hoc' => 'Lớp học',
+            'quan-ly-sinh-vien' => 'Sinh viên',
+            'quan-ly-bi-thu-doan-khoa' => 'Bí thư đoàn khoa',
+            'quan-ly-giang-vien' => 'Giảng viên',
+            'quan-ly-phan-cong' => 'Phân công',
+            'quan-ly-tai-khoan' => 'Tài khoản',
+            'quan-ly-dot-cham-diem' => 'Đợt chấm điểm',
+            'quan-ly-xep-loai' => 'Xếp loại',
+            'quan-ly-dieu' => 'Điều',
+            'quan-ly-khoan' => 'Khoản',
+            'quan-ly-mau-phieu' => 'Mẫu phiếu',
+            'quan-ly-phan-nhom' => 'Phân nhóm',
+            'quan-ly-phan-quyen' => 'Phân quyền',
+            'quan-ly-muc' => 'Mục',
+            'quan-ly-thong-ke' => 'Thống kê',
+            'quan-ly-ket-qua' => 'Kết quả',
+            'quan-ly-phieu-cham-diem' => 'Phiếu chấm điểm',
+            'thong-bao' => 'Thông báo',
+            'import-from-excel' => 'Dữ liệu Excel'
+        ];
+        $entity_name = isset($_GET['page']) && isset($page_to_name[$_GET['page']]) ? $page_to_name[$_GET['page']] : 'Dữ liệu';
+
         if ($_GET['status'] == "success") {
-            echo "<script>
-               Swal.fire(
-                   'Thành công!',
-                   'Thao tác thành công!',
-                   'success'
-                 )</script>";
+            echo "<script>Toast.fire('Thành công!', 'Thao tác thành công!', 'success')</script>";
         }
         if ($_GET['status'] == "failed") {
-            echo "<script>
-               Swal.fire(
-                   'Thất bại!',
-                   'Thao tác không thành công!',
-                   'error'
-                 )</script>";
+            echo "<script>Toast.fire('Thất bại!', 'Thao tác không thành công!', 'error')</script>";
+        }
+        if ($_GET['status'] == "add-success") {
+            echo "<script>Toast.fire('Thành công!', 'Thêm mới " . $entity_name . " thành công!', 'success')</script>";
+        }
+        if ($_GET['status'] == "add-failed") {
+            echo "<script>Toast.fire('Thất bại!', 'Thêm mới " . $entity_name . " thất bại!', 'error')</script>";
+        }
+        if ($_GET['status'] == "update-success") {
+            echo "<script>Toast.fire('Thành công!', 'Cập nhật " . $entity_name . " thành công!', 'success')</script>";
+        }
+        if ($_GET['status'] == "update-failed") {
+            echo "<script>Toast.fire('Thất bại!', 'Cập nhật " . $entity_name . " thất bại!', 'error')</script>";
+        }
+        if ($_GET['status'] == "delete-success") {
+            echo "<script>Toast.fire('Thành công!', 'Xóa " . $entity_name . " thành công!', 'success')</script>";
+        }
+        if ($_GET['status'] == "delete-failed") {
+            echo "<script>Toast.fire('Thất bại!', 'Xóa " . $entity_name . " thất bại!', 'error')</script>";
+        }
+        if ($_GET['status'] == "export-success") {
+            echo "<script>Toast.fire('Thành công!', 'Xuất dữ liệu " . $entity_name . " thành công!', 'success')</script>";
+        }
+        if ($_GET['status'] == "export-failed") {
+            echo "<script>Toast.fire('Thất bại!', 'Xuất dữ liệu " . $entity_name . " thất bại!', 'error')</script>";
         }
         // Nhựt sửa lỗi: Sau khi hiển thị thông báo thì xóa riêng tham số status khỏi URL để refresh không hiện lại alert.
         echo "<script>
@@ -309,6 +363,36 @@ if (!isset($_SESSION['admin'])) {
     ?>
     
     <style>
+        /* CSS cho thẻ Toast: Giảm khoảng cách giữa tiêu đề và nội dung */
+        .swal2-popup.swal2-toast {
+            padding: 8px 12px !important;
+        }
+        .swal2-popup.swal2-toast:has(.swal2-success) {
+            border: 1px solid #28a745 !important;
+            border-radius: 6px !important;
+        }
+        .swal2-popup.swal2-toast:has(.swal2-error) {
+            border: 1px solid #dc3545 !important;
+            border-radius: 6px !important;
+        }
+        .swal2-toast .swal2-title {
+            margin: 0.1em 0 0 0 !important;
+            font-size: 15px !important;
+        }
+        .swal2-toast.swal2-icon-success .swal2-title,
+        .swal2-toast .swal2-success ~ .swal2-title {
+            color: #28a745 !important;
+            font-weight: bold !important;
+        }
+        .swal2-toast.swal2-icon-error .swal2-title,
+        .swal2-toast .swal2-error ~ .swal2-title {
+            color: #dc3545 !important;
+            font-weight: bold !important;
+        }
+        .swal2-toast .swal2-html-container {
+            margin: 0.2em 0 0.2em 0 !important;
+            font-size: 14px !important;
+        }
         /* Nhựt sửa: Ẩn ô tìm kiếm mặc định của DataTable để sử dụng ô tìm kiếm chung trên Header */
         .dataTables_filter {
             display: none !important;
