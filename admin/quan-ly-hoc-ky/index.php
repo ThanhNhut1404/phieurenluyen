@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     // Nhựt sửa lỗi: tạo CSRF token cho thao tác thêm/sửa/xóa học kỳ.
     if (empty($_SESSION['csrf_token'])) {
         try {
@@ -462,7 +462,7 @@ function toggle_add_form() {
     
     addForm.slideToggle(300, function() {
         if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i> Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
+            btn.html('Đóng lại').removeClass('btn-primary').addClass('btn-secondary');
         } else {
             btn.html('<i class="fas fa-plus"></i> Thêm mới').removeClass('btn-secondary').addClass('btn-primary');
         }
@@ -524,12 +524,22 @@ function cancel_update() {
 function delete_obj(id_hoc_ky) {
     Swal.fire({
         title: 'Xác nhận xóa?',
-        text: 'Thao tác này sẽ xóa học kỳ đã chọn.',
+        html: 'Thao tác này sẽ xóa <b>Học kỳ</b><br>đã chọn và không thể hoàn tác.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Xóa'
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+            cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+        },
+        buttonsStyling: false,
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+        }
     }).then((result) => {
         if (!result.isConfirmed) {
             return;
@@ -563,6 +573,11 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
 </script>
+
+
+
+
+
 
 
 

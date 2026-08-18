@@ -1,4 +1,4 @@
- <?php
+﻿ <?php
     // require "../models/getModel.php";
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
@@ -343,13 +343,22 @@ function cancel_update() {
 function confirm_delete_dieu(url) {
     Swal.fire({
         title: 'Bạn có chắc muốn xóa điều này?',
-        text: "Toàn bộ khoản và mục thuộc điều này cũng sẽ bị xóa và không thể khôi phục.",
+        html: "Toàn bộ khoản và mục thuộc <b>Điều</b> này<br>cũng sẽ bị xóa và không thể khôi phục!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
         confirmButtonText: 'Đồng ý xóa',
-        cancelButtonText: 'Hủy'
+        cancelButtonText: 'Hủy',
+        customClass: {
+            confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+            cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+        },
+        buttonsStyling: false,
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             location.href = url;
@@ -357,6 +366,11 @@ function confirm_delete_dieu(url) {
     })
 }
  </script>
+
+
+
+
+
 
 
 

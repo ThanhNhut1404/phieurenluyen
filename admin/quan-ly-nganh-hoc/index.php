@@ -1,4 +1,4 @@
- <?php
+﻿ <?php
     // require "../models/getModel.php";
     // Nhựt sửa lỗi: tạo CSRF token cho các thao tác thêm/sửa/xóa ngành học.
     if (empty($_SESSION['csrf_token'])) {
@@ -468,12 +468,22 @@ function cancel_update() {
 function delete_obj(id_nganh_hoc) {
     Swal.fire({
         title: 'Xác nhận xóa?',
-        text: 'Thao tác này sẽ xóa ngành học đã chọn.',
+        html: 'Thao tác này sẽ xóa <b>Ngành học</b><br>đã chọn và không thể hoàn tác.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Xóa'
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+            cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+        },
+        buttonsStyling: false,
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+        }
     }).then((result) => {
         if (!result.isConfirmed) {
             return;
@@ -507,6 +517,11 @@ window.addEventListener("load", function() {
 });
 <?php endif; ?>
  </script>
+
+
+
+
+
 
 
 
