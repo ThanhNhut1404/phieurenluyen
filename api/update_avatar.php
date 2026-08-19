@@ -44,8 +44,7 @@ if (move_uploaded_file($file['tmp_name'], $target_path)) {
     $db_path = "uploads/avatars/" . $filename;
     $sinhvien->sinhvien__Update_Avatar($id_sinh_vien, $db_path);
     
-    $avatar_url = "http://localhost/phieurenluyen/" . $db_path;
-    response_json("success", "Cập nhật ảnh đại diện thành công", ['anh_dai_dien' => $avatar_url]);
+    response_json("success", "Cập nhật ảnh đại diện thành công", ['anh_dai_dien' => $db_path]);
 } else {
     response_json("error", "Không thể lưu file ảnh");
 }

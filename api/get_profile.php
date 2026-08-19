@@ -50,8 +50,7 @@ if ($sv->id_lop_hoc) {
 // Build URL cho ảnh đại diện nếu có
 $avatar_url = null;
 if (!empty($sv->anh_dai_dien)) {
-    // Assuming backend runs on localhost/phieurenluyen
-    $avatar_url = "http://localhost/phieurenluyen/" . $sv->anh_dai_dien;
+    $avatar_url = $sv->anh_dai_dien;
 }
 
 $data = [
