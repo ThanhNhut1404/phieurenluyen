@@ -204,14 +204,14 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 font-weight: 700;
                                 color: #003366;
                                 padding: 15px;
-                                font-size: 1.3rem;
+                                font-size: 1.75rem;
                                 text-transform: uppercase;
                                 border-bottom: 1px solid #dee2e6;
                             }
                             .evaluation-header .info-row {
                                 display: flex;
                                 flex-wrap: wrap;
-                                background: #fff;
+                                background: #e9ecef;
                             }
                             .evaluation-header .info-item {
                                 flex: 1;
@@ -227,15 +227,16 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 border-right: none;
                             }
                             .evaluation-header .info-label {
-                                font-size: 0.85rem;
-                                color: #6c757d;
-                                margin-bottom: 5px;
-                            }
+                            font-weight: normal;
+                            font-size: 1rem;
+                            color: #6c757d;
+                            margin-bottom: 5px;
+                        }
                             .evaluation-header .info-value {
-                                font-weight: 600;
-                                font-size: 0.95rem;
-                                color: #212529;
-                            }
+                            font-weight: 700;
+                            font-size: 1.15rem;
+                            color: #212529;
+                        }
                             @media (max-width: 768px) {
                                 .evaluation-header .info-item {
                                     border-right: none;
@@ -252,50 +253,52 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 flex-wrap: wrap;
                             }
                             .results-summary div {
-                                margin-right: 15px;
-                            }
+                            margin-right: 15px;
+                            font-size: 1.15rem;
+                            font-weight: normal;
+                        }
                         </style>
                         <div class="evaluation-header">
                             <div class="title">
                                 <?= $mauphieu__Get_By_Id->ten_mau_phieu ?>
                             </div>
                             <div class="info-row">
-                                <div class="info-item" style="flex: 1;">
-                                    <span class="info-label">Mã số sinh viên</span>
+                                <div class="info-item" style="flex: 0.6;">
+                                <span class="info-label">Mã số sinh viên</span>
                                     <span class="info-value"><?= $sinhvien__Get_By_Id->ma_sinh_vien ?></span>
                                 </div>
                                 <div class="info-item" style="flex: 1.2;">
                                     <span class="info-label">Họ tên sinh viên</span>
                                     <span class="info-value"><?= $sinhvien__Get_By_Id->ten_sinh_vien ?></span>
                                 </div>
-                                <div class="info-item" style="flex: 0.7; min-width: 80px;">
-                                    <span class="info-label">Khóa học</span>
+                                <div class="info-item" style="flex: 0.5; min-width: 60px;">
+                                <span class="info-label">Khóa học</span>
                                     <span class="info-value"><?= $khoahoc__Get_By_Id->ten_khoa_hoc ?></span>
                                 </div>
-                                <div class="info-item" style="flex: 1.5;">
-                                    <span class="info-label">Khoa/ Bộ môn</span>
+                                <div class="info-item" style="flex: 2.2;">
+                                <span class="info-label">Khoa/ Bộ môn</span>
                                     <span class="info-value"><?php 
                                         $nganhhoc_info = $nganhhoc->nganhhoc__Get_By_Id($lophoc__Get_By_Id->id_nganh_hoc);
                                         echo $khoa->khoa__Get_By_Id($nganhhoc_info->id_khoa)->ten_khoa;
                                     ?></span>
                                 </div>
-                                <div class="info-item" style="flex: 1.2;">
-                                    <span class="info-label">Lớp</span>
+                                <div class="info-item" style="flex: 1.6;">
+                                <span class="info-label">Lớp</span>
                                     <span class="info-value"><?= $lophoc__Get_By_Id->ten_lop_hoc ?></span>
                                 </div>
-                                <div class="info-item" style="flex: 0.7; min-width: 80px;">
-                                    <span class="info-label">Năm học</span>
+                                <div class="info-item" style="flex: 0.5; min-width: 60px;">
+                                <span class="info-label">Năm học</span>
                                     <span class="info-value"><?= $namhoc__Get_By_Id->ten_nam_hoc ?></span>
                                 </div>
-                                <div class="info-item" style="flex: 0.6; min-width: 70px;">
-                                    <span class="info-label">Học kỳ</span>
+                                <div class="info-item" style="flex: 0.4; min-width: 50px;">
+                                <span class="info-label">Học kỳ</span>
                                     <span class="info-value"><?= $hocky__Get_By_Id->ten_hoc_ky ?></span>
                                 </div>
                                 <div class="info-item" style="flex: 1.2;">
                                     <span class="info-label">Thời gian thực hiện đánh giá</span>
                                     <span class="info-value">
-                                        <?= isset($dotchamdiem__Get_By_Id->ngay_bat_dau) ? date('d/m/Y', strtotime($dotchamdiem__Get_By_Id->ngay_bat_dau)) : '' ?> - 
-                                        <?= isset($dotchamdiem__Get_By_Id->ngay_ket_thuc) ? date('d/m/Y', strtotime($dotchamdiem__Get_By_Id->ngay_ket_thuc)) : '' ?>
+                                        <?= isset($dotchamdiem__Get_By_Id->thoi_gian_bat_dau) ? date('d/m/Y', strtotime($dotchamdiem__Get_By_Id->thoi_gian_bat_dau)) : '' ?> - 
+                                        <?= isset($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc) ? date('d/m/Y', strtotime($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc)) : '' ?>
                                     </span>
                                 </div>
                             </div>
@@ -337,7 +340,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 <thead class="thead-light text-center">
                                     <tr>
                                         <th class="align-middle" style="padding:6px 4px; font-size: 1.15rem; background-color: #e9ecef !important;">ĐIỀU</th>
-                                        <th class="align-middle" style="padding:6px 4px; font-size: 1.25rem; background-color: #e9ecef !important;">NỘI DUNG</th>
+                                        <th class="align-middle" style="padding:6px 4px; font-size: 1.4rem; background-color: #e9ecef !important;">NỘI DUNG</th>
                                         <th class="align-middle" style="padding:6px 4px; background-color: #e9ecef !important;">SV TỰ<br>CHẤM</th>
                                         <th class="align-middle" style="padding:6px 4px; background-color: #e9ecef !important;">LỚP TRƯỞNG<br>BÍ THƯ</th>
                                         <th class="align-middle" style="padding:6px 4px; background-color: #e9ecef !important;">BCH ĐOÀN<br>KHOA</th>
@@ -362,8 +365,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                 <?php if ($is_first_row_dieu): ?>
                                                     <!-- Quân sửa: Thêm word-break và white-space normal để text không tràn làm lệch cột -->
                                                     <td rowspan="<?= $rowspan ?>" class="align-middle text-center" style="padding:6px 4px; word-break: break-word; overflow-wrap: break-word; white-space: normal;">
-                                                        <div class="font-weight-bold"><?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ten_dieu ?></div>
-                                                        <div class="text-muted small mt-1"><?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ghi_chu ?></div>
+                                                        <div class="font-weight-bold" style="white-space: normal !important; word-wrap: break-word;"><?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ten_dieu ?></div>
+                                                        <div class="text-muted small mt-1" style="white-space: normal !important; word-wrap: break-word;"><?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ghi_chu ?></div>
                                                     </td>
                                                     <?php $is_first_row_dieu = false; ?>
                                                 <?php endif; ?>
@@ -452,20 +455,20 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 </tbody>
                                 <tfoot>
                                     <tr class="font-weight-bold table-secondary text-center">
-                                        <td colspan="2" class="align-middle text-right" style="padding:6px 8px;">Tổng điểm:</td>
-                                        <td class="align-middle" style="padding:4px;">
+                                        <td colspan="2" class="align-middle text-right font-weight-bold" style="padding:6px 8px; font-size: 1.15rem; color: #003366; background-color: #e9ecef !important;">TỔNG ĐIỂM:</td>
+                                        <td class="align-middle" style="padding:4px; background-color: #e9ecef !important;">
                                             <input type="number" class="form-control font-weight-bold" id="sum_sv" placeholder="0" min="0" max="100" readonly required style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;">
                                         </td>
-                                        <td class="align-middle" style="padding:4px;">
+                                        <td class="align-middle" style="padding:4px; background-color: #e9ecef !important;">
                                             <input type="number" class="form-control font-weight-bold" id="sum_lt_bt" placeholder="0" min="0" max="100" readonly required style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;">
                                         </td>
-                                        <td class="align-middle" style="padding:4px;">
+                                        <td class="align-middle" style="padding:4px; background-color: #e9ecef !important;">
                                             <input type="number" class="form-control font-weight-bold" id="sum_btdk" placeholder="0" min="0" max="100" readonly required style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;">
                                         </td>
-                                        <td class="align-middle" style="padding:4px;">
+                                        <td class="align-middle" style="padding:4px; background-color: #e9ecef !important;">
                                             <input type="number" class="form-control font-weight-bold bg-success text-white" id="sum_gv" placeholder="0" min="0" max="100" readonly required style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;">
                                         </td>
-                                        <td style="padding:4px;"></td>
+                                        <td style="padding:4px; background-color: #e9ecef !important;"></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -474,7 +477,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     <div class="card-footer">
                         <label for="" class="text-muted text-crimson">Vui lòng thêm minh chứng trước khi nhấn cập
                             nhật</label>
-                        <input type="submit" value="Cập nhật" class="btn btn-success float-right font-weight-bold" id="submit"
+                        <input type="submit" value="Cập nhật" class="btn btn-success btn-lg float-right font-weight-bold" id="submit"
                             <?php // Quân sửa: Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm trên nút submit ?>
                             <?= ($dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'disabled' : '' ?>>
                     </div>
@@ -546,7 +549,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 <div class="card-header">
     <div class="row">
         <div class="col">
-            <p class="mb-0"><b>• Quy định:</b></p>
+            <p class="mb-0" style="color: red;"><b>• Quy định:</b></p>
             <div style="padding-left: 15px;">
                 <p>
                     - Xếp loại kết quả rèn luyện: <b>xuất sắc</b> (90 - 100 điểm), <b>tốt</b> (80 - 89 điểm), <b>khá</b> (65 - 79 điểm), <b>trung bình</b> (50 - 64 điểm), <b>yếu</b> (35 - 49 điểm), <b>kém</b> (dưới 35 điểm).<br>
@@ -558,6 +561,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             </div>
         </div>
     </div>
+</div>
 </div>
 </section>
 <?php endif; ?>

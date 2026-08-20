@@ -396,6 +396,7 @@
                     nhật</label>
                 <input type="submit" value="Cập nhật" class="btn btn-danger float-right" id="submit">
             </div>
+        </div>
         </form>
 
         <div class="row">
@@ -450,7 +451,7 @@
 <div class="card-header">
     <div class="row">
         <div class="col">
-            <p class="mb-0"><b>• Quy định:</b></p>
+            <p class="mb-0" style="color: red;"><b>• Quy định:</b></p>
             <div style="padding-left: 15px;">
                 <p>
                     - Xếp loại kết quả rèn luyện: <b>xuất sắc</b> (90 - 100 điểm), <b>tốt</b> (80 - 89 điểm), <b>khá</b> (65 - 79 điểm), <b>trung bình</b> (50 - 64 điểm), <b>yếu</b> (35 - 49 điểm), <b>kém</b> (dưới 35 điểm).<br>
@@ -462,6 +463,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 </section>
 </div>
