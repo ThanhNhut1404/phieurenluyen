@@ -206,6 +206,28 @@ class phieuchamdiem extends Database {
         return $obj->fetchAll();
     }
 
-    
+    public function phieuchamdiem__Get_Lich_Su_By_Id_Sinh_Vien($id_sinh_vien) {
+        $sql = "
+            SELECT 
+                phieuchamdiem.*, 
+                dotchamdiem.ten_dot, 
+                hocky.ten_hoc_ky, 
+                namhoc.ten_nam_hoc,
+                ketquaxeploai.ket_qua as tong_diem_xep_loai,
+                ketquaxeploai.xep_loai
+            FROM phieuchamdiem
+            INNER JOIN lopapdung ON phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung
+            INNER JOIN dotchamdiem ON lopapdung.id_dot = dotchamdiem.id_dot
+            INNER JOIN hocky ON dotchamdiem.id_hoc_ky = hocky.id_hoc_ky
+            INNER JOIN namhoc ON hocky.id_nam_hoc = namhoc.id_nam_hoc
+            LEFT JOIN ketquaxeploai ON phieuchamdiem.id_phieu = ketquaxeploai.id_phieu
+            WHERE phieuchamdiem.id_sinh_vien = ?
+            ORDER BY namhoc.ngay_bat_dau DESC, hocky.ngay_bat_dau DESC
+        ";
+        $obj = $this->connect->prepare($sql);
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_sinh_vien));
+        return $obj->fetchAll();
+    }
 }
 ?>

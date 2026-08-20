@@ -98,6 +98,11 @@ class sinhvien extends Database {
         return $obj->rowCount();
     }
     
+    public function sinhvien__Update_Avatar($id_sinh_vien, $anh_dai_dien) {
+        $obj = $this->connect->prepare("UPDATE sinhvien SET anh_dai_dien=? WHERE id_sinh_vien=?");
+        $obj->execute(array($anh_dai_dien, $id_sinh_vien));
+        return $obj->rowCount();
+    }
     public function sinhvien__Get_By_Id_Lop_Hoc($id_lop_hoc) {
         $obj = $this->connect->prepare("SELECT * FROM sinhvien WHERE id_lop_hoc = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
