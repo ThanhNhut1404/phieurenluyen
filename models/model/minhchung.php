@@ -76,11 +76,22 @@ class minhchung extends Database {
 
     // Hàm tiện ích: Nén ảnh và trả về chuỗi Base64
     public function minhchung__Compress_Image($source_path, $max_size = 800, $quality = 60) {
+        $mime = mime_content_type($source_path);
+
+        // Hỗ trợ lưu trữ file PDF (tối đa 5MB)
+        if ($mime == 'application/pdf') {
+            if (filesize($source_path) > 5 * 1024 * 1024) { // 5MB
+                return false; 
+            }
+            $pdf_content = file_get_contents($source_path);
+            return "data:application/pdf;base64," . base64_encode($pdf_content);
+        }
+
+        // Xử lý nén nếu là file ảnh
         $info = getimagesize($source_path);
         if ($info == false) return false;
 
-        $mime = $info['mime'];
-        switch ($mime) {
+        switch ($info['mime']) {
             case 'image/jpeg': $image = imagecreatefromjpeg($source_path); break;
             case 'image/png': $image = imagecreatefrompng($source_path); break;
             case 'image/gif': $image = imagecreatefromgif($source_path); break;

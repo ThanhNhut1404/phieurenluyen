@@ -11,6 +11,10 @@
                 
                 $email = $_POST['email'];
                 $mat_khau = $_POST['mat_khau'];
+                
+                // Nhựt sửa: Xóa toàn bộ session cũ trước khi đăng nhập tài khoản mới để tránh bị lưu dính quyền (ví dụ: đang là bí thư đăng nhập lại thành sinh viên nhưng vẫn còn session bí thư)
+                session_unset();
+
                 $status = $taikhoan->taikhoan__Check_Login($email, $hashpassword->Encryption($mat_khau));
                 // $status = $taikhoan->taikhoan__Check_Login($email, $mat_khau);
                 

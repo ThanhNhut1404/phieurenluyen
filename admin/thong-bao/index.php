@@ -23,7 +23,7 @@
     <section class="content">
         <div class="card card-primary mt-3">
             <div class="card-header">
-                <h3 class="card-title">Danh sách Thông báo</h3>
+                <h3 class="card-title">Danh sách yêu cầu Kích hoạt tài khoản</h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                         <i class="fas fa-minus"></i>

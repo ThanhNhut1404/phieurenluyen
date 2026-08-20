@@ -155,7 +155,7 @@
 
                          <div class="form-group">
                              <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết</label>
-                             <textarea id="ghi_chu" name="ghi_chu" class="form-control" required
+                             <textarea id="ghi_chu" name="ghi_chu" class="form-control"
                                  placeholder="Nhập nội dung chi tiết"><?=muc_escape(muc_old_value('ghi_chu', 'add'))?></textarea>
                          </div>
                          
@@ -597,11 +597,22 @@ function cancel_update() {
  }
 
  // Chạy lần đầu khi load trang nếu đã chọn sẵn khoản
- $(document).ready(function() {
+ document.addEventListener("DOMContentLoaded", function() {
      var firstKhoan = $('#id_khoan_add').val();
      if(firstKhoan) {
          loadThuTu(firstKhoan);
      }
+     
+     $('#ghi_chu').summernote({
+         height: 150,
+         toolbar: [
+             ['font', ['bold', 'italic', 'underline', 'clear']],
+             ['color', ['color']],
+             ['para', ['ul', 'ol', 'paragraph']],
+             ['insert', ['link']],
+             ['view', ['fullscreen', 'codeview']]
+         ]
+     });
  });
  </script>
 

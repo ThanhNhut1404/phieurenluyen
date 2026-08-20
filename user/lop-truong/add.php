@@ -450,59 +450,15 @@
 <div class="card-header">
     <div class="row">
         <div class="col">
-            <h3 class="card-title font-weight-bold">
-                • Quy định:
-            </h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <h3 class="card-title">
-                - Xếp loại kết quả rèn luyện: xuất sắc (90 - 100 điểm), tốt (90 - 89 điểm), khá (65 - 79
-                điểm), trung bình (50 - 64 điểm), yếu (35 - 49 điểm), kém (dưới 35 điểm).
-            </h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <h3 class="card-title">
-                - Kết quả rèn luyện năm học xuất sắc và tốt được nhà trường xét khen thưởng.
-            </h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <h3 class="card-title">
-                - Kết quả rèn luyện yếu, kém 2 học kỳ liên tiếp phải tạm ngừng học ít nhất 1 học kỳ ở
-                học kỳ
-                tiếp theo.
-            </h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <h3 class="card-title">
-                - Sinh viên bị kỷ luật mức khiển trách trong học kỳ thì mức xếp loại không được vượt quá
-                loại
-                khá, bị kỷ luật mức cảnh cáo thì không được vượt quá loại trung bình.
-            </h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="col">
-                <h3 class="card-title">
-                    - Sinh viên không nộp phiếu đánh giá kết quả rèn luyện mà không có lý do chính
-                    đáng, cố
-                    vấn học
-                    tập và tập thể lớp đánh giá kết quả rèn luyện cho sinh viên không nộp phiếu và
-                    trừ điểm
-                    để hạ
-                    một bậc xếp loại (xuất sắc: trừ 10 điểm, tốt: trừ 10 điểm, khá: trừ 15 điểm,
-                    trung bình:
-                    trừ 15
-                    điểm, yếu: trừ 15 điểm).
-                </h3>
+            <p class="mb-0"><b>• Quy định:</b></p>
+            <div style="padding-left: 15px;">
+                <p>
+                    - Xếp loại kết quả rèn luyện: <b>xuất sắc</b> (90 - 100 điểm), <b>tốt</b> (80 - 89 điểm), <b>khá</b> (65 - 79 điểm), <b>trung bình</b> (50 - 64 điểm), <b>yếu</b> (35 - 49 điểm), <b>kém</b> (dưới 35 điểm).<br>
+                    - Kết quả rèn luyện năm học <b>xuất sắc</b> và <b>tốt</b> được nhà trường xét khen thưởng.<br>
+                    - Kết quả rèn luyện <b>yếu</b>, <b>kém</b> 2 học kỳ liên tiếp phải tạm ngừng học ít nhất 1 học kỳ ở học kỳ tiếp theo.<br>
+                    - Sinh viên bị kỷ luật mức khiển trách trong học kỳ thì mức xếp loại không được vượt quá loại <b>khá</b>, bị kỷ luật mức cảnh cáo thì không được vượt quá loại <b>trung bình</b>.<br>
+                    - Sinh viên không nộp phiếu đánh giá kết quả rèn luyện mà không có lý do chính đáng, cố vấn học tập và tập thể lớp đánh giá kết quả rèn luyện cho sinh viên không nộp phiếu và trừ điểm để hạ một bậc xếp loại (<b>xuất sắc</b>: trừ 11 điểm, <b>tốt</b>: trừ 11 điểm, <b>khá</b>: trừ 15 điểm, <b>trung bình</b>: trừ 15 điểm, <b>yếu</b>: trừ 15 điểm).
+                </p>
             </div>
         </div>
     </div>

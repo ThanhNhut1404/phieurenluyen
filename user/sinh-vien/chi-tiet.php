@@ -32,7 +32,7 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/theme/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="../../assets/vendor/dropzone/dropzone.min.css">
-    <link rel="stylesheet" href="../../assets/css/main.css?v=6">
+    <link rel="stylesheet" href="../../assets/css/main.css?v=8">
 
 </head>
 
@@ -216,7 +216,7 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
                                                 <tbody>
                                                     <tr>
                                                         <td class="w-90 no-border full  h-0 ">
-                                                            <?= $dw ?>
+                                                            Nội dung đánh giá
                                                         </td>
                                                         <td class="w-10 h-0 no-border full  h-0">
                                                             Sv tự chấm
@@ -444,65 +444,21 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
 
 
             <div class="card-header">
-                <div class="row">
-                    <div class="col">
-                        <h3 class="card-title font-weight-bold">
-                            • Quy định:
-                        </h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h3 class="card-title">
-                            - Xếp loại kết quả rèn luyện: xuất sắc (90 - 100 điểm), tốt (90 - 89 điểm), khá (65 - 79
-                            điểm), trung bình (50 - 64 điểm), yếu (35 - 49 điểm), kém (dưới 35 điểm).
-                        </h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h3 class="card-title">
-                            - Kết quả rèn luyện năm học xuất sắc và tốt được nhà trường xét khen thưởng.
-                        </h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h3 class="card-title">
-                            - Kết quả rèn luyện yếu, kém 2 học kỳ liên tiếp phải tạm ngừng học ít nhất 1 học kỳ ở
-                            học kỳ
-                            tiếp theo.
-                        </h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h3 class="card-title">
-                            - Sinh viên bị kỷ luật mức khiển trách trong học kỳ thì mức xếp loại không được vượt quá
-                            loại
-                            khá, bị kỷ luật mức cảnh cáo thì không được vượt quá loại trung bình.
-                        </h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="col">
-                            <h3 class="card-title">
-                                - Sinh viên không nộp phiếu đánh giá kết quả rèn luyện mà không có lý do chính
-                                đáng, cố
-                                vấn học
-                                tập và tập thể lớp đánh giá kết quả rèn luyện cho sinh viên không nộp phiếu và
-                                trừ điểm
-                                để hạ
-                                một bậc xếp loại (xuất sắc: trừ 10 điểm, tốt: trừ 10 điểm, khá: trừ 15 điểm,
-                                trung bình:
-                                trừ 15
-                                điểm, yếu: trừ 15 điểm).
-                            </h3>
-                        </div>
-                    </div>
-                </div>
+    <div class="row">
+        <div class="col">
+            <p class="mb-0"><b>• Quy định:</b></p>
+            <div style="padding-left: 15px;">
+                <p>
+                    - Xếp loại kết quả rèn luyện: <b>xuất sắc</b> (90 - 100 điểm), <b>tốt</b> (80 - 89 điểm), <b>khá</b> (65 - 79 điểm), <b>trung bình</b> (50 - 64 điểm), <b>yếu</b> (35 - 49 điểm), <b>kém</b> (dưới 35 điểm).<br>
+                    - Kết quả rèn luyện năm học <b>xuất sắc</b> và <b>tốt</b> được nhà trường xét khen thưởng.<br>
+                    - Kết quả rèn luyện <b>yếu</b>, <b>kém</b> 2 học kỳ liên tiếp phải tạm ngừng học ít nhất 1 học kỳ ở học kỳ tiếp theo.<br>
+                    - Sinh viên bị kỷ luật mức khiển trách trong học kỳ thì mức xếp loại không được vượt quá loại <b>khá</b>, bị kỷ luật mức cảnh cáo thì không được vượt quá loại <b>trung bình</b>.<br>
+                    - Sinh viên không nộp phiếu đánh giá kết quả rèn luyện mà không có lý do chính đáng, cố vấn học tập và tập thể lớp đánh giá kết quả rèn luyện cho sinh viên không nộp phiếu và trừ điểm để hạ một bậc xếp loại (<b>xuất sắc</b>: trừ 11 điểm, <b>tốt</b>: trừ 11 điểm, <b>khá</b>: trừ 15 điểm, <b>trung bình</b>: trừ 15 điểm, <b>yếu</b>: trừ 15 điểm).
+                </p>
             </div>
+        </div>
+    </div>
+</div>
             </section>
     </div>
 
@@ -606,13 +562,16 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
 
     Dropzone.options.uploadForm = { // The camelized version of the ID of the form element
 
-        dictDefaultMessage: 'Kéo thả hình ảnh vào đây',
+        dictDefaultMessage: 'Kéo thả hình ảnh hoặc file PDF vào đây',
         paramName: "hinh_anh",
-        acceptedFiles: "image/jpeg,image/png,image/gif",
+        acceptedFiles: "image/jpeg,image/png,image/jpg,application/pdf",
         autoProcessQueue: false,
         thumbnailWidth: 400,
         thumbnailHeight: 400,
+        maxFilesize: 5,
         addRemoveLinks: true,
+        dictFileTooBig: 'File vượt quá dung lượng cho phép ({{filesize}}MB). Tối đa: {{maxFilesize}}MB.',
+        dictInvalidFileType: 'Chỉ chấp nhận hình ảnh hoặc file PDF.',
 
         init: function() {
             var myDropzone = this;
@@ -625,16 +584,11 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
         },
         queuecomplete: function() {
             this.removeAllFiles();
-            Swal.fire({
+            Toast.fire({
                 title: 'Đã thêm minh chứng thành công',
-                icon: 'success',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Yes'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    location.reload();
-                }
+                icon: 'success'
+            }).then(() => {
+                location.reload();
             })
         },
 
@@ -655,27 +609,55 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
     });
 
 
-    function confirm_sweet(url) {
-        Swal.fire({
-            title: 'Xác nhận thao tác?',
-            text: "Bạn chắc chắn thực hiện thao tác này",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                location.href = url;
-            }
-        })
-    }
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
 </script>
+<style>
+    /* CSS cho thẻ Toast: Giảm khoảng cách giữa tiêu đề và nội dung */
+    .swal2-popup.swal2-toast {
+        padding: 8px 12px !important;
+    }
+    .swal2-popup.swal2-toast:has(.swal2-success) {
+        border: 1px solid #28a745 !important;
+        border-radius: 6px !important;
+    }
+    .swal2-popup.swal2-toast:has(.swal2-error) {
+        border: 1px solid #dc3545 !important;
+        border-radius: 6px !important;
+    }
+    .swal2-toast .swal2-title {
+        margin: 0.1em 0 0 0 !important;
+        font-size: 15px !important;
+    }
+    .swal2-toast.swal2-icon-success .swal2-title,
+    .swal2-toast .swal2-success ~ .swal2-title {
+        color: #28a745 !important;
+        font-weight: bold !important;
+    }
+    .swal2-toast.swal2-icon-error .swal2-title,
+    .swal2-toast .swal2-error ~ .swal2-title {
+        color: #dc3545 !important;
+        font-weight: bold !important;
+    }
+    .swal2-toast .swal2-html-container {
+        margin: 0.2em 0 0.2em 0 !important;
+        font-size: 14px !important;
+    }
+</style>
 <?php
 if (isset($_GET['status'])) {
     if ($_GET['status'] == "success") {
         echo "<script>
-               Swal.fire(
+               Toast.fire(
                    'Thành công!',
                    'Thao tác thành công!',
                    'success'
@@ -689,7 +671,7 @@ if (isset($_GET['status'])) {
     }
     if ($_GET['status'] == "failed") {
         echo "<script>
-               Swal.fire(
+               Toast.fire(
                    'Thất bại!',
                    'Thao tác không thành công!',
                    'error'

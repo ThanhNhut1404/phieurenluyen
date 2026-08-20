@@ -88,6 +88,39 @@
                     $kq .= $item."|";
                 }
                 
+                // Xử lý nén và lưu ảnh minh chứng theo từng mục khi bí thư chi đoàn chấm hộ
+                if (isset($_FILES['minh_chung_muc'])) {
+                    $files = $_FILES['minh_chung_muc'];
+                    if (isset($files['name']) && is_array($files['name'])) {
+                        foreach ($files['name'] as $id_muc => $file_names) {
+                            foreach ($file_names as $index => $name) {
+                                if ($files['error'][$id_muc][$index] == UPLOAD_ERR_OK && $name != "") {
+                                    $tmp_name = $files['tmp_name'][$id_muc][$index];
+                                    
+                                    // Gọi hàm nén ảnh (max width 800, quality 60)
+                                    $base64_img = $minhchung->minhchung__Compress_Image($tmp_name, 800, 60);
+                                    
+                                    if ($base64_img) {
+                                        // Thêm vào database với id_muc
+                                        $minhchung->minhchung__Add($id_phieu, $base64_img, date("Y-m-d H:i:s"), $id_muc);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Xử lý xóa các minh chứng đã đánh dấu
+                if (isset($_POST['delete_minhchung']) && is_array($_POST['delete_minhchung'])) {
+                    foreach ($_POST['delete_minhchung'] as $id_minh_chung_to_delete) {
+                        // Xác minh bảo mật: minh chứng này phải thuộc về phiếu đang chấm
+                        $mc = $minhchung->minhchung__Get_By_Id($id_minh_chung_to_delete);
+                        if ($mc && $mc->id_phieu == $id_phieu) {
+                            $minhchung->minhchung__Delete($id_minh_chung_to_delete);
+                        }
+                    }
+                }
+
                 // Nhựt sửa: Thực hiện cập nhật điểm tự chấm của sinh viên (do bí thư chi đoàn chấm hộ) và chuyển hướng thành công
                 $phieuchamdiem->phieuchamdiem__Update_Kq_Sv($id_phieu, rtrim($kq, "|"));
                 header("location: $href&status=success");

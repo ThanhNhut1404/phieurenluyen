@@ -104,17 +104,26 @@
                         </div>
                     </div>
 
-                    <script>
-                    $(document).ready(function() {
-                        loadThuTu($('#id_khoan_update').val(), <?=muc_update_old_value('thu_tu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->thu_tu)?>, '#thu_tu_update');
-                    });
-                    </script>
-
                     <div class="form-group">
-                        <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết</label>
-                        <textarea id="ghi_chu" name="ghi_chu" class="form-control" placeholder="Nhập nội dung chi tiết"
-                            required><?=muc_update_escape(muc_update_old_value('ghi_chu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->ghi_chu))?></textarea>
+                        <label class="label-sidebar" for="ghi_chu_update">Nội dung chi tiết</label>
+                        <textarea id="ghi_chu_update" name="ghi_chu" class="form-control" placeholder="Nhập nội dung chi tiết"><?=muc_update_escape(muc_update_old_value('ghi_chu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->ghi_chu))?></textarea>
                     </div>
+
+                    <script>
+                        $('#ghi_chu_update').summernote({
+                            height: 150,
+                            toolbar: [
+                                ['font', ['bold', 'italic', 'underline', 'clear']],
+                                ['color', ['color']],
+                                ['para', ['ul', 'ol', 'paragraph']],
+                                ['insert', ['link']],
+                                ['view', ['fullscreen', 'codeview']]
+                            ]
+                        });
+                        
+                        // Cập nhật load thứ tự
+                        loadThuTu($('#id_khoan_update').val(), <?=muc_update_old_value('thu_tu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->thu_tu)?>, '#thu_tu_update');
+                    </script>
 
                     <!-- quân sửa: Thêm tuỳ chọn Yêu cầu minh chứng -->
                     <div class="form-group">

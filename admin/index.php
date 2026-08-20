@@ -32,8 +32,9 @@ if (!isset($_SESSION['admin'])) {
     <link rel="stylesheet" href="../assets/theme/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../assets/theme/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css?v=6">
+    <link rel="stylesheet" href="../assets/css/main.css?v=8">
 
+    <link rel="stylesheet" href="../assets/theme/plugins/summernote/summernote-bs4.min.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
 </head>
@@ -82,6 +83,7 @@ if (!isset($_SESSION['admin'])) {
 
     <script src="../assets/vendor/sweetalert2@11.js"></script>
 
+    <script src="../assets/theme/plugins/summernote/summernote-bs4.min.js"></script>
 
     <script>
     window.addEventListener('load', function() {

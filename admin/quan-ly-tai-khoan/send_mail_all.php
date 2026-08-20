@@ -52,7 +52,7 @@ try {
         $mail->Body    =
             "
         <p>Thân chào bạn,</p>
-        <p>Thông tin tài khoản sử dụng tại ứng dụng <b>TDU - PRL</b> là:</p>
+        <p>Thông tin tài khoản sử dụng tại ứng dụng <b>TDU - DRL</b> là:</p>
         <p>Email: <b>$email</b></p>
         <p>Password: <b>$password</b></p>
         <hr/>

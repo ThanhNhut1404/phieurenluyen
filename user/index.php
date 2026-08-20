@@ -26,7 +26,7 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="../assets/theme/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="../assets/vendor/dropzone/dropzone.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css?v=6">
+    <link rel="stylesheet" href="../assets/css/main.css?v=8">
 
 </head>
 
@@ -97,14 +97,16 @@
 
     Dropzone.options.uploadForm = { // The camelized version of the ID of the form element
 
-        dictDefaultMessage: 'Kéo thả hình ảnh vào đây',
+        dictDefaultMessage: 'Kéo thả hình ảnh hoặc file PDF vào đây',
         paramName: "hinh_anh",
-        acceptedFiles: "image/jpeg,image/png,image/jpg",
+        acceptedFiles: "image/jpeg,image/png,image/jpg,application/pdf",
         autoProcessQueue: false,
         thumbnailWidth: 400,
         thumbnailHeight: 400,
-        maxFilesize: 10,
+        maxFilesize: 5,
         addRemoveLinks: true,
+        dictFileTooBig: 'File vượt quá dung lượng cho phép ({{filesize}}MB). Tối đa: {{maxFilesize}}MB.',
+        dictInvalidFileType: 'Chỉ chấp nhận hình ảnh hoặc file PDF.',
 
         init: function() {
             var myDropzone = this;
@@ -117,16 +119,11 @@
         },
         queuecomplete: function() {
             this.removeAllFiles();
-            Swal.fire({
+            Toast.fire({
                 title: 'Đã thêm minh chứng thành công',
-                icon: 'success',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Yes'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    location.reload();
-                }
+                icon: 'success'
+            }).then(() => {
+                location.reload();
             })
         },
 
@@ -147,21 +144,17 @@
     });
 
 
-    function confirm_sweet(url) {
-        Swal.fire({
-            title: 'Xác nhận thao tác?',
-            text: "Bạn chắc chắn thực hiện thao tác này",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                location.href = url;
-            }
-        })
-    }
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
 
     // Quân sửa: Tăng cường trải nghiệm người dùng (UX) khi nhập điểm rèn luyện
     $(document).on('focus', 'input.kq_sv, input.kq_lt_bt, input.kq_btdk, input.kq_gv', function() {
@@ -229,7 +222,7 @@
                 success: function(response, status, xhr) {
                     var finalUrl = xhr.responseURL || '';
                     if (finalUrl.indexOf('status=success') !== -1) {
-                        Swal.fire({
+                        Toast.fire({
                             title: 'Thành công!',
                             text: 'Thao tác thành công!',
                             icon: 'success'
@@ -237,7 +230,7 @@
                             location.reload();
                         });
                     } else {
-                        Swal.fire({
+                        Toast.fire({
                             title: 'Thất bại!',
                             text: 'Thao tác không thành công! Điểm số đã nhập vẫn được giữ lại để bạn chỉnh sửa.',
                             icon: 'error'
@@ -246,7 +239,7 @@
                     }
                 },
                 error: function() {
-                    Swal.fire({
+                    Toast.fire({
                         title: 'Thất bại!',
                         text: 'Có lỗi kết nối mạng xảy ra. Điểm số đã nhập vẫn được giữ lại.',
                         icon: 'error'
@@ -257,12 +250,44 @@
         }
     });
     </script>
+    <style>
+        /* CSS cho thẻ Toast: Giảm khoảng cách giữa tiêu đề và nội dung */
+        .swal2-popup.swal2-toast {
+            padding: 8px 12px !important;
+        }
+        .swal2-popup.swal2-toast:has(.swal2-success) {
+            border: 1px solid #28a745 !important;
+            border-radius: 6px !important;
+        }
+        .swal2-popup.swal2-toast:has(.swal2-error) {
+            border: 1px solid #dc3545 !important;
+            border-radius: 6px !important;
+        }
+        .swal2-toast .swal2-title {
+            margin: 0.1em 0 0 0 !important;
+            font-size: 15px !important;
+        }
+        .swal2-toast.swal2-icon-success .swal2-title,
+        .swal2-toast .swal2-success ~ .swal2-title {
+            color: #28a745 !important;
+            font-weight: bold !important;
+        }
+        .swal2-toast.swal2-icon-error .swal2-title,
+        .swal2-toast .swal2-error ~ .swal2-title {
+            color: #dc3545 !important;
+            font-weight: bold !important;
+        }
+        .swal2-toast .swal2-html-container {
+            margin: 0.2em 0 0.2em 0 !important;
+            font-size: 14px !important;
+        }
+    </style>
     <?php
        // Nhựt sửa lỗi: Sử dụng replaceState để xóa tham số status khỏi URL nhằm tránh lặp lại thông báo SweetAlert khi F5/reload trang.
        if(isset($_GET['status'])){
            if($_GET['status'] == "success"){
                echo "<script>
-               Swal.fire(
+               Toast.fire(
                    'Thành công!',
                    'Thao tác thành công!',
                    'success'
@@ -276,7 +301,7 @@
            }
            if($_GET['status'] == "failed"){
                echo "<script>
-               Swal.fire(
+               Toast.fire(
                    'Thất bại!',
                    'Thao tác không thành công!',
                    'error'
