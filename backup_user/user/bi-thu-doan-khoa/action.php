@@ -1,4 +1,4 @@
-
+﻿
 
 <?php
     session_start();
@@ -15,7 +15,7 @@
                 $status = 0;
                 $id_phieu = $_POST["id_phieu"];
                 
-                // Quân sửa: Kiểm tra quyền Bí thư đoàn khoa
+                // QuÃ¢n sá»­a: Kiá»ƒm tra quyá»n BÃ­ thÆ° Ä‘oÃ n khoa
                 if (!isset($_SESSION["btdk"])) {
                     header("location: ../auth/");
                     exit();
@@ -28,17 +28,17 @@
                     exit();
                 }
                 
-                // Kiểm tra xem sinh viên có thuộc khoa của BTDK không
+                // Kiá»ƒm tra xem sinh viÃªn cÃ³ thuá»™c khoa cá»§a BTDK khÃ´ng
                 $sv = $sinhvien->sinhvien__Get_By_Id($phieu->id_sinh_vien);
                 $lop = $lophoc->lophoc__Get_By_Id($sv->id_lop_hoc);
-                // Quân sửa: Lấy thông tin ngành học để kiểm tra id_khoa của lớp học
+                // QuÃ¢n sá»­a: Láº¥y thÃ´ng tin ngÃ nh há»c Ä‘á»ƒ kiá»ƒm tra id_khoa cá»§a lá»›p há»c
                 $nganh = $nganhhoc->nganhhoc__Get_By_Id($lop->id_nganh_hoc);
                 if ($nganh->id_khoa != $bithudoankhoa__Get_By_Id->id_khoa) {
                     header("location: $href&status=failed");
                     exit();
                 }
                 
-                // Nhựt sửa: Kiểm tra xem đợt phải đang mở ở backend
+                // Nhá»±t sá»­a: Kiá»ƒm tra xem Ä‘á»£t pháº£i Ä‘ang má»Ÿ á»Ÿ backend
                 $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
                 if (!$lop_ap_dung) {
                     header("location: $href&status=failed");
@@ -50,7 +50,7 @@
                     exit();
                 }
                 
-                // Kiểm tra xem Lớp trưởng đã chấm chưa
+                // Kiá»ƒm tra xem Lá»›p trÆ°á»Ÿng Ä‘Ã£ cháº¥m chÆ°a
                 if (empty($phieu->kq_lt_bt)) {
                     header("location: $href&status=failed");
                     exit();
@@ -59,12 +59,13 @@
                 $kq_btdk = $_POST["kq_btdk"];
                 $kq = "";
                 foreach($kq_btdk as $item){
-                    $val = ($item === "") ? "0" : $item; $kq .= $val."|";
+                    $val = ($item === "") ? "0" : $item;
+                    $kq .= $val."|";
                 }
                 
-                // Quân sửa: Thực hiện cập nhật điểm và chuyển hướng thành công
+                // QuÃ¢n sá»­a: Thá»±c hiá»‡n cáº­p nháº­t Ä‘iá»ƒm vÃ  chuyá»ƒn hÆ°á»›ng thÃ nh cÃ´ng
                 $phieuchamdiem->phieuchamdiem__Update_Kq_BTDK($id_phieu, rtrim($kq, "|"));
-                header("location: $href&status=success&msg=" . urlencode("Cập nhật điểm đánh giá thành công!"));
+                header("location: $href&status=success&msg=" . urlencode("Cáº­p nháº­t Ä‘iá»ƒm Ä‘Ã¡nh giÃ¡ thÃ nh cÃ´ng!"));
                 break; 
         }
     }

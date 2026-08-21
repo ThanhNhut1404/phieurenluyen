@@ -34,9 +34,16 @@ class minhchung extends Database {
     }
     
     public function minhchung__Add($id_phieu, $hinh_anh, $ghi_chu, $id_muc = null) {
-        $obj = $this->connect->prepare("INSERT INTO minhchung(id_phieu, hinh_anh, ghi_chu, id_muc) VALUES (?,?,?,?)");
-        $obj->execute(array($id_phieu, $hinh_anh, $ghi_chu, $id_muc));
-        return $obj->rowCount();
+        try {
+            $obj = $this->connect->prepare("INSERT INTO minhchung(id_phieu, hinh_anh, ghi_chu, id_muc) VALUES (?,?,?,?)");
+            $obj->execute(array($id_phieu, $hinh_anh, $ghi_chu, $id_muc));
+            return $obj->rowCount();
+        } catch (PDOException $e) {
+            if ($e->getCode() == '08S01' || strpos($e->getMessage(), 'max_allowed_packet') !== false) {
+                return 0;
+            }
+            throw $e;
+        }
     }
 
     public function minhchung__Update($id_minh_chung, $id_phieu, $hinh_anh, $ghi_chu) {
@@ -76,13 +83,14 @@ class minhchung extends Database {
 
     // Hàm tiện ích: Nén ảnh và trả về chuỗi Base64
     public function minhchung__Compress_Image($source_path, $max_size = 800, $quality = 60) {
+        if (filesize($source_path) > 5 * 1024 * 1024) { // 5MB limit cho tất cả file
+            return false;
+        }
+
         $mime = mime_content_type($source_path);
 
-        // Hỗ trợ lưu trữ file PDF (tối đa 5MB)
+        // Hỗ trợ lưu trữ file PDF
         if ($mime == 'application/pdf') {
-            if (filesize($source_path) > 5 * 1024 * 1024) { // 5MB
-                return false; 
-            }
             $pdf_content = file_get_contents($source_path);
             return "data:application/pdf;base64," . base64_encode($pdf_content);
         }

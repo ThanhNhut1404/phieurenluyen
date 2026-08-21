@@ -146,8 +146,8 @@
                      <form action="./quan-ly-thong-ke/action.php?req=export" method="post" class="mr-2 mb-0">
                          <input type="hidden" name="id_lop_hoc" value="<?=$id_lop_hoc?>">
                          <input type="hidden" name="id_dot" value="<?=$id_dot?>">
-                         <button type="submit" class="btn btn-primary btn-sm">
-                             <i class="fas fa-print"></i> EXPORT
+                         <button type="submit" class="btn btn-sm btn-outline-primary bg-white font-weight-bold">
+                             <i class="fas fa-file-export"></i> EXPORT
                          </button>
                      </form>
                      <?php endif; ?>

@@ -45,7 +45,8 @@
                 $kq_lt_bt = $_POST["kq_lt_bt"];
                 $kq = "";
                 foreach($kq_lt_bt as $item){
-                    $kq .= $item."|";
+                    $val = ($item === "") ? "0" : $item;
+                    $kq .= $val."|";
                 }
                 
                 // Nhựt sửa: Thực hiện cập nhật điểm của bí thư chi đoàn và chuyển hướng thành công
@@ -85,7 +86,8 @@
                 $kq_sv = $_POST["kq_sv"];
                 $kq = "";
                 foreach($kq_sv as $item){
-                    $kq .= $item."|";
+                    $val = ($item === "") ? "0" : $item;
+                    $kq .= $val."|";
                 }
                 
                 // Xử lý nén và lưu ảnh minh chứng theo từng mục khi bí thư chi đoàn chấm hộ
@@ -121,10 +123,12 @@
                     }
                 }
 
-                // Nhựt sửa: Thực hiện cập nhật điểm tự chấm của sinh viên (do bí thư chi đoàn chấm hộ) và chuyển hướng thành công
-                $phieuchamdiem->phieuchamdiem__Update_Kq_Sv($id_phieu, rtrim($kq, "|"));
+                // Chỉ cập nhật điểm nếu phiếu chưa được nộp (trạng thái = 1)
+                // Nếu phiếu đã nộp, sinh viên (bí thư chi đoàn) chỉ được cập nhật minh chứng
                 $msg = "Cập nhật thành công";
                 if ($phieu->trang_thai == 1) {
+                    $phieuchamdiem->phieuchamdiem__Update_Kq_Sv($id_phieu, rtrim($kq, "|"));
+                    $phieuchamdiem->phieuchamdiem__Update_Trang_Thai($id_phieu, 2);
                     $msg = "Nộp phiếu đánh giá thành công";
                 } else if ($phieu->trang_thai == 2) {
                     $msg = "Cập nhật minh chứng thành công";
