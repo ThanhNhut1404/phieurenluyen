@@ -165,7 +165,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 <div class="col-md-5">
                                     <label>Sinh viên (<?= count($sinhvien_list) ?>)</label>
                                     <select class="form-control" name="id_sinh_vien" onchange="this.form.submit()">
-                                        <option value="">-- Chọn sinh viên --</option>
+                                        <option value="" <?= ($id_sinh_vien == '' || $id_sinh_vien == -2) ? 'selected' : '' ?>>-- Chọn sinh viên --</option>
                                         <?php foreach ($sinhvien_list as $sv_item): ?>
                                             <option value="<?= $sv_item->id_sinh_vien ?>" <?= $id_sinh_vien == $sv_item->id_sinh_vien ? 'selected' : '' ?>>
                                                 <?= $sv_item->ma_sinh_vien ?> - <?= $sv_item->ten_sinh_vien ?>
@@ -180,7 +180,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 </div>
             </div>
         </div>
-    <section class="content-header">
+    <section class="content-header d-none">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -202,7 +202,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 <div class="row">
                     <div class="col">
                         <h3 class="card-title text-center font-weight-bold w-100 mt-3 mb-3">
-                            Bạn không có trong đợt này</h3>
+                            <?php if ($mode == 'lop' && ($id_sinh_vien == '' || $id_sinh_vien == -2)): ?>Vui lòng chọn một sinh viên trong danh sách để bắt đầu chấm điểm<?php else: ?>Bạn không có trong đợt này<?php endif; ?></h3>
                     </div>
                 </div>
             </div>
@@ -245,7 +245,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 <div class="col-md-5">
                                     <label>Sinh viên (<?= count($sinhvien_list) ?>)</label>
                                     <select class="form-control" name="id_sinh_vien" onchange="this.form.submit()">
-                                        <option value="">-- Chọn sinh viên --</option>
+                                        <option value="" <?= ($id_sinh_vien == '' || $id_sinh_vien == -2) ? 'selected' : '' ?>>-- Chọn sinh viên --</option>
                                         <?php foreach ($sinhvien_list as $index => $sv_item): ?>
                                             <option value="<?= $sv_item->id_sinh_vien ?>" <?= $id_sinh_vien == $sv_item->id_sinh_vien ? 'selected' : '' ?>>
                                                 <?= ($index + 1) ?>. <?= $sv_item->ma_sinh_vien ?> - <?= $sv_item->ten_sinh_vien ?>
@@ -260,7 +260,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 </div>
             </div>
         </div>
-    <section class="content-header">
+    <section class="content-header d-none">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -278,28 +278,28 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     <section class="content evaluation-page">
         <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên -->
         <?php if ($mode == 'lop' && count($sinhvien_list) > 0): ?>
-        <div class="row mb-3">
+        <div class="row mb-2">
             <div class="col-12 d-flex justify-content-between align-items-center">
                 <div>
                     <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
-                       class="btn btn-outline-primary <?= ($current_index === 0 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                       class="btn btn-outline-custom-blue <?= ($current_index === 0 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         <i class="fas fa-angle-double-left"></i> Đầu
                     </a>
                     <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
-                       class="btn btn-outline-primary <?= ($prev_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                       class="btn btn-outline-custom-blue <?= ($prev_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         <i class="fas fa-angle-left"></i> Trước
                     </a>
                 </div>
                 <div class="text-muted font-weight-bold">
-                    Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?>
+                    Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?><?= ($current_index !== false && isset($sinhvien_list[$current_index])) ? ' - ' . htmlspecialchars($sinhvien_list[$current_index]->ten_sinh_vien) : '' ?>
                 </div>
                 <div>
                     <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
-                       class="btn btn-outline-primary <?= ($next_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                       class="btn btn-outline-custom-blue <?= ($next_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         Sau <i class="fas fa-angle-right"></i>
                     </a>
                     <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
-                       class="btn btn-outline-primary <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                       class="btn btn-outline-custom-blue <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         Cuối <i class="fas fa-angle-double-right"></i>
                     </a>
                 </div>
@@ -641,24 +641,24 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             <div class="col-12 d-flex justify-content-between align-items-center">
                 <div>
                     <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
-                       class="btn btn-outline-primary <?= ($current_index === 0 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                       class="btn btn-outline-custom-blue <?= ($current_index === 0 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         <i class="fas fa-angle-double-left"></i> Đầu
                     </a>
                     <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
-                       class="btn btn-outline-primary <?= ($prev_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                       class="btn btn-outline-custom-blue <?= ($prev_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         <i class="fas fa-angle-left"></i> Trước
                     </a>
                 </div>
                 <div class="text-muted font-weight-bold">
-                    Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?>
+                    Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?><?= ($current_index !== false && isset($sinhvien_list[$current_index])) ? ' - ' . htmlspecialchars($sinhvien_list[$current_index]->ten_sinh_vien) : '' ?>
                 </div>
                 <div>
                     <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
-                       class="btn btn-outline-primary <?= ($next_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                       class="btn btn-outline-custom-blue <?= ($next_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         Sau <i class="fas fa-angle-right"></i>
                     </a>
                     <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
-                       class="btn btn-outline-primary <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
+                       class="btn btn-outline-custom-blue <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         Cuối <i class="fas fa-angle-double-right"></i>
                     </a>
                 </div>
@@ -669,6 +669,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
 
 
+<div class="card mt-3">
 <div class="card-header">
     <div class="row">
         <div class="col">
@@ -688,6 +689,60 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 </div>
 
 </section>
+</div>
+
+<!-- Modal Manager -->
+<div class="modal fade" id="evidenceManagerModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 1000px;">
+    <div class="modal-content" style="border-radius: 0.75rem; overflow: hidden;">
+      <div class="modal-header bg-custom-dark text-white py-2">
+        <h5 class="modal-title font-weight-bold">Minh chứng</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1; font-size: 1.75rem;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="row">
+              <!-- Left column: List -->
+              <div class="col-md-5 border-right">
+                  <h6 class="font-weight-bold mb-3">Danh sách tệp</h6>
+                  
+                  <!-- Nút tải lên -->
+                  <div class="mb-3 text-center" id="managerUploadBtnContainer">
+                      <button type="button" class="btn btn-upload-custom btn-block" style="border-style: dashed; padding: 10px; transition: all 0.2s; color: #003366 !important; border-color: #003366 !important;" id="managerUploadBtn">
+                          <i class="fas fa-cloud-upload-alt fa-2x mb-2 d-block"></i>
+                          Nhấn hoặc kéo thả tệp tải lên vào đây
+                      </button>
+                  </div>
+
+                  <!-- Danh sách Existing -->
+                  <div id="managerExistingList" class="mb-3">
+                      <!-- Populated by JS -->
+                  </div>
+
+                  <!-- Danh sách New -->
+                  <div id="managerNewList">
+                      <!-- Populated by JS -->
+                  </div>
+
+              </div>
+              
+              <!-- Right column: Preview -->
+              <div class="col-md-7 d-flex flex-column align-items-center justify-content-center bg-light rounded" style="min-height: 450px; padding: 10px;">
+                  <div id="managerPreviewEmpty" class="text-muted text-center">
+                      <i class="fas fa-image fa-3x mb-2 d-block"></i>
+                      Chọn một tệp ở danh sách bên trái để xem trước
+                  </div>
+                  <img id="managerPreviewImage" src="" class="img-fluid rounded d-none" style="max-height: 500px; object-fit: contain;">
+                  <iframe id="managerPreviewPdf" src="" class="d-none w-100" style="height: 500px; border: 1px solid #ddd; border-radius: 4px;"></iframe>
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer bg-light py-2">
+        <button type="button" class="btn btn-cancel-custom font-weight-bold" style="font-size: 1.15rem; padding: 6px 24px; font-weight: bold !important;" data-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -775,45 +830,6 @@ window.addEventListener('load', function() {
 });
 </script>
 
-
-<script>
-                  <!-- Nút tải lên -->
-                  <div class="mb-3 text-center" id="managerUploadBtnContainer">
-                      <button type="button" class="btn btn-upload-custom btn-block" style="border-style: dashed; padding: 10px; transition: all 0.2s; color: #003366 !important; border-color: #003366 !important;" id="managerUploadBtn">
-                          <i class="fas fa-cloud-upload-alt fa-2x mb-2 d-block"></i>
-                          Nhấn hoặc kéo thả tệp tải lên vào đây
-                      </button>
-                  </div>
-
-                  <!-- Danh sách Existing -->
-                  <div id="managerExistingList" class="mb-3">
-                      <!-- Populated by JS -->
-                  </div>
-
-                  <!-- Danh sách New -->
-                  <div id="managerNewList">
-                      <!-- Populated by JS -->
-                  </div>
-
-              </div>
-              
-              <!-- Right column: Preview -->
-              <div class="col-md-7 d-flex flex-column align-items-center justify-content-center bg-light rounded" style="min-height: 450px; padding: 10px;">
-                  <div id="managerPreviewEmpty" class="text-muted text-center">
-                      <i class="fas fa-image fa-3x mb-2 d-block"></i>
-                      Chọn một tệp ở danh sách bên trái để xem trước
-                  </div>
-                  <img id="managerPreviewImage" src="" class="img-fluid rounded d-none" style="max-height: 500px; object-fit: contain;">
-                  <iframe id="managerPreviewPdf" src="" class="d-none w-100" style="height: 500px; border: 1px solid #ddd; border-radius: 4px;"></iframe>
-              </div>
-          </div>
-      </div>
-      <div class="modal-footer bg-light py-2">
-        <button type="button" class="btn btn-cancel-custom font-weight-bold" style="font-size: 1.15rem; padding: 6px 24px; font-weight: bold !important;" data-dismiss="modal">Đóng</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
 window.addEventListener('load', function () {
@@ -1041,7 +1057,7 @@ window.addEventListener('load', function () {
         
         let btn = $('.evidence-manager-trigger[data-id-muc="'+mucId+'"]');
         btn.find('span.evidence-count-'+mucId).text(total);
-          // Removed dynamic toggling of btn-outline-primary because we use inline styling
+          // Removed dynamic toggling of btn-outline-custom-blue because we use inline styling
     }
 });
 </script>

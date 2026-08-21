@@ -41,7 +41,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
 <div class="content-wrapper student-evaluation-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header d-none">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
@@ -90,7 +90,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         }
     </style>
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header d-none">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">

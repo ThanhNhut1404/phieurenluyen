@@ -98,7 +98,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
 <div class="content-wrapper student-evaluation-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    <section class="content-header d-none">
         <div class="container-fluid">
             <div class="row mb-2">
 
@@ -156,28 +156,28 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         <section class="content">
             <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên -->
             <?php if (count($sinhvien_list) > 0): ?>
-            <div class="row mb-3">
+            <div class="row mb-2">
                 <div class="col-12 d-flex justify-content-between align-items-center">
                     <div>
                         <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $first_id ?>" 
-                           class="btn btn-outline-primary <?= ($current_index === 0 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                           class="btn btn-outline-custom-blue <?= ($current_index === 0 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             <i class="fas fa-angle-double-left"></i> Đầu
                         </a>
                         <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $prev_id ?>" 
-                           class="btn btn-outline-primary <?= ($prev_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                           class="btn btn-outline-custom-blue <?= ($prev_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             <i class="fas fa-angle-left"></i> Trước
                         </a>
                     </div>
                     <div class="text-muted font-weight-bold">
-                        Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?>
+                        Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?><?= ($current_index !== false && isset($sinhvien_list[$current_index])) ? ' - ' . htmlspecialchars($sinhvien_list[$current_index]->ten_sinh_vien) : '' ?>
                     </div>
                     <div>
                         <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $next_id ?>" 
-                           class="btn btn-outline-primary <?= ($next_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                           class="btn btn-outline-custom-blue <?= ($next_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             Sau <i class="fas fa-angle-right"></i>
                         </a>
                         <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $last_id ?>" 
-                           class="btn btn-outline-primary <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                           class="btn btn-outline-custom-blue <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             Cuối <i class="fas fa-angle-double-right"></i>
                         </a>
                     </div>
@@ -520,24 +520,24 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 <div class="col-12 d-flex justify-content-between align-items-center">
                     <div>
                         <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $first_id ?>" 
-                           class="btn btn-outline-primary <?= ($current_index === 0 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                           class="btn btn-outline-custom-blue <?= ($current_index === 0 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             <i class="fas fa-angle-double-left"></i> Đầu
                         </a>
                         <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $prev_id ?>" 
-                           class="btn btn-outline-primary <?= ($prev_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                           class="btn btn-outline-custom-blue <?= ($prev_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             <i class="fas fa-angle-left"></i> Trước
                         </a>
                     </div>
                     <div class="text-muted font-weight-bold">
-                        Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?>
+                        Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?><?= ($current_index !== false && isset($sinhvien_list[$current_index])) ? ' - ' . htmlspecialchars($sinhvien_list[$current_index]->ten_sinh_vien) : '' ?>
                     </div>
                     <div>
                         <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $next_id ?>" 
-                           class="btn btn-outline-primary <?= ($next_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                           class="btn btn-outline-custom-blue <?= ($next_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             Sau <i class="fas fa-angle-right"></i>
                         </a>
                         <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $last_id ?>" 
-                           class="btn btn-outline-primary <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
+                           class="btn btn-outline-custom-blue <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             Cuối <i class="fas fa-angle-double-right"></i>
                         </a>
                     </div>
@@ -576,6 +576,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 </div>
 
 
+<div class="card mt-3">
 <div class="card-header">
     <div class="row">
         <div class="col">
@@ -994,7 +995,8 @@ window.addEventListener('load', function () {
         
         let btn = $('.evidence-manager-trigger[data-id-muc="'+mucId+'"]');
         btn.find('span.evidence-count-'+mucId).text(total);
-          // Removed dynamic toggling of btn-outline-primary because we use inline styling
+          // Removed dynamic toggling of btn-outline-custom-blue because we use inline styling
     }
 });
 </script>
+
