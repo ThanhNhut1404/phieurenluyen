@@ -76,7 +76,13 @@
                 }
 
                 // Nhựt sửa: Thực hiện cập nhật điểm tự chấm của sinh viên và chuyển hướng thành công
-                header("location: $href&status=success");
+                $msg = "Cập nhật thành công";
+                if ($phieu->trang_thai == 1) {
+                    $msg = "Nộp phiếu đánh giá thành công";
+                } else if ($phieu->trang_thai == 2) {
+                    $msg = "Cập nhật minh chứng thành công";
+                }
+                header("location: $href&status=success&msg=" . urlencode($msg));
                 break; 
 
            

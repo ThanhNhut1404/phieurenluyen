@@ -50,7 +50,7 @@
                 
                 // Nhựt sửa: Thực hiện cập nhật điểm của lớp trưởng và chuyển hướng thành công
                 $phieuchamdiem->phieuchamdiem__Update_Kq_LTBT($id_phieu, rtrim($kq, "|"));
-                header("location: $href&status=success");
+                header("location: $href&status=success&msg=" . urlencode("Cập nhật điểm đánh giá thành công!"));
                 break; 
 
             case "add_sv":
@@ -121,7 +121,13 @@
 
                 // Nhựt sửa: Thực hiện cập nhật điểm tự chấm của sinh viên (do lớp trưởng chấm hộ) và chuyển hướng thành công
                 $phieuchamdiem->phieuchamdiem__Update_Kq_Sv($id_phieu, rtrim($kq, "|"));
-                header("location: $href&status=success");
+                $msg = "Cập nhật thành công";
+                if ($phieu->trang_thai == 1) {
+                    $msg = "Nộp phiếu đánh giá thành công";
+                } else if ($phieu->trang_thai == 2) {
+                    $msg = "Cập nhật minh chứng thành công";
+                }
+                header("location: $href&status=success&msg=" . urlencode($msg));
                 break; 
         }
     }

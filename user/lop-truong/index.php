@@ -491,16 +491,16 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                 <?= $khoan->khoan__Get_By_Id($item_2->id_khoan)->ten_khoan ?>
                                             </td>
                                             <td class="text-center align-middle font-weight-bold" style="padding:4px;">
-                                                <span class="sum_khoan_sv" style="color: #003366;" data-id-khoan="<?= $item_2->id_khoan ?>" data-can-tren="<?= $item_2->can_tren ?>">0</span>
+                                                <span class="khoan-total-kq_sv font-weight-bold" style="color: #003366;" data-id-khoan="<?= $item_2->id_khoan ?>"></span>
                                             </td>
                                             <td class="text-center align-middle font-weight-bold" style="padding:4px;">
-                                                <span class="sum_khoan_lt_bt" style="color: #003366;" data-id-khoan="<?= $item_2->id_khoan ?>" data-can-tren="<?= $item_2->can_tren ?>">0</span>
+                                                <span class="khoan-total-kq_lt_bt font-weight-bold" style="color: #003366;" data-id-khoan="<?= $item_2->id_khoan ?>"></span>
                                             </td>
                                             <td class="text-center align-middle font-weight-bold" style="padding:4px;">
-                                                <span class="sum_khoan_btdk" style="color: #003366;" data-id-khoan="<?= $item_2->id_khoan ?>" data-can-tren="<?= $item_2->can_tren ?>">0</span>
+                                                <span class="khoan-total-kq_btdk font-weight-bold" style="color: #003366;" data-id-khoan="<?= $item_2->id_khoan ?>"></span>
                                             </td>
                                             <td class="text-center align-middle font-weight-bold" style="padding:4px;">
-                                                <span class="sum_khoan_gv" style="color: #003366;" data-id-khoan="<?= $item_2->id_khoan ?>" data-can-tren="<?= $item_2->can_tren ?>">0</span>
+                                                <span class="khoan-total-kq_gv font-weight-bold" style="color: #003366;" data-id-khoan="<?= $item_2->id_khoan ?>"></span>
                                             </td>
                                             <td style="padding:4px;"></td>
                                         </tr>
@@ -513,39 +513,61 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         <div class="mt-1 ml-2 text-muted text-sm"><?= $ghi_chu_muc ?></div>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td class="text-center align-middle" style="padding:4px;">
+                                                    <?php 
+                                                        $val_sv = isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i] : 0;
+                                                        $val_lt = isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i] : 0;
+                                                        $val_btdk = isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i] : 0;
+                                                        $val_gv = isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i] : 0;
+                                                        
+                                                        $muc_info = $muc->muc__Get_By_Id($item_3->id_muc);
+                                                        $quyen_sv = $muc_info->quyen_sv;
+                                                        $quyen_lt = $muc_info->quyen_lt;
+                                                        $quyen_btdk = $muc_info->quyen_btdk;
+                                                        $quyen_gv = $muc_info->quyen_gv;
+                                                        if ($quyen_sv == 0) { $val_sv = 0; }
+                                                        if ($quyen_lt == 0) { $val_lt = $val_sv; }
+                                                        if ($quyen_btdk == 0) { $val_btdk = $val_lt; }
+                                                        if ($quyen_gv == 0) { $val_gv = $val_btdk; }
+
+                                                    ?>
+
+<td class="text-center align-middle" style="padding:4px;">
                                                     <!-- Quân sửa: Chỉ cho phép lớp trưởng sửa cột SV Tự Chấm khi chấm bản thân, và ngược lại -->
-                                                    <input type="number" class="form-control kq_sv" data-id-khoan="<?= $item_2->id_khoan ?>" name="kq_sv[]"
-                                                        style="width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
-                                                        <?= ($mode == 'lop' || $dotchamdiem__Get_By_Id->trang_thai == 0 || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1) ? 'readonly' : '' ?>
-                                                        pattern="[-+]?[0-9]{1,2}"
-                                                        title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" placeholder="0" min="0"
-                                                        max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" required
-                                                        value="<?= $val_sv == 0 ? '' : $val_sv ?>">
-                                                </td>
+                                                    <input type="number" class="form-control kq_sv" name="kq_sv[]"
+                title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" data-id-khoan="<?= $item_2->id_khoan ?>" data-khoan-max="<?= $item_2->can_tren ?>"
+                pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0" required
+                style="<?= $quyen_sv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_sv == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
+                
+                <?= ($quyen_sv == 0 || $mode == 'lop' || $dotchamdiem__Get_By_Id->trang_thai == 0 || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1) ? 'readonly tabindex="-1"' : '' ?>
+                value="<?= $val_sv == 0 ? '' : $val_sv ?>">
+</td>
                                                 <td class="text-center align-middle" style="padding:4px;">
-                                                    <input type="number" class="form-control kq_lt_bt" data-id-khoan="<?= $item_2->id_khoan ?>" name="kq_lt_bt[]"
-                                                        style="<?= $quyen_lt == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_lt == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;" <?= $quyen_lt == 0 ? 'readonly tabindex="-1"' : '' ?>
-                                                        pattern="[-+]?[0-9]{1,2}"
-                                                        title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" placeholder="0" min="0"
-                                                        max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" required  <?= ($mode == 'ban_than' || $dotchamdiem__Get_By_Id->trang_thai == 0 || ($phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2)) ? 'readonly' : '' ?> value="<?= $val_lt == 0 ? '' : $val_lt ?>">
-                                                </td>
+                                                    <input type="number" class="form-control kq_lt_bt" name="kq_lt_bt[]"
+                title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" data-id-khoan="<?= $item_2->id_khoan ?>" data-khoan-max="<?= $item_2->can_tren ?>"
+                pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0" required
+                style="<?= $quyen_lt == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_lt == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
+                
+                <?= ($quyen_lt == 0 || $mode == 'ban_than' || $dotchamdiem__Get_By_Id->trang_thai == 0 || ($phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2)) ? 'readonly tabindex="-1"' : '' ?>
+                value="<?= $val_lt == 0 ? '' : $val_lt ?>">
+</td>
                                                 <td class="text-center align-middle" style="padding:4px;">
-                                                    <input type="number" class="form-control kq_btdk" data-id-khoan="<?= $item_2->id_khoan ?>" name="kq_btdk[]"
-                                                        style="<?= $quyen_btdk == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_btdk == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;" <?= $quyen_btdk == 0 ? 'readonly tabindex="-1"' : '' ?>
-                                                        pattern="[-+]?[0-9]{1,2}"
-                                                        title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" placeholder="0" min="0"
-                                                        max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" required disabled
-                                                        value="<?= $val_btdk == 0 ? '' : $val_btdk ?>">
-                                                </td>
+                                                    <input type="number" class="form-control kq_btdk" name="kq_btdk[]"
+                title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" data-id-khoan="<?= $item_2->id_khoan ?>" data-khoan-max="<?= $item_2->can_tren ?>"
+                pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0" required
+                style="<?= $quyen_btdk == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_btdk == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
+                
+                readonly tabindex="-1"
+                value="<?= $val_btdk == 0 ? '' : $val_btdk ?>">
+</td>
                                                 <td class="text-center align-middle" style="padding:4px;">
-                                                    <input type="number" class="form-control kq_gv" data-id-khoan="<?= $item_2->id_khoan ?>" name="kq_gv[]"
-                                                        style="<?= $quyen_gv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_gv == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;" <?= $quyen_gv == 0 ? 'readonly tabindex="-1"' : '' ?>
-                                                        pattern="[-+]?[0-9]{1,2}"
-                                                        title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" placeholder="0" min="0"
-                                                        max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" required disabled
-                                                        value="<?= $val_gv == 0 ? '' : $val_gv ?>">
-                                                </td>
+                                                    <input type="number" class="form-control kq_gv" name="kq_gv[]"
+                title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" data-id-khoan="<?= $item_2->id_khoan ?>" data-khoan-max="<?= $item_2->can_tren ?>"
+                pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0" required
+                style="<?= $quyen_gv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_gv == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
+                
+                readonly tabindex="-1"
+                value="<?= $val_gv == 0 ? '' : $val_gv ?>">
+</td>
                                                 <td class="text-center align-middle" style="padding:4px;">
                                                     <?php if ($muc->muc__Get_By_Id($item_3->id_muc)->co_minh_chung == 1): ?>
                                                         <?php
@@ -755,51 +777,6 @@ window.addEventListener('load', function() {
 
 
 <script>
-function calculateKhoanSums() {
-    ['sv', 'lt_bt', 'btdk', 'gv'].forEach(function(role) {
-        let spans = document.querySelectorAll('.sum_khoan_' + role);
-        spans.forEach(function(span) {
-            let idKhoan = span.getAttribute('data-id-khoan');
-            let maxScore = Number(span.getAttribute('data-can-tren'));
-            let inputs = document.querySelectorAll('.kq_' + role + '[data-id-khoan="' + idKhoan + '"]');
-            let sum = 0;
-            inputs.forEach(function(input) {
-                sum += Number(input.value) || 0;
-            });
-            span.innerText = sum > 0 ? sum : '';
-            if (sum > maxScore) {
-                span.style.color = '';
-                span.classList.add('text-danger');
-            } else {
-                span.classList.remove('text-danger');
-                span.style.color = '#003366';
-            }
-        });
-    });
-}
-window.addEventListener('load', function() {
-    calculateKhoanSums();
-    $('.kq_sv, .kq_lt_bt, .kq_btdk, .kq_gv').change(function() {
-        calculateKhoanSums();
-    });
-});
-</script>
-<!-- Modal Manager -->
-<div class="modal fade" id="evidenceManagerModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 1000px;">
-    <div class="modal-content" style="border-radius: 0.75rem; overflow: hidden;">
-      <div class="modal-header bg-custom-dark text-white py-2">
-        <h5 class="modal-title font-weight-bold">Minh chứng</h5>
-        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1; font-size: 1.75rem;">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-          <div class="row">
-              <!-- Left column: List -->
-              <div class="col-md-5 border-right">
-                  <h6 class="font-weight-bold mb-3">Danh sách tệp</h6>
-                  
                   <!-- Nút tải lên -->
                   <div class="mb-3 text-center" id="managerUploadBtnContainer">
                       <button type="button" class="btn btn-upload-custom btn-block" style="border-style: dashed; padding: 10px; transition: all 0.2s; color: #003366 !important; border-color: #003366 !important;" id="managerUploadBtn">
@@ -1069,5 +1046,56 @@ window.addEventListener('load', function () {
 });
 </script>
 
+
+
+<script>
+function calculateKhoanTotals(targetClass) {
+    let khoanSums = {};
+    $('.' + targetClass).each(function() {
+        let id_khoan = $(this).data('id-khoan');
+        let val = Number($(this).val()) || 0;
+        
+        if (id_khoan) {
+            if (!khoanSums[id_khoan]) khoanSums[id_khoan] = 0;
+            khoanSums[id_khoan] += val;
+        }
+    });
+
+    for (let id_khoan in khoanSums) {
+        let displayElem = $('.khoan-total-' + targetClass + '[data-id-khoan="' + id_khoan + '"]');
+        if (displayElem.length > 0) {
+            let sum = khoanSums[id_khoan];
+            displayElem.text(sum === 0 ? '' : sum);
+        }
+    }
+}
+
+window.addEventListener('load', function() {
+    ['kq_sv', 'kq_lt_bt', 'kq_btdk', 'kq_gv'].forEach(function(cls) {
+        calculateKhoanTotals(cls);
+        $('.' + cls).on('input change', function() {
+            let max_muc = parseInt($(this).attr('max')) || 0;
+            if (Number($(this).val()) > max_muc) {
+                $(this).val(max_muc);
+            }
+            
+            let id_khoan = $(this).data('id-khoan');
+            let khoan_max = parseInt($(this).data('khoan-max')) || 0;
+            let sum = 0;
+            $('.' + cls + '[data-id-khoan="' + id_khoan + '"]').each(function() {
+                sum += Number($(this).val()) || 0;
+            });
+
+            if (sum > khoan_max) {
+                Swal.fire({icon: 'warning', title: 'Vượt quá điểm tối đa', text: 'Tổng điểm của Khoản này không được vượt quá ' + khoan_max + ' điểm!'});
+                $(this).val(0);
+                $(this).trigger('change');
+            } else {
+                calculateKhoanTotals(cls);
+            }
+        });
+    });
+});
+</script>
 
 <?php endif ?>

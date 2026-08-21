@@ -242,30 +242,46 @@
             margin: 0.2em 0 0.2em 0 !important;
             font-size: 14px !important;
         }
-    </style>
+    
+        /* Đường chéo xám cho các ô không được phép chấm */
+        input[type="number"]:disabled {
+            background: repeating-linear-gradient(
+                45deg,
+                #e9ecef,
+                #e9ecef 10px,
+                #f8f9fa 10px,
+                #f8f9fa 20px
+            ) !important;
+            cursor: not-allowed !important;
+        }
+</style>
     <?php
        // Nhựt sửa lỗi: Sử dụng replaceState để xóa tham số status khỏi URL nhằm tránh lặp lại thông báo SweetAlert khi F5/reload trang.
               if(isset($_GET['status'])){
-           if($_GET['status'] == "success"){
-               echo "<script>
-               try {
-                   if (typeof window.Toast !== 'undefined') {
-                       window.Toast.fire({ icon: 'success', title: 'Thành công!', text: 'Thao tác thành công!' });
-                   } else {
-                       alert('Thành công! (Lỗi hiển thị giao diện thông báo)');
-                   }
-               } catch (e) {
-                   console.error('Lỗi hiển thị thông báo:', e);
-                   alert('Thành công!');
-               }
-               if (window.history.replaceState) {
-                   const url = new URL(window.location.href);
-                   url.searchParams.delete('status');
-                   window.history.replaceState({ path: url.href }, '', url.href);
-               }
-               </script>";
-           }
-           if($_GET['status'] == "failed"){
+            if($_GET['status'] == "success"){
+                $msg = isset($_GET['msg']) ? htmlspecialchars($_GET['msg']) : 'Thao tác thành công!';
+                $title = isset($_GET['title']) ? htmlspecialchars($_GET['title']) : 'Thành công!';
+                echo "<script>
+                try {
+                    if (typeof window.Toast !== 'undefined') {
+                        window.Toast.fire({ icon: 'success', title: '" . $title . "', text: '" . $msg . "' });
+                    } else {
+                        alert('" . $title . "! " . $msg . "');
+                    }
+                } catch (e) {
+                    console.error('Lỗi hiển thị thông báo:', e);
+                    alert('" . $title . "!');
+                }
+                if (window.history.replaceState) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('status');
+                    url.searchParams.delete('msg');
+                    url.searchParams.delete('title');
+                    window.history.replaceState({ path: url.href }, '', url.href);
+                }
+                </script>";
+            }
+            if($_GET['status'] == "failed"){
                echo "<script>
                try {
                    if (typeof window.Toast !== 'undefined') {

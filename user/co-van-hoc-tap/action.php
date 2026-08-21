@@ -62,7 +62,7 @@
                 
                 // Quân sửa: Thực hiện cập nhật điểm của cố vấn học tập và chuyển hướng thành công
                 $phieuchamdiem->phieuchamdiem__Update_Kq_Gv($id_phieu, rtrim($kq, "|"));
-                header("location: $href&status=success");
+                header("location: $href&status=success&msg=" . urlencode("Cập nhật điểm đánh giá thành công!"));
                 break; 
         }
     }
