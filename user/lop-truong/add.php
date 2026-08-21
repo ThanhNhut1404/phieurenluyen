@@ -43,7 +43,7 @@
   
 
 ?>
-<link rel="stylesheet" href="../assets/css/user.css">
+<link rel="stylesheet" href="../assets/css/user.css?v=<?=time()?>">
 <?php if(isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)):?>
 <!-- Content Wrapper. Contains page content -->
 <div class="ml-0 mr-3 content-wrapper">
@@ -282,7 +282,7 @@
                                             </tr>
                                             <tr class="border-bottom">
                                                 <td class="w-60 no-border full vertical-align-middle">
-                                                    - <?=$muc->muc__Get_By_Id($item_3->id_muc)->ten_muc?>
+                                                    <?=$muc->muc__Get_By_Id($item_3->id_muc)->ten_muc?>
                                                 </td>
 
                                                 <td class="w-10 no-border full vertical-align-middle">

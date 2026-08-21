@@ -37,6 +37,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 ?>
 <link rel="stylesheet" href="../assets/css/user.css">
 <?php if (!isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) : ?>
+
+
 <div class="content-wrapper student-evaluation-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -291,7 +293,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                         <?php foreach ($muc->muc__Get_All_By_Id_Khoan($item_2->id_khoan) as $item_3) : ?>
                                             <tr>
                                                 <td class="criterion-text-cell">
-                                                    - <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
+                                                    <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
                                                     <?php $ghi_chu_muc = $muc->muc__Get_By_Id($item_3->id_muc)->ghi_chu; ?>
                                                     <?php if(!empty(trim(strip_tags($ghi_chu_muc)))): ?>
                                                         <div class="mt-1 ml-2 text-muted text-sm"><?= $ghi_chu_muc ?></div>
@@ -336,9 +338,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         <?php
                                                             $minh_chung_cua_muc = $minhchung->minhchung__Get_By_Id_Phieu_And_Muc($phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu, $item_3->id_muc);
                                                             $has_existing = count($minh_chung_cua_muc) > 0;
-                                                            $readonly = ($dotchamdiem__Get_By_Id->trang_thai == 0 || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1) ? 'true' : 'false';
+                                                            $readonly = ($dotchamdiem__Get_By_Id->trang_thai == 0) ? 'true' : 'false';
                                                         ?>
-                                                        <button type="button" class="btn btn-evidence evidence-manager-trigger"
+                                                        <button type="button" class="btn btn-evidence-custom evidence-manager-trigger"
                                                             data-id-muc="<?= $item_3->id_muc ?>"
                                                             data-readonly="<?= $readonly ?>">
                                                             <i class="fas fa-folder-open"></i> (<span class="evidence-count-<?= $item_3->id_muc ?>"><?= count($minh_chung_cua_muc) ?></span>)
@@ -348,7 +350,12 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         <div id="evidence-state-<?= $item_3->id_muc ?>" class="d-none">
                                                             <!-- Existing Evidences -->
                                                             <?php foreach($minh_chung_cua_muc as $mc): ?>
-                                                                <div class="existing-evidence" data-id="<?= $mc->id_minh_chung ?>" data-url="sinh-vien/image.php?id_minh_chung=<?= $mc->id_minh_chung ?>" data-name="<?= htmlspecialchars(basename($mc->hinh_anh)) ?>"></div>
+                                                                <?php
+                                                                    $isPdf = strpos($mc->hinh_anh, 'application/pdf') !== false;
+                                                                    $ext = $isPdf ? '.pdf' : '.jpg';
+                                                                    $displayName = "Minh_chung_" . $mc->id_minh_chung . "_" . date("d-m-Y", strtotime($mc->ghi_chu)) . $ext;
+                                                                ?>
+                                                                <div class="existing-evidence" data-id="<?= $mc->id_minh_chung ?>" data-url="<?= $mc->hinh_anh ?>" data-name="<?= htmlspecialchars($displayName) ?>"></div>
                                                             <?php endforeach; ?>
                                                             <!-- File Input -->
                                                             <input type="file" name="minh_chung_muc[<?= $item_3->id_muc ?>][]" multiple accept="image/*,application/pdf"
@@ -386,9 +393,14 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     </div>
                 </div>
             <div class="card-footer">
-                <input type="submit" value="Nộp phiếu đánh giá" class="btn btn-success btn-lg float-right font-weight-bold" id="submit"
-                    <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>
-                    <?= $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 ? 'disabled' : '' ?>>
+                <?php
+                    $is_submitted = $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1;
+                    $btn_text = $is_submitted ? "Cập nhật minh chứng" : "Nộp phiếu đánh giá";
+                    $btn_class = $is_submitted ? "btn text-white" : "btn btn-success";
+                    $btn_style = $is_submitted ? 'style="background-color: #003366;"' : '';
+                ?>
+                <input type="submit" value="<?= $btn_text ?>" class="<?= $btn_class ?> btn-lg float-right font-weight-bold" <?= $btn_style ?> id="submit"
+                    <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>>
             </div>
             </div>
         </form>
@@ -486,7 +498,7 @@ window.addEventListener('load', function() {
 <div class="modal fade" id="evidenceManagerModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl" style="max-width: 1000px;">
     <div class="modal-content" style="border-radius: 0.75rem; overflow: hidden;">
-      <div class="modal-header bg-primary text-white py-2">
+      <div class="modal-header bg-custom-dark text-white py-2">
         <h5 class="modal-title font-weight-bold">Minh chứng</h5>
         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1; font-size: 1.75rem;">
           <span aria-hidden="true">&times;</span>
@@ -500,7 +512,7 @@ window.addEventListener('load', function() {
                   
                   <!-- Nút tải lên -->
                   <div class="mb-3 text-center" id="managerUploadBtnContainer">
-                      <button type="button" class="btn btn-outline-primary btn-block" style="border-style: dashed; padding: 10px; transition: all 0.2s;" id="managerUploadBtn">
+                      <button type="button" class="btn btn-upload-custom btn-block" style="border-style: dashed; padding: 10px; transition: all 0.2s; color: #003366 !important; border-color: #003366 !important;" id="managerUploadBtn">
                           <i class="fas fa-cloud-upload-alt fa-2x mb-2 d-block"></i>
                           Nhấn hoặc kéo thả tệp tải lên vào đây
                       </button>
@@ -519,18 +531,18 @@ window.addEventListener('load', function() {
               </div>
               
               <!-- Right column: Preview -->
-              <div class="col-md-7 d-flex flex-column align-items-center justify-content-center bg-light rounded" style="min-height: 550px; padding: 10px;">
+              <div class="col-md-7 d-flex flex-column align-items-center justify-content-center bg-light rounded" style="min-height: 450px; padding: 10px;">
                   <div id="managerPreviewEmpty" class="text-muted text-center">
                       <i class="fas fa-image fa-3x mb-2 d-block"></i>
                       Chọn một tệp ở danh sách bên trái để xem trước
                   </div>
-                  <img id="managerPreviewImage" src="" class="img-fluid rounded d-none" style="max-height: 600px; object-fit: contain;">
-                  <iframe id="managerPreviewPdf" src="" class="d-none w-100" style="height: 600px; border: 1px solid #ddd; border-radius: 4px;"></iframe>
+                  <img id="managerPreviewImage" src="" class="img-fluid rounded d-none" style="max-height: 500px; object-fit: contain;">
+                  <iframe id="managerPreviewPdf" src="" class="d-none w-100" style="height: 500px; border: 1px solid #ddd; border-radius: 4px;"></iframe>
               </div>
           </div>
       </div>
       <div class="modal-footer bg-light py-2">
-        <button type="button" class="btn btn-cancel-custom font-weight-bold" data-dismiss="modal">Đóng</button>
+        <button type="button" class="btn btn-cancel-custom font-weight-bold" style="font-size: 1.15rem; padding: 6px 24px; font-weight: bold !important;" data-dismiss="modal">Đóng</button>
       </div>
     </div>
   </div>
@@ -667,19 +679,19 @@ window.addEventListener('load', function () {
     $(document).on('dragover', '#managerUploadBtn', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        $(this).addClass('bg-primary text-white').removeClass('btn-outline-primary');
+        $(this).addClass('bg-custom-dark').removeClass('btn-upload-custom');
     });
 
     $(document).on('dragleave', '#managerUploadBtn', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        $(this).removeClass('bg-primary text-white').addClass('btn-outline-primary');
+        $(this).removeClass('bg-custom-dark').addClass('btn-upload-custom');
     });
 
     $(document).on('drop', '#managerUploadBtn', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        $(this).removeClass('bg-primary text-white').addClass('btn-outline-primary');
+        $(this).removeClass('bg-custom-dark').addClass('btn-upload-custom');
         
         let files = e.originalEvent.dataTransfer.files;
         if (files && files.length > 0) {
@@ -762,12 +774,7 @@ window.addEventListener('load', function () {
         
         let btn = $('.evidence-manager-trigger[data-id-muc="'+mucId+'"]');
         btn.find('span.evidence-count-'+mucId).text(total);
-        
-        if(total > 0) {
-            btn.removeClass('btn-outline-primary').addClass('btn-primary');
-        } else {
-            btn.removeClass('btn-primary').addClass('btn-outline-primary');
-        }
+        // Removed dynamic toggling of btn-outline-primary because we use inline styling
     }
 });
 </script>

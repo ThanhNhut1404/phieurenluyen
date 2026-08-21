@@ -29,12 +29,18 @@
                     exit();
                 }
 
-                $kq_sv = $_POST["kq_sv"];
-                $kq = "";
-                foreach($kq_sv as $item){
-                    $kq .= $item."|";
+                // Chỉ cập nhật điểm nếu phiếu chưa được nộp (trạng thái = 1)
+                // Nếu phiếu đã nộp, sinh viên chỉ được cập nhật minh chứng
+                if ($phieu->trang_thai == 1) {
+                    $kq_sv = $_POST["kq_sv"];
+                    $kq = "";
+                    foreach($kq_sv as $item){
+                        $kq .= $item."|";
+                    }
+                    $status .= $phieuchamdiem->phieuchamdiem__Update_Kq_Sv($id_phieu, rtrim($kq, "|"));
+                    // Cập nhật trạng thái thành 2 (Đã nộp, chờ ban cán sự duyệt)
+                    $phieuchamdiem->phieuchamdiem__Update_Trang_Thai($id_phieu, 2);
                 }
-                $status .= $phieuchamdiem->phieuchamdiem__Update_Kq_Sv($id_phieu, rtrim($kq, "|"));
 
                 // Xử lý nén và lưu ảnh minh chứng theo từng mục
                 if (isset($_FILES['minh_chung_muc'])) {

@@ -53,29 +53,7 @@
                  </div>
              </div>
              
-             <!-- quân sửa: Bắt lỗi nếu vượt quỹ điểm Khoản -->
-             <?php if(isset($_GET['status']) && $_GET['status'] == 'failed_over_limit'): ?>
-                 <div class="alert alert-danger alert-dismissible mt-2">
-                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                     <h5><i class="icon fas fa-ban"></i> Lỗi!</h5>
-                     Tổng điểm của các Mục đã vượt quá Điểm tối đa của Khoản. Vui lòng kiểm tra lại.
-                 </div>
-             <?php endif; ?>
-             <!-- quân sửa: Cảnh báo khi dữ liệu đang bị khoá bởi Đợt chấm điểm -->
-             <?php if(isset($_GET['status']) && $_GET['status'] == 'locked_by_dotchamdiem'): ?>
-                 <div class="alert alert-danger alert-dismissible mt-2">
-                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                     <h5><i class="icon fas fa-lock"></i> Thao tác thất bại!</h5>
-                     Dữ liệu này đang được sử dụng trong một Đợt chấm điểm đang diễn ra. Bạn không thể Sửa hoặc Xoá vào lúc này!
-                 </div>
-             <?php endif; ?>
-             <?php if(isset($_GET['status']) && $_GET['status'] == 'locked_update'): ?>
-                 <div class="alert alert-danger alert-dismissible mt-2">
-                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                     <h5><i class="icon fas fa-lock"></i> Thao tác thất bại!</h5>
-                     Dữ liệu này đã được sử dụng trong một Đợt chấm điểm. Để bảo toàn lịch sử, bạn không thể Sửa dữ liệu này. Hãy tạo mới thay thế!
-                 </div>
-             <?php endif; ?>
+
          </div><!-- /.container-fluid -->
      </section>
 
@@ -106,8 +84,8 @@
                                          <option value="">-- Chọn Khoản --</option>
                                          <?php $old_khoan = muc_old_value('id_khoan', 'add'); ?>
                                          <?php foreach ($khoan__Get_All as $item):?>
-                                         <option value="<?=$item->id_khoan?>" <?= $old_khoan == $item->id_khoan ? 'selected' : '' ?>><?=$item->ten_khoan?> -
-                                             <?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?></option>
+                                         <option value="<?=$item->id_khoan?>" <?= $old_khoan == $item->id_khoan ? 'selected' : '' ?>><?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?> -
+                                             <?=$item->ten_khoan?></option>
                                          <?php endforeach; ?>
                                      </select>
                                      <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-khoan'): ?>
@@ -115,19 +93,6 @@
                                      <?php endif; ?>
                                  </div>
                              </div>
-                             <div class="col-6">
-                                 <div class="form-group">
-                                     <label class="label-sidebar" for="ten_muc">Tên mục <span class="color-crimson">*</span></label>
-                                     <input type="text" id="ten_muc" name="ten_muc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ten') ? 'is-invalid' : '' ?>" required
-                                         placeholder="Nhập tên mục" value="<?=muc_escape(muc_old_value('ten_muc', 'add'))?>">
-                                     <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ten'): ?>
-                                         <small class="text-danger mt-1">Tên mục không được để trống.</small>
-                                     <?php endif; ?>
-                                 </div>
-                             </div>
-                         </div>
-                         
-                         <div class="row">
                              <div class="col-6">
                                  <div class="form-group">
                                      <!-- quân sửa: Đổi thành thẻ select để chọn thứ tự linh động thông qua AJAX -->
@@ -140,6 +105,9 @@
                                      <?php endif; ?>
                                  </div>
                              </div>
+                         </div>
+                         
+                         <div class="row">
                              <div class="col-6">
                                  <!-- quân sửa: Thêm ô nhập Điểm tối đa cho Mục -->
                                  <div class="form-group">
@@ -151,13 +119,23 @@
                                      <?php endif; ?>
                                  </div>
                              </div>
-                         </div>
+                             <div class="col-6">
+                                 <div class="form-group">
+                                     <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết</label>
+                                     <input type="text" id="ghi_chu" name="ghi_chu" class="form-control"
+                                         placeholder="Nhập nội dung chi tiết" value="<?=muc_escape(muc_old_value('ghi_chu', 'add'))?>">
+                                 </div>
+                             </div>
+                             </div>
 
-                         <div class="form-group">
-                             <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết</label>
-                             <textarea id="ghi_chu" name="ghi_chu" class="form-control"
-                                 placeholder="Nhập nội dung chi tiết"><?=muc_escape(muc_old_value('ghi_chu', 'add'))?></textarea>
-                         </div>
+                             <div class="form-group">
+                                 <label class="label-sidebar" for="ten_muc">Tên mục <span class="color-crimson">*</span></label>
+                                 <textarea id="ten_muc" name="ten_muc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ten') ? 'is-invalid' : '' ?>" required
+                                     placeholder="Nhập tên mục"><?=muc_escape(muc_old_value('ten_muc', 'add'))?></textarea>
+                                 <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ten'): ?>
+                                     <small class="text-danger mt-1">Tên mục không được để trống.</small>
+                                 <?php endif; ?>
+                             </div>
                          
                          <!-- quân sửa: Thêm tuỳ chọn Yêu cầu minh chứng -->
                          <div class="form-group">
@@ -178,19 +156,19 @@
                                  <div class="col-md-3 text-center">
                                      <div class="icheck-primary d-inline">
                                          <input type="checkbox" id="quyen_lt" name="quyen_lt" value="1" <?= (!$is_add_error || muc_old_value('quyen_lt', 'add', 0) == 1) ? 'checked' : '' ?>>
-                                         <label for="quyen_lt">Lớp trưởng/BCS</label>
+                                         <label for="quyen_lt">Lớp trưởng/Bí thư</label>
                                      </div>
                                  </div>
                                  <div class="col-md-3 text-center">
                                      <div class="icheck-primary d-inline">
                                          <input type="checkbox" id="quyen_btdk" name="quyen_btdk" value="1" <?= (!$is_add_error || muc_old_value('quyen_btdk', 'add', 0) == 1) ? 'checked' : '' ?>>
-                                         <label for="quyen_btdk">Bí thư đoàn khoa</label>
+                                         <label for="quyen_btdk">BCH Đoàn Khoa/BM</label>
                                      </div>
                                  </div>
                                  <div class="col-md-3 text-center">
                                      <div class="icheck-primary d-inline">
                                          <input type="checkbox" id="quyen_gv" name="quyen_gv" value="1" <?= (!$is_add_error || muc_old_value('quyen_gv', 'add', 0) == 1) ? 'checked' : '' ?>>
-                                         <label for="quyen_gv">Giảng viên/CVHT</label>
+                                         <label for="quyen_gv">Cố vấn học tập</label>
                                      </div>
                                  </div>
                              </div>
@@ -251,9 +229,9 @@
                              <td class="text-center" style="text-align: center !important;"><?=$item->diem_toi_da?></td>
                              <td class="text-center" style="text-align: center !important;">
                                  <?php if($item->co_minh_chung == 1): ?>
-                                     <span class="badge badge-danger"><i class="fas fa-file-upload"></i> Có</span>
+                                     <span class="badge badge-success">Có</span>
                                  <?php else: ?>
-                                     <span class="badge badge-secondary">Không</span>
+                                     <span class="badge badge-danger">Không</span>
                                  <?php endif; ?>
                              </td>
                              <td><?=$item->ghi_chu?></td>
@@ -269,7 +247,7 @@
                                      </a>
                                  <?php endif; ?>
                                  <a href="#" type="button" class="btn btn-danger"
-                                     onclick="return confirm_delete_sweet('quan-ly-muc/action.php?req=delete&id_muc=<?=$item->id_muc?>', 'Mục')">
+                                     onclick="return confirm_delete_sweet('quan-ly-muc/action.php?req=delete&id_muc=<?=$item->id_muc?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>', 'Mục')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
@@ -603,7 +581,7 @@ function cancel_update() {
          loadThuTu(firstKhoan);
      }
      
-     $('#ghi_chu').summernote({
+     $('#ten_muc').summernote({
          height: 150,
          toolbar: [
              ['font', ['bold', 'italic', 'underline', 'clear']],
@@ -613,6 +591,16 @@ function cancel_update() {
              ['view', ['fullscreen', 'codeview']]
          ]
      });
+     
+     <?php if (isset($_GET['status'])): ?>
+         <?php if ($_GET['status'] == 'failed_over_limit'): ?>
+             Toast.fire('Lỗi!', 'Tổng điểm của các Mục đã vượt quá Điểm tối đa của Khoản. Vui lòng kiểm tra lại!', 'error');
+         <?php elseif ($_GET['status'] == 'locked_by_dotchamdiem'): ?>
+             Toast.fire('Cảnh báo!', 'Dữ liệu này đang được sử dụng trong một Đợt chấm điểm. Bạn không thể Sửa/Xoá vào lúc này!', 'warning');
+         <?php elseif ($_GET['status'] == 'locked_update'): ?>
+             Toast.fire('Cảnh báo!', 'Dữ liệu này đã sử dụng trong lịch sử. Vui lòng tạo mới thay vì sửa!', 'warning');
+         <?php endif; ?>
+     <?php endif; ?>
  });
  </script>
 

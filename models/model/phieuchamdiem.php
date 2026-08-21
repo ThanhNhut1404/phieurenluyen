@@ -173,6 +173,13 @@ class phieuchamdiem extends Database {
         return $obj->rowCount();
     }
 
+    public function phieuchamdiem__Update_Trang_Thai($id_phieu, $trang_thai) {
+        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET trang_thai=? WHERE id_phieu=?");
+        $obj->execute(array($trang_thai, $id_phieu));
+        return $obj->rowCount();
+    }
+
+
     public function phieuchamdiem__Get_By_Id_Lop($id_lop_hoc, $id_dot) {
         // Nhựt sửa lỗi: Hàm nhận id_lop_hoc nên phải lọc theo lopapdung.id_lop_hoc, không phải id_lop_ap_dung.
         $obj = $this->connect->prepare("SELECT * FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_lop_hoc = ? AND id_dot = ?");

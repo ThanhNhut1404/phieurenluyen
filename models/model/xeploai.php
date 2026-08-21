@@ -27,7 +27,7 @@ include_once($des);
 class xeploai extends Database {
 
     public function xeploai__Get_All() {
-        $obj = $this->connect->prepare("SELECT * FROM xeploai ORDER BY can_tren DESC");
+        $obj = $this->connect->prepare("SELECT * FROM xeploai WHERE is_deleted = 0 ORDER BY can_tren DESC");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         return $obj->fetchAll();
@@ -60,7 +60,7 @@ class xeploai extends Database {
     public function xeploai__Check_Name($ten_xep_loai) {
         // Nhựt sửa lỗi: Không cho thêm xếp loại trùng tên sau khi đã chuẩn hóa khoảng trắng.
         $ten_xep_loai = $this->xeploai__Normalize_Name($ten_xep_loai);
-        $obj = $this->connect->prepare("SELECT id_xep_loai, ten_xep_loai FROM xeploai");
+        $obj = $this->connect->prepare("SELECT id_xep_loai, ten_xep_loai FROM xeploai WHERE is_deleted = 0");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         $list = $obj->fetchAll();
@@ -75,7 +75,7 @@ class xeploai extends Database {
     public function xeploai__Check_Name_Update($id_xep_loai, $ten_xep_loai) {
         // Nhựt sửa lỗi: Khi cập nhật được giữ nguyên tên của chính nó nhưng không được trùng xếp loại khác.
         $ten_xep_loai = $this->xeploai__Normalize_Name($ten_xep_loai);
-        $obj = $this->connect->prepare("SELECT id_xep_loai, ten_xep_loai FROM xeploai WHERE id_xep_loai != ?");
+        $obj = $this->connect->prepare("SELECT id_xep_loai, ten_xep_loai FROM xeploai WHERE id_xep_loai != ? AND is_deleted = 0");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_xep_loai));
         $list = $obj->fetchAll();
@@ -89,19 +89,26 @@ class xeploai extends Database {
     
 
     public function xeploai__Delete($id_xep_loai) {
-        $obj = $this->connect->prepare("DELETE FROM xeploai WHERE id_xep_loai = ?");
-        $obj->execute(array($id_xep_loai));
-        return $obj->rowCount();
+        // Nếu đã được sử dụng trong kết quả xếp loại, thực hiện xóa mềm
+        if ($this->xeploai__Is_Used_In_Ketquaxeploai($id_xep_loai)) {
+            $obj = $this->connect->prepare("UPDATE xeploai SET is_deleted = 1 WHERE id_xep_loai = ?");
+            $obj->execute(array($id_xep_loai));
+            return $obj->rowCount();
+        } else {
+            $obj = $this->connect->prepare("DELETE FROM xeploai WHERE id_xep_loai = ?");
+            $obj->execute(array($id_xep_loai));
+            return $obj->rowCount();
+        }
     }
 
     public function xeploai__Check_Khoang_Diem_Ton_Tai($can_duoi, $can_tren, $id_xep_loai = 0) {
         // Nhựt sửa lỗi: Kiểm tra khoảng điểm chồng nhau, khi update thì loại trừ chính bản ghi đang sửa.
         if ($id_xep_loai > 0) {
-            $obj = $this->connect->prepare("SELECT * FROM xeploai WHERE can_duoi <= ? AND can_tren >= ? AND id_xep_loai != ? LIMIT 1");
+            $obj = $this->connect->prepare("SELECT * FROM xeploai WHERE can_duoi <= ? AND can_tren >= ? AND id_xep_loai != ? AND is_deleted = 0 LIMIT 1");
             $obj->setFetchMode(PDO::FETCH_OBJ);
             $obj->execute(array($can_tren, $can_duoi, $id_xep_loai));
         } else {
-            $obj = $this->connect->prepare("SELECT * FROM xeploai WHERE can_duoi <= ? AND can_tren >= ? LIMIT 1");
+            $obj = $this->connect->prepare("SELECT * FROM xeploai WHERE can_duoi <= ? AND can_tren >= ? AND is_deleted = 0 LIMIT 1");
             $obj->setFetchMode(PDO::FETCH_OBJ);
             $obj->execute(array($can_tren, $can_duoi));
         }
@@ -119,7 +126,7 @@ class xeploai extends Database {
 
     public function xeploai__Check_Du_Khoang_Diem() {
         // Nhựt sửa lỗi: Trước khi tạo kết quả phải đảm bảo các khoảng điểm phủ kín từ 0 đến 100.
-        $obj = $this->connect->prepare("SELECT can_duoi, can_tren FROM xeploai ORDER BY can_duoi ASC");
+        $obj = $this->connect->prepare("SELECT can_duoi, can_tren FROM xeploai WHERE is_deleted = 0 ORDER BY can_duoi ASC");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute();
         $list = $obj->fetchAll();

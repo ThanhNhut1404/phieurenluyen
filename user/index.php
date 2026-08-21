@@ -78,6 +78,18 @@
 
 
     <script>
+    window.Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
     //Bootstrap Duallistbox
     $('.duallistbox').bootstrapDualListbox({
         filterTextClear: 'Hiện tất cả',
@@ -119,7 +131,7 @@
         },
         queuecomplete: function() {
             this.removeAllFiles();
-            Toast.fire({
+            window.Toast.fire({
                 title: 'Đã thêm minh chứng thành công',
                 icon: 'success'
             }).then(() => {
@@ -135,25 +147,14 @@
         });
     });
 
-    $('.filter-container').filterizr({
-        gutterPixels: 3
-    });
+    if ($('.filter-container').length > 0) {
+        $('.filter-container').filterizr({
+            gutterPixels: 3
+        });
+    }
     $('.btn[data-filter]').on('click', function() {
         $('.btn[data-filter]').removeClass('active');
         $(this).addClass('active');
-    });
-
-
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
     });
 
     // Quân sửa: Tăng cường trải nghiệm người dùng (UX) khi nhập điểm rèn luyện
@@ -206,49 +207,9 @@
             }
         });
 
-        var actionUrl = form.attr('action') || '';
-        if (actionUrl.indexOf('action.php?req=add') !== -1) {
-            e.preventDefault();
-            var submitBtn = form.find('input[type="submit"], button[type="submit"]');
-            var originalBtnValue = submitBtn.val();
-            submitBtn.prop('disabled', true).val('Đang xử lý...');
-
-            $.ajax({
-                url: actionUrl,
-                type: form.attr('method') || 'POST',
-                data: new FormData(this),
-                processData: false,
-                contentType: false,
-                success: function(response, status, xhr) {
-                    var finalUrl = xhr.responseURL || '';
-                    if (finalUrl.indexOf('status=success') !== -1) {
-                        Toast.fire({
-                            title: 'Thành công!',
-                            text: 'Thao tác thành công!',
-                            icon: 'success'
-                        }).then(function() {
-                            location.reload();
-                        });
-                    } else {
-                        Toast.fire({
-                            title: 'Thất bại!',
-                            text: 'Thao tác không thành công! Điểm số đã nhập vẫn được giữ lại để bạn chỉnh sửa.',
-                            icon: 'error'
-                        });
-                        submitBtn.prop('disabled', false).val(originalBtnValue);
-                    }
-                },
-                error: function() {
-                    Toast.fire({
-                        title: 'Thất bại!',
-                        text: 'Có lỗi kết nối mạng xảy ra. Điểm số đã nhập vẫn được giữ lại.',
-                        icon: 'error'
-                    });
-                    submitBtn.prop('disabled', false).val(originalBtnValue);
-                }
-            });
-        }
-    });
+        var submitBtn = form.find('input[type="submit"], button[type="submit"]');
+          setTimeout(function() { submitBtn.prop('disabled', true).val('Đang xử lý...'); }, 10);
+      });
     </script>
     <style>
         /* CSS cho thẻ Toast: Giảm khoảng cách giữa tiêu đề và nội dung */
@@ -284,36 +245,45 @@
     </style>
     <?php
        // Nhựt sửa lỗi: Sử dụng replaceState để xóa tham số status khỏi URL nhằm tránh lặp lại thông báo SweetAlert khi F5/reload trang.
-       if(isset($_GET['status'])){
+              if(isset($_GET['status'])){
            if($_GET['status'] == "success"){
                echo "<script>
-               Toast.fire(
-                   'Thành công!',
-                   'Thao tác thành công!',
-                   'success'
-                 );
-                 if (window.history.replaceState) {
-                     const url = new URL(window.location.href);
-                     url.searchParams.delete('status');
-                     window.history.replaceState({ path: url.href }, '', url.href);
-                 }
-                 </script>";
+               try {
+                   if (typeof window.Toast !== 'undefined') {
+                       window.Toast.fire({ icon: 'success', title: 'Thành công!', text: 'Thao tác thành công!' });
+                   } else {
+                       alert('Thành công! (Lỗi hiển thị giao diện thông báo)');
+                   }
+               } catch (e) {
+                   console.error('Lỗi hiển thị thông báo:', e);
+                   alert('Thành công!');
+               }
+               if (window.history.replaceState) {
+                   const url = new URL(window.location.href);
+                   url.searchParams.delete('status');
+                   window.history.replaceState({ path: url.href }, '', url.href);
+               }
+               </script>";
            }
            if($_GET['status'] == "failed"){
                echo "<script>
-               Toast.fire(
-                   'Thất bại!',
-                   'Thao tác không thành công!',
-                   'error'
-                 );
-                 if (window.history.replaceState) {
-                     const url = new URL(window.location.href);
-                     url.searchParams.delete('status');
-                     window.history.replaceState({ path: url.href }, '', url.href);
-                 }
-                 </script>";
+               try {
+                   if (typeof window.Toast !== 'undefined') {
+                       window.Toast.fire({ icon: 'error', title: 'Thất bại!', text: 'Thao tác không thành công!' });
+                   } else {
+                       alert('Thất bại!');
+                   }
+               } catch (e) {
+                   console.error('Lỗi hiển thị thông báo:', e);
+                   alert('Thất bại!');
+               }
+               if (window.history.replaceState) {
+                   const url = new URL(window.location.href);
+                   url.searchParams.delete('status');
+                   window.history.replaceState({ path: url.href }, '', url.href);
+               }
+               </script>";
            }
-         
        }
 ?>
 </body>

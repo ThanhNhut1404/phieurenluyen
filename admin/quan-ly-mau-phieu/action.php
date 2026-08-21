@@ -173,7 +173,7 @@
                     }
                     $mauphieu->connect->commit();
                     mauphieu__Rotate_Csrf_Token();
-                    mauphieu__Redirect('success');
+                    mauphieu__Redirect('delete-success');
                 } catch (Throwable $e) {
                     if ($mauphieu->connect->inTransaction()) {
                         $mauphieu->connect->rollBack();

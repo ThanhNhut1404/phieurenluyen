@@ -248,23 +248,14 @@
                     xep_loai__Redirect('not-found');
                 }
 
-                // Nhá»±t sá»­a lá»—i: Xáº¿p loáº¡i Ä‘ang Ä‘Æ°á»£c ketquaxeploai sá»­ dá»¥ng thÃ¬ khÃ´ng Ä‘Æ°á»£c xÃ³a.
-                if ($xeploai->xeploai__Is_Used_In_Ketquaxeploai($id_xep_loai)) {
-                    xep_loai__Redirect('related-xep-loai');
-                }
-
                 try {
-                    // Nhá»±t sá»­a lá»—i: Bá»c Delete trong transaction Ä‘á»ƒ kiá»ƒm tra cha-con vÃ  xÃ³a nguyÃªn tá»­.
+                    // Nhá»±t sá»­a lá»—i: Bá» c Delete trong transaction Ä‘á»ƒ kiá»ƒm tra cha-con vÃ  xÃ³a nguyÃªn tá»­.
                     $xeploai->connect->beginTransaction();
                     $xeploai->xeploai__Lock_All();
 
                     if (!$xeploai->xeploai__Get_By_Id($id_xep_loai)) {
                         $xeploai->connect->rollBack();
                         xep_loai__Redirect('not-found');
-                    }
-                    if ($xeploai->xeploai__Is_Used_In_Ketquaxeploai($id_xep_loai)) {
-                        $xeploai->connect->rollBack();
-                        xep_loai__Redirect('related-xep-loai');
                     }
 
                     $status = $xeploai->xeploai__Delete($id_xep_loai);

@@ -265,7 +265,7 @@ button.btn.removeall.btn-outline-secondary:before {
                                  <?php endif; ?>
 
                                  <a href="#" type="button" class="btn  btn-danger m-2"
-                                     onclick="return confirm_delete_sweet('quan-ly-mau-phieu/action.php?req=delete&id_mau_phieu=<?=$item->id_mau_phieu?>', 'Mẫu phiếu')">
+                                     onclick="return confirm_delete_sweet('quan-ly-mau-phieu/action.php?req=delete&id_mau_phieu=<?=$item->id_mau_phieu?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>', 'Mẫu phiếu')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
@@ -287,26 +287,12 @@ button.btn.removeall.btn-outline-secondary:before {
  <script>
 window.addEventListener("load", function() {
     <?php if (isset($_GET['status'])): ?>
-        <?php if ($_GET['status'] == 'success'): ?>
-            Swal.fire({
-                icon: 'success',
-                title: 'Thành công',
-                text: 'Thao tác thành công!',
-                timer: 1500,
-                showConfirmButton: false
-            });
-        <?php elseif ($_GET['status'] == 'locked'): ?>
-            Swal.fire({
-                icon: 'warning',
-                title: 'Cảnh báo',
-                text: 'Nội dung này thuộc mẫu đã phát sinh đợt chấm nên chưa thể chỉnh sửa.'
-            });
-        <?php elseif ($_GET['status'] == 'failed' || $_GET['status'] == 'delete-failed'): ?>
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                text: 'Đã có lỗi xảy ra, vui lòng thử lại!'
-            });
+        <?php if ($_GET['status'] == 'locked'): ?>
+            Toast.fire('Từ chối!', 'Không thể Sửa/Xóa. Mẫu phiếu này đã được sử dụng trong Đợt chấm điểm!', 'warning');
+        <?php elseif ($_GET['status'] == 'not-found'): ?>
+            Toast.fire('Lỗi!', 'Không tìm thấy Mẫu phiếu này!', 'error');
+        <?php elseif ($_GET['status'] == 'locked_update'): ?>
+            Toast.fire('Cảnh báo!', 'Mẫu phiếu này đã sử dụng trong lịch sử. Vui lòng tạo mới thay vì sửa!', 'warning');
         <?php endif; ?>
     <?php endif; ?>
 
@@ -449,6 +435,3 @@ function update_obj_dieu(id_mau_phieu) {
     });
 }
  </script>
-
-
-

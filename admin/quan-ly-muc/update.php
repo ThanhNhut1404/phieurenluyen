@@ -54,11 +54,11 @@
                                 <?php $old_khoan_up = muc_update_old_value('id_khoan', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->id_khoan); ?>
                                 <select class="form-control <?= ($is_update_error && $status == 'invalid-khoan') ? 'is-invalid' : '' ?>" name="id_khoan" id="id_khoan_update" required onchange="loadThuTu(this.value, <?=muc_update_old_value('thu_tu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->thu_tu)?>, '#thu_tu_update')">
                                     <option value="<?=$muc__Get_By_Id->id_khoan?>" <?= $old_khoan_up == $muc__Get_By_Id->id_khoan ? 'selected' : '' ?>>
-                                        <?=$khoan->khoan__Get_By_Id($muc__Get_By_Id->id_khoan)->ten_khoan?>
+                                        <?=$dieu->dieu__Get_By_Id($khoan->khoan__Get_By_Id($muc__Get_By_Id->id_khoan)->id_dieu)->ten_dieu?> - <?=$khoan->khoan__Get_By_Id($muc__Get_By_Id->id_khoan)->ten_khoan?>
                                     </option>
                                     <?php foreach ($khoan__Get_All as $item):?>
                                     <?php if($item->id_khoan != $muc__Get_By_Id->id_khoan):?>
-                                    <option value="<?=$item->id_khoan?>" <?= $old_khoan_up == $item->id_khoan ? 'selected' : '' ?>><?=$item->ten_khoan?></option>
+                                    <option value="<?=$item->id_khoan?>" <?= $old_khoan_up == $item->id_khoan ? 'selected' : '' ?>><?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?> - <?=$item->ten_khoan?></option>
                                     <?php endif; ?>
                                     <?php endforeach; ?>
                                 </select>
@@ -68,49 +68,49 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-group">
-                                <label class="label-sidebar" for="ten_muc">Tên mục <span class="color-crimson">*</span></label>
-                                <input type="text" id="ten_muc" name="ten_muc" class="form-control <?= ($is_update_error && $status == 'invalid-ten') ? 'is-invalid' : '' ?>" required
-                                    placeholder="Nhập tên mục" value="<?=muc_update_escape(muc_update_old_value('ten_muc', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->ten_muc))?>">
-                                <?php if ($is_update_error && $status == 'invalid-ten'): ?>
-                                    <small class="text-danger mt-1">Tên mục không được để trống.</small>
-                                <?php endif; ?>
-                            </div>
-                        </div>
+                             <div class="form-group">
+                                 <label class="label-sidebar" for="thu_tu_update">Thứ tự <span class="color-crimson">*</span></label>
+                                 <select id="thu_tu_update" name="thu_tu" class="form-control <?= ($is_update_error && $status == 'invalid-thutu') ? 'is-invalid' : '' ?>" required>
+                                     <option value="<?=muc_update_old_value('thu_tu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->thu_tu)?>"><?=muc_update_old_value('thu_tu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->thu_tu)?></option>
+                                 </select>
+                                 <?php if ($is_update_error && $status == 'invalid-thutu'): ?>
+                                     <small class="text-danger mt-1">Thứ tự không hợp lệ.</small>
+                                 <?php endif; ?>
+                             </div>
+                         </div>
                     </div>
                     
                     <div class="row">
+                         <div class="col-6">
+                             <div class="form-group">
+                                 <label class="label-sidebar" for="diem_toi_da_update">Điểm tối đa <span class="color-crimson">*</span></label>
+                                 <input type="number" id="diem_toi_da_update" name="diem_toi_da" class="form-control <?= ($is_update_error && $status == 'invalid-diem') ? 'is-invalid' : '' ?>" required
+                                     placeholder="Nhập điểm tối đa của mục" min="0" value="<?=muc_update_escape(muc_update_old_value('diem_toi_da', $muc__Get_By_Id->id_muc, isset($muc__Get_By_Id->diem_toi_da) ? $muc__Get_By_Id->diem_toi_da : 0))?>">
+                                 <?php if ($is_update_error && $status == 'invalid-diem'): ?>
+                                     <small class="text-danger mt-1">Điểm tối đa không hợp lệ.</small>
+                                 <?php endif; ?>
+                             </div>
+                         </div>
                         <div class="col-6">
-                            <div class="form-group">
-                                <label class="label-sidebar" for="thu_tu_update">Thứ tự <span class="color-crimson">*</span></label>
-                                <select id="thu_tu_update" name="thu_tu" class="form-control <?= ($is_update_error && $status == 'invalid-thutu') ? 'is-invalid' : '' ?>" required>
-                                    <option value="<?=muc_update_old_value('thu_tu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->thu_tu)?>"><?=muc_update_old_value('thu_tu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->thu_tu)?></option>
-                                </select>
-                                <?php if ($is_update_error && $status == 'invalid-thutu'): ?>
-                                    <small class="text-danger mt-1">Thứ tự không hợp lệ.</small>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <!-- quân sửa: Bổ sung input Điểm tối đa -->
-                            <div class="form-group">
-                                <label class="label-sidebar" for="diem_toi_da">Điểm tối đa <span class="color-crimson">*</span></label>
-                                <input type="number" id="diem_toi_da" name="diem_toi_da" class="form-control <?= ($is_update_error && $status == 'invalid-diem') ? 'is-invalid' : '' ?>" required
-                                    placeholder="Nhập điểm tối đa của mục" min="0" value="<?=muc_update_escape(muc_update_old_value('diem_toi_da', $muc__Get_By_Id->id_muc, isset($muc__Get_By_Id->diem_toi_da) ? $muc__Get_By_Id->diem_toi_da : 0))?>">
-                                <?php if ($is_update_error && $status == 'invalid-diem'): ?>
-                                    <small class="text-danger mt-1">Điểm tối đa không hợp lệ.</small>
-                                <?php endif; ?>
-                            </div>
-                        </div>
+                             <div class="form-group">
+                                 <label class="label-sidebar" for="ghi_chu_update">Nội dung chi tiết</label>
+                                 <input type="text" id="ghi_chu_update" name="ghi_chu" class="form-control"
+                                     placeholder="Nhập nội dung chi tiết" value="<?=muc_update_escape(muc_update_old_value('ghi_chu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->ghi_chu))?>">
+                             </div>
+                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="label-sidebar" for="ghi_chu_update">Nội dung chi tiết</label>
-                        <textarea id="ghi_chu_update" name="ghi_chu" class="form-control" placeholder="Nhập nội dung chi tiết"><?=muc_update_escape(muc_update_old_value('ghi_chu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->ghi_chu))?></textarea>
-                    </div>
+                         <label class="label-sidebar" for="ten_muc_update">Tên mục <span class="color-crimson">*</span></label>
+                         <textarea id="ten_muc_update" name="ten_muc" class="form-control <?= ($is_update_error && $status == 'invalid-ten') ? 'is-invalid' : '' ?>" required
+                             placeholder="Nhập tên mục"><?=muc_update_escape(muc_update_old_value('ten_muc', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->ten_muc))?></textarea>
+                         <?php if ($is_update_error && $status == 'invalid-ten'): ?>
+                             <small class="text-danger mt-1">Tên mục không được để trống.</small>
+                         <?php endif; ?>
+                     </div>
 
                     <script>
-                        $('#ghi_chu_update').summernote({
+                        $('#ten_muc_update').summernote({
                             height: 150,
                             toolbar: [
                                 ['font', ['bold', 'italic', 'underline', 'clear']],
@@ -145,19 +145,19 @@
                             <div class="col-md-3 text-center">
                                 <div class="icheck-primary d-inline">
                                     <input type="checkbox" id="quyen_lt_update" name="quyen_lt" value="1" <?= muc_update_old_value('quyen_lt', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->quyen_lt) == 1 ? 'checked' : '' ?>>
-                                    <label for="quyen_lt_update">Lớp trưởng/BCS</label>
+                                    <label for="quyen_lt_update">Lớp trưởng/Bí thư</label>
                                 </div>
                             </div>
                             <div class="col-md-3 text-center">
                                 <div class="icheck-primary d-inline">
                                     <input type="checkbox" id="quyen_btdk_update" name="quyen_btdk" value="1" <?= muc_update_old_value('quyen_btdk', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->quyen_btdk) == 1 ? 'checked' : '' ?>>
-                                    <label for="quyen_btdk_update">Bí thư đoàn khoa</label>
+                                    <label for="quyen_btdk_update">BCH Đoàn Khoa/BM</label>
                                 </div>
                             </div>
                             <div class="col-md-3 text-center">
                                 <div class="icheck-primary d-inline">
                                     <input type="checkbox" id="quyen_gv_update" name="quyen_gv" value="1" <?= muc_update_old_value('quyen_gv', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->quyen_gv) == 1 ? 'checked' : '' ?>>
-                                    <label for="quyen_gv_update">Giảng viên/CVHT</label>
+                                    <label for="quyen_gv_update">Cố vấn học tập</label>
                                 </div>
                             </div>
                         </div>

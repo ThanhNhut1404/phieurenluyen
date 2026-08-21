@@ -45,11 +45,11 @@ class dieu extends Database {
     public function dieu__Get_By_Ten($ten_dieu, $id_dieu = 0) {
         $ten_dieu = trim($ten_dieu);
         if ($id_dieu > 0) {
-            $obj = $this->connect->prepare("SELECT * FROM dieu WHERE TRIM(ten_dieu) = ? AND id_dieu != ? LIMIT 1");
+            $obj = $this->connect->prepare("SELECT * FROM dieu WHERE TRIM(ten_dieu) = ? AND id_dieu != ? AND is_deleted = 0 LIMIT 1");
             $obj->setFetchMode(PDO::FETCH_OBJ);
             $obj->execute(array($ten_dieu, $id_dieu));
         } else {
-            $obj = $this->connect->prepare("SELECT * FROM dieu WHERE TRIM(ten_dieu) = ? LIMIT 1");
+            $obj = $this->connect->prepare("SELECT * FROM dieu WHERE TRIM(ten_dieu) = ? AND is_deleted = 0 LIMIT 1");
             $obj->setFetchMode(PDO::FETCH_OBJ);
             $obj->execute(array($ten_dieu));
         }
@@ -58,8 +58,7 @@ class dieu extends Database {
 
     public function dieu__Update($id_dieu, $ten_dieu, $ghi_chu, $thu_tu) {
         $obj = $this->connect->prepare("UPDATE dieu SET ten_dieu=?, ghi_chu=?, thu_tu=? WHERE id_dieu=?");
-        $obj->execute(array($ten_dieu, $ghi_chu, $thu_tu, $id_dieu));
-        return $obj->rowCount();
+        return $obj->execute(array($ten_dieu, $ghi_chu, $thu_tu, $id_dieu));
     }
     
 
@@ -215,25 +214,37 @@ class dieu extends Database {
     }
 
     public function dieu__DeleteWithChildren($id_dieu) {
-        // Quân sửa: Thực hiện xóa cascade toàn bộ Khoản, Mục, BoCauHoi và Điều theo yêu cầu mới. Transaction được quản lý ở Controller.
+        // Quân sửa: Thực hiện xóa cascade toàn bộ Khoản, Mục, BoCauHoi và Điều theo yêu cầu mới. 
+        // Có kết hợp kiểm tra Xoá mềm/Xoá cứng.
         try {
-            // 1 & 2 & 3. Tìm Khoản của Điều và Xóa Mục thuộc các Khoản đó
-            $stmtMuc = $this->connect->prepare("DELETE FROM muc WHERE id_khoan IN (SELECT id_khoan FROM khoan WHERE id_dieu = ?)");
-            $stmtMuc->execute(array($id_dieu));
+            if ($this->dieu__Is_Used_In_Bocauhoi($id_dieu)) {
+                // Đã có lịch sử -> Xoá mềm (chỉ đánh dấu is_deleted = 1)
+                $stmtMuc = $this->connect->prepare("UPDATE muc SET is_deleted = 1 WHERE id_khoan IN (SELECT id_khoan FROM khoan WHERE id_dieu = ?)");
+                $stmtMuc->execute(array($id_dieu));
 
-            // 4. Xóa Khoản thuộc Điều
-            $stmtKhoan = $this->connect->prepare("DELETE FROM khoan WHERE id_dieu = ?");
-            $stmtKhoan->execute(array($id_dieu));
+                $stmtKhoan = $this->connect->prepare("UPDATE khoan SET is_deleted = 1 WHERE id_dieu = ?");
+                $stmtKhoan->execute(array($id_dieu));
 
-            // 5. Xóa quan hệ bocauhoi tham chiếu đến Điều
-            $stmtBoCauHoi = $this->connect->prepare("DELETE FROM bocauhoi WHERE id_dieu = ?");
-            $stmtBoCauHoi->execute(array($id_dieu));
+                $stmtDieu = $this->connect->prepare("UPDATE dieu SET is_deleted = 1 WHERE id_dieu = ?");
+                $stmtDieu->execute(array($id_dieu));
 
-            // 6. Xóa Điều
-            $stmtDieu = $this->connect->prepare("DELETE FROM dieu WHERE id_dieu = ?");
-            $stmtDieu->execute(array($id_dieu));
+                return $stmtDieu->rowCount() > 0;
+            } else {
+                // Chưa có lịch sử -> Xoá cứng vĩnh viễn
+                $stmtMuc = $this->connect->prepare("DELETE FROM muc WHERE id_khoan IN (SELECT id_khoan FROM khoan WHERE id_dieu = ?)");
+                $stmtMuc->execute(array($id_dieu));
 
-            return $stmtDieu->rowCount() > 0;
+                $stmtKhoan = $this->connect->prepare("DELETE FROM khoan WHERE id_dieu = ?");
+                $stmtKhoan->execute(array($id_dieu));
+
+                $stmtBoCauHoi = $this->connect->prepare("DELETE FROM bocauhoi WHERE id_dieu = ?");
+                $stmtBoCauHoi->execute(array($id_dieu));
+
+                $stmtDieu = $this->connect->prepare("DELETE FROM dieu WHERE id_dieu = ?");
+                $stmtDieu->execute(array($id_dieu));
+
+                return $stmtDieu->rowCount() > 0;
+            }
         } catch (Exception $e) {
             throw $e;
         }

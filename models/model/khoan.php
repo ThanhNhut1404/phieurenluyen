@@ -44,18 +44,23 @@ class khoan extends Database {
     // quân sửa: Bổ sung tham số so_luong_muc vào hàm Sửa
     public function khoan__Update($id_khoan, $ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc) {
         $obj = $this->connect->prepare("UPDATE khoan SET ten_khoan=?, ghi_chu=?, can_tren=?, thu_tu=?, id_dieu=?, so_luong_muc=? WHERE id_khoan=?");
-        $obj->execute(array($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc, $id_khoan));
-        return $obj->rowCount();
+        return $obj->execute(array($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc, $id_khoan));
     }
     
 
     public function khoan__Delete($id_khoan) {
         // quân sửa: Soft delete kết hợp Hard delete
         if ($this->khoan__Is_Used_In_Bocauhoi($id_khoan)) {
+            $stmtMuc = $this->connect->prepare("UPDATE muc SET is_deleted = 1 WHERE id_khoan = ?");
+            $stmtMuc->execute(array($id_khoan));
+
             $obj = $this->connect->prepare("UPDATE khoan SET is_deleted = 1 WHERE id_khoan = ?");
             $obj->execute(array($id_khoan));
             return $obj->rowCount();
         } else {
+            $stmtMuc = $this->connect->prepare("DELETE FROM muc WHERE id_khoan = ?");
+            $stmtMuc->execute(array($id_khoan));
+
             $obj = $this->connect->prepare("DELETE FROM khoan WHERE id_khoan = ?");
             $obj->execute(array($id_khoan));
             return $obj->rowCount();

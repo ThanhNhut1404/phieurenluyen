@@ -112,8 +112,8 @@
                         <div class="col-6">
                             <!-- quân sửa: Xoá ô nhập Thứ tự ở đây vì đã tự động đồng bộ theo Điều -->
                             <div class="form-group">
-                                <label class="label-sidebar" for="can_tren_up">Điểm tối đa</label>
-                                <input type="number" id="can_tren_up" name="can_tren" class="form-control <?= ($is_update_error && $status == 'invalid-diem') ? 'is-invalid' : '' ?>"
+                                <label class="label-sidebar" for="can_tren_up">Điểm tối đa <span class="color-crimson">*</span></label>
+                                <input type="number" id="can_tren_up" name="can_tren" class="form-control <?= ($is_update_error && $status == 'invalid-diem') ? 'is-invalid' : '' ?>" required
                                     placeholder="Nhập điểm tối đa" value="<?=khoan_update_escape(khoan_update_old_value('can_tren', $khoan__Get_By_Id->id_khoan, $khoan__Get_By_Id->can_tren))?>">
                                 <?php if ($is_update_error && $status == 'invalid-diem'): ?>
                                     <small class="text-danger mt-1">Điểm tối đa không hợp lệ.</small>
@@ -133,9 +133,9 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="label-sidebar" for="ghi_chu_up">Nội dung chi tiết <span class="color-crimson">*</span></label>
+                        <label class="label-sidebar" for="ghi_chu_up">Nội dung chi tiết</label>
                         <textarea id="ghi_chu_up" name="ghi_chu" class="form-control" placeholder="Nhập nội dung chi tiết"
-                            required><?=khoan_update_escape(khoan_update_old_value('ghi_chu', $khoan__Get_By_Id->id_khoan, $khoan__Get_By_Id->ghi_chu))?></textarea>
+                            ><?=khoan_update_escape(khoan_update_old_value('ghi_chu', $khoan__Get_By_Id->id_khoan, $khoan__Get_By_Id->ghi_chu))?></textarea>
                     </div>
                 </div>
                 <!-- /.card-body -->

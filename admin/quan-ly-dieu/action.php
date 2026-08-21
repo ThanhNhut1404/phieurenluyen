@@ -79,8 +79,7 @@
                     // Nhựt sửa lỗi: Thêm Điều có swap gồm nhiều câu SQL nên phải dùng transaction.
                     $dieu->connect->beginTransaction();
                     dieu__Lock_All($dieu);
-
-                    // Nhựt sửa lỗi: Tên Điều là dữ liệu danh mục, không được trùng sau khi trim.
+                    // Nhựt sửa lỗi: Tên Điều không được trùng, check sau khi lock table.
                     if ($dieu->dieu__Get_By_Ten($ten_dieu)) {
                         $error_status = 'duplicate-name';
                         throw new Exception("Dieu da ton tai");
@@ -168,8 +167,7 @@
                         $error_status = 'locked_update';
                         throw new Exception("Dieu da phat sinh trong dot cham diem");
                     }
-
-                    // Nhựt sửa lỗi: Không cho đổi tên sang tên Điều đã tồn tại ở bản ghi khác.
+                    // Nhựt sửa lỗi: Tên Điều cập nhật không được trùng với Điều khác.
                     if ($dieu->dieu__Get_By_Ten($ten_dieu, $id_dieu)) {
                         $error_status = 'duplicate-name';
                         throw new Exception("Dieu da ton tai");

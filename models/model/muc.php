@@ -42,10 +42,9 @@ class muc extends Database {
     }
 
     // quân sửa: Bổ sung tham số diem_toi_da và co_minh_chung
-    public function muc__Update($id_muc, $ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da, $co_minh_chung = 0) {
+    public function muc__Update($id_muc, $ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da, $co_minh_chung) {
         $obj = $this->connect->prepare("UPDATE muc SET ten_muc=?, ghi_chu=?, thu_tu=?, id_khoan=?, quyen_sv=?, quyen_lt=?, quyen_btdk=?, quyen_gv=?, diem_toi_da=?, co_minh_chung=? WHERE id_muc=?");
-        $obj->execute(array($ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da, $co_minh_chung, $id_muc));
-        return $obj->rowCount();
+        return $obj->execute(array($ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da, $co_minh_chung, $id_muc));
     }
     
 

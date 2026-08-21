@@ -126,7 +126,7 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
 
 
         ?>
-        <link rel="stylesheet" href="../../assets/css/user.css">
+        <link rel="stylesheet" href="../../assets/css/user.css?v=<?=time()?>">
         <?php if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) : ?>
             <!-- Content Wrapper. Contains page content -->
             <div class="ml-0 mr-3 content-wrapper">
@@ -267,7 +267,7 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
                                                 <table class="table no-border text-center">
                                                     <tbody>
                                                         <tr>
-                                                            <th class="p-0">
+                                                            <th class="p-0" style="font-size: 1.15em;">
                                                                 <?= $dieu->dieu__Get_By_Id($item_1->id_dieu)->ten_dieu ?>
                                                             </th>
                                                         </tr>
@@ -325,20 +325,37 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
                                                                 </tr>
                                                                 <tr class="border-bottom">
                                                                     <td class="w-60 no-border full vertical-align-middle">
-                                                                        - <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
+                                                                        <?= $muc->muc__Get_By_Id($item_3->id_muc)->ten_muc ?>
                                                                     </td>
 
-                                                                    <td class="w-10 no-border full vertical-align-middle">
-                                                                        <input type="number" class="form-control kq_sv" name="kq_sv[]" pattern="[-+]?[0-9]{1-2}" title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0" max="<?= $item_2->can_tren ?>" required disabled value="<?= $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i] ?>">
+                                                                    <?php
+    $quyen_sv = $muc->muc__Get_By_Id($item_3->id_muc)->quyen_sv;
+    $quyen_lt = $muc->muc__Get_By_Id($item_3->id_muc)->quyen_lt;
+    $quyen_btdk = $muc->muc__Get_By_Id($item_3->id_muc)->quyen_btdk;
+    $quyen_gv = $muc->muc__Get_By_Id($item_3->id_muc)->quyen_gv;
+
+    $val_sv = isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i] : 0;
+    
+    $val_lt = isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i] : 0;
+    if ($quyen_lt == 0) $val_lt = $val_sv;
+    
+    $val_btdk = isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i] : 0;
+    if ($quyen_btdk == 0) $val_btdk = $val_lt;
+    
+    $val_gv = isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i] : 0;
+    if ($quyen_gv == 0) $val_gv = $val_btdk;
+?>
+<td class="w-10 no-border full vertical-align-middle">
+                                                                        <input type="number" class="form-control kq_sv" style="<?= $muc->muc__Get_By_Id($item_3->id_muc)->quyen_sv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8; color: transparent !important; -webkit-text-fill-color: transparent !important;' : '' ?>" name="kq_sv[]" pattern="[-+]?[0-9]{1-2}" title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" placeholder="0" min="0" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" required disabled value="<?= $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)[$i] ?>">
                                                                     </td>
                                                                     <td class="w-10 no-border full vertical-align-middle">
-                                                                        <input type="number" class="form-control kq_lt_bt" name="kq_lt_bt[]" pattern="[-+]?[0-9]{1-2}" title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0" max="<?= $item_2->can_tren ?>" required disabled value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt)[$i] : 00 ?>">
+                                                                        <input type="number" class="form-control kq_lt_bt" style="<?= $muc->muc__Get_By_Id($item_3->id_muc)->quyen_lt == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8; color: transparent !important; -webkit-text-fill-color: transparent !important;' : '' ?>" name="kq_lt_bt[]" pattern="[-+]?[0-9]{1-2}" title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" placeholder="0" min="0" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" required disabled value="<?= $val_lt == 0 ? '' : $val_lt ?>">
                                                                     </td>
                                                                     <td class="w-10 no-border full vertical-align-middle">
-                                                                        <input type="number" class="form-control kq_btdk" name="kq_btdk[]" pattern="[-+]?[0-9]{1-2}" title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0" max="<?= $item_2->can_tren ?>" required disabled value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk)[$i] : 00 ?>">
+                                                                        <input type="number" class="form-control kq_btdk" style="<?= $muc->muc__Get_By_Id($item_3->id_muc)->quyen_btdk == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8; color: transparent !important; -webkit-text-fill-color: transparent !important;' : '' ?>" name="kq_btdk[]" pattern="[-+]?[0-9]{1-2}" title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" placeholder="0" min="0" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" required disabled value="<?= $val_btdk == 0 ? '' : $val_btdk ?>">
                                                                     </td>
                                                                     <td class="w-10 no-border full vertical-align-middle">
-                                                                        <input type="number" class="form-control kq_gv" name="kq_gv[]" pattern="[-+]?[0-9]{1-2}" title="max is <?= $item_2->can_tren ?>" placeholder="0" min="0" max="<?= $item_2->can_tren ?>" required disabled value="<?= isset($phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i]) ? $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)[$i] : 00 ?>">
+                                                                        <input type="number" class="form-control kq_gv" style="<?= $muc->muc__Get_By_Id($item_3->id_muc)->quyen_gv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8; color: transparent !important; -webkit-text-fill-color: transparent !important;' : '' ?>" name="kq_gv[]" pattern="[-+]?[0-9]{1-2}" title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" placeholder="0" min="0" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" required disabled value="<?= $val_gv == 0 ? '' : $val_gv ?>">
                                                                     </td>
 
                                             </td>

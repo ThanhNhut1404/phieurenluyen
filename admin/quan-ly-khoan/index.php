@@ -59,21 +59,7 @@
                      </ol>
                  </div>
              </div>
-             <!-- quân sửa: Cảnh báo khi dữ liệu đang bị khoá bởi Đợt chấm điểm -->
-             <?php if(isset($_GET['status']) && $_GET['status'] == 'locked_by_dotchamdiem'): ?>
-                 <div class="alert alert-danger alert-dismissible mt-2">
-                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                     <h5><i class="icon fas fa-lock"></i> Thao tác thất bại!</h5>
-                     Dữ liệu này đang được sử dụng trong một Đợt chấm điểm đang diễn ra. Bạn không thể Sửa hoặc Xoá vào lúc này!
-                 </div>
-             <?php endif; ?>
-             <?php if(isset($_GET['status']) && $_GET['status'] == 'locked_update'): ?>
-                 <div class="alert alert-danger alert-dismissible mt-2">
-                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                     <h5><i class="icon fas fa-lock"></i> Thao tác thất bại!</h5>
-                     Dữ liệu này đã được sử dụng trong một Đợt chấm điểm. Để bảo toàn lịch sử, bạn không thể Sửa dữ liệu này. Hãy tạo mới thay thế!
-                 </div>
-             <?php endif; ?>
+
          </div><!-- /.container-fluid -->
      </section>
 
@@ -131,9 +117,9 @@
                          <div class="row">
                              <div class="col-6">
                                  <div class="form-group">
-                                     <label class="label-sidebar" for="can_tren">Điểm tối đa</label>
-                                     <input type="number" id="can_tren" name="can_tren" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-diem') ? 'is-invalid' : '' ?>"
-                                         placeholder="Nhập điểm tối đa" value="<?=khoan_escape(khoan_old_value('can_tren', 'add'))?>">
+                                      <label class="label-sidebar" for="can_tren">Điểm tối đa <span class="color-crimson">*</span></label>
+                                      <input type="number" id="can_tren" name="can_tren" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-diem') ? 'is-invalid' : '' ?>" required
+                                          placeholder="Nhập điểm tối đa" value="<?=khoan_escape(khoan_old_value('can_tren', 'add'))?>">
                                      <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-diem'): ?>
                                          <small class="text-danger mt-1">Điểm tối đa không hợp lệ.</small>
                                      <?php endif; ?>
@@ -152,8 +138,8 @@
                              </div>
                          </div>
                          <div class="form-group">
-                             <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết <span class="color-crimson">*</span></label>
-                             <textarea id="ghi_chu" name="ghi_chu" class="form-control" required
+                             <label class="label-sidebar" for="ghi_chu">Nội dung chi tiết</label>
+                             <textarea id="ghi_chu" name="ghi_chu" class="form-control"
                                  placeholder="Nhập nội dung chi tiết"><?=khoan_escape(khoan_old_value('ghi_chu', 'add'))?></textarea>
                          </div>
                      </div>
@@ -520,7 +506,14 @@ window.addEventListener("load", function() {
     update_obj(<?=(int)$khoan_old_input['id_khoan']?>, '<?=$_GET['status'] ?? ''?>');
 });
 <?php endif; ?>
+
+window.addEventListener("load", function() {
+    <?php if (isset($_GET['status'])): ?>
+        <?php if ($_GET['status'] == 'locked_by_dotchamdiem'): ?>
+            Toast.fire('Cảnh báo!', 'Dữ liệu này đang được sử dụng trong một Đợt chấm điểm. Bạn không thể Sửa/Xoá vào lúc này!', 'warning');
+        <?php elseif ($_GET['status'] == 'locked_update'): ?>
+            Toast.fire('Cảnh báo!', 'Dữ liệu này đã sử dụng trong lịch sử. Vui lòng tạo mới thay vì sửa!', 'warning');
+        <?php endif; ?>
+    <?php endif; ?>
+});
  </script>
-
-
-

@@ -178,3 +178,32 @@ input:invalid {
     height: 100%;
     width: 100%;
 }
+/* Overwrite main.css rule that makes the first column bold by default */
+.table tbody td.criterion-text-cell:not(.font-weight-bold),
+.table tbody td.w-60.no-border.full.vertical-align-middle {
+    font-weight: normal !important;
+    padding-left: 20px !important;
+    vertical-align: middle !important;
+}
+
+.table tbody td.criterion-text-cell:not(.font-weight-bold) p,
+.table tbody td.w-60.no-border.full.vertical-align-middle p {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Tăng kích thước chữ cho Tên Khoản */
+.table tbody td.criterion-text-cell.font-weight-bold,
+th.w-100.table.table-border {
+    font-size: 1.15em !important;
+}
+
+.btn-evidence-custom { background-color: white !important; color: #003366 !important; border: 1px solid #003366 !important; border-radius: 6px !important; transition: all 0.2s ease-in-out; }
+.btn-evidence-custom:hover { background-color: #e6ebf0 !important; color: #003366 !important; }
+
+
+.bg-custom-dark { background-color: #003366 !important; color: white !important; }
+.btn-upload-custom { color: #003366 !important; border-color: #003366 !important; background-color: transparent !important; }
+.btn-upload-custom:hover { background-color: #e6ebf0 !important; }
+
+

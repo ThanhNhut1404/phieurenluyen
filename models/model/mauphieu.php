@@ -41,8 +41,7 @@ class mauphieu extends Database {
 
     public function mauphieu__Update($id_mau_phieu, $ten_mau_phieu, $ghi_chu) {
         $obj = $this->connect->prepare("UPDATE mauphieu SET ten_mau_phieu=?, ghi_chu=? WHERE id_mau_phieu=?");
-        $obj->execute(array($ten_mau_phieu, $ghi_chu, $id_mau_phieu));
-        return $obj->rowCount();
+        return $obj->execute(array($ten_mau_phieu, $ghi_chu, $id_mau_phieu));
     }
     
 
