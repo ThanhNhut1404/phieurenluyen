@@ -54,7 +54,7 @@
                 <div class="col">
                     <label for="">Sinh viên tự chấm</label>
                     <a class="form-control"
-                        href="?page=lop-truong-tu-cham&id_dot=<?=$id_dot?>&id_sinh_vien=<?=$item->id_sinh_vien?>">Sinh
+                        href="?page=lop-truong-tu-cham&id_dot=<?=$id_dot?>&id_sinh_vien=<?=$id_sinh_vien?>">Sinh
                         viên tự chấm</a>
                 </div>
             </div>
@@ -173,7 +173,7 @@
                                         <tbody>
                                             <tr>
                                                 <td class="w-90 no-border full  h-0 ">
-                                                    <?=$dw?>
+                                                    
                                                 </td>
                                                 <td class="w-10 h-0 no-border full  h-0">
                                                     Sv tự chấm

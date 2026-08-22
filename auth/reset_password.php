@@ -15,7 +15,7 @@
     <meta name="description" content="Chấm Điểm Rèn Luyện">
     
     <!-- Google Font: Plus Jakarta Sans & Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="../assets/css/source-sans-pro.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="../assets/theme/plugins/fontawesome-free/css/all.min.css">
     <!-- AdminLTE & Bootstrap -->

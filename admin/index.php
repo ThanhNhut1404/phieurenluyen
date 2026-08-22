@@ -20,7 +20,7 @@ if (!isset($_SESSION['admin'])) {
     <!-- CSS Files -->
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+        href="../assets/css/source-sans-pro.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="../assets/theme/plugins/fontawesome-free/css/all.min.css">
 
@@ -35,7 +35,7 @@ if (!isset($_SESSION['admin'])) {
     <link rel="stylesheet" href="../assets/css/main.css?v=8">
 
     <link rel="stylesheet" href="../assets/theme/plugins/summernote/summernote-bs4.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="../assets/remixicon/fonts/remixicon.css" rel="stylesheet" />
 
 </head>
 
