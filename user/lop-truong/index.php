@@ -109,7 +109,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
     $bocauhoi__Get_By_Id_Mau_Phieu = $bocauhoi->bocauhoi__Get_By_Id_Mau_Phieu($id_mau_phieu);
 
-    $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_ap_dung, $id_dot, $id_sinh_vien);
+    $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($lophoc__Get_By_Id->id_lop_hoc, $id_dot, $id_sinh_vien);
 }
 
 
@@ -156,10 +156,10 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                     <label>Lọc sinh viên</label>
                                     <select class="form-control" name="filter" onchange="this.form.submit()">
                                         <option value="all" <?= $filter == 'all' ? 'selected' : '' ?>>Tất cả sinh viên</option>
-                                        <option value="da_tu_cham" <?= $filter == 'da_tu_cham' ? 'selected' : '' ?>>Đã tự chấm</option>
-                                        <option value="chua_tu_cham" <?= $filter == 'chua_tu_cham' ? 'selected' : '' ?>>Chưa tự chấm</option>
-                                        <option value="da_lt_cham" <?= $filter == 'da_lt_cham' ? 'selected' : '' ?>>Đã được lớp trưởng chấm</option>
-                                        <option value="chua_lt_cham" <?= $filter == 'chua_lt_cham' ? 'selected' : '' ?>>Chưa được lớp trưởng chấm</option>
+                                        <option value="da_tu_cham" <?= $filter == 'da_tu_cham' ? 'selected' : '' ?>>Cá nhân đã đánh giá</option>
+                                        <option value="chua_tu_cham" <?= $filter == 'chua_tu_cham' ? 'selected' : '' ?>>Cá nhân chưa đánh giá</option>
+                                        <option value="da_lt_cham" <?= $filter == 'da_lt_cham' ? 'selected' : '' ?>>Lớp trưởng đã chấm</option>
+                                        <option value="chua_lt_cham" <?= $filter == 'chua_lt_cham' ? 'selected' : '' ?>>Lớp trưởng chưa chấm</option>
                                     </select>
                                 </div>
                                 <div class="col-md-5">
@@ -197,14 +197,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     </section>
     <section class="content">
 
-        <div class="card overflow-auto w-100">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col">
-                        <h3 class="card-title text-center font-weight-bold w-100 mt-3 mb-3">
-                            <?php if ($mode == 'lop' && ($id_sinh_vien == '' || $id_sinh_vien == -2)): ?>Vui lòng chọn một sinh viên trong danh sách để bắt đầu chấm điểm<?php else: ?>Bạn không có trong đợt này<?php endif; ?></h3>
-                    </div>
-                </div>
+        <div class="card overflow-auto w-100 mt-3">
+            <div class="card-header p-3">
+                <h3 class="card-title text-center text-danger font-weight-bold m-0" style="float: none;">
+                    <?php if ($mode == 'lop' && ($id_sinh_vien == '' || $id_sinh_vien == -2)): ?>Vui lòng chọn một sinh viên trong danh sách để bắt đầu chấm điểm<?php else: ?>Bạn không có trong đợt này<?php endif; ?>
+                </h3>
             </div>
         </div>
     </section>
@@ -236,10 +233,10 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                     <label>Lọc sinh viên</label>
                                     <select class="form-control" name="filter" onchange="this.form.submit()">
                                         <option value="all" <?= $filter == 'all' ? 'selected' : '' ?>>Tất cả sinh viên</option>
-                                        <option value="da_tu_cham" <?= $filter == 'da_tu_cham' ? 'selected' : '' ?>>Đã tự chấm</option>
-                                        <option value="chua_tu_cham" <?= $filter == 'chua_tu_cham' ? 'selected' : '' ?>>Chưa tự chấm</option>
-                                        <option value="da_lt_cham" <?= $filter == 'da_lt_cham' ? 'selected' : '' ?>>Đã được lớp trưởng chấm</option>
-                                        <option value="chua_lt_cham" <?= $filter == 'chua_lt_cham' ? 'selected' : '' ?>>Chưa được lớp trưởng chấm</option>
+                                        <option value="da_tu_cham" <?= $filter == 'da_tu_cham' ? 'selected' : '' ?>>Cá nhân đã đánh giá</option>
+                                        <option value="chua_tu_cham" <?= $filter == 'chua_tu_cham' ? 'selected' : '' ?>>Cá nhân chưa đánh giá</option>
+                                        <option value="da_lt_cham" <?= $filter == 'da_lt_cham' ? 'selected' : '' ?>>Lớp trưởng đã chấm</option>
+                                        <option value="chua_lt_cham" <?= $filter == 'chua_lt_cham' ? 'selected' : '' ?>>Lớp trưởng chưa chấm</option>
                                     </select>
                                 </div>
                                 <div class="col-md-5">
@@ -423,9 +420,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         </div>
                     </div>
                     <div class="results-summary">
+                        <div><strong>Ngày xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai : "Chưa tổng kết" ?></div>
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
-                        <div><strong>Ngày xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai : "Chưa tổng kết" ?></div>
                         <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
                         <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                         <?php endif; ?>

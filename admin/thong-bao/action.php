@@ -76,7 +76,7 @@ if (isset($_GET["req"]) && $_GET["req"] == 'tao_tai_khoan') {
     $mat_khau_goc = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
     $ghi_chu = date("Y-m-d H:i:s");
 
-    $mat_khau_ma_hoa = $hashpassword->Encryption($mat_khau_goc);
+    $mat_khau_ma_hoa = password_hash($mat_khau_goc, PASSWORD_BCRYPT);
 
     // Kiểm tra xem sinh viên đã có tài khoản nào chưa (do data cũ có thể tạo tài khoản rác user284@gmail.com)
     $tk_exist = $taikhoan->taikhoan__Get_By_Sinh_Vien($sv->id_sinh_vien);

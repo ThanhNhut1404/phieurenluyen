@@ -273,9 +273,9 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
                             </div>
                         </div>
                         <div class="results-summary">
-                            <div><strong>Điểm rèn luyện:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
-                            <div><strong>Xếp loại:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                             <div><strong>Ngày xếp loại:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai : "Chưa tổng kết" ?></div>
+                        <div><strong>Điểm rèn luyện:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
+                        <div><strong>Xếp loại:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                             <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ghi_chu : "" ?></div>
                         </div>
                     </div>

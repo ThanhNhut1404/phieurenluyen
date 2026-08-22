@@ -18,7 +18,7 @@ if (empty($email) || empty($mat_khau)) {
 }
 
 // Kiểm tra đăng nhập
-$status = $taikhoan->taikhoan__Check_Login($email, $hashpassword->Encryption($mat_khau));
+$status = $taikhoan->taikhoan__Check_Login($email, $mat_khau);
 
 if ($status != "0") {
     // Đăng nhập thành công, tạo token ngẫu nhiên

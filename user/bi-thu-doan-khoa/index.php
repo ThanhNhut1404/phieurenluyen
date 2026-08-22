@@ -206,14 +206,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     <section class="content">
 
         
-<div class="card overflow-auto w-100">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col">
-                        <h3 class="card-title text-center font-weight-bold w-100 mt-3 mb-3">
-                            <?php if ($id_sinh_vien == '' || $id_sinh_vien == -2): ?>Vui lòng chọn một sinh viên trong danh sách để bắt đầu chấm điểm<?php else: ?>Sinh viên này không có phiếu đánh giá trong đợt này<?php endif; ?></h3>
-                    </div>
-                </div>
+<div class="card overflow-auto w-100 mt-3">
+            <div class="card-header p-3">
+                <h3 class="card-title text-center text-danger font-weight-bold m-0" style="float: none;">
+                    <?php if ($id_sinh_vien == '' || $id_sinh_vien == -2): ?>Vui lòng chọn một sinh viên trong danh sách để bắt đầu chấm điểm<?php else: ?>Sinh viên này không có phiếu đánh giá trong đợt này<?php endif; ?>
+                </h3>
             </div>
         </div>
     </section>
@@ -329,9 +326,13 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
             <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
 <?php if (!$lt_has_scored): ?>
-    <div class="alert alert-warning text-center">
-        <strong>Sinh viên này chưa được Lớp trưởng/Bí thư chấm điểm.</strong> Bạn không thể chấm điểm lúc này.
+    <div class="card overflow-auto w-100 mt-3">
+    <div class="card-header p-3">
+        <h3 class="card-title text-center text-danger font-weight-bold m-0" style="float: none;">
+            Sinh viên này chưa được Lớp trưởng/Bí thư chấm điểm. Bạn không thể chấm điểm lúc này.
+        </h3>
     </div>
+</div>
 <?php endif; ?>
             <div class="card overflow-auto w-100">
                 <div class="card-header p-0" style="border-bottom: none;">
@@ -445,9 +446,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         </div>
                     </div>
                     <div class="results-summary">
+                        <div><strong>Ngày xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai : "Chưa tổng kết" ?></div>
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
-                        <div><strong>Ngày xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai : "Chưa tổng kết" ?></div>
                         <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
                         <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                         <?php endif; ?>

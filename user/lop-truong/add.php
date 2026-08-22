@@ -38,7 +38,7 @@
         $sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_LTBT($id_dot, $lophoc__Get_By_Id->id_lop_hoc, -1);
         $sinhvien__Get_By_Id_Lop_Hoc_Da_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_LTBT($id_dot, $lophoc__Get_By_Id->id_lop_hoc, null);
     
-        $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_ap_dung, $id_dot, $id_sinh_vien);
+        $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($lophoc__Get_By_Id->id_lop_hoc, $id_dot, $id_sinh_vien);
     }
   
 

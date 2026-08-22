@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $mat_khau_ma_hoa = $hashpassword->Encryption($new_password);
+    $mat_khau_ma_hoa = password_hash($new_password, PASSWORD_BCRYPT);
     
     $status = $taikhoan->taikhoan__Reset_Password_By_Email($email, $mat_khau_ma_hoa);
     

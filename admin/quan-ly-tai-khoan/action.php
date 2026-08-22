@@ -88,7 +88,7 @@ if (isset($_GET["req"])) {
                 exit();
             }
 
-            $status = $taikhoan->taikhoan__Add($email, $hashpassword->Encryption($mat_khau), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $id_nguoi_dung);
+            $status = $taikhoan->taikhoan__Add($email, password_hash($mat_khau, PASSWORD_BCRYPT), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $id_nguoi_dung);
             if ($status != 0) {
                 unset($_SESSION['taikhoan_old_input']);
                 header("location: $href&status=success");
@@ -119,7 +119,7 @@ if (isset($_GET["req"])) {
 
                     // Check duplicate email to avoid DB UNIQUE error
                     if (!$taikhoan->taikhoan__Exists_Email($email)) {
-                        $status += $taikhoan->taikhoan__Add($email, $hashpassword->Encryption($mat_khau), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
+                        $status += $taikhoan->taikhoan__Add($email, password_hash($mat_khau, PASSWORD_BCRYPT), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
                     }
                 }
             }
@@ -147,7 +147,7 @@ if (isset($_GET["req"])) {
                     $ghi_chu = date("Y-m-d H:i:s");
 
                     if (!$taikhoan->taikhoan__Exists_Email($email)) {
-                        $status += $taikhoan->taikhoan__Add($email, $hashpassword->Encryption($mat_khau), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
+                        $status += $taikhoan->taikhoan__Add($email, password_hash($mat_khau, PASSWORD_BCRYPT), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
                     }
                 }
             }
@@ -182,7 +182,7 @@ if (isset($_GET["req"])) {
                     $ghi_chu = date("Y-m-d H:i:s");
 
                     if (!$taikhoan->taikhoan__Exists_Email($email)) {
-                        $status += $taikhoan->taikhoan__Add($email, $hashpassword->Encryption($mat_khau), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
+                        $status += $taikhoan->taikhoan__Add($email, password_hash($mat_khau, PASSWORD_BCRYPT), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
                     }
                 }
             }
@@ -211,7 +211,7 @@ if (isset($_GET["req"])) {
             $status = 0;
             $id_tai_khoan = isset($_GET["id_tai_khoan"]) ? $_GET["id_tai_khoan"] : '';
             $mat_khau = '123456';
-            $status = $taikhoan->taikhoan__Reset($id_tai_khoan, $hashpassword->Encryption($mat_khau));
+            $status = $taikhoan->taikhoan__Reset($id_tai_khoan, password_hash($mat_khau, PASSWORD_BCRYPT));
 
             if ($status != 0) {
                 header("location: $href&status=success");

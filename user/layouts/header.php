@@ -45,7 +45,7 @@
                     if(isset($_GET['id_dot'])){
                         $id_dot = $_GET['id_dot'];
                     }
-                    echo $dotchamdiem->dotchamdiem__Get_By_Id($id_dot)->ten_dot." - ".$dotchamdiem->dotchamdiem__Get_By_Id($id_dot)->ten_hoc_ky."(".$dotchamdiem->dotchamdiem__Get_By_Id($id_dot)->ten_nam_hoc.")";
+                    echo $dotchamdiem->dotchamdiem__Get_By_Id($id_dot)->ten_dot." - ".$dotchamdiem->dotchamdiem__Get_By_Id($id_dot)->ten_hoc_ky." - ".$dotchamdiem->dotchamdiem__Get_By_Id($id_dot)->ten_nam_hoc;
                     ?>
                 <i class="fas fa-caret-down"></i>
             </a>
@@ -53,9 +53,8 @@
             <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
                 <?php foreach($dotchamdiem->dotchamdiem__Get_All() as $item):?>
                 <a href="?page=thong-ke&id_dot=<?=$item->id_dot?>" class="dropdown-item">
-                    <i class="fas fa-file"></i>
 
-                    <?=$item->ten_dot." - ".$item->ten_hoc_ky."(".$item->ten_nam_hoc.")"?>
+                    <?=$item->ten_dot." - ".$item->ten_hoc_ky." - ".$item->ten_nam_hoc?>
                 </a>
                 <?php endforeach; ?>
             </div>

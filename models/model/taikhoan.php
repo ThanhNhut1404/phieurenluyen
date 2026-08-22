@@ -116,16 +116,33 @@ class taikhoan extends Database
         return $obj->fetchAll();
     }
 
-    public function taikhoan__Check_Login($email, $mat_khau)
+    public function taikhoan__Check_Login($email, $mat_khau_plaintext)
     {
-        $obj = $this->connect->prepare("SELECT * FROM taikhoan WHERE email =? AND mat_khau = ? AND trang_thai=1");
+        $obj = $this->connect->prepare("SELECT * FROM taikhoan WHERE email = ? AND trang_thai=1");
         $obj->setFetchMode(PDO::FETCH_OBJ);
-        $obj->execute(array($email, $mat_khau));
+        $obj->execute(array($email));
         if ($obj->rowCount() > 0) {
-            return $obj->fetch();
-        } else {
-            return 0;
+            $user = $obj->fetch();
+            
+            // 1. Kiểm tra bằng bcrypt
+            if (password_verify($mat_khau_plaintext, $user->mat_khau)) {
+                return $user;
+            }
+            
+            // 2. Nếu không khớp, thử kiểm tra bằng AES (dành cho tài khoản cũ chưa migrate)
+            require_once 'hashpassword.php';
+            $hashpassword = new hashpassword();
+            if ($hashpassword->Encryption($mat_khau_plaintext) === $user->mat_khau) {
+                // Mật khẩu cũ đúng -> Thực hiện Graceful Migration (Chuyển sang Bcrypt)
+                $new_hash = password_hash($mat_khau_plaintext, PASSWORD_BCRYPT);
+                $update_obj = $this->connect->prepare("UPDATE taikhoan SET mat_khau=? WHERE id_tai_khoan=?");
+                $update_obj->execute(array($new_hash, $user->id_tai_khoan));
+                
+                $user->mat_khau = $new_hash;
+                return $user;
+            }
         }
+        return 0;
     }
 
     public function taikhoan__Get_By_Sinh_Vien($id_nguoi_dung)

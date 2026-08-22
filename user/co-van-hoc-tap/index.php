@@ -191,9 +191,13 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
                 <!-- Quân sửa: Thêm cảnh báo nếu sinh viên chưa được BCH Đoàn khoa chấm điểm -->
                 <?php if (!$btdk_has_scored): ?>
-                    <div class="alert alert-warning text-center">
-                        <strong>Sinh viên này chưa được Ban chấp hành Đoàn khoa chấm điểm.</strong> Bạn không thể chấm điểm lúc này.
-                    </div>
+                <div class="card overflow-auto w-100 mt-3">
+    <div class="card-header p-3">
+        <h3 class="card-title text-center text-danger font-weight-bold m-0" style="float: none;">
+            Sinh viên này chưa được Ban chấp hành Đoàn khoa chấm điểm. Bạn không thể chấm điểm lúc này.
+        </h3>
+    </div>
+</div>
                 <?php endif; ?>
                 <div class="card overflow-auto w-100">
                     <div class="card-header p-0" style="border-bottom: none;">
@@ -307,9 +311,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                             </div>
                         </div>
                         <div class="results-summary">
-                            <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
-                            <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                             <div><strong>Ngày xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai : "Chưa tổng kết" ?></div>
+                        <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
+                        <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                             <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
                             <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                             <?php endif; ?>

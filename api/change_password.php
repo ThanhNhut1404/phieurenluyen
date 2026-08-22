@@ -27,18 +27,20 @@ if (!$data || !isset($data['old_password']) || !isset($data['new_password'])) {
 $old_password = $data['old_password'];
 $new_password = $data['new_password'];
 
-// Kiểm tra mật khẩu cũ (cần mã hóa trước khi so sánh)
-$old_password_hash = $hashpassword->Encryption($old_password);
-if ($tai_khoan->mat_khau !== $old_password_hash) {
-    response_json("error", "Mật khẩu cũ không chính xác.");
+// Kiểm tra mật khẩu cũ
+if (!password_verify($old_password, $tai_khoan->mat_khau)) {
+    // Fallback cho tài khoản cũ chưa migrate
+    $old_password_hash = $hashpassword->Encryption($old_password);
+    if ($tai_khoan->mat_khau !== $old_password_hash) {
+        response_json("error", "Mật khẩu cũ không chính xác.");
+    }
 }
 
-// Mã hóa mật khẩu mới trước khi lưu
-$new_password_hash = $hashpassword->Encryption($new_password);
+// Mã hóa mật khẩu mới bằng bcrypt trước khi lưu
+$new_password_hash = password_hash($new_password, PASSWORD_BCRYPT);
 
 // LOG FOR DEBUG
 $log_msg = "User ID: " . $tai_khoan->id_tai_khoan . "\n";
-$log_msg .= "Old Pass: " . $old_password . " | Hash: " . $old_password_hash . "\n";
 $log_msg .= "New Pass: " . $new_password . " | Hash: " . $new_password_hash . "\n";
 file_put_contents('debug_password.txt', $log_msg, FILE_APPEND);
 
