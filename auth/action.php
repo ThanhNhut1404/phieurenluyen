@@ -47,17 +47,17 @@
                             $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($status->id_nguoi_dung);
                             if($sinhvien__Get_By_Id->chuc_vu == 0){
                                 $_SESSION['sv'] = $status;
-                                header('location: ../user/index.php?page=thong-ke');
+                                header('location: ../user/UI-sv/index.php');
                                 break;
                             }
                             if($sinhvien__Get_By_Id->chuc_vu == 1){
                                 $_SESSION['lt'] = $status;
-                                header('location: ../user/index.php?page=thong-ke');
+                                header('location: ../user/UI-sv/index.php');
                                 break;
                             }
                             if($sinhvien__Get_By_Id->chuc_vu == 2){
                                 $_SESSION['bt'] = $status;
-                                header('location: ../user/index.php?page=thong-ke');
+                                header('location: ../user/UI-sv/index.php');
                                 break;
                             }
                         }

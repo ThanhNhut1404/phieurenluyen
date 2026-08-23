@@ -285,6 +285,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 <div class="info-item" style="flex: 2.2;">
                                 <span class="info-label">Khoa/ Bộ môn</span>
                                     <span class="info-value"><?php 
+                                        /** @var nganhhoc $nganhhoc */
+                                        /** @var khoa $khoa */
                                         $nganhhoc_info = $nganhhoc->nganhhoc__Get_By_Id($lophoc__Get_By_Id->id_nganh_hoc);
                                         echo $khoa->khoa__Get_By_Id($nganhhoc_info->id_khoa)->ten_khoa;
                                     ?></span>

@@ -102,6 +102,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $khoahoc__Get_By_Id = $khoahoc->khoahoc__Get_By_Id($id_khoa_hoc);
     
     // Quân sửa: Lấy thông tin Khoa/Bộ môn của sinh viên để hiển thị trên phiếu
+    /** @var nganhhoc $nganhhoc */
+    /** @var khoa $khoa */
     $id_nganh_hoc = isset($lophoc__Get_By_Id->id_nganh_hoc) ? $lophoc__Get_By_Id->id_nganh_hoc : 0;
     $nganhhoc__Get_By_Id = $nganhhoc->nganhhoc__Get_By_Id($id_nganh_hoc);
     $id_khoa = isset($nganhhoc__Get_By_Id->id_khoa) ? $nganhhoc__Get_By_Id->id_khoa : 0;
@@ -394,6 +396,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                             <div class="info-item" style="flex: 2.2;">
                                 <span class="info-label">Khoa/ Bộ môn</span>
                                 <span class="info-value"><?php 
+                                    /** @var nganhhoc $nganhhoc */
+                                    /** @var khoa $khoa */
                                     $nganhhoc_info = $nganhhoc->nganhhoc__Get_By_Id($lophoc__Get_By_Id->id_nganh_hoc);
                                     echo $khoa->khoa__Get_By_Id($nganhhoc_info->id_khoa)->ten_khoa;
                                 ?></span>
