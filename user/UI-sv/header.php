@@ -46,15 +46,15 @@
         </a>
         
         <div class="user-profile dropdown">
-            <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link">
-                <img src="../../assets/img/user.png" alt="User Avatar">
-                <span><?php echo $ten_sinh_vien; ?></span> 
+            <a href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link">
+                <img src="../../assets/theme/dist/img/avatar.png" alt="User Avatar">
+                <span style="white-space: nowrap;"><?php echo $ten_sinh_vien; ?></span> 
                 <svg class="user-caret" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </a>
             <div class="dropdown-menu dropdown-menu-right custom-dropdown">
-                <a href="#" class="dropdown-item">
+                <a href="javascript:void(0);" class="dropdown-item">
                     <i class="ri-profile-line"></i> Thông tin cá nhân
                 </a>
                 <a href="../index.php?page=quan-ly-tai-khoan" class="dropdown-item">

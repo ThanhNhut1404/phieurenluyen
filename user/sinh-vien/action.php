@@ -12,9 +12,19 @@
                 $status = 0;
                 $id_phieu = $_POST["id_phieu"];
 
+                // Lấy id sinh viên từ session
+                $id_sinh_vien = "";
+                if(isset($_SESSION['sv'])){
+                    $id_sinh_vien = $_SESSION['sv']->id_nguoi_dung;
+                } else if(isset($_SESSION['lt'])){
+                    $id_sinh_vien = $_SESSION['lt']->id_nguoi_dung;
+                } else if(isset($_SESSION['bt'])){
+                    $id_sinh_vien = $_SESSION['bt']->id_nguoi_dung;
+                }
+
                 // Nhựt sửa: Thêm bảo mật kiểm tra chủ sở hữu phiếu và đợt chấm điểm đang mở ở backend
                 $phieu = $phieuchamdiem->phieuchamdiem__Get_By_Id($id_phieu);
-                if (!$phieu || $phieu->id_sinh_vien != $_SESSION['sv']->id_nguoi_dung) {
+                if (!$phieu || $phieu->id_sinh_vien != $id_sinh_vien) {
                     header("location: $href&status=failed");
                     exit();
                 }

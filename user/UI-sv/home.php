@@ -12,6 +12,13 @@
     $lop = $lophoc->lophoc__Get_By_Id($sv->id_lop_hoc);
     $nganh = $nganhhoc->nganhhoc__Get_By_Id($lop->id_nganh_hoc);
     $khoa = $khoahoc->khoahoc__Get_By_Id($lop->id_khoa_hoc);
+
+    // Fetch ket qua ren luyen data for the chart
+    $list_ketqua = $ketquaxeploai->ketquaxeploai__Get_By_Id_Sinh_Vien_With_HocKy_NamHoc($id_sinh_vien);
+    $grouped_ketqua = [];
+    foreach ($list_ketqua as $kq) {
+        $grouped_ketqua[$kq->ten_nam_hoc][] = $kq;
+    }
 ?>
 <div class="dashboard-container">
     
@@ -97,8 +104,8 @@
             <span>Đăng ký hoạt động</span>
         </a>
         <!-- LINK TO EVALUATION FORM -->
-        <a href="../index.php?page=thong-ke" class="action-btn">
-            <i class="ri-file-list-3-line"></i>
+        <a href="?page=phieu-cham-diem" class="action-btn">
+            <i class="ri-survey-line"></i>
             <span>Phiếu đánh giá</span>
         </a>
         <a href="#" class="action-btn">
@@ -116,26 +123,246 @@
         <div class="col-md-4">
             <div class="custom-card" style="height: calc(100% - 10px);">
                 <h3 class="card-title-custom">Hoạt động đã đăng ký</h3>
-                <canvas id="chartRegistered" height="200"></canvas>
+                <div class="chart-placeholder" style="height: calc(100% - 45px);">
+                    <i class="ri-bar-chart-box-line"></i>
+                    <p>Chưa có dữ liệu thống kê</p>
+                </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="custom-card" style="height: calc(100% - 10px);">
-                <h3 class="card-title-custom">Tiến độ rèn luyện</h3>
+                <div class="card-title-custom d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e8ecf3;">
+                    <span class="mb-0">Tiến độ rèn luyện</span>
+                    <?php if(!empty($grouped_ketqua)): ?>
+                    <div class="d-flex align-items-center">
+                        <span class="mr-1 text-muted" style="font-size: 12px; white-space: nowrap;">Năm học:</span>
+                        <select id="tdYearSelect" class="form-control form-control-sm mr-2" style="width: auto; max-width: 110px; font-size: 12px;" onchange="updateTdSemesterOptions()">
+                            <?php foreach(array_keys($grouped_ketqua) as $nam_hoc): ?>
+                                <option value="<?= htmlspecialchars($nam_hoc) ?>"><?= htmlspecialchars($nam_hoc) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <span class="mr-1 text-muted" style="font-size: 12px; white-space: nowrap;">Học kỳ:</span>
+                        <select id="tdHkSelect" class="form-control form-control-sm" style="width: auto; max-width: 85px; font-size: 12px;" onchange="updateDoughnutChartStandalone()">
+                        </select>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                
+                <?php if(empty($grouped_ketqua)): ?>
                 <div class="chart-placeholder" style="height: calc(100% - 45px);">
                     <i class="ri-pie-chart-line"></i>
                     <p>Chưa có dữ liệu thống kê</p>
                 </div>
+                <?php else: ?>
+                <div style="position: relative; height: 170px; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10px;">
+                    <canvas id="chartTienDo"></canvas>
+                    <div id="chartTienDoCenterText" style="position: absolute; text-align: center; font-weight: bold; font-size: 28px; color: #1d4ed8;"></div>
+                </div>
+                <div id="chartTienDoLabel" class="text-center mt-3 font-weight-bold text-muted" style="font-size: 14px;"></div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="col-md-4">
             <div class="custom-card" style="height: calc(100% - 10px);">
-                <h3 class="card-title-custom">Kết quả rèn luyện</h3>
+                <div class="card-title-custom d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e8ecf3;">
+                    <span class="mb-0">Kết quả rèn luyện</span>
+                    <?php if(!empty($grouped_ketqua)): ?>
+                    <div class="d-flex align-items-center">
+                        <span class="mr-2 text-muted" style="font-size: 13px; white-space: nowrap;">Năm học:</span>
+                        <select id="yearSelect" class="form-control form-control-sm" style="width: auto; max-width: 130px; font-size: 13px;" onchange="updateChart()">
+                            <?php foreach(array_keys($grouped_ketqua) as $nam_hoc): ?>
+                                <option value="<?= htmlspecialchars($nam_hoc) ?>"><?= htmlspecialchars($nam_hoc) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                
+                <?php if(empty($grouped_ketqua)): ?>
                 <div class="chart-placeholder" style="height: calc(100% - 45px);">
                     <i class="ri-bar-chart-grouped-line"></i>
                     <p>Chưa có dữ liệu thống kê</p>
                 </div>
+                <?php else: ?>
+                <div style="position: relative; height: 200px; width: 100%;">
+                    <canvas id="chartKetQua"></canvas>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
+
+<?php if(!empty($grouped_ketqua)): ?>
+<script>
+    const chartKetQuaData = <?= json_encode($grouped_ketqua) ?>;
+    let myBarChart = null;
+
+    function updateChart() {
+        const year = document.getElementById('yearSelect').value;
+        const yearData = chartKetQuaData[year] || [];
+        
+        const labels = ['Học kỳ 1', 'Học kỳ 2', 'Học kỳ 3'];
+        const scores = [null, null, null];
+        const bgColors = [null, null, null];
+        
+        yearData.forEach(d => {
+            let idx = labels.indexOf(d.ten_hoc_ky);
+            if(idx === -1) {
+                 if(String(d.ten_hoc_ky).includes('1')) idx = 0;
+                 else if(String(d.ten_hoc_ky).includes('2')) idx = 1;
+                 else if(String(d.ten_hoc_ky).includes('3') || String(d.ten_hoc_ky).toLowerCase().includes('hè') || String(d.ten_hoc_ky).toLowerCase().includes('phụ')) idx = 2;
+            }
+            
+            if (idx !== -1) {
+                const score = parseFloat(d.ket_qua);
+                scores[idx] = score;
+                
+                if(score >= 90) bgColors[idx] = 'rgba(40, 167, 69, 0.7)'; // Xuất sắc (green)
+                else if(score >= 80) bgColors[idx] = 'rgba(0, 123, 255, 0.7)'; // Tốt (blue)
+                else if(score >= 65) bgColors[idx] = 'rgba(23, 162, 184, 0.7)'; // Khá (info)
+                else if(score >= 50) bgColors[idx] = 'rgba(255, 193, 7, 0.7)'; // TB (yellow)
+                else bgColors[idx] = 'rgba(220, 53, 69, 0.7)'; // Yếu/Kém (red)
+            }
+        });
+
+        if(myBarChart) {
+            myBarChart.data.labels = labels;
+            myBarChart.data.datasets[0].data = scores;
+            myBarChart.data.datasets[0].backgroundColor = bgColors;
+            myBarChart.update();
+        } else {
+            const ctx = document.getElementById('chartKetQua');
+            if(!ctx) return;
+            
+            if(typeof Chart === 'undefined') {
+                setTimeout(updateChart, 100);
+                return;
+            }
+            
+            myBarChart = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Điểm rèn luyện',
+                        data: scores,
+                        backgroundColor: bgColors,
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    }
+
+    let myDoughnutChart = null;
+    function updateTdSemesterOptions() {
+        const yearSelect = document.getElementById('tdYearSelect');
+        const hkSelect = document.getElementById('tdHkSelect');
+        if(!yearSelect || !hkSelect) return;
+        
+        const year = yearSelect.value;
+        const yearData = chartKetQuaData[year] || [];
+        
+        hkSelect.innerHTML = '';
+        yearData.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d.ten_hoc_ky;
+            opt.text = d.ten_hoc_ky;
+            hkSelect.appendChild(opt);
+        });
+        
+        updateDoughnutChartStandalone();
+    }
+    
+    function updateDoughnutChartStandalone() {
+        const yearSelect = document.getElementById('tdYearSelect');
+        const hkSelect = document.getElementById('tdHkSelect');
+        if(!yearSelect || !hkSelect) return;
+        
+        const year = yearSelect.value;
+        const hk = hkSelect.value;
+        const yearData = chartKetQuaData[year] || [];
+        
+        const d = yearData.find(item => item.ten_hoc_ky == hk);
+        if(!d) return;
+        
+        const score = parseFloat(d.ket_qua);
+        const remainScore = 100 - score;
+        
+        let color = '#28a745';
+        if(score >= 90) color = 'rgba(40, 167, 69, 0.9)';
+        else if(score >= 80) color = 'rgba(0, 123, 255, 0.9)';
+        else if(score >= 65) color = 'rgba(23, 162, 184, 0.9)';
+        else if(score >= 50) color = 'rgba(255, 193, 7, 0.9)';
+        else color = 'rgba(220, 53, 69, 0.9)';
+
+        const textEl = document.getElementById('chartTienDoCenterText');
+        const labelEl = document.getElementById('chartTienDoLabel');
+        if(textEl) textEl.innerText = score + '/100';
+        if(textEl) textEl.style.color = color;
+        if(labelEl) labelEl.innerText = 'Tiến độ: HK ' + hk + ' (' + year + ')';
+
+        if(myDoughnutChart) {
+            myDoughnutChart.data.datasets[0].data = [score, remainScore];
+            myDoughnutChart.data.datasets[0].backgroundColor = [color, '#e8ecf3'];
+            myDoughnutChart.update();
+        } else {
+            const ctxDo = document.getElementById('chartTienDo');
+            if(!ctxDo) return;
+            
+            if(typeof Chart === 'undefined') {
+                setTimeout(updateDoughnutChartStandalone, 100);
+                return;
+            }
+            
+            myDoughnutChart = new Chart(ctxDo, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Đạt được', 'Còn lại'],
+                    datasets: [{
+                        data: [score, remainScore],
+                        backgroundColor: [color, '#e8ecf3'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        }
+    }
+
+    // Attempt to load chart on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // slight delay to ensure Chart.js is fully parsed
+        setTimeout(function() {
+            updateChart();
+            updateTdSemesterOptions();
+        }, 200);
+    });
+</script>
+<?php endif; ?>

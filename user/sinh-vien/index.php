@@ -32,10 +32,17 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($lophoc__Get_By_Id->id_lop_hoc, $id_dot, $id_sinh_vien);
 }
 
-
-
 ?>
-<link rel="stylesheet" href="../assets/css/user.css">
+<?php
+$is_new_layout = strpos($_SERVER['REQUEST_URI'], '/UI-sv/') !== false;
+$asset_path = $is_new_layout ? '../../assets/css/user.css' : '../assets/css/user.css';
+$action_path = $is_new_layout ? '../sinh-vien/action.php?req=add' : 'sinh-vien/action.php?req=add';
+$main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
+?>
+<?php if($main_css_path): ?>
+<link rel="stylesheet" href="<?= $main_css_path ?>">
+<?php endif; ?>
+<link rel="stylesheet" href="<?= $asset_path ?>">
 <?php if (!isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) : ?>
 
 
@@ -88,6 +95,10 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             padding: 12px 16px !important;
             margin: 0 !important;
         }
+        
+        .evaluation-page .card {
+            border-radius: 0 !important;
+        }
     </style>
     <!-- Content Header (Page header) -->
     <section class="content-header d-none">
@@ -106,7 +117,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         </div><!-- /.container-fluid -->
     </section>
     <section class="content evaluation-page">
-        <form class="form" action="sinh-vien/action.php?req=add" method="post" enctype="multipart/form-data">
+        <form class="form" action="<?= $action_path ?>" method="post" enctype="multipart/form-data">
 
             <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
             <div class="card overflow-auto w-100">
@@ -258,7 +269,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                             <thead class="thead-light text-center">
                                 <tr>
                                     <th class="align-middle" style="padding:6px 4px; font-size: 1.15rem; background-color: #e9ecef !important;">ĐIỀU</th>
-                                    <th class="align-middle" style="padding:6px 4px; font-size: 1.4rem; background-color: #e9ecef !important;">NỘI DUNG</th>
+                                    <th class="align-middle" style="padding:6px 4px; font-size: 1.4rem; background-color: #e9ecef !important;">NỘI DUNG ĐÁNH GIÁ</th>
                                     <th class="align-middle" style="padding:6px 4px; background-color: #e9ecef !important;">SV TỰ<br>CHẤM</th>
                                     <th class="align-middle" style="padding:6px 4px; background-color: #e9ecef !important;">LỚP TRƯỞNG<br>BÍ THƯ</th>
                                     <th class="align-middle" style="padding:6px 4px; background-color: #e9ecef !important;">BCH ĐOÀN<br>KHOA</th>

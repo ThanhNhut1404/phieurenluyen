@@ -117,7 +117,17 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
 
 ?>
-<link rel="stylesheet" href="../assets/css/user.css?v=<?=time()?>">
+<?php
+$is_new_layout = strpos($_SERVER['REQUEST_URI'], '/UI-sv/') !== false;
+$base_page = $is_new_layout ? 'phieu-cham-diem' : 'lop-truong';
+$asset_path = $is_new_layout ? '../../assets/css/user.css' : '../assets/css/user.css';
+$action_path = $is_new_layout ? '../lop-truong/action.php?req=' : 'lop-truong/action.php?req=';
+$main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
+?>
+<?php if($main_css_path): ?>
+<link rel="stylesheet" href="<?= $main_css_path ?>">
+<?php endif; ?>
+<link rel="stylesheet" href="<?= $asset_path ?>?v=<?=time()?>">
 <style>
     /* Override the global sidebar margin from main.css for this specific student page */
     body:not(.sidebar-collapse) .content-wrapper.student-evaluation-wrapper,
@@ -142,7 +152,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 <div class="card card-outline card-primary">
                     <div class="card-body">
                         <form method="get" action="">
-                            <input type="hidden" name="page" value="lop-truong">
+                            <input type="hidden" name="page" value="<?= $base_page ?>">
                             <input type="hidden" name="id_dot" value="<?= $id_dot ?>">
                             
                             <div class="row align-items-end">
@@ -219,7 +229,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 <div class="card card-outline card-primary">
                     <div class="card-body">
                         <form method="get" action="">
-                            <input type="hidden" name="page" value="lop-truong">
+                            <input type="hidden" name="page" value="<?= $base_page ?>">
                             <input type="hidden" name="id_dot" value="<?= $id_dot ?>">
                             
                             <div class="row align-items-end">
@@ -280,11 +290,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         <div class="row mb-2">
             <div class="col-12 d-flex justify-content-between align-items-center">
                 <div>
-                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
+                    <a href="?page=<?= $base_page ?>&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
                        class="btn btn-outline-custom-blue <?= ($current_index === 0 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         <i class="fas fa-angle-double-left"></i> Đầu
                     </a>
-                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
+                    <a href="?page=<?= $base_page ?>&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
                        class="btn btn-outline-custom-blue <?= ($prev_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         <i class="fas fa-angle-left"></i> Trước
                     </a>
@@ -293,11 +303,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?><?= ($current_index !== false && isset($sinhvien_list[$current_index])) ? ' - ' . htmlspecialchars($sinhvien_list[$current_index]->ten_sinh_vien) : '' ?>
                 </div>
                 <div>
-                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
+                    <a href="?page=<?= $base_page ?>&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
                        class="btn btn-outline-custom-blue <?= ($next_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         Sau <i class="fas fa-angle-right"></i>
                     </a>
-                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
+                    <a href="?page=<?= $base_page ?>&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
                        class="btn btn-outline-custom-blue <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         Cuối <i class="fas fa-angle-double-right"></i>
                     </a>
@@ -307,7 +317,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         <?php endif; ?>
 
         <!-- Quân sửa: Định tuyến đúng hành động cập nhật điểm (Sinh viên tự chấm hoặc Lớp trưởng chấm) -->
-        <form class="form" action="lop-truong/action.php?req=<?= $mode == 'ban_than' ? 'add_sv' : 'add' ?>" method="post" enctype="multipart/form-data">
+        <form class="form" action="<?= $action_path ?><?= $mode == 'ban_than' ? 'add_sv' : 'add' ?>" method="post" enctype="multipart/form-data">
 
             <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
             <div class="card overflow-auto w-100">
@@ -656,11 +666,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         <div class="row mt-3 mb-3">
             <div class="col-12 d-flex justify-content-between align-items-center">
                 <div>
-                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
+                    <a href="?page=<?= $base_page ?>&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $first_id ?>" 
                        class="btn btn-outline-custom-blue <?= ($current_index === 0 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         <i class="fas fa-angle-double-left"></i> Đầu
                     </a>
-                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
+                    <a href="?page=<?= $base_page ?>&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $prev_id ?>" 
                        class="btn btn-outline-custom-blue <?= ($prev_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         <i class="fas fa-angle-left"></i> Trước
                     </a>
@@ -669,11 +679,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                     Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?><?= ($current_index !== false && isset($sinhvien_list[$current_index])) ? ' - ' . htmlspecialchars($sinhvien_list[$current_index]->ten_sinh_vien) : '' ?>
                 </div>
                 <div>
-                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
+                    <a href="?page=<?= $base_page ?>&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $next_id ?>" 
                        class="btn btn-outline-custom-blue <?= ($next_id === null || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         Sau <i class="fas fa-angle-right"></i>
                     </a>
-                    <a href="?page=lop-truong&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
+                    <a href="?page=<?= $base_page ?>&id_dot=<?= $id_dot ?>&mode=lop&filter=<?= $filter ?>&id_sinh_vien=<?= $last_id ?>" 
                        class="btn btn-outline-custom-blue <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == '') ? 'disabled' : '' ?>">
                         Cuối <i class="fas fa-angle-double-right"></i>
                     </a>

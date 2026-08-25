@@ -174,7 +174,7 @@ input:invalid {
 .modal-dialog {
     height: 100%;
 }
-.show img{
+.modal.show img{
     height: 100%;
     width: 100%;
 }

@@ -101,6 +101,21 @@ class dotchamdiem extends Database {
         $obj->execute(array($trang_thai, $id_dot));
         return $obj->rowCount();
     }
+    
+    public function dotchamdiem__Get_By_Id_Lop_Hoc($id_lop_hoc) {
+        $obj = $this->connect->prepare("
+            SELECT d.*, h.ten_hoc_ky, n.ten_nam_hoc 
+            FROM dotchamdiem d
+            JOIN hocky h ON d.id_hoc_ky = h.id_hoc_ky
+            JOIN namhoc n ON h.id_nam_hoc = n.id_nam_hoc
+            JOIN lopapdung la ON d.id_dot = la.id_dot
+            WHERE la.id_lop_hoc = ?
+            ORDER BY d.id_dot DESC
+        ");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_lop_hoc));
+        return $obj->fetchAll();
+    }
 
     public function dotchamdiem__Get_Time($date) {
         $obj = $this->connect->prepare("SELECT * FROM dotchamdiem WHERE thoi_gian_ket_thuc <= DATE(?)");
