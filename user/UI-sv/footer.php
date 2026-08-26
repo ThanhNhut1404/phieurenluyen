@@ -35,7 +35,3 @@
         &copy; 2026 Bản quyền thuộc về Sinh viên thực hiện đề tài. &nbsp;&bull;&nbsp; <a href="#">Điều khoản</a> &nbsp;&bull;&nbsp; <a href="#">Chính sách</a>
     </div>
 </footer>
-
-<div class="chat-widget">
-    <i class="ri-chat-smile-3-line"></i>
-</div>

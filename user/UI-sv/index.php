@@ -29,6 +29,57 @@
         <!-- header -->
         <?php require 'header.php';?>
 
+        <!-- Sidebar Dropdown -->
+        <div class="sidebar-dropdown-container">
+            <button class="sidebar-toggle-btn" id="sidebarToggleBtn">
+                <i class="ri-menu-line"></i>
+            </button>
+            
+            <div class="custom-sidebar" id="customSidebar">
+                <ul class="sidebar-menu-list">
+                    <li>
+                        <a href="index.php" class="sidebar-link">
+                            <i class="ri-grid-fill"></i> Trang chủ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="sidebar-link">
+                            <i class="ri-notification-3-line"></i> Thông báo
+                        </a>
+                    </li>
+                    <li class="sidebar-dropdown">
+                        <a href="javascript:void(0)" class="sidebar-link dropdown-toggle-btn">
+                            <i class="ri-information-line"></i> Thông tin chung
+                            <i class="ri-arrow-down-s-line caret"></i>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="#">Thông tin sinh viên</a></li>
+                            <li><a href="?page=quan-ly-tai-khoan">Đổi mật khẩu</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="sidebar-dropdown">
+                        <a href="javascript:void(0)" class="sidebar-link dropdown-toggle-btn">
+                            <i class="ri-history-line"></i> Điểm rèn luyện
+                            <i class="ri-arrow-down-s-line caret"></i>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a href="?page=phieu-cham-diem">Phiếu đánh giá</a></li>
+                            <li><a href="?page=ket-qua">Kết quả rèn luyện</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="../../auth/action.php?req=dang-xuat" class="sidebar-link">
+                            <i class="ri-logout-box-r-line"></i> Đăng xuất
+                        </a>
+                    </li>
+                </ul>
+
+
+            </div>
+        </div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
         <!-- content -->
         <?php 
             $page = isset($_GET['page']) ? $_GET['page'] : 'home';
@@ -38,6 +89,8 @@
                 require "ketqua.php";
             } else if ($page == 'phieu-cham-diem') {
                 require "phieu-cham-diem.php";
+            } else if ($page == 'quan-ly-tai-khoan') {
+                require "quan-ly-tai-khoan.php";
             } else {
                 require "home.php";
             }
@@ -172,5 +225,49 @@
            }
        }
     ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarBtn = document.getElementById('sidebarToggleBtn');
+            const customSidebar = document.getElementById('customSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            // Toggle sidebar dropdown
+            sidebarBtn.addEventListener('click', function() {
+                sidebarBtn.classList.toggle('active');
+                customSidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
+            
+            // Close when clicking overlay
+            sidebarOverlay.addEventListener('click', function() {
+                sidebarBtn.classList.remove('active');
+                customSidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+            
+            // Toggle submenus with animation
+            const dropdownBtns = document.querySelectorAll('.dropdown-toggle-btn');
+            dropdownBtns.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const parentLi = this.parentElement;
+                    const submenu = this.nextElementSibling;
+                    // Close others
+                    document.querySelectorAll('.sidebar-dropdown').forEach(function(item) {
+                        if (item !== parentLi) {
+                            item.classList.remove('active');
+                            const otherSub = item.querySelector('.sidebar-submenu');
+                            if (otherSub) $(otherSub).slideUp(250);
+                        }
+                    });
+                    // Toggle current
+                    parentLi.classList.toggle('active');
+                    if (submenu) $(submenu).slideToggle(250);
+                });
+            });
+            
+
+        });
+    </script>
 </body>
 </html>

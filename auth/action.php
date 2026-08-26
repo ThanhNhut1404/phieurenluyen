@@ -86,8 +86,10 @@
                 $mat_khau_moi = $_POST['mat_khau_moi'];
                 $xac_nhan_mat_khau = $_POST['xac_nhan_mat_khau'];
 
+                $redirect = isset($_POST['redirect_to']) && $_POST['redirect_to'] == 'UI-sv' ? '../user/UI-sv/index.php?page=quan-ly-tai-khoan' : '../user/index.php?page=quan-ly-tai-khoan';
+
                 if ($mat_khau_moi !== $xac_nhan_mat_khau) {
-                    header('location: ../user/index.php?page=quan-ly-tai-khoan&status=password_mismatch');
+                    header('location: ' . $redirect . '&status=password_mismatch');
                     exit();
                 }
 
@@ -104,15 +106,15 @@
                 }
 
                 if (!$is_valid) {
-                    header('location: ../user/index.php?page=quan-ly-tai-khoan&status=wrong_old_password');
+                    header('location: ' . $redirect . '&status=wrong_old_password');
                     exit();
                 }
 
                 $status = $taikhoan->taikhoan__Reset($id_tai_khoan, password_hash($mat_khau_moi, PASSWORD_BCRYPT));
                 if($status != "0" ){
-                    header('location: ../user/index.php?page=quan-ly-tai-khoan&status=success');
+                    header('location: ' . $redirect . '&status=success');
                 }else{
-                    header('location: ../user/index.php?page=quan-ly-tai-khoan&status=failed');
+                    header('location: ' . $redirect . '&status=failed');
                 }
                 break; 
 

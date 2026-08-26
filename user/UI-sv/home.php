@@ -29,7 +29,7 @@
                 <h3 class="card-title-custom">Thông tin sinh viên</h3>
                 <div class="student-info-wrapper">
                     <div class="student-avatar">
-                        <img src="../../assets/img/user.png" alt="Avatar">
+                        <i class="ri-user-3-fill" style="font-size: 80px; color: rgba(255,255,255,0.9); margin-top: 15px;"></i>
                     </div>
                     <div class="student-details">
                         <div class="student-name-title"><?php echo $sv->ten_sinh_vien; ?></div>
@@ -91,28 +91,28 @@
 
     <!-- Quick Actions -->
     <div class="quick-actions-row">
-        <a href="index.php?page=ket-qua" class="action-btn">
-            <i class="ri-bar-chart-2-line"></i>
-            <span>Kết quả rèn luyện</span>
-        </a>
-        <a href="#" class="action-btn">
-            <i class="ri-calendar-event-line"></i>
-            <span>Lịch hoạt động</span>
-        </a>
-        <a href="#" class="action-btn">
-            <i class="ri-survey-line"></i>
-            <span>Đăng ký hoạt động</span>
-        </a>
         <!-- LINK TO EVALUATION FORM -->
         <a href="?page=phieu-cham-diem" class="action-btn">
             <i class="ri-survey-line"></i>
             <span>Phiếu đánh giá</span>
         </a>
-        <a href="#" class="action-btn">
+        <a href="index.php?page=ket-qua" class="action-btn">
+            <i class="ri-bar-chart-2-line"></i>
+            <span>Kết quả rèn luyện</span>
+        </a>
+        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
+            <i class="ri-survey-line"></i>
+            <span>Đăng ký hoạt động</span>
+        </a>
+        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
+            <i class="ri-calendar-event-line"></i>
+            <span>Lịch hoạt động</span>
+        </a>
+        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
             <i class="ri-add-box-line"></i>
             <span>Hoạt động đã đăng ký</span>
         </a>
-        <a href="#" class="action-btn">
+        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
             <i class="ri-user-follow-line"></i>
             <span>Điểm danh</span>
         </a>
@@ -121,7 +121,7 @@
     <!-- Charts Row -->
     <div class="row">
         <div class="col-md-4">
-            <div class="custom-card" style="height: calc(100% - 10px);">
+            <div class="custom-card disabled-card" title="Chức năng sẽ phát triển trong tương lai" style="height: calc(100% - 10px);">
                 <h3 class="card-title-custom">Hoạt động đã đăng ký</h3>
                 <div class="chart-placeholder" style="height: calc(100% - 45px);">
                     <i class="ri-bar-chart-box-line"></i>

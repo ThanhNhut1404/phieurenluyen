@@ -47,7 +47,9 @@
         
         <div class="user-profile dropdown">
             <a href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link">
-                <img src="../../assets/theme/dist/img/avatar.png" alt="User Avatar">
+                <span style="width: 35px; height: 35px; border-radius: 50%; background: #1d4ed8; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-right: 0px;">
+                    <i class="ri-user-3-fill" style="color: rgba(255,255,255,0.9); font-size: 26px; margin-top: 5px;"></i>
+                </span>
                 <span style="white-space: nowrap;"><?php echo $ten_sinh_vien; ?></span> 
                 <svg class="user-caret" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -57,8 +59,8 @@
                 <a href="javascript:void(0);" class="dropdown-item">
                     <i class="ri-profile-line"></i> Thông tin cá nhân
                 </a>
-                <a href="../index.php?page=quan-ly-tai-khoan" class="dropdown-item">
-                    <i class="ri-pencil-line"></i> Đổi mật khẩu
+                <a href="?page=quan-ly-tai-khoan" class="dropdown-item">
+                    <i class="ri-lock-password-line"></i> Đổi mật khẩu
                 </a>
                 <div class="dropdown-divider"></div>
                 <a href="../../auth/action.php?req=dang-xuat" class="dropdown-item">

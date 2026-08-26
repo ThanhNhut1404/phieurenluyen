@@ -16,14 +16,30 @@
                                 value="<?=$_SESSION['user']->email?>">
                         </div>
                         <?php if(isset($_GET['status'])): ?>
-                            <?php if($_GET['status'] == 'password_mismatch'): ?>
-                                <div class="alert alert-danger mt-2">Mật khẩu mới và xác nhận mật khẩu không khớp!</div>
-                            <?php elseif($_GET['status'] == 'wrong_old_password'): ?>
-                                <div class="alert alert-danger mt-2">Mật khẩu cũ không chính xác!</div>
-                            <?php elseif($_GET['status'] == 'success'): ?>
-                                <div class="alert alert-success mt-2">Đổi mật khẩu thành công!</div>
+                            <?php if($_GET['status'] == 'success'): ?>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function() {
+                                        if(window.Toast) {
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.'
+                                            }).then(() => {
+                                                window.location.href = '../auth/action.php?req=dang-xuat';
+                                            });
+                                        }
+                                    });
+                                </script>
                             <?php elseif($_GET['status'] == 'failed'): ?>
-                                <div class="alert alert-danger mt-2">Có lỗi xảy ra, vui lòng thử lại!</div>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function() {
+                                        if(window.Toast) {
+                                            Toast.fire({
+                                                icon: 'error',
+                                                title: 'Có lỗi xảy ra, vui lòng thử lại!'
+                                            });
+                                        }
+                                    });
+                                </script>
                             <?php endif; ?>
                         <?php endif; ?>
 
@@ -35,6 +51,9 @@
                                     <span class="input-group-text"><i class="fas fa-eye" id="icon_cu"></i></span>
                                 </div>
                             </div>
+                            <?php if(isset($_GET['status']) && $_GET['status'] == 'wrong_old_password'): ?>
+                                <small class="text-danger mt-1 d-block">Mật khẩu cũ không chính xác!</small>
+                            <?php endif; ?>
                         </div>
                         <div class="form-group">
                             <label class="label-sidebar" for="mat_khau_moi">Mật khẩu mới <span class="text-danger">*</span></label>
@@ -53,6 +72,9 @@
                                     <span class="input-group-text"><i class="fas fa-eye" id="icon_xac_nhan"></i></span>
                                 </div>
                             </div>
+                            <?php if(isset($_GET['status']) && $_GET['status'] == 'password_mismatch'): ?>
+                                <small class="text-danger mt-1 d-block">Mật khẩu mới và xác nhận mật khẩu không khớp!</small>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <!-- /.card-body -->
