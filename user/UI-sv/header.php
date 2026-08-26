@@ -59,7 +59,7 @@
                 <a href="javascript:void(0);" class="dropdown-item">
                     <i class="ri-profile-line"></i> Thông tin cá nhân
                 </a>
-                <a href="?page=quan-ly-tai-khoan" class="dropdown-item">
+                <a href="?page=doi-mat-khau" class="dropdown-item">
                     <i class="ri-lock-password-line"></i> Đổi mật khẩu
                 </a>
                 <div class="dropdown-divider"></div>
