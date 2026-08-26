@@ -58,7 +58,7 @@ foreach ($bo_cau_hoi as $bch) {
     if ($d && $d->is_deleted == 0) {
         $dieu_data = [
             'id_dieu' => $d->id_dieu,
-            'ten_dieu' => $d->ten_dieu,
+            'ten_dieu' => html_entity_decode(strip_tags($d->ten_dieu)),
             'diem_toi_da' => 0, // Tính tổng sau
             'khoan' => []
         ];
@@ -68,7 +68,7 @@ foreach ($bo_cau_hoi as $bch) {
         foreach ($danh_sach_khoan as $k) {
             $khoan_data = [
                 'id_khoan' => $k->id_khoan,
-                'ten_khoan' => $k->ten_khoan,
+                'ten_khoan' => html_entity_decode(strip_tags($k->ten_khoan)),
                 'diem_toi_da' => $k->diem_toi_da,
                 'muc' => []
             ];
@@ -80,7 +80,7 @@ foreach ($bo_cau_hoi as $bch) {
                 // Hoặc trả về hết nhưng đánh dấu quyen_sv để app tự disable
                 $muc_data = [
                     'id_muc' => $m->id_muc,
-                    'ten_muc' => $m->ten_muc,
+                    'ten_muc' => html_entity_decode(strip_tags($m->ten_muc)),
                     'diem_toi_da' => $m->diem_toi_da,
                     'quyen_sv' => $m->quyen_sv,
                     'co_minh_chung' => $m->co_minh_chung

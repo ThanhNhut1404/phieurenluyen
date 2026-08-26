@@ -1,6 +1,5 @@
 <?php
 require_once 'core.php';
-require_once 'ai_service.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     response_json("error", "Invalid request method");
@@ -43,7 +42,7 @@ foreach ($kq_sv as $item) {
     }
 }
 
-// Lấy danh sách id_muc theo đúng thứ tự của mẫu phiếu
+// Lấy danh sách id_muc theo đúng thực tế của mẫu phiếu
 $kq_string_arr = [];
 if ($phieu) {
     $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
@@ -80,25 +79,13 @@ if (is_array($minh_chung) && count($minh_chung) > 0) {
         }
     }
 
-    // Lấy thông tin sinh viên để cấp cho AI
-    $sv = $sinhvien->sinhvien__Get_By_Id($tai_khoan->id_nguoi_dung);
-
     foreach ($minh_chung as $mc_item) {
         if (!empty($mc_item['id_muc']) && !empty($mc_item['base64'])) {
             $id_muc = $mc_item['id_muc'];
             $base64 = $mc_item['base64'];
 
-            // Lấy tên tiêu chí
-            $muc_info = $muc->muc__Get_By_Id($id_muc);
-            $ten_muc = $muc_info ? $muc_info->ten_muc : "Hoạt động rèn luyện";
-
-            // Gọi AI phân tích ảnh
-            $ai_result = AIService::checkMinhChung($base64, $sv->ten_sinh_vien, $sv->ma_sinh_vien, $ten_muc);
-            $ai_trang_thai = $ai_result['hop_le'] ? 1 : 2;
-            $ai_nhan_xet = $ai_result['ly_do'];
-
-            // Lưu trực tiếp chuỗi base64 vào DB kèm kết quả đánh giá của AI
-            $minhchung->minhchung__Add($id_phieu, $base64, date("Y-m-d H:i:s"), $id_muc, $ai_trang_thai, $ai_nhan_xet);
+            // Lưu trực tiếp chuỗi base64 vào DB (không dùng AI)
+            $minhchung->minhchung__Add($id_phieu, $base64, date("Y-m-d H:i:s"), $id_muc, 0, null);
         }
     }
 }
@@ -108,3 +95,4 @@ if ($status !== false) {
 } else {
     response_json("error", "Lỗi khi lưu điểm rèn luyện");
 }
+?>

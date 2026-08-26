@@ -103,7 +103,7 @@ if ($active_dot) {
     ];
 }
 
-// 2. Có thể thêm thông báo chung nếu muốn (Welcome, vv)
+// 2. Có thể thêm thông báo chung nếu muốn
 if (count($thong_bao) == 0) {
     $thong_bao[] = [
         'type' => 'info',
