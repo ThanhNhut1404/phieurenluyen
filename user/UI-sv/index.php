@@ -87,7 +87,7 @@
                 require "home.php";
             } else if ($page == 'ket-qua') {
                 require "ketqua.php";
-            } else if ($page == 'dot-cham-diem') {
+            } else if ($page == 'dot-cham-diem' || $page == 'phieu-cham-diem') {
                 require "dot-cham-diem.php";
             } else if ($page == 'doi-mat-khau') {
                 require "doi-mat-khau.php";
