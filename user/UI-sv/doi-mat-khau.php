@@ -22,7 +22,7 @@
                                         icon: 'success',
                                         title: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.'
                                     }).then(() => {
-                                        window.location.href = '../../auth/action.php?req=dang-xuat';
+                                        window.location.href = '../../auth/action.php?req=dang-xuat&role=user';
                                     });
                                 }
                             });

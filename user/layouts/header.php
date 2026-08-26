@@ -72,7 +72,7 @@
                     Đổi mật khẩu
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="../auth/action.php?req=dang-xuat" class="dropdown-item">
+                <a href="../auth/action.php?req=dang-xuat&role=user" class="dropdown-item">
                     <i class="fas fa-sign-out-alt"></i>
                     Đăng xuất
                 </a>

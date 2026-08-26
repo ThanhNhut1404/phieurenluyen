@@ -69,7 +69,7 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="../../auth/action.php?req=dang-xuat" class="sidebar-link">
+                        <a href="../../auth/action.php?req=dang-xuat&role=user" class="sidebar-link">
                             <i class="ri-logout-box-r-line"></i> Đăng xuất
                         </a>
                     </li>

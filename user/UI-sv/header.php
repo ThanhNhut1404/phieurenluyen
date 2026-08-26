@@ -13,7 +13,7 @@
         $id_sinh_vien = $_SESSION['bt']->id_nguoi_dung;
     } else {
         // If not sv/lt/bt, redirect back
-        header("Location: ../../auth/action.php?req=dang-xuat");
+        header("Location: ../../auth/action.php?req=dang-xuat&role=user");
         exit();
     }
 
@@ -63,7 +63,7 @@
                     <i class="ri-lock-password-line"></i> Đổi mật khẩu
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="../../auth/action.php?req=dang-xuat" class="dropdown-item">
+                <a href="../../auth/action.php?req=dang-xuat&role=user" class="dropdown-item">
                     <i class="ri-logout-box-r-line"></i> Đăng xuất
                 </a>
             </div>

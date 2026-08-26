@@ -12,13 +12,17 @@
                 $email = $_POST['email'];
                 $mat_khau = $_POST['mat_khau'];
                 
-                // Nhựt sửa: Xóa toàn bộ session cũ trước khi đăng nhập tài khoản mới để tránh bị lưu dính quyền (ví dụ: đang là bí thư đăng nhập lại thành sinh viên nhưng vẫn còn session bí thư)
-                session_unset();
-
                 $status = $taikhoan->taikhoan__Check_Login($email, $mat_khau);
                 // $status = $taikhoan->taikhoan__Check_Login($email, $mat_khau);
                 
                 if($status != "0" ){
+                    // Tách biệt session Admin và User
+                    $cap_bac_check = $phanquyen->phanquyen__Get_By_Id($status->id_phan_quyen)->cap_bac;
+                    if ($cap_bac_check == 0 || $cap_bac_check == 1) {
+                        unset($_SESSION['admin'], $_SESSION['super'], $_SESSION['manager']);
+                    } else {
+                        unset($_SESSION['user'], $_SESSION['sv'], $_SESSION['lt'], $_SESSION['bt'], $_SESSION['btdk'], $_SESSION['gv']);
+                    }
 
                     $s = $dotchamdiem->dotchamdiem__Get_Time(date('Y-m-d'));
                     if(count($s) > 0){
@@ -119,8 +123,15 @@
                 break; 
 
             case 'dang-xuat':
-
-                session_destroy();
+                if (isset($_GET['role'])) {
+                    if ($_GET['role'] === 'admin') {
+                        unset($_SESSION['admin'], $_SESSION['super'], $_SESSION['manager']);
+                    } else if ($_GET['role'] === 'user') {
+                        unset($_SESSION['user'], $_SESSION['sv'], $_SESSION['lt'], $_SESSION['bt'], $_SESSION['btdk'], $_SESSION['gv']);
+                    }
+                } else {
+                    session_destroy();
+                }
                 header('location: ../auth/index.php');
                 break;
             }

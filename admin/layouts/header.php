@@ -60,7 +60,7 @@
             </a>
 
             <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                <a href="../auth/action.php?req=dang-xuat" class="dropdown-item">
+                <a href="../auth/action.php?req=dang-xuat&role=admin" class="dropdown-item">
                     <i class="ri-logout-box-line"></i>
                     Đăng xuất
                 </a>
