@@ -33,10 +33,10 @@ class minhchung extends Database {
         return $obj->fetchAll();
     }
     
-    public function minhchung__Add($id_phieu, $hinh_anh, $ghi_chu, $id_muc = null) {
+    public function minhchung__Add($id_phieu, $hinh_anh, $ghi_chu, $id_muc = null, $ai_trang_thai = 0, $ai_nhan_xet = null) {
         try {
-            $obj = $this->connect->prepare("INSERT INTO minhchung(id_phieu, hinh_anh, ghi_chu, id_muc) VALUES (?,?,?,?)");
-            $obj->execute(array($id_phieu, $hinh_anh, $ghi_chu, $id_muc));
+            $obj = $this->connect->prepare("INSERT INTO minhchung(id_phieu, hinh_anh, ghi_chu, id_muc, ai_trang_thai, ai_nhan_xet) VALUES (?,?,?,?,?,?)");
+            $obj->execute(array($id_phieu, $hinh_anh, $ghi_chu, $id_muc, $ai_trang_thai, $ai_nhan_xet));
             return $obj->rowCount();
         } catch (PDOException $e) {
             if ($e->getCode() == '08S01' || strpos($e->getMessage(), 'max_allowed_packet') !== false) {
