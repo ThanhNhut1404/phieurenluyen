@@ -32,7 +32,7 @@ if (!isset($_GET['id_dot'])) {
                                         <p class="card-text text-muted mb-4"><i class="fas fa-clock mr-2" style="width: 16px;"></i> <?= date('d/m/Y', strtotime($dot->thoi_gian_bat_dau)) ?> đến <?= date('d/m/Y', strtotime($dot->thoi_gian_ket_thuc)) ?></p>
                                         
                                         <div class="mt-auto">
-                                            <a href="?page=phieu-cham-diem&id_dot=<?= $dot->id_dot ?>" class="btn btn-primary btn-block" style="border-radius: 8px; font-weight: 600;">
+                                            <a href="?page=dot-cham-diem&id_dot=<?= $dot->id_dot ?>" class="btn btn-primary btn-block" style="border-radius: 8px; font-weight: 600;">
                                                 <i class="fas fa-edit mr-1"></i> Vào phiếu chấm
                                             </a>
                                         </div>

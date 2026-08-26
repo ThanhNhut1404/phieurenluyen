@@ -86,7 +86,7 @@
                 $mat_khau_moi = $_POST['mat_khau_moi'];
                 $xac_nhan_mat_khau = $_POST['xac_nhan_mat_khau'];
 
-                $redirect = isset($_POST['redirect_to']) && $_POST['redirect_to'] == 'UI-sv' ? '../user/UI-sv/index.php?page=quan-ly-tai-khoan' : '../user/index.php?page=quan-ly-tai-khoan';
+                $redirect = isset($_POST['redirect_to']) && $_POST['redirect_to'] == 'UI-sv' ? '../user/UI-sv/index.php?page=doi-mat-khau' : '../user/index.php?page=quan-ly-tai-khoan';
 
                 if ($mat_khau_moi !== $xac_nhan_mat_khau) {
                     header('location: ' . $redirect . '&status=password_mismatch');

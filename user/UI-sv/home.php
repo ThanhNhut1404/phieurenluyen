@@ -92,7 +92,7 @@
     <!-- Quick Actions -->
     <div class="quick-actions-row">
         <!-- LINK TO EVALUATION FORM -->
-        <a href="?page=phieu-cham-diem" class="action-btn">
+        <a href="?page=dot-cham-diem" class="action-btn">
             <i class="ri-survey-line"></i>
             <span>Phiếu đánh giá</span>
         </a>

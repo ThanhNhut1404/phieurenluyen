@@ -54,7 +54,7 @@
                         </a>
                         <ul class="sidebar-submenu">
                             <li><a href="#">Thông tin sinh viên</a></li>
-                            <li><a href="?page=quan-ly-tai-khoan">Đổi mật khẩu</a></li>
+                            <li><a href="?page=doi-mat-khau">Đổi mật khẩu</a></li>
                         </ul>
                     </li>
 
@@ -64,7 +64,7 @@
                             <i class="ri-arrow-down-s-line caret"></i>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="?page=phieu-cham-diem">Phiếu đánh giá</a></li>
+                            <li><a href="?page=dot-cham-diem">Phiếu đánh giá</a></li>
                             <li><a href="?page=ket-qua">Kết quả rèn luyện</a></li>
                         </ul>
                     </li>
@@ -87,10 +87,10 @@
                 require "home.php";
             } else if ($page == 'ket-qua') {
                 require "ketqua.php";
-            } else if ($page == 'phieu-cham-diem') {
-                require "phieu-cham-diem.php";
-            } else if ($page == 'quan-ly-tai-khoan') {
-                require "quan-ly-tai-khoan.php";
+            } else if ($page == 'dot-cham-diem') {
+                require "dot-cham-diem.php";
+            } else if ($page == 'doi-mat-khau') {
+                require "doi-mat-khau.php";
             } else {
                 require "home.php";
             }
