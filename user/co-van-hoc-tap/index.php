@@ -39,13 +39,30 @@ $id_khoa_hoc = isset($lophoc__Get_By_Id->id_khoa_hoc) ? $lophoc__Get_By_Id->id_k
 $khoahoc__Get_By_Id = $khoahoc->khoahoc__Get_By_Id($id_khoa_hoc);
 $bocauhoi__Get_By_Id_Mau_Phieu = $bocauhoi->bocauhoi__Get_By_Id_Mau_Phieu($id_mau_phieu);
 
-$sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_CVHT($id_dot, $id_lop_hoc, -1);
-$sinhvien__Get_By_Id_Lop_Hoc_Da_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_CVHT($id_dot, $id_lop_hoc, null);
-// Quân sửa: Định nghĩa các biến bị thiếu và đổi sang hàm Get_By_Id_Lop_Hoc_Kq_CVHT cho Cố vấn học tập
+$filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+$sinhvien_list = [];
+if ($id_lop_hoc != -2) {
+    switch($filter) {
+        case 'chua_btdk_cham':
+            $sinhvien_list = $sinhvien->sinhvien__Get_Chua_BTDK_Cham($id_dot, $id_lop_hoc);
+            break;
+        case 'da_btdk_cham':
+            $sinhvien_list = $sinhvien->sinhvien__Get_Da_BTDK_Cham($id_dot, $id_lop_hoc);
+            break;
+        case 'chua_cvht_cham':
+            $sinhvien_list = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_CVHT($id_dot, $id_lop_hoc, -1);
+            break;
+        case 'da_cvht_cham':
+            $sinhvien_list = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_CVHT($id_dot, $id_lop_hoc, null);
+            break;
+        default:
+            $sinhvien_list = $sinhvien->sinhvien__Get_All_In_Lop($id_dot, $id_lop_hoc);
+            break;
+    }
+}
 $dw = "";
 
 // Quân sửa: Hợp nhất danh sách để tính toán phân trang ổn định theo mã sinh viên
-$sinhvien_list = array_merge($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham, $sinhvien__Get_By_Id_Lop_Hoc_Da_Cham);
 usort($sinhvien_list, function($a, $b) {
     return strcmp($a->ma_sinh_vien, $b->ma_sinh_vien);
 });
@@ -102,52 +119,44 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     <div class="col-12">
         <div class="card card-outline card-primary">
             <div class="card-body">
-                <div class="row align-items-end">
-                    <div class="col-md-4 mb-2">
-                        <label for="">Chọn lớp (<?= count($phancong__Get_By_Id_Giang_Vien_All) ?>)</label>
-                        <select class="form-control" name="id_lop_hoc" required onchange="location.href=this.value">
-                            <option value="">Chọn lớp</option>
-                            <?php foreach ($phancong__Get_By_Id_Giang_Vien_All as $item) : ?>
-                                <option value="?page=co-van-hoc-tap&id_lop_hoc=<?= $item->id_lop_hoc ?>&id_dot=<?= $id_dot ?>" <?= $id_lop_hoc == $item->id_lop_hoc ? "selected" : "" ?>>
-                                    <?= $item->ten_lop_hoc ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                <form method="get" action="">
+                    <input type="hidden" name="page" value="co-van-hoc-tap">
+                    <input type="hidden" name="id_dot" value="<?= $id_dot ?>">
+                    <div class="row align-items-end">
+                        <div class="col-md-3 mb-2">
+                            <label>Chọn lớp (<?= count($phancong__Get_By_Id_Giang_Vien_All) ?>)</label>
+                            <select class="form-control" name="id_lop_hoc" onchange="this.form.submit()">
+                                <option value="-2">-- Chọn lớp --</option>
+                                <?php foreach ($phancong__Get_By_Id_Giang_Vien_All as $item) : ?>
+                                    <option value="<?= $item->id_lop_hoc ?>" <?= $id_lop_hoc == $item->id_lop_hoc ? "selected" : "" ?>>
+                                        <?= $item->ten_lop_hoc ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label>Lọc danh sách</label>
+                            <select class="form-control" name="filter" onchange="this.form.submit()">
+                                <option value="all" <?= $filter == 'all' ? 'selected' : '' ?>>Tất cả sinh viên</option>
+                                <option value="da_btdk_cham" <?= $filter == 'da_btdk_cham' ? 'selected' : '' ?>>Đã được Đoàn khoa chấm</option>
+                                <option value="chua_btdk_cham" <?= $filter == 'chua_btdk_cham' ? 'selected' : '' ?>>Chưa được Đoàn khoa chấm</option>
+                                <option value="da_cvht_cham" <?= $filter == 'da_cvht_cham' ? 'selected' : '' ?>>Đã được Cố vấn học tập chấm</option>
+                                <option value="chua_cvht_cham" <?= $filter == 'chua_cvht_cham' ? 'selected' : '' ?>>Chưa được Cố vấn học tập chấm</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5 mb-2">
+                            <label>Chọn sinh viên (<?= count($sinhvien_list) ?>)</label>
+                            <select class="form-control" name="id_sinh_vien" onchange="this.form.submit()">
+                                <option value="-2">-- Chọn sinh viên --</option>
+                                <?php foreach ($sinhvien_list as $index => $sv_item) : ?>
+                                    <option value="<?= $sv_item->id_sinh_vien ?>" <?= $id_sinh_vien == $sv_item->id_sinh_vien ? 'selected' : '' ?>>
+                                        <?= ($index + 1) . '. ' . $sv_item->ma_sinh_vien . ' - ' . $sv_item->ten_sinh_vien ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                    
-                    <div class="col-md-4 mb-2">
-                        <label for="">Đã chấm điểm (<?= count($sinhvien__Get_By_Id_Lop_Hoc_Da_Cham) ?>)</label>
-                        <select class="form-control" name="id_sinh_vien" required onchange="location.href=this.value">
-                            <option value="">Chọn sinh viên</option>
-                            <?php foreach ($sinhvien__Get_By_Id_Lop_Hoc_Da_Cham as $item) : ?>
-                                <?php
-                                $abs_index = array_search($item->id_sinh_vien, $student_ids);
-                                $num_prefix = ($abs_index !== false) ? ($abs_index + 1) . '. ' : '';
-                                ?>
-                                <option value="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $item->id_sinh_vien ?>" <?= $id_sinh_vien == $item->id_sinh_vien ? "selected" : "" ?>>
-                                    <?= $num_prefix ?><?= $item->ma_sinh_vien ?> - <?= $item->ten_sinh_vien ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4 mb-2">
-                        <label for="">Chưa chấm điểm (<?= count($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham) ?>)</label>
-                        <select class="form-control" name="id_sinh_vien" required onchange="location.href=this.value">
-                            <option value="">Chọn sinh viên</option>
-
-                            <?php foreach ($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham as $item) : ?>
-                                <?php
-                                $abs_index = array_search($item->id_sinh_vien, $student_ids);
-                                $num_prefix = ($abs_index !== false) ? ($abs_index + 1) . '. ' : '';
-                                ?>
-                                <option value="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $item->id_sinh_vien ?>" <?= $id_sinh_vien == $item->id_sinh_vien ? "selected" : "" ?>>
-                                    <?= $num_prefix ?><?= $item->ma_sinh_vien ?> - <?= $item->ten_sinh_vien ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>

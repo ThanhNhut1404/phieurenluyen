@@ -23,6 +23,12 @@
                     $role_name = 'Bí thư chi đoàn';
                 } elseif (isset($_SESSION['btdk'])) {
                     $role_name = 'Bí thư đoàn khoa';
+                    if (isset($_SESSION['btdk']->id_khoa)) {
+                        $khoa_info = $khoa->khoa__Get_By_Id($_SESSION['btdk']->id_khoa);
+                        if ($khoa_info) {
+                            $role_name .= ' - ' . $khoa_info->ten_khoa;
+                        }
+                    }
                 } elseif (isset($_SESSION['gv'])) {
                     $role_name = 'Cố vấn học tập';
                 }
