@@ -247,6 +247,67 @@
                 
                 break;
 
+            case 'copy':
+                if (!muc__Valid_Csrf_Get()) {
+                    muc__Redirect('csrf');
+                }
+
+                $id_muc_cu = isset($_GET['id_muc']) ? trim($_GET['id_muc']) : "";
+
+                if (!preg_match('/^[1-9][0-9]*$/', $id_muc_cu)) {
+                    muc__Redirect('not-found');
+                }
+
+                try {
+                    $muc->connect->beginTransaction();
+                    muc__Lock_All($muc);
+
+                    $old_muc = $muc->muc__Get_By_Id($id_muc_cu);
+                    if (!$old_muc) {
+                        throw new Exception('not-found');
+                    }
+
+                    $khoan_info = $khoan->khoan__Get_By_Id($old_muc->id_khoan);
+                    if (!$khoan_info) {
+                        throw new Exception('invalid-khoan');
+                    }
+
+                    // Kiểm tra quỹ điểm (Mục mới thêm vào nên không bù trừ)
+                    $current_total_diem = $muc->muc__Get_Total_Diem_By_Khoan($old_muc->id_khoan);
+                    if ($current_total_diem + $old_muc->diem_toi_da > $khoan_info->can_tren) {
+                        throw new Exception('failed_over_limit');
+                    }
+
+                    $ten_muc_moi = $old_muc->ten_muc;
+
+                    $stmt_count = $muc->connect->prepare("SELECT COUNT(*) FROM muc WHERE ten_muc = ?");
+                    $stmt_count->execute([$ten_muc_moi]);
+                    $count_ban_sao = (int)$stmt_count->fetchColumn();
+
+                    $ghi_chu_cu = trim($old_muc->ghi_chu);
+                    $ghi_chu_moi = $ghi_chu_cu ? $ghi_chu_cu . " (Bản sao thứ " . $count_ban_sao . ")" : "Bản sao thứ " . $count_ban_sao;
+                    
+                    $status = $muc->muc__Add($ten_muc_moi, $ghi_chu_moi, $old_muc->thu_tu, $old_muc->id_khoan, $old_muc->quyen_sv, $old_muc->quyen_lt, $old_muc->quyen_btdk, $old_muc->quyen_gv, $old_muc->diem_toi_da, $old_muc->co_minh_chung);
+                    if($status == 0){
+                        throw new Exception('failed');
+                    }
+
+                    $muc->connect->commit();
+                    muc__Rotate_Csrf_Token();
+                    muc__Redirect('copy_success');
+                } catch (Exception $e) {
+                    if ($muc->connect->inTransaction()) {
+                        $muc->connect->rollBack();
+                    }
+                    $msg = $e->getMessage();
+                    if (in_array($msg, ['not-found'])) {
+                        muc__Redirect($msg);
+                    }
+                    muc__Redirect(in_array($msg, ['failed_over_limit']) ? $msg : 'failed');
+                }
+                
+                break;
+
             case 'delete':
                 if (!muc__Valid_Csrf_Get()) {
                     muc__Redirect('csrf');

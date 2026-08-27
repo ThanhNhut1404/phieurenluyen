@@ -208,6 +208,10 @@
                                      onclick="return confirm_delete_sweet('quan-ly-khoan/action.php?req=delete&id_khoan=<?=$item->id_khoan?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>', 'Khoản')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
+                                 <a href="javascript:void(0)" class="btn btn-secondary m-2" title="Nhân bản Khoản"
+                                     onclick="return confirm_copy_sweet('quan-ly-khoan/action.php?req=copy&id_khoan=<?=$item->id_khoan?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
+                                     <i class="ri-file-copy-line"></i>
+                                 </a>
                              </td>
                          </tr>
                          <?php endforeach?>
@@ -513,7 +517,30 @@ window.addEventListener("load", function() {
             Toast.fire('Cảnh báo!', 'Dữ liệu này đang được sử dụng trong một Đợt chấm điểm. Bạn không thể Sửa/Xoá vào lúc này!', 'warning');
         <?php elseif ($_GET['status'] == 'locked_update'): ?>
             Toast.fire('Cảnh báo!', 'Dữ liệu này đã sử dụng trong lịch sử. Vui lòng tạo mới thay vì sửa!', 'warning');
+        <?php elseif ($_GET['status'] == 'copy_success'): ?>
+            Toast.fire('Thành công!', 'Đã nhân bản Khoản thành công!', 'success');
         <?php endif; ?>
     <?php endif; ?>
 });
+
+function confirm_copy_sweet(url) {
+    Swal.fire({
+        title: 'Nhân bản Khoản này?',
+        html: 'Toàn bộ <b>Mục</b> bên trong Khoản này cũng sẽ được nhân bản theo.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Nhân bản',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+            cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+        },
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = url;
+        }
+    })
+    return false;
+}
  </script>

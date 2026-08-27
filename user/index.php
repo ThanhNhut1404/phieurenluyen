@@ -305,3 +305,7 @@
 </body>
 
 </html>
+<?php 
+    $output = ob_get_clean();
+    echo preg_replace('/ \(Bản sao thứ \d+\)/', '', $output);
+?>

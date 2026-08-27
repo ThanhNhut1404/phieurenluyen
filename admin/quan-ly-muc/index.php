@@ -246,9 +246,13 @@
                                          <i class="ri-edit-2-line"></i>
                                      </a>
                                  <?php endif; ?>
-                                 <a href="#" type="button" class="btn btn-danger"
+                                 <a href="#" type="button" class="btn btn-danger m-1"
                                      onclick="return confirm_delete_sweet('quan-ly-muc/action.php?req=delete&id_muc=<?=$item->id_muc?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>', 'Mục')">
                                      <i class="ri-delete-bin-line"></i>
+                                 </a>
+                                 <a href="#" type="button" class="btn btn-secondary m-1" title="Nhân bản Mục"
+                                     onclick="return confirm_copy_sweet('quan-ly-muc/action.php?req=copy&id_muc=<?=$item->id_muc?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
+                                     <i class="ri-file-copy-line"></i>
                                  </a>
                              </td>
                          </tr>
@@ -599,9 +603,32 @@ function cancel_update() {
              Toast.fire('Cảnh báo!', 'Dữ liệu này đang được sử dụng trong một Đợt chấm điểm. Bạn không thể Sửa/Xoá vào lúc này!', 'warning');
          <?php elseif ($_GET['status'] == 'locked_update'): ?>
              Toast.fire('Cảnh báo!', 'Dữ liệu này đã sử dụng trong lịch sử. Vui lòng tạo mới thay vì sửa!', 'warning');
+         <?php elseif ($_GET['status'] == 'copy_success'): ?>
+             Toast.fire('Thành công!', 'Đã nhân bản Mục thành công!', 'success');
          <?php endif; ?>
      <?php endif; ?>
  });
+
+ function confirm_copy_sweet(url) {
+     Swal.fire({
+         title: 'Nhân bản Mục này?',
+         html: 'Bạn có chắc chắn muốn nhân bản Mục này không?',
+         icon: 'question',
+         showCancelButton: true,
+         confirmButtonText: 'Nhân bản',
+         cancelButtonText: 'Hủy',
+         customClass: {
+             confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+             cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+         },
+         buttonsStyling: false
+     }).then((result) => {
+         if (result.isConfirmed) {
+             location.href = url;
+         }
+     })
+     return false;
+ }
  </script>
 
 

@@ -95,17 +95,7 @@
                     $dieu_info = $dieu->dieu__Get_By_Id($id_dieu);
                     $thu_tu = $dieu_info ? $dieu_info->thu_tu : 1;
 
-                    // Kiểm tra xem Điều đã được sử dụng chưa
-                    $khoan__Get_All = $khoan->khoan__Get_All();
-                    $used_dieu = [];
-                    foreach ($khoan__Get_All as $k) {
-                        $used_dieu[] = $k->id_dieu;
-                    }
-                    if (in_array($id_dieu, $used_dieu)) {
-                        $khoan->connect->rollBack();
-                        khoan_store_old_input('add', $id_dieu, $ten_khoan, $ghi_chu, $can_tren, $so_luong_muc);
-                        khoan__Redirect('duplicate-dieu');
-                    }
+
 
                     $status = $khoan->khoan__Add($ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc);
                     if($status !=0 ){
@@ -164,19 +154,7 @@
                     $dieu_info = $dieu->dieu__Get_By_Id($id_dieu);
                     $thu_tu = $dieu_info ? $dieu_info->thu_tu : 1;
 
-                    // Kiểm tra xem Điều đã được sử dụng chưa (ngoại trừ khoản hiện tại)
-                    $khoan__Get_All = $khoan->khoan__Get_All();
-                    $used_dieu = [];
-                    foreach ($khoan__Get_All as $k) {
-                        if ($k->id_khoan != $id_khoan) {
-                            $used_dieu[] = $k->id_dieu;
-                        }
-                    }
-                    if (in_array($id_dieu, $used_dieu)) {
-                        $khoan->connect->rollBack();
-                        khoan_store_old_input('update', $id_dieu, $ten_khoan, $ghi_chu, $can_tren, $so_luong_muc, $id_khoan);
-                        khoan__Redirect('duplicate-dieu');
-                    }
+
 
                     $status = $khoan->khoan__Update($id_khoan, $ten_khoan, $ghi_chu, $can_tren, $thu_tu, $id_dieu, $so_luong_muc);
                     if($status !=0 ){
@@ -197,6 +175,59 @@
                     khoan__Redirect('failed');
                 }
                 
+                break;
+
+            case 'copy':
+                if (!khoan__Valid_Csrf_Get()) {
+                    khoan__Redirect('csrf');
+                }
+
+                $id_khoan_cu = isset($_GET['id_khoan']) ? trim($_GET['id_khoan']) : "";
+
+                if (!khoan__Is_Positive_Integer($id_khoan_cu)) {
+                    khoan__Redirect('not-found');
+                }
+
+                try {
+                    $khoan->connect->beginTransaction();
+
+                    $khoan_cu = $khoan->khoan__Get_By_Id($id_khoan_cu);
+                    if (!$khoan_cu) {
+                        throw new Exception("not-found");
+                    }
+
+                    // 1. Tạo Khoản mới
+                    $ten_khoan_moi = $khoan_cu->ten_khoan;
+                    $thu_tu_moi = $khoan_cu->thu_tu;
+
+                    $stmt_count = $khoan->connect->prepare("SELECT COUNT(*) FROM khoan WHERE ten_khoan = ?");
+                    $stmt_count->execute([$ten_khoan_moi]);
+                    $count_ban_sao = (int)$stmt_count->fetchColumn();
+
+                    $ghi_chu_cu = trim($khoan_cu->ghi_chu);
+                    $ghi_chu_moi = $ghi_chu_cu ? $ghi_chu_cu . " (Bản sao thứ " . $count_ban_sao . ")" : "Bản sao thứ " . $count_ban_sao;
+
+                    $status_khoan = $khoan->khoan__Add($ten_khoan_moi, $ghi_chu_moi, $khoan_cu->can_tren, $thu_tu_moi, $khoan_cu->id_dieu, $khoan_cu->so_luong_muc);
+                    if (!$status_khoan) throw new Exception('copy-failed');
+                    $id_khoan_moi = $khoan->connect->lastInsertId();
+
+                    // 2. Nhân bản Mục
+                    $muc->connect = $khoan->connect;
+                    $muc_cu_list = $muc->muc__Get_All_By_Id_Khoan($id_khoan_cu);
+                    foreach ($muc_cu_list as $mc) {
+                        $status_muc = $muc->muc__Add($mc->ten_muc, $mc->ghi_chu, $mc->thu_tu, $id_khoan_moi, $mc->quyen_sv, $mc->quyen_lt, $mc->quyen_btdk, $mc->quyen_gv, $mc->diem_toi_da, $mc->co_minh_chung);
+                        if (!$status_muc) throw new Exception('copy-failed');
+                    }
+
+                    $khoan->connect->commit();
+                    khoan__Rotate_Csrf_Token();
+                    khoan__Redirect('copy_success');
+                } catch (Exception $e) {
+                    if ($khoan->connect->inTransaction()) {
+                        $khoan->connect->rollBack();
+                    }
+                    khoan__Redirect($e->getMessage() === 'not-found' ? 'not-found' : 'failed');
+                }
                 break;
 
             case 'delete':

@@ -269,10 +269,7 @@ button.btn.removeall.btn-outline-secondary:before {
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
 
-                                 <a href="#" type="button" class="btn btn-secondary m-2" title="Nhân bản mẫu phiếu"
-                                     onclick="return confirm_copy_sweet('quan-ly-mau-phieu/action.php?req=copy&id_mau_phieu=<?=$item->id_mau_phieu?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
-                                     <i class="ri-file-copy-line"></i>
-                                 </a>
+
                              </td>
                          </tr>
                          <?php endforeach?>
@@ -444,25 +441,5 @@ function update_obj_dieu(id_mau_phieu) {
     });
 }
 
-function confirm_copy_sweet(url) {
-    Swal.fire({
-        title: 'Nhân bản Mẫu phiếu?',
-        html: 'Bạn có chắc chắn muốn Nhân bản <b>Mẫu phiếu</b><br>này thành một bộ mới không?',
-        icon: 'question',
-        width: '36em',
-        showCancelButton: true,
-        confirmButtonText: 'Đồng ý',
-        cancelButtonText: 'Hủy',
-        buttonsStyling: false,
-        customClass: {
-            confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
-            cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = url;
-        }
-    });
-    return false;
-}
+
  </script>

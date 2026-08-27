@@ -79,11 +79,7 @@
                     // Nhựt sửa lỗi: Thêm Điều có swap gồm nhiều câu SQL nên phải dùng transaction.
                     $dieu->connect->beginTransaction();
                     dieu__Lock_All($dieu);
-                    // Nhựt sửa lỗi: Tên Điều không được trùng, check sau khi lock table.
-                    if ($dieu->dieu__Get_By_Ten($ten_dieu)) {
-                        $error_status = 'duplicate-name';
-                        throw new Exception("Dieu da ton tai");
-                    }
+
 
                     // Nhựt sửa lỗi: Nếu dữ liệu thứ tự hiện tại đã trùng/hở/NULL thì không xử lý tiếp làm sai thêm.
                     if (!$dieu->dieu__Check_Thu_Tu_Hop_Le()) {
@@ -167,11 +163,7 @@
                         $error_status = 'locked_update';
                         throw new Exception("Dieu da phat sinh trong dot cham diem");
                     }
-                    // Nhựt sửa lỗi: Tên Điều cập nhật không được trùng với Điều khác.
-                    if ($dieu->dieu__Get_By_Ten($ten_dieu, $id_dieu)) {
-                        $error_status = 'duplicate-name';
-                        throw new Exception("Dieu da ton tai");
-                    }
+
 
                     // Nhựt sửa lỗi: Dữ liệu thứ tự đang lỗi thì không swap/update tiếp.
                     if (!$dieu->dieu__Check_Thu_Tu_Hop_Le()) {
@@ -217,6 +209,71 @@
                     dieu__Redirect($error_status);
                 }
                 
+                break;
+
+            case 'copy':
+                if (!dieu__Valid_Csrf_Get()) {
+                    dieu__Redirect('csrf');
+                }
+
+                $id_dieu_cu = isset($_GET['id_dieu']) ? trim($_GET['id_dieu']) : "";
+
+                if (!dieu__Is_Positive_Integer($id_dieu_cu)) {
+                    dieu__Redirect('not-found');
+                }
+
+                try {
+                    $dieu->connect->beginTransaction();
+                    dieu__Lock_All($dieu);
+
+                    $dieu_cu = $dieu->dieu__Get_By_Id($id_dieu_cu);
+                    if (!$dieu_cu) {
+                        throw new Exception("not-found");
+                    }
+
+                    // 1. Tạo Điều mới
+                    $ten_dieu_moi = $dieu_cu->ten_dieu;
+
+                    $stmt_count = $dieu->connect->prepare("SELECT COUNT(*) FROM dieu WHERE ten_dieu = ?");
+                    $stmt_count->execute([$ten_dieu_moi]);
+                    $count_ban_sao = (int)$stmt_count->fetchColumn();
+
+                    $ghi_chu_cu = trim($dieu_cu->ghi_chu);
+                    $ghi_chu_moi = $ghi_chu_cu ? $ghi_chu_cu . " (Bản sao thứ " . $count_ban_sao . ")" : "Bản sao thứ " . $count_ban_sao;
+
+                    $thu_tu_moi = $dieu->dieu__Get_Max_Thu_Tu() + 1;
+
+                    $status_dieu = $dieu->dieu__Add($ten_dieu_moi, $ghi_chu_moi, $thu_tu_moi);
+                    if (!$status_dieu) throw new Exception('copy-failed');
+                    $id_dieu_moi = $dieu->connect->lastInsertId();
+
+                    // 2. Nhân bản Khoản
+                    $khoan->connect = $dieu->connect;
+                    $muc->connect = $dieu->connect;
+                    
+                    $khoan_cu_list = $khoan->khoan__Get_All_By_Id_Dieu($id_dieu_cu);
+                    foreach ($khoan_cu_list as $kc) {
+                        $status_khoan = $khoan->khoan__Add($kc->ten_khoan, $kc->ghi_chu, $kc->can_tren, $kc->thu_tu, $id_dieu_moi, $kc->so_luong_muc);
+                        if (!$status_khoan) throw new Exception('copy-failed');
+                        $id_khoan_moi = $khoan->connect->lastInsertId();
+
+                        // 3. Nhân bản Mục
+                        $muc_cu_list = $muc->muc__Get_All_By_Id_Khoan($kc->id_khoan);
+                        foreach ($muc_cu_list as $mc) {
+                            $status_muc = $muc->muc__Add($mc->ten_muc, $mc->ghi_chu, $mc->thu_tu, $id_khoan_moi, $mc->quyen_sv, $mc->quyen_lt, $mc->quyen_btdk, $mc->quyen_gv, $mc->diem_toi_da, $mc->co_minh_chung);
+                            if (!$status_muc) throw new Exception('copy-failed');
+                        }
+                    }
+
+                    $dieu->connect->commit();
+                    dieu__Rotate_Csrf_Token();
+                    dieu__Redirect('copy_success');
+                } catch (Exception $e) {
+                    if ($dieu->connect->inTransaction()) {
+                        $dieu->connect->rollBack();
+                    }
+                    dieu__Redirect($e->getMessage() === 'not-found' ? 'not-found' : 'failed');
+                }
                 break;
 
             case 'delete':
