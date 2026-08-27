@@ -68,6 +68,7 @@ $kq_string = implode("|", $kq_string_arr);
 
 // Lưu vào cơ sở dữ liệu
 $status = $phieuchamdiem->phieuchamdiem__Update_Kq_Sv($id_phieu, $kq_string);
+$phieuchamdiem->phieuchamdiem__Update_Trang_Thai($id_phieu, 2);
 
 // Xử lý lưu minh chứng
 if (is_array($minh_chung) && count($minh_chung) > 0) {
