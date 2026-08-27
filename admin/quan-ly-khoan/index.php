@@ -188,8 +188,8 @@
                          <?php foreach($khoan__Get_All as $item):?>
                          <tr>
                               <td><?=++$num?></td>
-                              <td class="text-center" style="text-align: center !important;"> <?=htmlspecialchars($dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu ?? "", ENT_QUOTES, 'UTF-8')?></td>
-                              <td><?=htmlspecialchars($item->ten_khoan ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                              <td class="text-center" style="text-align: center !important;"> <?php $dieu_obj = $dieu->dieu__Get_By_Id($item->id_dieu); echo htmlspecialchars($dieu_obj->ten_dieu ?? "", ENT_QUOTES, 'UTF-8'); $bs_d = preg_match('/\(Bản sao thứ \d+\)/', $dieu_obj->ghi_chu ?? '', $m) ? $m[0] : ''; echo $bs_d ? " <small class='text-muted'>$bs_d</small>" : ""; ?></td>
+                              <td><?=htmlspecialchars($item->ten_khoan ?? "", ENT_QUOTES, 'UTF-8')?><?php $bs_k = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu ?? '', $m) ? $m[0] : ''; echo $bs_k ? " <small class='text-muted'>$bs_k</small>" : ""; ?></td>
                               <td class="text-center" style="text-align: center !important;"><?=htmlspecialchars($item->can_tren ?? "", ENT_QUOTES, 'UTF-8')?></td>
                               <!-- quân sửa: Hiển thị giá trị Số lượng mục -->
                               <td class="text-center" style="text-align: center !important;"><?=htmlspecialchars($item->so_luong_muc ?? "", ENT_QUOTES, 'UTF-8')?></td>

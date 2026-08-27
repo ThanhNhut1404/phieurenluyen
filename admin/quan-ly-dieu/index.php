@@ -154,7 +154,7 @@
                          <?php foreach($dieu__Get_All as $item):?>
                          <tr>
                              <td><?=++$num?></td>
-                             <td class="text-center" style="text-align: center !important;"><?=$item->ten_dieu?></td>
+                             <td class="text-center" style="text-align: center !important;"><?=$item->ten_dieu?><?php $bs = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu, $m) ? $m[0] : ''; echo $bs ? " <small class='text-muted'>$bs</small>" : ""; ?></td>
                              <td><?=$item->ghi_chu?></td>
                              <td class="text-center" style="text-align: center !important;"><?=$item->thu_tu?></td>
                              <td>

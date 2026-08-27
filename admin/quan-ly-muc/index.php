@@ -228,9 +228,9 @@
                                  $kh = $khoan->khoan__Get_By_Id($item->id_khoan);
                                  $di = $kh ? $dieu->dieu__Get_By_Id($kh->id_dieu) : null;
                              ?>
-                             <td class="text-center" style="text-align: center !important;"><?= $di ? htmlspecialchars($di->ten_dieu, ENT_QUOTES, 'UTF-8') : '<span class="text-danger">Chưa xác định</span>' ?></td>
-                             <td><?= $kh ? htmlspecialchars($kh->ten_khoan, ENT_QUOTES, 'UTF-8') : '<span class="text-danger">Chưa xác định</span>' ?></td>
-                             <td><?=$item->ten_muc?></td>
+                             <td class="text-center" style="text-align: center !important;"><?= $di ? htmlspecialchars($di->ten_dieu, ENT_QUOTES, 'UTF-8') . (preg_match('/\(Bản sao thứ \d+\)/', $di->ghi_chu ?? '', $m) ? " <small class='text-muted'>{$m[0]}</small>" : "") : '<span class="text-danger">Chưa xác định</span>' ?></td>
+                             <td><?= $kh ? htmlspecialchars($kh->ten_khoan, ENT_QUOTES, 'UTF-8') . (preg_match('/\(Bản sao thứ \d+\)/', $kh->ghi_chu ?? '', $m) ? " <small class='text-muted'>{$m[0]}</small>" : "") : '<span class="text-danger">Chưa xác định</span>' ?></td>
+                             <td><?=$item->ten_muc?><?php $bs_m = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu, $m) ? $m[0] : ''; echo $bs_m ? " <small class='text-muted'>$bs_m</small>" : ""; ?></td>
                              <td class="text-center" style="text-align: center !important;"><?=$item->diem_toi_da?></td>
                              <td class="text-center" style="text-align: center !important;">
                                  <?php if($item->co_minh_chung == 1): ?>
