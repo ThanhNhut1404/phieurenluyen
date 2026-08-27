@@ -89,46 +89,53 @@
                              <?php
                                 $dia_chi_ll = $bithudoankhoa__Get_By_Id->dia_chi_lien_lac ?? '';
                                 $arr_dc_ll = preg_split('/,\s*/', $dia_chi_ll);
-                                if (count($arr_dc_ll) < 4) {
+                                $count_ll = count($arr_dc_ll);
+                                if ($count_ll >= 4) {
+                                    $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
+                                    $dc_ll_xa = $arr_dc_ll[1] ?? '';
+                                    $dc_ll_tinh = $arr_dc_ll[3] ?? '';
+                                } elseif ($count_ll == 3) {
+                                    $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
+                                    $dc_ll_xa = $arr_dc_ll[1] ?? '';
+                                    $dc_ll_tinh = $arr_dc_ll[2] ?? '';
+                                } else {
                                     $dc_ll_so_nha = $dia_chi_ll;
-                                    $dc_ll_ap = '';
                                     $dc_ll_xa = '';
                                     $dc_ll_tinh = '';
-                                } else {
-                                    $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
-                                    $dc_ll_ap = $arr_dc_ll[1] ?? '';
-                                    $dc_ll_xa = $arr_dc_ll[2] ?? '';
-                                    $dc_ll_tinh = $arr_dc_ll[3] ?? '';
                                 }
 
                                 $dia_chi_tt = $bithudoankhoa__Get_By_Id->dia_chi_thuong_tru ?? '';
                                 $arr_dc_tt = preg_split('/,\s*/', $dia_chi_tt);
-                                if (count($arr_dc_tt) < 4) {
+                                $count_tt = count($arr_dc_tt);
+                                if ($count_tt >= 4) {
+                                    $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
+                                    $dc_tt_xa = $arr_dc_tt[1] ?? '';
+                                    $dc_tt_tinh = $arr_dc_tt[3] ?? '';
+                                } elseif ($count_tt == 3) {
+                                    $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
+                                    $dc_tt_xa = $arr_dc_tt[1] ?? '';
+                                    $dc_tt_tinh = $arr_dc_tt[2] ?? '';
+                                } else {
                                     $dc_tt_so_nha = $dia_chi_tt;
-                                    $dc_tt_ap = '';
                                     $dc_tt_xa = '';
                                     $dc_tt_tinh = '';
-                                } else {
-                                    $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
-                                    $dc_tt_ap = $arr_dc_tt[1] ?? '';
-                                    $dc_tt_xa = $arr_dc_tt[2] ?? '';
-                                    $dc_tt_tinh = $arr_dc_tt[3] ?? '';
                                 }
                             ?>
                             <div class="form-group">
                                 <label class="label-sidebar" for="">Địa chỉ liên lạc <span class="color-crimson">*</span></label>
                                 <div class="row">
                                     <div class="col-6 mb-2">
-                                        <input type="text" name="dc_ll_so_nha" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_ll_so_nha', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_ll_so_nha)) ?>" placeholder="Số nhà, đường">
+                                        <select name="dc_ll_tinh" id="update_dc_ll_tinh" class="form-control" required>
+                                            <option value="">Chọn Tỉnh / Thành phố</option>
+                                        </select>
                                     </div>
                                     <div class="col-6 mb-2">
-                                        <input type="text" name="dc_ll_ap" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_ll_ap', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_ll_ap)) ?>" placeholder="Ấp / Khu phố">
+                                        <select name="dc_ll_xa" id="update_dc_ll_xa" class="form-control" required>
+                                            <option value="">Chọn Phường / Xã</option>
+                                        </select>
                                     </div>
-                                    <div class="col-6 mb-2">
-                                        <input type="text" name="dc_ll_xa" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_ll_xa', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_ll_xa)) ?>" placeholder="Xã / Phường">
-                                    </div>
-                                    <div class="col-6 mb-2">
-                                        <input type="text" name="dc_ll_tinh" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_ll_tinh', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_ll_tinh)) ?>" placeholder="Tỉnh / Thành phố">
+                                    <div class="col-12 mb-2">
+                                        <input type="text" name="dc_ll_chitiet" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_ll_chitiet', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_ll_so_nha)) ?>" placeholder="Số nhà, đường, khu phố">
                                     </div>
                                 </div>
                             </div>
@@ -151,16 +158,17 @@
                                 <label class="label-sidebar" for="">Địa chỉ thường trú <span class="color-crimson">*</span></label>
                                 <div class="row">
                                     <div class="col-6 mb-2">
-                                        <input type="text" name="dc_tt_so_nha" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_tt_so_nha', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_tt_so_nha)) ?>" placeholder="Số nhà, đường">
+                                        <select name="dc_tt_tinh" id="update_dc_tt_tinh" class="form-control" required>
+                                            <option value="">Chọn Tỉnh / Thành phố</option>
+                                        </select>
                                     </div>
                                     <div class="col-6 mb-2">
-                                        <input type="text" name="dc_tt_ap" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_tt_ap', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_tt_ap)) ?>" placeholder="Ấp / Khu phố">
+                                        <select name="dc_tt_xa" id="update_dc_tt_xa" class="form-control" required>
+                                            <option value="">Chọn Phường / Xã</option>
+                                        </select>
                                     </div>
-                                    <div class="col-6 mb-2">
-                                        <input type="text" name="dc_tt_xa" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_tt_xa', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_tt_xa)) ?>" placeholder="Xã / Phường">
-                                    </div>
-                                    <div class="col-6 mb-2">
-                                        <input type="text" name="dc_tt_tinh" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_tt_tinh', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_tt_tinh)) ?>" placeholder="Tỉnh / Thành phố">
+                                    <div class="col-12 mb-2">
+                                        <input type="text" name="dc_tt_chitiet" class="form-control" required value="<?= bithu_update_escape(bithu_old_value_update('dc_tt_chitiet', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_tt_so_nha)) ?>" placeholder="Số nhà, đường, khu phố">
                                     </div>
                                 </div>
                             </div>
@@ -180,3 +188,18 @@
             <!-- /.card -->
         </div>
     </form>
+    <script>
+    $(document).ready(function() {
+        var updateLL = {
+            tinh: "<?= bithu_update_escape(bithu_old_value_update('dc_ll_tinh', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_ll_tinh)) ?>",
+            xa: "<?= bithu_update_escape(bithu_old_value_update('dc_ll_xa', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_ll_xa)) ?>"
+        };
+        loadVNProvinces('update_dc_ll', updateLL.tinh ? updateLL : null);
+        
+        var updateTT = {
+            tinh: "<?= bithu_update_escape(bithu_old_value_update('dc_tt_tinh', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_tt_tinh)) ?>",
+            xa: "<?= bithu_update_escape(bithu_old_value_update('dc_tt_xa', $bithudoankhoa__Get_By_Id->id_bi_thu, $dc_tt_xa)) ?>"
+        };
+        loadVNProvinces('update_dc_tt', updateTT.tinh ? updateTT : null);
+    });
+    </script>

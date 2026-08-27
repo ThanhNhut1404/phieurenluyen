@@ -103,16 +103,17 @@
                                      <label class="label-sidebar" for="">Địa chỉ liên lạc <span class="color-crimson">*</span></label>
                                      <div class="row">
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_so_nha" class="form-control" required placeholder="Số nhà, đường" value="<?= htmlspecialchars(bithu_old_value('dc_ll_so_nha', 'add')) ?>">
+                                             <select name="dc_ll_tinh" id="dc_ll_tinh" class="form-control" required>
+                                                 <option value="">Chọn Tỉnh / Thành phố</option>
+                                             </select>
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_ap" class="form-control" required placeholder="Ấp / Khu phố" value="<?= htmlspecialchars(bithu_old_value('dc_ll_ap', 'add')) ?>">
+                                             <select name="dc_ll_xa" id="dc_ll_xa" class="form-control" required>
+                                                 <option value="">Chọn Phường / Xã</option>
+                                             </select>
                                          </div>
-                                         <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_xa" class="form-control" required placeholder="Xã / Phường" value="<?= htmlspecialchars(bithu_old_value('dc_ll_xa', 'add')) ?>">
-                                         </div>
-                                         <div class="col-6 mb-2">
-                                             <input type="text" name="dc_ll_tinh" class="form-control" required placeholder="Tỉnh / Thành phố" value="<?= htmlspecialchars(bithu_old_value('dc_ll_tinh', 'add')) ?>">
+                                         <div class="col-12 mb-2">
+                                             <input type="text" name="dc_ll_chitiet" class="form-control" required placeholder="Số nhà, đường, khu phố" value="<?= htmlspecialchars(bithu_old_value('dc_ll_chitiet', 'add')) ?>">
                                          </div>
                                      </div>
                                  </div>
@@ -139,16 +140,17 @@
                                      <label class="label-sidebar" for="">Địa chỉ thường trú <span class="color-crimson">*</span></label>
                                      <div class="row">
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_so_nha" class="form-control" required placeholder="Số nhà, đường" value="<?= htmlspecialchars(bithu_old_value('dc_tt_so_nha', 'add')) ?>">
+                                             <select name="dc_tt_tinh" id="dc_tt_tinh" class="form-control" required>
+                                                 <option value="">Chọn Tỉnh / Thành phố</option>
+                                             </select>
                                          </div>
                                          <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_ap" class="form-control" required placeholder="Ấp / Khu phố" value="<?= htmlspecialchars(bithu_old_value('dc_tt_ap', 'add')) ?>">
+                                             <select name="dc_tt_xa" id="dc_tt_xa" class="form-control" required>
+                                                 <option value="">Chọn Phường / Xã</option>
+                                             </select>
                                          </div>
-                                         <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_xa" class="form-control" required placeholder="Xã / Phường" value="<?= htmlspecialchars(bithu_old_value('dc_tt_xa', 'add')) ?>">
-                                         </div>
-                                         <div class="col-6 mb-2">
-                                             <input type="text" name="dc_tt_tinh" class="form-control" required placeholder="Tỉnh / Thành phố" value="<?= htmlspecialchars(bithu_old_value('dc_tt_tinh', 'add')) ?>">
+                                         <div class="col-12 mb-2">
+                                             <input type="text" name="dc_tt_chitiet" class="form-control" required placeholder="Số nhà, đường, khu phố" value="<?= htmlspecialchars(bithu_old_value('dc_tt_chitiet', 'add')) ?>">
                                          </div>
                                      </div>
                                  </div>
@@ -535,6 +537,85 @@ window.addEventListener("load", function() {
     update_obj(<?=(int)$bithu_old_input['id_bi_thu']?>, '<?=$_GET['status'] ?? ''?>');
 });
 <?php endif; ?>
+
+// Logic load Tỉnh/Huyện/Xã từ API
+let vnProvincesData = null;
+
+function loadVNProvinces(prefix, preselect = null) {
+    var $tinh = $('#' + prefix + '_tinh');
+    var $xa = $('#' + prefix + '_xa');
+    
+    function resetDropdown($select, defaultText) {
+        if ($select.hasClass("select2-hidden-accessible")) {
+            $select.select2('destroy');
+        }
+        $select.empty().append('<option value="">' + defaultText + '</option>');
+        $select.select2({ theme: 'bootstrap4', width: '100%' });
+    }
+    
+    function populateDropdown($select, data, selectedValue, defaultText) {
+        if ($select.hasClass("select2-hidden-accessible")) {
+            $select.select2('destroy');
+        }
+        $select.empty().append('<option value="">' + defaultText + '</option>');
+        $.each(data, function(index, item) {
+            var selected = (selectedValue === item.name) ? 'selected' : '';
+            $select.append('<option value="' + item.name + '" ' + selected + ' data-id="' + item.code + '">' + item.name + '</option>');
+        });
+        $select.select2({ theme: 'bootstrap4', width: '100%' });
+    }
+
+    function init() {
+        populateDropdown($tinh, vnProvincesData, preselect ? preselect.tinh : null, 'Chọn Tỉnh / Thành phố');
+        if (!$xa.hasClass("select2-hidden-accessible")) {
+            $xa.select2({ theme: 'bootstrap4', width: '100%' });
+        }
+        
+        if (preselect && preselect.tinh) {
+            $tinh.trigger('change', [preselect.xa]);
+        }
+    }
+
+    $tinh.on('change', function(e, preXa) {
+        var selectedProvinceCode = $(this).find(':selected').data('id');
+        
+        resetDropdown($xa, 'Chọn Phường / Xã');
+        
+        if (selectedProvinceCode) {
+            var province = vnProvincesData.find(p => p.code == selectedProvinceCode);
+            if (province && province.wards) {
+                populateDropdown($xa, province.wards, preXa, 'Chọn Phường / Xã');
+            }
+        }
+    });
+    
+    if (vnProvincesData) {
+        init();
+    } else {
+        $.getJSON('../assets/provinces.json?v=' + new Date().getTime(), function(data) {
+            vnProvincesData = data;
+            init();
+        }).fail(function(jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            console.error("Request Failed: " + err);
+            alert("Không thể tải danh sách Tỉnh/Thành phố. Vui lòng làm mới trang (F5).");
+        });
+    }
+}
+
+window.addEventListener('load', function() {
+    var oldAddLL = {
+        tinh: "<?= htmlspecialchars(bithu_old_value('dc_ll_tinh', 'add')) ?>",
+        xa: "<?= htmlspecialchars(bithu_old_value('dc_ll_xa', 'add')) ?>"
+    };
+    loadVNProvinces('dc_ll', oldAddLL.tinh ? oldAddLL : null);
+    
+    var oldAddTT = {
+        tinh: "<?= htmlspecialchars(bithu_old_value('dc_tt_tinh', 'add')) ?>",
+        xa: "<?= htmlspecialchars(bithu_old_value('dc_tt_xa', 'add')) ?>"
+    };
+    loadVNProvinces('dc_tt', oldAddTT.tinh ? oldAddTT : null);
+});
  </script>
 
 

@@ -18,18 +18,16 @@ if (isset($_GET['req'])) {
             $so_dien_thoai_1 = isset($_POST['so_dien_thoai_1']) ? trim($_POST['so_dien_thoai_1']) : '';
             $so_dien_thoai_2 = isset($_POST['so_dien_thoai_2']) ? trim($_POST['so_dien_thoai_2']) : '';
             
-            $dc_ll_so_nha = isset($_POST['dc_ll_so_nha']) ? trim($_POST['dc_ll_so_nha']) : '';
-            $dc_ll_ap = isset($_POST['dc_ll_ap']) ? trim($_POST['dc_ll_ap']) : '';
+            $dc_ll_chitiet = isset($_POST['dc_ll_chitiet']) ? trim($_POST['dc_ll_chitiet']) : '';
             $dc_ll_xa = isset($_POST['dc_ll_xa']) ? trim($_POST['dc_ll_xa']) : '';
             $dc_ll_tinh = isset($_POST['dc_ll_tinh']) ? trim($_POST['dc_ll_tinh']) : '';
             
-            $dc_tt_so_nha = isset($_POST['dc_tt_so_nha']) ? trim($_POST['dc_tt_so_nha']) : '';
-            $dc_tt_ap = isset($_POST['dc_tt_ap']) ? trim($_POST['dc_tt_ap']) : '';
+            $dc_tt_chitiet = isset($_POST['dc_tt_chitiet']) ? trim($_POST['dc_tt_chitiet']) : '';
             $dc_tt_xa = isset($_POST['dc_tt_xa']) ? trim($_POST['dc_tt_xa']) : '';
             $dc_tt_tinh = isset($_POST['dc_tt_tinh']) ? trim($_POST['dc_tt_tinh']) : '';
 
-            $dia_chi_lien_lac = $dc_ll_so_nha . ', ' . $dc_ll_ap . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
-            $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
+            $dia_chi_lien_lac = $dc_ll_chitiet . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
+            $dia_chi_thuong_tru = $dc_tt_chitiet . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
             $chuc_vu = isset($_POST['chuc_vu']) ? $_POST['chuc_vu'] : '';
             $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
 
@@ -66,18 +64,16 @@ if (isset($_GET['req'])) {
             $so_dien_thoai_1 = isset($_POST['so_dien_thoai_1']) ? trim($_POST['so_dien_thoai_1']) : '';
             $so_dien_thoai_2 = isset($_POST['so_dien_thoai_2']) ? trim($_POST['so_dien_thoai_2']) : '';
             
-            $dc_ll_so_nha = isset($_POST['dc_ll_so_nha']) ? trim($_POST['dc_ll_so_nha']) : '';
-            $dc_ll_ap = isset($_POST['dc_ll_ap']) ? trim($_POST['dc_ll_ap']) : '';
+            $dc_ll_chitiet = isset($_POST['dc_ll_chitiet']) ? trim($_POST['dc_ll_chitiet']) : '';
             $dc_ll_xa = isset($_POST['dc_ll_xa']) ? trim($_POST['dc_ll_xa']) : '';
             $dc_ll_tinh = isset($_POST['dc_ll_tinh']) ? trim($_POST['dc_ll_tinh']) : '';
             
-            $dc_tt_so_nha = isset($_POST['dc_tt_so_nha']) ? trim($_POST['dc_tt_so_nha']) : '';
-            $dc_tt_ap = isset($_POST['dc_tt_ap']) ? trim($_POST['dc_tt_ap']) : '';
+            $dc_tt_chitiet = isset($_POST['dc_tt_chitiet']) ? trim($_POST['dc_tt_chitiet']) : '';
             $dc_tt_xa = isset($_POST['dc_tt_xa']) ? trim($_POST['dc_tt_xa']) : '';
             $dc_tt_tinh = isset($_POST['dc_tt_tinh']) ? trim($_POST['dc_tt_tinh']) : '';
 
-            $dia_chi_lien_lac = $dc_ll_so_nha . ', ' . $dc_ll_ap . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
-            $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
+            $dia_chi_lien_lac = $dc_ll_chitiet . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
+            $dia_chi_thuong_tru = $dc_tt_chitiet . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
             $chuc_vu = isset($_POST['chuc_vu']) ? $_POST['chuc_vu'] : '';
             $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
 

@@ -22,19 +22,18 @@
                 $so_dien_thoai_1 = isset($_POST['so_dien_thoai_1']) ? trim($_POST['so_dien_thoai_1']) : '';
                 $so_dien_thoai_2 = isset($_POST['so_dien_thoai_2']) ? trim($_POST['so_dien_thoai_2']) : '';
                 
-                $dc_ll_so_nha = isset($_POST['dc_ll_so_nha']) ? trim($_POST['dc_ll_so_nha']) : '';
-                $dc_ll_ap = isset($_POST['dc_ll_ap']) ? trim($_POST['dc_ll_ap']) : '';
+                $dc_ll_chitiet = isset($_POST['dc_ll_chitiet']) ? trim($_POST['dc_ll_chitiet']) : '';
                 $dc_ll_xa = isset($_POST['dc_ll_xa']) ? trim($_POST['dc_ll_xa']) : '';
                 $dc_ll_tinh = isset($_POST['dc_ll_tinh']) ? trim($_POST['dc_ll_tinh']) : '';
                 
-                $dc_tt_so_nha = isset($_POST['dc_tt_so_nha']) ? trim($_POST['dc_tt_so_nha']) : '';
-                $dc_tt_ap = isset($_POST['dc_tt_ap']) ? trim($_POST['dc_tt_ap']) : '';
+                $dc_tt_chitiet = isset($_POST['dc_tt_chitiet']) ? trim($_POST['dc_tt_chitiet']) : '';
                 $dc_tt_xa = isset($_POST['dc_tt_xa']) ? trim($_POST['dc_tt_xa']) : '';
                 $dc_tt_tinh = isset($_POST['dc_tt_tinh']) ? trim($_POST['dc_tt_tinh']) : '';
 
-                $dia_chi_lien_lac = $dc_ll_so_nha . ', ' . $dc_ll_ap . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
-                $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
+                $dia_chi_lien_lac = $dc_ll_chitiet . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
+                $dia_chi_thuong_tru = $dc_tt_chitiet . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
                 $id_trinh_do = isset($_POST['id_trinh_do']) ? $_POST['id_trinh_do'] : '';
+                $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
                 
                 $_SESSION['giangvien_old_input'] = array_merge($_POST, ['context' => 'add']);
 
@@ -51,6 +50,12 @@
                 
                 $status = $giangvien->giangvien__Add($ma_giang_vien, $ten_giang_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $id_trinh_do);
                 if($status != 0){
+                    if (!empty($id_lop_hoc)) {
+                        $new_gv = $giangvien->giangvien__Get_By_Ma($ma_giang_vien);
+                        if ($new_gv) {
+                            $phancong->phancong__Add($new_gv->id_giang_vien, $id_lop_hoc, "Phân công khi thêm giảng viên");
+                        }
+                    }
                     unset($_SESSION['giangvien_old_input']);
                     header('location: ../index.php?page=quan-ly-giang-vien&status=success');
                 }else{
@@ -68,19 +73,18 @@
                 $so_dien_thoai_1 = isset($_POST['so_dien_thoai_1']) ? trim($_POST['so_dien_thoai_1']) : '';
                 $so_dien_thoai_2 = isset($_POST['so_dien_thoai_2']) ? trim($_POST['so_dien_thoai_2']) : '';
                 
-                $dc_ll_so_nha = isset($_POST['dc_ll_so_nha']) ? trim($_POST['dc_ll_so_nha']) : '';
-                $dc_ll_ap = isset($_POST['dc_ll_ap']) ? trim($_POST['dc_ll_ap']) : '';
+                $dc_ll_chitiet = isset($_POST['dc_ll_chitiet']) ? trim($_POST['dc_ll_chitiet']) : '';
                 $dc_ll_xa = isset($_POST['dc_ll_xa']) ? trim($_POST['dc_ll_xa']) : '';
                 $dc_ll_tinh = isset($_POST['dc_ll_tinh']) ? trim($_POST['dc_ll_tinh']) : '';
                 
-                $dc_tt_so_nha = isset($_POST['dc_tt_so_nha']) ? trim($_POST['dc_tt_so_nha']) : '';
-                $dc_tt_ap = isset($_POST['dc_tt_ap']) ? trim($_POST['dc_tt_ap']) : '';
+                $dc_tt_chitiet = isset($_POST['dc_tt_chitiet']) ? trim($_POST['dc_tt_chitiet']) : '';
                 $dc_tt_xa = isset($_POST['dc_tt_xa']) ? trim($_POST['dc_tt_xa']) : '';
                 $dc_tt_tinh = isset($_POST['dc_tt_tinh']) ? trim($_POST['dc_tt_tinh']) : '';
 
-                $dia_chi_lien_lac = $dc_ll_so_nha . ', ' . $dc_ll_ap . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
-                $dia_chi_thuong_tru = $dc_tt_so_nha . ', ' . $dc_tt_ap . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
+                $dia_chi_lien_lac = $dc_ll_chitiet . ', ' . $dc_ll_xa . ', ' . $dc_ll_tinh;
+                $dia_chi_thuong_tru = $dc_tt_chitiet . ', ' . $dc_tt_xa . ', ' . $dc_tt_tinh;
                 $id_trinh_do = isset($_POST['id_trinh_do']) ? $_POST['id_trinh_do'] : '';
+                $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
                 
                 $_SESSION['giangvien_old_input'] = array_merge($_POST, ['context' => 'update']);
 
@@ -96,6 +100,20 @@
                 }
 
                 $giangvien->giangvien__Update($id_giang_vien, $ma_giang_vien, $ten_giang_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $id_trinh_do);
+                
+                $current_phancong = $phancong->phancong__Get_By_Id_Giang_Vien($id_giang_vien);
+                if (!empty($id_lop_hoc)) {
+                    if ($current_phancong) {
+                        $phancong->phancong__Update($current_phancong->id_phan_cong, $id_giang_vien, $id_lop_hoc, "Cập nhật phân công từ sửa giảng viên");
+                    } else {
+                        $phancong->phancong__Add($id_giang_vien, $id_lop_hoc, "Phân công khi sửa giảng viên");
+                    }
+                } else {
+                    if ($current_phancong) {
+                        $phancong->phancong__Delete($current_phancong->id_phan_cong);
+                    }
+                }
+                
                 unset($_SESSION['giangvien_old_input']);
                 header('location: ../index.php?page=quan-ly-giang-vien&status=success');
                 exit();
