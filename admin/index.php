@@ -3,8 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 if (!isset($_SESSION['admin'])) {
-    header('location: ../auth/');
-    exit();
+    header('location: ../index.php');
 }
 ?>
 <!DOCTYPE html>
@@ -13,7 +12,14 @@ if (!isset($_SESSION['admin'])) {
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            alert("JS Error: " + message + " at " + source + ":" + lineno);
+            return true;
+        };
+    </script>
     <title>Chấm Điểm Rèn Luyện</title>
     <link rel="icon" href="../assets/img/favicon.ico" type="image/gif" sizes="16x16">
     <meta name="description" content="Chấm Điểm Rèn Luyện">
@@ -26,6 +32,10 @@ if (!isset($_SESSION['admin'])) {
 
     <!-- Bootstrap4 Duallistbox -->
     <link rel="stylesheet" href="../assets/theme/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
+    
+    <!-- Select2 -->
+    <link rel="stylesheet" href="../assets/theme/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="../assets/theme/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 
     <link rel="stylesheet" href="../assets/theme/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="../assets/theme/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
@@ -61,6 +71,9 @@ if (!isset($_SESSION['admin'])) {
     <script src="../assets/theme/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap4 Duallistbox -->
     <script src="../assets/theme/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+    
+    <!-- Select2 -->
+    <script src="../assets/theme/plugins/select2/js/select2.full.min.js"></script>
 
 
     <script src="../assets/theme/plugins/datatables/jquery.dataTables.min.js"></script>
@@ -163,18 +176,18 @@ if (!isset($_SESSION['admin'])) {
         return false;
     }
 
-    function confirm_delete_sweet(url) {
+    function confirm_delete_sweet(url, entity_name) {
         Swal.fire({
-            title: '<span style="color: #dc3545 !important">Xác nhận xóa?</span>',
-            text: 'Hệ thống sẽ tiến hành xóa dữ liệu này.',
+            title: 'Xác nhận xóa?',
+            html: 'Thao tác này sẽ xóa <b>' + entity_name + '</b><br>đã chọn và không thể hoàn tác.',
             icon: 'warning',
             width: '36em',
             showCancelButton: true,
-            confirmButtonText: 'Có',
+            confirmButtonText: 'Xóa',
             cancelButtonText: 'Hủy',
             buttonsStyling: false,
             customClass: {
-                confirmButton: 'btn btn-danger font-weight-bold mx-2 px-4 py-2',
+                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
                 cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
             }
         }).then((result) => {

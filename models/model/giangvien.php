@@ -88,7 +88,6 @@ class giangvien extends Database {
     }
     
 
-    // quân sửa: Hàm kiểm tra trùng lặp Mã hoặc Email (Cho phép trùng Tên)
     public function giangvien__Check_Duplicate($ma_giang_vien, $email, $id_giang_vien = 0) {
         if ($id_giang_vien == 0) {
             $obj = $this->connect->prepare("SELECT * FROM giangvien WHERE ma_giang_vien = ? OR email = ?");
@@ -98,6 +97,13 @@ class giangvien extends Database {
             $obj->execute(array($ma_giang_vien, $email, $id_giang_vien));
         }
         return $obj->rowCount();
+    }
+
+    public function giangvien__Get_By_Ma($ma_giang_vien) {
+        $obj = $this->connect->prepare("SELECT * FROM giangvien WHERE ma_giang_vien = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($ma_giang_vien));
+        return $obj->fetch();
     }
 }
 ?>

@@ -294,7 +294,7 @@ button.btn.removeall.btn-outline-secondary:before {
              </div>
          </form>
          <script>
-            $(document).ready(function() {
+            window.addEventListener("load", function() {
                 <?php if ($is_add_error && dotchamdiem_old_value('id_nam_hoc') != ''): ?>
                     load_hoc_ky_by_nam_hoc(<?=json_encode(dotchamdiem_old_value('id_nam_hoc'))?>, '#id_hoc_ky', <?=json_encode(dotchamdiem_old_value('id_hoc_ky'))?>);
                 <?php endif; ?>

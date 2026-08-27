@@ -3,6 +3,9 @@
     $id_giang_vien = $_POST['id_giang_vien'];
     $giangvien__Get_By_Id = $giangvien->giangvien__Get_By_Id($id_giang_vien);
     $trinhdo__Get_All = $trinhdo->trinhdo__Get_All();
+    $lophoc__Get_All = $lophoc->lophoc__Get_All();
+    $current_phancong = $phancong->phancong__Get_By_Id_Giang_Vien($id_giang_vien);
+    $current_id_lop_hoc = $current_phancong ? $current_phancong->id_lop_hoc : '';
     
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -76,52 +79,68 @@
                             <?php
                                 $dia_chi_ll = $giangvien__Get_By_Id->dia_chi_lien_lac ?? '';
                                 $arr_dc_ll = preg_split('/,\s*/', $dia_chi_ll);
-                                if (count($arr_dc_ll) < 4) {
+                                $count_ll = count($arr_dc_ll);
+                                if ($count_ll >= 4) {
+                                    $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
+                                    $dc_ll_xa = $arr_dc_ll[1] ?? '';
+                                    $dc_ll_tinh = $arr_dc_ll[3] ?? '';
+                                } elseif ($count_ll == 3) {
+                                    $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
+                                    $dc_ll_xa = $arr_dc_ll[1] ?? '';
+                                    $dc_ll_tinh = $arr_dc_ll[2] ?? '';
+                                } else {
                                     $dc_ll_so_nha = $dia_chi_ll;
-                                    $dc_ll_ap = '';
                                     $dc_ll_xa = '';
                                     $dc_ll_tinh = '';
-                                } else {
-                                    $dc_ll_so_nha = $arr_dc_ll[0] ?? '';
-                                    $dc_ll_ap = $arr_dc_ll[1] ?? '';
-                                    $dc_ll_xa = $arr_dc_ll[2] ?? '';
-                                    $dc_ll_tinh = $arr_dc_ll[3] ?? '';
                                 }
 
                                 $dia_chi_tt = $giangvien__Get_By_Id->dia_chi_thuong_tru ?? '';
                                 $arr_dc_tt = preg_split('/,\s*/', $dia_chi_tt);
-                                if (count($arr_dc_tt) < 4) {
+                                $count_tt = count($arr_dc_tt);
+                                if ($count_tt >= 4) {
+                                    $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
+                                    $dc_tt_xa = $arr_dc_tt[1] ?? '';
+                                    $dc_tt_tinh = $arr_dc_tt[3] ?? '';
+                                } elseif ($count_tt == 3) {
+                                    $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
+                                    $dc_tt_xa = $arr_dc_tt[1] ?? '';
+                                    $dc_tt_tinh = $arr_dc_tt[2] ?? '';
+                                } else {
                                     $dc_tt_so_nha = $dia_chi_tt;
-                                    $dc_tt_ap = '';
                                     $dc_tt_xa = '';
                                     $dc_tt_tinh = '';
-                                } else {
-                                    $dc_tt_so_nha = $arr_dc_tt[0] ?? '';
-                                    $dc_tt_ap = $arr_dc_tt[1] ?? '';
-                                    $dc_tt_xa = $arr_dc_tt[2] ?? '';
-                                    $dc_tt_tinh = $arr_dc_tt[3] ?? '';
                                 }
                             ?>
                             <div class="form-group">
                                 <label class="label-sidebar" for="">Địa chỉ liên lạc <span class="color-crimson">*</span></label>
                                 <div class="row">
                                     <div class="col-6 mb-2">
-                                        <input type="text" name="dc_ll_so_nha" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_ll_so_nha', $dc_ll_so_nha)) ?>" placeholder="Số nhà, đường">
+                                        <select name="dc_ll_tinh" id="update_dc_ll_tinh" class="form-control" required>
+                                            <option value="">Chọn Tỉnh / Thành phố</option>
+                                        </select>
                                     </div>
                                     <div class="col-6 mb-2">
-                                        <input type="text" name="dc_ll_ap" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_ll_ap', $dc_ll_ap)) ?>" placeholder="Ấp / Khu phố">
+                                        <select name="dc_ll_xa" id="update_dc_ll_xa" class="form-control" required>
+                                            <option value="">Chọn Phường / Xã</option>
+                                        </select>
                                     </div>
-                                    <div class="col-6 mb-2">
-                                        <input type="text" name="dc_ll_xa" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_ll_xa', $dc_ll_xa)) ?>" placeholder="Xã / Phường">
-                                    </div>
-                                    <div class="col-6 mb-2">
-                                        <input type="text" name="dc_ll_tinh" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_ll_tinh', $dc_ll_tinh)) ?>" placeholder="Tỉnh / Thành phố">
+                                    <div class="col-12 mb-2">
+                                        <input type="text" name="dc_ll_chitiet" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_ll_chitiet', $dc_ll_so_nha)) ?>" placeholder="Số nhà, đường, khu phố">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="label-sidebar" for="">Số điện thoại 1 <span class="color-crimson">*</span></label>
                                 <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1" pattern="0[0-9]{9,10}" class="form-control <?= ($is_update_error && ($_GET['status'] ?? '') == 'invalid-sdt') ? 'is-invalid' : '' ?>" required value="<?= htmlspecialchars(giangvien_old_value_update('so_dien_thoai_1', $giangvien__Get_By_Id->so_dien_thoai_1)) ?>" title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1" minlength="10" maxlength="11">
+                            </div>
+                            <div class="form-group">
+                                <label class="label-sidebar" for="">Phân công lớp học (Tùy chọn)</label>
+                                <select class="form-control" name="id_lop_hoc">
+                                    <option value="">Không phân công</option>
+                                    <?php foreach($lophoc__Get_All as $item):?>
+                                    <option value="<?=$item->id_lop_hoc?>" <?= giangvien_old_value_update('id_lop_hoc', $current_id_lop_hoc) == $item->id_lop_hoc ? 'selected' : '' ?>><?=$item->ten_lop_hoc?></option>
+                                    <?php endforeach;?>
+                                </select>
                             </div>
                         </div>
 
@@ -130,16 +149,17 @@
                                 <label class="label-sidebar" for="">Địa chỉ thường trú <span class="color-crimson">*</span></label>
                                 <div class="row">
                                     <div class="col-6 mb-2">
-                                        <input type="text" name="dc_tt_so_nha" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_tt_so_nha', $dc_tt_so_nha)) ?>" placeholder="Số nhà, đường">
+                                        <select name="dc_tt_tinh" id="update_dc_tt_tinh" class="form-control" required>
+                                            <option value="">Chọn Tỉnh / Thành phố</option>
+                                        </select>
                                     </div>
                                     <div class="col-6 mb-2">
-                                        <input type="text" name="dc_tt_ap" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_tt_ap', $dc_tt_ap)) ?>" placeholder="Ấp / Khu phố">
+                                        <select name="dc_tt_xa" id="update_dc_tt_xa" class="form-control" required>
+                                            <option value="">Chọn Phường / Xã</option>
+                                        </select>
                                     </div>
-                                    <div class="col-6 mb-2">
-                                        <input type="text" name="dc_tt_xa" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_tt_xa', $dc_tt_xa)) ?>" placeholder="Xã / Phường">
-                                    </div>
-                                    <div class="col-6 mb-2">
-                                        <input type="text" name="dc_tt_tinh" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_tt_tinh', $dc_tt_tinh)) ?>" placeholder="Tỉnh / Thành phố">
+                                    <div class="col-12 mb-2">
+                                        <input type="text" name="dc_tt_chitiet" class="form-control" required value="<?= htmlspecialchars(giangvien_old_value_update('dc_tt_chitiet', $dc_tt_so_nha)) ?>" placeholder="Số nhà, đường, khu phố">
                                     </div>
                                 </div>
                             </div>
@@ -159,3 +179,19 @@
             <!-- /.card -->
         </div>
     </form>
+    
+    <script>
+    $(document).ready(function() {
+        var updateLL = {
+            tinh: "<?= htmlspecialchars(giangvien_old_value_update('dc_ll_tinh', $dc_ll_tinh)) ?>",
+            xa: "<?= htmlspecialchars(giangvien_old_value_update('dc_ll_xa', $dc_ll_xa)) ?>"
+        };
+        loadVNProvinces('update_dc_ll', updateLL.tinh ? updateLL : null);
+        
+        var updateTT = {
+            tinh: "<?= htmlspecialchars(giangvien_old_value_update('dc_tt_tinh', $dc_tt_tinh)) ?>",
+            xa: "<?= htmlspecialchars(giangvien_old_value_update('dc_tt_xa', $dc_tt_xa)) ?>"
+        };
+        loadVNProvinces('update_dc_tt', updateTT.tinh ? updateTT : null);
+    });
+    </script>
