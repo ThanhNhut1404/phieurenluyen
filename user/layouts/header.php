@@ -23,10 +23,13 @@
                     $role_name = 'Bí thư chi đoàn';
                 } elseif (isset($_SESSION['btdk'])) {
                     $role_name = 'Bí thư đoàn khoa';
-                    if (isset($_SESSION['btdk']->id_khoa)) {
-                        $khoa_info = $khoa->khoa__Get_By_Id($_SESSION['btdk']->id_khoa);
-                        if ($khoa_info) {
-                            $role_name .= ' - ' . $khoa_info->ten_khoa;
+                    if (isset($_SESSION['btdk']->id_nguoi_dung)) {
+                        $bithudoankhoa_info = $bithudoankhoa->bithudoankhoa__Get_By_Id($_SESSION['btdk']->id_nguoi_dung);
+                        if ($bithudoankhoa_info && isset($bithudoankhoa_info->id_khoa)) {
+                            $khoa_info = $khoa->khoa__Get_By_Id($bithudoankhoa_info->id_khoa);
+                            if ($khoa_info) {
+                                $role_name .= ' - Khoa ' . $khoa_info->ten_khoa;
+                            }
                         }
                     }
                 } elseif (isset($_SESSION['gv'])) {
