@@ -405,6 +405,12 @@ button.btn.removeall.btn-outline-secondary:before {
                           $num = 0; 
                           ?>
                          <?php foreach ($taikhoan__Get_All as $item) : ?>
+                         <?php 
+                            // Bỏ qua hiển thị tài khoản đang đăng nhập
+                            if (isset($_SESSION['admin']) && $_SESSION['admin']->email == $item->email) {
+                                continue;
+                            }
+                         ?>
                          <tr>
                              <td><?= ++$num ?></td>
                              <?php
@@ -430,27 +436,36 @@ button.btn.removeall.btn-outline-secondary:before {
                              <td class="text-center" style="text-align: center !important;"><?= $pn ? htmlspecialchars($pn->ten_phan_nhom) : '<span class="text-danger">Chưa xác định</span>' ?></td>
                              <td class="text-center" style="text-align: center !important;"><?= $pq ? htmlspecialchars($pq->ten_phan_quyen) : '<span class="text-danger">Chưa xác định</span>' ?></td>
                              <td class="text-center" style="text-align: center !important;"
-                                 onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=active&id_tai_khoan=<?= $item->id_tai_khoan ?>&trang_thai=<?= $item->trang_thai ?>', '<?= $item->trang_thai == 1 ? 'Khóa tài khoản này?' : 'Kích hoạt tài khoản này?' ?>', 'status')">
+                                 <?php if ($item->email !== 'admin@gmail.com'): ?>
+                                 onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=active&id_tai_khoan=<?= $item->id_tai_khoan ?>&trang_thai=<?= $item->trang_thai ?>', '<?= $item->trang_thai == 1 ? 'Khóa tài khoản này?' : 'Kích hoạt tài khoản này?' ?>', 'status')"
+                                 <?php endif; ?>>
+                                 <?php if ($item->email !== 'admin@gmail.com'): ?>
                                  <?= $item->trang_thai == 1 ? "<a href='#' class='btn btn-sm btn-success'><i class='ri-checkbox-circle-line'></i></a>" : "<a href='#' class='btn btn-sm btn-danger'><i class='ri-forbid-line'></i></a>" ?>
-
+                                 <?php endif; ?>
                              </td>
                              <td class="text-center" style="text-align: center !important;">
+                                 <?php if ($item->email !== 'admin@gmail.com'): ?>
                                  <a href="#" type="button" class="btn btn-sm btn-warning"
                                      onclick="return send_mail('<?= $item->email ?>', '<?= $item->mat_khau ?>')">
                                      <i class="ri-mail-send-line"></i>
                                  </a>
+                                 <?php endif; ?>
                              </td>
                              <td class="text-center" style="text-align: center !important;">
+                                 <?php if ($item->email !== 'admin@gmail.com'): ?>
                                  <a href="#" type="button" class="btn btn-sm btn-info"
                                      onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=reset&id_tai_khoan=<?= $item->id_tai_khoan ?>', 'Khôi phục mật khẩu tài khoản này về mặc định?', 'reset')">
                                      <i class="ri-key-2-line"></i>
                                  </a>
+                                 <?php endif; ?>
                              </td>
                              <td class="text-center" style="text-align: center !important;">
+                                 <?php if ($item->email !== 'admin@gmail.com'): ?>
                                  <a href="#" type="button" class="btn btn-sm btn-danger"
                                      onclick="return confirm_delete_sweet('quan-ly-tai-khoan/action.php?req=delete&id_tai_khoan=<?= $item->id_tai_khoan ?>', 'Tài khoản')">
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
+                                 <?php endif; ?>
                              </td>
 
                          </tr>

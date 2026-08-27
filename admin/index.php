@@ -176,18 +176,18 @@ if (!isset($_SESSION['admin'])) {
         return false;
     }
 
-    function confirm_delete_sweet(url) {
+    function confirm_delete_sweet(url, entity_name) {
         Swal.fire({
-            title: '<span style="color: #dc3545 !important">Xác nhận xóa?</span>',
-            text: 'Hệ thống sẽ tiến hành xóa dữ liệu này.',
+            title: 'Xác nhận xóa?',
+            html: 'Thao tác này sẽ xóa <b>' + entity_name + '</b><br>đã chọn và không thể hoàn tác.',
             icon: 'warning',
             width: '36em',
             showCancelButton: true,
-            confirmButtonText: 'Có',
+            confirmButtonText: 'Xóa',
             cancelButtonText: 'Hủy',
             buttonsStyling: false,
             customClass: {
-                confirmButton: 'btn btn-danger font-weight-bold mx-2 px-4 py-2',
+                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
                 cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
             }
         }).then((result) => {

@@ -384,6 +384,7 @@ table#tablejs thead th {
 .table td .btn-warning,
 .table td .btn-danger,
 .table td .btn-success,
+.table td .btn-secondary,
 .table td .btn-info {
     background-color: #fff !important;
     border: 1px solid #dee2e6 !important;
@@ -402,6 +403,7 @@ table#tablejs thead th {
 .table td .btn-warning i,
 .table td .btn-danger i,
 .table td .btn-success i,
+.table td .btn-secondary i,
 .table td .btn-info i {
     font-size: 1.15rem !important;
     transition: transform 0.2s ease-in-out !important;
@@ -432,6 +434,20 @@ table#tablejs thead th {
 }
 
 .table td .btn-danger:hover i {
+    transform: scale(1.1);
+}
+
+/* Copy Button (Gray/Secondary) */
+.table td .btn-secondary {
+    color: #4b5563 !important; /* Slate/Gray color for icon */
+}
+
+.table td .btn-secondary:hover {
+    background-color: rgba(75, 85, 99, 0.06) !important;
+    border-color: #4b5563 !important;
+}
+
+.table td .btn-secondary:hover i {
     transform: scale(1.1);
 }
 
