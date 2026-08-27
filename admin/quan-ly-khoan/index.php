@@ -90,7 +90,8 @@
                                          <option value="">Chọn Điều</option>
                                          <?php foreach ($dieu__Get_All as $item):?>
                                              <?php if(!in_array($item->id_dieu, $used_dieu) || khoan_old_value('id_dieu', 'add') == $item->id_dieu): ?>
-                                                 <option value="<?=$item->id_dieu?>" <?= khoan_old_value('id_dieu', 'add') == $item->id_dieu ? 'selected' : '' ?>><?=$item->ten_dieu?></option>
+                                                 <?php $ban_sao_text = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu, $m) ? ' ' . $m[0] : ''; ?>
+                                                 <option value="<?=$item->id_dieu?>" <?= khoan_old_value('id_dieu', 'add') == $item->id_dieu ? 'selected' : '' ?>><?=$item->ten_dieu . $ban_sao_text?></option>
                                              <?php endif; ?>
                                          <?php endforeach; ?>
                                      </select>

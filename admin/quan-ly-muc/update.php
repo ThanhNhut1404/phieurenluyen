@@ -54,11 +54,24 @@
                                 <?php $old_khoan_up = muc_update_old_value('id_khoan', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->id_khoan); ?>
                                 <select class="form-control <?= ($is_update_error && $status == 'invalid-khoan') ? 'is-invalid' : '' ?>" name="id_khoan" id="id_khoan_update" required onchange="loadThuTu(this.value, <?=muc_update_old_value('thu_tu', $muc__Get_By_Id->id_muc, $muc__Get_By_Id->thu_tu)?>, '#thu_tu_update')">
                                     <option value="<?=$muc__Get_By_Id->id_khoan?>" <?= $old_khoan_up == $muc__Get_By_Id->id_khoan ? 'selected' : '' ?>>
-                                        <?=$dieu->dieu__Get_By_Id($khoan->khoan__Get_By_Id($muc__Get_By_Id->id_khoan)->id_dieu)->ten_dieu?> - <?=$khoan->khoan__Get_By_Id($muc__Get_By_Id->id_khoan)->ten_khoan?>
+                                        <?php 
+                                            $current_khoan = $khoan->khoan__Get_By_Id($muc__Get_By_Id->id_khoan);
+                                            $current_dieu = $dieu->dieu__Get_By_Id($current_khoan->id_dieu);
+                                            $ban_sao_text_dieu = preg_match('/\(Bản sao thứ \d+\)/', $current_dieu->ghi_chu ?? '', $m) ? ' ' . $m[0] : '';
+                                            $ban_sao_text_khoan = preg_match('/\(Bản sao thứ \d+\)/', $current_khoan->ghi_chu, $m) ? ' ' . $m[0] : '';
+                                        ?>
+                                        <?=$current_dieu->ten_dieu . $ban_sao_text_dieu?> - <?=$current_khoan->ten_khoan . $ban_sao_text_khoan?>
                                     </option>
                                     <?php foreach ($khoan__Get_All as $item):?>
                                     <?php if($item->id_khoan != $muc__Get_By_Id->id_khoan):?>
-                                    <option value="<?=$item->id_khoan?>" <?= $old_khoan_up == $item->id_khoan ? 'selected' : '' ?>><?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?> - <?=$item->ten_khoan?></option>
+                                    <option value="<?=$item->id_khoan?>" <?= $old_khoan_up == $item->id_khoan ? 'selected' : '' ?>>
+                                        <?php
+                                            $dieu_obj = $dieu->dieu__Get_By_Id($item->id_dieu);
+                                            $ban_sao_text_dieu = preg_match('/\(Bản sao thứ \d+\)/', $dieu_obj->ghi_chu ?? '', $m) ? ' ' . $m[0] : '';
+                                            $ban_sao_text_khoan = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu, $m) ? ' ' . $m[0] : '';
+                                        ?>
+                                        <?=$dieu_obj->ten_dieu . $ban_sao_text_dieu?> - <?=$item->ten_khoan . $ban_sao_text_khoan?>
+                                    </option>
                                     <?php endif; ?>
                                     <?php endforeach; ?>
                                 </select>

@@ -80,11 +80,13 @@
                                 <select class="form-control <?= ($is_update_error && in_array($status, ['invalid-dieu', 'duplicate-dieu'])) ? 'is-invalid' : '' ?>" name="id_dieu" id="id_dieu_up" required>
                                     <?php $selected_dieu = khoan_update_old_value('id_dieu', $khoan__Get_By_Id->id_khoan, $khoan__Get_By_Id->id_dieu); ?>
                                     <option value="<?=$khoan__Get_By_Id->id_dieu?>" <?= $selected_dieu == $khoan__Get_By_Id->id_dieu ? 'selected' : '' ?>>
-                                        <?=khoan_update_escape($dieu->dieu__Get_By_Id($khoan__Get_By_Id->id_dieu)->ten_dieu ?? '')?>
+                                        <?php $ban_sao_text_hien_tai = preg_match('/\(Bản sao thứ \d+\)/', $dieu->dieu__Get_By_Id($khoan__Get_By_Id->id_dieu)->ghi_chu ?? '', $m) ? ' ' . $m[0] : ''; ?>
+                                        <?=khoan_update_escape($dieu->dieu__Get_By_Id($khoan__Get_By_Id->id_dieu)->ten_dieu ?? '') . $ban_sao_text_hien_tai?>
                                     </option>
                                     <?php foreach ($dieu__Get_All as $item):?>
                                         <?php if($item->id_dieu != $khoan__Get_By_Id->id_dieu && !in_array($item->id_dieu, $used_dieu)):?>
-                                            <option value="<?=$item->id_dieu?>" <?= $selected_dieu == $item->id_dieu ? 'selected' : '' ?>><?=khoan_update_escape($item->ten_dieu)?></option>
+                                            <?php $ban_sao_text = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu, $m) ? ' ' . $m[0] : ''; ?>
+                                            <option value="<?=$item->id_dieu?>" <?= $selected_dieu == $item->id_dieu ? 'selected' : '' ?>><?=khoan_update_escape($item->ten_dieu) . $ban_sao_text?></option>
                                         <?php endif; ?>
                                     <?php endforeach; ?>
                                 </select>

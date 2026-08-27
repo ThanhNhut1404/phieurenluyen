@@ -183,7 +183,8 @@ button.btn.removeall.btn-outline-secondary:before {
                                      <?php $old_id_dieu = mauphieu_old_value('id_dieu', 'add', array()); ?>
                                      <select class="duallistbox <?= ($is_add_error && $status == 'invalid-dieu') ? 'is-invalid' : '' ?>" multiple="multiple" name="id_dieu[]" id="id_dieu" required>
                                          <?php foreach($dieu__Get_All as $item):?>
-                                         <option value="<?=$item->id_dieu?>" <?= in_array($item->id_dieu, $old_id_dieu) ? 'selected' : '' ?>><?=$item->ten_dieu?></option>
+                                         <?php $ban_sao_text = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu, $m) ? ' ' . $m[0] : ''; ?>
+                                         <option value="<?=$item->id_dieu?>" <?= in_array($item->id_dieu, $old_id_dieu) ? 'selected' : '' ?>><?=$item->ten_dieu . $ban_sao_text?></option>
                                          <?php endforeach; ?>
                                      </select>
                                      <?php if ($is_add_error && $status == 'invalid-dieu'): ?>

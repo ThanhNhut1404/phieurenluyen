@@ -84,8 +84,13 @@
                                          <option value="">-- Chọn Khoản --</option>
                                          <?php $old_khoan = muc_old_value('id_khoan', 'add'); ?>
                                          <?php foreach ($khoan__Get_All as $item):?>
-                                         <option value="<?=$item->id_khoan?>" <?= $old_khoan == $item->id_khoan ? 'selected' : '' ?>><?=$dieu->dieu__Get_By_Id($item->id_dieu)->ten_dieu?> -
-                                             <?=$item->ten_khoan?></option>
+                                         <?php 
+                                            $dieu_obj = $dieu->dieu__Get_By_Id($item->id_dieu);
+                                            $ban_sao_text_dieu = preg_match('/\(Bản sao thứ \d+\)/', $dieu_obj->ghi_chu ?? '', $m) ? ' ' . $m[0] : '';
+                                            $ban_sao_text_khoan = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu, $m) ? ' ' . $m[0] : ''; 
+                                         ?>
+                                         <option value="<?=$item->id_khoan?>" <?= $old_khoan == $item->id_khoan ? 'selected' : '' ?>><?=$dieu_obj->ten_dieu . $ban_sao_text_dieu?> -
+                                             <?=$item->ten_khoan . $ban_sao_text_khoan?></option>
                                          <?php endforeach; ?>
                                      </select>
                                      <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-khoan'): ?>
@@ -395,26 +400,6 @@
                           <option value="">-- Tất cả Điều --</option>
                       </select>
                   </div>
-                  <div class="form-group mb-2">
-                      <label class="label-sidebar">Khoản:</label>
-                      <select id="filter_khoan" class="form-control form-control-sm">
-                          <option value="">-- Tất cả Khoản --</option>
-                      </select>
-                  </div>
-                  <div class="form-group mb-2">
-                      <label class="label-sidebar">Mục:</label>
-                      <select id="filter_muc" class="form-control form-control-sm">
-                          <option value="">-- Tất cả Mục --</option>
-                      </select>
-                  </div>
-                  <div class="form-group mb-2">
-                      <label class="label-sidebar">Minh chứng:</label>
-                      <select id="filter_minh_chung" class="form-control form-control-sm">
-                          <option value="">-- Tất cả --</option>
-                          <option value="Có">Có</option>
-                          <option value="Không">Không</option>
-                      </select>
-                  </div>
                   <div class="d-flex justify-content-end mt-3">
                       <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
                       <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
@@ -429,28 +414,14 @@
 
               function updateCascadeDropdowns() {
                   var selectedDieu = $('#filter_dieu').val() || "";
-                  var selectedKhoan = $('#filter_khoan').val() || "";
-                  var selectedMuc = $('#filter_muc').val() || "";
                   
                   var dieuOptions = [];
-                  var khoanOptions = [];
-                  var mucOptions = [];
                   
                   table.rows().every(function() {
                       var data = this.data();
                       var dieu = $('<div>').html(data[1]).text().trim();
-                      var khoan = $('<div>').html(data[2]).text().trim();
-                      var muc = $('<div>').html(data[3]).text().trim();
                       
                       if (dieu !== '' && dieuOptions.indexOf(dieu) === -1) dieuOptions.push(dieu);
-                      
-                      if (selectedDieu === "" || dieu === selectedDieu) {
-                          if (khoan !== '' && khoanOptions.indexOf(khoan) === -1) khoanOptions.push(khoan);
-                      }
-                      
-                      if ((selectedDieu === "" || dieu === selectedDieu) && (selectedKhoan === "" || khoan === selectedKhoan)) {
-                          if (muc !== '' && mucOptions.indexOf(muc) === -1) mucOptions.push(muc);
-                      }
                   });
                   
                   function populate(selectId, options, currentValue, defaultText) {
@@ -467,22 +438,9 @@
                   }
                   
                   populate('filter_dieu', dieuOptions, selectedDieu, '-- Tất cả Điều --');
-                  populate('filter_khoan', khoanOptions, selectedKhoan, '-- Tất cả Khoản --');
-                  populate('filter_muc', mucOptions, selectedMuc, '-- Tất cả Mục --');
               }
 
               $('#filter_dieu').on('change', function() {
-                  $('#filter_khoan').val('');
-                  $('#filter_muc').val('');
-                  updateCascadeDropdowns();
-              });
-
-              $('#filter_khoan').on('change', function() {
-                  $('#filter_muc').val('');
-                  updateCascadeDropdowns();
-              });
-              
-              $('#filter_muc').on('change', function() {
                   updateCascadeDropdowns();
               });
 
@@ -503,28 +461,16 @@
 
               $('#btn-apply-filter').on('click', function() {
                   var dieuVal = $('#filter_dieu').val();
-                  var khoanVal = $('#filter_khoan').val();
-                  var mucVal = $('#filter_muc').val();
-                  var mcVal = $('#filter_minh_chung').val();
                   
                   table.column(1).search(dieuVal ? '^' + $.fn.dataTable.util.escapeRegex(dieuVal) + '$' : '', true, false)
-                       .column(2).search(khoanVal ? '^' + $.fn.dataTable.util.escapeRegex(khoanVal) + '$' : '', true, false)
-                       .column(3).search(mucVal ? '^' + $.fn.dataTable.util.escapeRegex(mucVal) + '$' : '', true, false)
-                       .column(5).search(mcVal ? $.fn.dataTable.util.escapeRegex(mcVal) : '', true, false)
                        .draw();
                   $('#custom-filter-menu').fadeOut(200);
               });
 
               $('#btn-cancel-filter').on('click', function() {
                   $('#filter_dieu').val('');
-                  $('#filter_khoan').val('');
-                  $('#filter_muc').val('');
-                  $('#filter_minh_chung').val('');
                   updateCascadeDropdowns();
                   table.column(1).search('')
-                       .column(2).search('')
-                       .column(3).search('')
-                       .column(5).search('')
                        .draw();
                   $('#custom-filter-menu').fadeOut(200);
               });

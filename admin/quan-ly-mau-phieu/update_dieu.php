@@ -65,7 +65,8 @@
                                 <?php $old_id_dieu_upd = mauphieu_update_dieu_old_value('id_dieu', $id_mau_phieu, $arr_id_dieu_hien_tai); ?>
                                 <select class="duallistboxs <?= ($is_update_error && $status == 'invalid-dieu') ? 'is-invalid' : '' ?>" multiple="multiple" name="id_dieu[]" id="id_dieu_upd" required>
                                     <?php foreach($dieu__Get_All as $item):?>
-                                    <option value="<?=$item->id_dieu?>" <?= in_array($item->id_dieu, $old_id_dieu_upd) ? 'selected' : '' ?>><?=$item->ten_dieu?></option>
+                                    <?php $ban_sao_text = preg_match('/\(Bản sao thứ \d+\)/', $item->ghi_chu, $m) ? ' ' . $m[0] : ''; ?>
+                                    <option value="<?=$item->id_dieu?>" <?= in_array($item->id_dieu, $old_id_dieu_upd) ? 'selected' : '' ?>><?=$item->ten_dieu . $ban_sao_text?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <?php if ($is_update_error && $status == 'invalid-dieu'): ?>
