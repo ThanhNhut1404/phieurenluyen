@@ -19,9 +19,9 @@ if ($tai_khoan == "0") {
 
 // Lấy dữ liệu chấm điểm từ App
 $data = json_decode(file_get_contents("php://input"), true);
-$id_phieu = $data['id_phieu'] ?? '';
-$kq_sv = $data['kq_sv'] ?? []; // Mảng chứa điểm của từng mục
-$minh_chung = $data['minh_chung'] ?? []; // Mảng chứa minh chứng base64
+$id_phieu = $data['id_phieu'] ?? $_POST['id_phieu'] ?? '';
+$kq_sv = $data['kq_sv'] ?? $_POST['kq_sv'] ?? []; // Mảng chứa điểm của từng mục
+$minh_chung = $data['minh_chung'] ?? $_POST['minh_chung'] ?? []; // Mảng chứa minh chứng base64
 
 if (empty($id_phieu) || empty($kq_sv) || !is_array($kq_sv)) {
     response_json("error", "Dữ liệu chấm điểm không hợp lệ");

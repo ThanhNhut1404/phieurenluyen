@@ -50,7 +50,7 @@
                     exit();
                 }
                 
-                // Kiểm tra xem Lớp trưởng đã chấm chưa
+                // Kiếm tra xem Lớp trưởng đã chấm chưa
                 if (empty($phieu->kq_lt_bt)) {
                     header("location: $href&status=failed");
                     exit();

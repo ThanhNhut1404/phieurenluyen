@@ -178,6 +178,9 @@
                                 <?php elseif ($is_update_error && $status == 'invalid-lop'): ?>
                                     <small class="text-danger mt-1">Lớp áp dụng không hợp lệ.</small>
                                 <?php endif; ?>
+                                <?php if ($is_update_error && $status == 'cannot-remove-class-with-data'): ?>
+                                    <small class="text-danger mt-1">Không thể loại bỏ lớp đã phát sinh dữ liệu (sinh viên đã chấm điểm).</small>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="col-12">
