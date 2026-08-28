@@ -20,11 +20,81 @@ if (strlen(strpos($href, '&status')) > 0) {
     $href = explode('&status', $href)[0];
 }
 
+function vietTatChuCaiDau($str) {
+    $unicode = array(
+        "a" => "á|à|ả|ã|ạ|ă|ắ|ặ|ằ|ẳ|ẵ|â|ấ|ầ|ẩ|ẫ|ậ", "d" => "đ", "e" => "é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ",
+        "i" => "í|ì|ỉ|ĩ|ị", "o" => "ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ",
+        "u" => "ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự", "y" => "ý|ỳ|ỷ|ỹ|ỵ",
+        "A" => "Á|À|Ả|Ã|Ạ|Ă|Ắ|Ặ|Ằ|Ẳ|Ẵ|Â|Ấ|Ầ|Ẩ|Ẫ|Ậ", "D" => "Đ", "E" => "É|È|Ẻ|Ẽ|Ẹ|Ê|Ế|Ề|Ể|Ễ|Ệ",
+        "I" => "Í|Ì|Ỉ|Ĩ|Ị", "O" => "Ó|Ò|Ỏ|Õ|Ọ|Ô|Ố|Ồ|Ổ|Ỗ|Ộ|Ơ|Ớ|Ờ|Ở|Ỡ|Ợ",
+        "U" => "Ú|Ủ|Ũ|Ụ|Ư|Ứ|Ừ|Ử|Ữ|Ự", "Y" => "Ý|Ỳ|Ỷ|Ỹ|Ỵ",
+    );
+    foreach ($unicode as $nonUnicode => $uni) {
+        $str = preg_replace("/($uni)/i", $nonUnicode, $str);
+    }
+    $words = explode(" ", trim($str));
+    $acronym = "";
+    foreach ($words as $w) {
+        if (trim($w) != "") {
+            $word = trim($w);
+            if (preg_match('/[0-9]/', $word)) {
+                $acronym .= $word;
+            } else {
+                $acronym .= mb_substr($word, 0, 1, "UTF-8");
+            }
+        }
+    }
+    return strtoupper($acronym);
+}
+
 $status = 0;
 $email = $_POST["email"];
 $pass = $_POST["password"];
-$password = $hashpassword->Decryption($pass);
 
+if (strpos($pass, '$2y$') === 0) {
+    if (password_verify("123456", $pass)) {
+        $password = "123456";
+    } else if (password_verify("#TDU123", $pass)) {
+        $password = "#TDU123";
+    } else {
+        $password = "123456"; // Fallback mặc định
+        $tk = $taikhoan->taikhoan__Get_By_Email($email);
+        if ($tk && $tk->id_phan_nhom == 3) {
+            $sv = $sinhvien->sinhvien__Get_By_Id($tk->id_nguoi_dung);
+            if ($sv) {
+                $lh = $lophoc->lophoc__Get_By_Id($sv->id_lop_hoc);
+                $ten_lop = $lh ? $lh->ten_lop_hoc : '';
+                $default_pass = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
+                if (password_verify($default_pass, $pass)) {
+                    $password = $default_pass;
+                }
+            }
+        }
+    }
+} else {
+    $password = $hashpassword->Decryption($pass);
+    if (!$password || strlen($password) > 100) {
+        if (password_verify("123456", $pass)) {
+            $password = "123456";
+        } else if (password_verify("#TDU123", $pass)) {
+            $password = "#TDU123";
+        } else {
+            $password = "123456"; // Fallback mặc định
+            $tk = $taikhoan->taikhoan__Get_By_Email($email);
+            if ($tk && $tk->id_phan_nhom == 3) {
+                $sv = $sinhvien->sinhvien__Get_By_Id($tk->id_nguoi_dung);
+                if ($sv) {
+                    $lh = $lophoc->lophoc__Get_By_Id($sv->id_lop_hoc);
+                    $ten_lop = $lh ? $lh->ten_lop_hoc : '';
+                    $default_pass = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
+                    if (password_verify($default_pass, $pass)) {
+                        $password = $default_pass;
+                    }
+                }
+            }
+        }
+    }
+}
 try {
     //Server settings
     $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Disable verbose debug output

@@ -15,10 +15,12 @@ $data = json_decode(file_get_contents("php://input"));
 if (isset($data->email)) {
     $email = trim($data->email);
     
-    // Kiểm tra email có trong bảng sinhvien hay không
+    // Kiểm tra email có trong bảng sinhvien, giangvien, bithudoankhoa hay không
     $sv = $sinhvien->sinhvien__Get_By_Email($email);
+    $gv = $giangvien->giangvien__Get_By_Email($email);
+    $bt = $bithudoankhoa->bithudoankhoa__Get_By_Email($email);
     
-    if($sv) {
+    if($sv || $gv || $bt) {
         // Kiểm tra xem đã có tài khoản chưa
         if ($taikhoan->taikhoan__Exists_Email($email)) {
             echo json_encode([

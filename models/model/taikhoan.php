@@ -155,7 +155,7 @@ class taikhoan extends Database
 
     public function taikhoan__Get_By_Bi_Thu($id_nguoi_dung)
     {
-        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 4 AND taikhoan.id_nguoi_dung = ?");
+        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN bithudoankhoa ON taikhoan.id_nguoi_dung = bithudoankhoa.id_bi_thu WHERE taikhoan.id_phan_nhom = 4 AND taikhoan.id_nguoi_dung = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_nguoi_dung));
         return $obj->fetchAll();
@@ -163,7 +163,7 @@ class taikhoan extends Database
 
     public function taikhoan__Get_By_Giang_Vien($id_nguoi_dung)
     {
-        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN sinhvien ON taikhoan.id_nguoi_dung = sinhvien.id_sinh_vien WHERE taikhoan.id_phan_nhom = 5 AND taikhoan.id_nguoi_dung = ?");
+        $obj = $this->connect->prepare("SELECT taikhoan.* FROM taikhoan INNER JOIN giangvien ON taikhoan.id_nguoi_dung = giangvien.id_giang_vien WHERE taikhoan.id_phan_nhom = 5 AND taikhoan.id_nguoi_dung = ?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_nguoi_dung));
         return $obj->fetchAll();
