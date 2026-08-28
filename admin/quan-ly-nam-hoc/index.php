@@ -101,15 +101,15 @@
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label class="label-sidebar">Ngày bắt đầu <span class="color-crimson">*</span></label>
-                                <input type="date" id="ngay_bat_dau" name="ngay_bat_dau" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                <input type="date" id="ngay_bat_dau" name="ngay_bat_dau" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-date-range') ? 'is-invalid' : '' ?>" required
                                     value="<?=namhoc_escape(namhoc_old_value('ngay_bat_dau', 'add'))?>">
-                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-ngay'): ?>
+                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-date-range'): ?>
                                     <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
                                 <?php endif; ?>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label class="label-sidebar">Ngày kết thúc <span class="color-crimson">*</span></label>
-                                <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                                <input type="date" id="ngay_ket_thuc" name="ngay_ket_thuc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-date-range') ? 'is-invalid' : '' ?>" required
                                     value="<?=namhoc_escape(namhoc_old_value('ngay_ket_thuc', 'add'))?>">
                             </div>
                         </div>
@@ -196,8 +196,8 @@ window.addEventListener("load", function() {
     $("#tablejs").DataTable({
         "responsive": true,
         "autoWidth": false,
-        // Nhựt sửa lỗi: đưa dropdown chọn số dòng lên hàng riêng phía trên các nút xuất dữ liệu.
-        "dom": "<'row'<'col-sm-12'l>><'row'<'col-sm-12'B>><'row'<'col-sm-12'f>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
+        // Nhựt sửa lỗi: Đưa dropdown và nút xuất dữ liệu lên cùng 1 hàng.
+        "dom": "<'row align-items-center'<'col-sm-6'l><'col-sm-6 d-flex justify-content-end align-items-center'B>><'row'<'col-sm-12'f>>rt<'row mt-3 mb-n2'<'col-sm-6'i><'col-sm-6 d-flex justify-content-end'p>>",
         "pagingType": "full_numbers",
         "pageLength": 10,
         "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -274,7 +274,7 @@ window.addEventListener("load", function() {
                 }
             ]
         }]
-    }).buttons().container().appendTo('#tablejs_wrapper .col-md-6:eq(0)');
+    });
 });
 
 function toggle_add_form() {
