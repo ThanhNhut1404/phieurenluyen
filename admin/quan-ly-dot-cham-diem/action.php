@@ -281,7 +281,7 @@
                         if (!in_array($lad->id_lop_hoc, $id_lop_hoc_valid)) {
                             $count_phieu = $phieuchamdiem->phieuchamdiem__Count_By_Id_Dot_And_Id_Lop_Hoc($id_dot, $lad->id_lop_hoc);
                             if ($count_phieu > 0) {
-                                // Bỏ qua việc xóa
+                                throw new Exception('cannot-remove-class-with-data');
                             } else {
                                 $lopapdung->lopapdung__Delete($lad->id_lop_ap_dung);
                             }
@@ -325,7 +325,13 @@
                         $dotchamdiem->connect->rollBack();
                     }
                     dotchamdiem_store_old_input('update', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot);
-                    dotchamdiem__Redirect('failed');
+                    
+                    $msg = $e->getMessage();
+                    if ($msg === 'cannot-remove-class-with-data') {
+                        dotchamdiem__Redirect($msg);
+                    } else {
+                        dotchamdiem__Redirect('failed');
+                    }
                 }
                 
                 break;

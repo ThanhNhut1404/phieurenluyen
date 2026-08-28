@@ -83,7 +83,7 @@
                              <div class="col-6">
                                  <div class="form-group">
                                      <label class="label-sidebar">Chọn file <span class="color-crimson">*</span></label>
-                                     <input type="file" id="file" name="file" class="form-control" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
+                                     <input type="file" id="file" name="file" class="form-control" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
                                  </div>
                              </div>
 

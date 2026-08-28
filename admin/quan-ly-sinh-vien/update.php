@@ -22,14 +22,10 @@
     $dia_chi_ll = $sinhvien__Get_By_Id->dia_chi_lien_lac ?? '';
     $dc_ll = preg_split('/,\s*/', $dia_chi_ll);
     $count_ll = count($dc_ll);
-    if ($count_ll >= 4) {
-        $dc_ll_so_nha = $dc_ll[0] ?? '';
-        $dc_ll_xa = $dc_ll[1] ?? '';
-        $dc_ll_tinh = $dc_ll[3] ?? '';
-    } elseif ($count_ll == 3) {
-        $dc_ll_so_nha = $dc_ll[0] ?? '';
-        $dc_ll_xa = $dc_ll[1] ?? '';
-        $dc_ll_tinh = $dc_ll[2] ?? '';
+    if ($count_ll >= 3) {
+        $dc_ll_tinh = array_pop($dc_ll);
+        $dc_ll_xa = array_pop($dc_ll);
+        $dc_ll_so_nha = implode(', ', $dc_ll);
     } else {
         $dc_ll_so_nha = $dia_chi_ll;
         $dc_ll_xa = '';
@@ -39,14 +35,10 @@
     $dia_chi_tt = $sinhvien__Get_By_Id->dia_chi_thuong_tru ?? '';
     $dc_tt = preg_split('/,\s*/', $dia_chi_tt);
     $count_tt = count($dc_tt);
-    if ($count_tt >= 4) {
-        $dc_tt_so_nha = $dc_tt[0] ?? '';
-        $dc_tt_xa = $dc_tt[1] ?? '';
-        $dc_tt_tinh = $dc_tt[3] ?? '';
-    } elseif ($count_tt == 3) {
-        $dc_tt_so_nha = $dc_tt[0] ?? '';
-        $dc_tt_xa = $dc_tt[1] ?? '';
-        $dc_tt_tinh = $dc_tt[2] ?? '';
+    if ($count_tt >= 3) {
+        $dc_tt_tinh = array_pop($dc_tt);
+        $dc_tt_xa = array_pop($dc_tt);
+        $dc_tt_so_nha = implode(', ', $dc_tt);
     } else {
         $dc_tt_so_nha = $dia_chi_tt;
         $dc_tt_xa = '';
