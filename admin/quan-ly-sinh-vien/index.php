@@ -134,7 +134,7 @@
                              <div class="col-6">
                                  <div class="form-group">
                                      <label class="label-sidebar">Họ và tên <span class="color-crimson">*</span></label>
-                                     <input type="text" id="ten_sinh_vien" name="ten_sinh_vien" class="form-control" required placeholder="Nhập tên sinh viên">
+                                     <input type="text" id="ten_sinh_vien" name="ten_sinh_vien" class="form-control" required placeholder="Nhập tên sinh viên" value="<?= htmlspecialchars(sinhvien_old_value('ten_sinh_vien', 'add')) ?>">
                                  </div>
                              </div>
                          </div>
@@ -145,15 +145,15 @@
                                      <label class="label-sidebar">Giới tính <span class="color-crimson">*</span></label>
                                      <select class="form-control" name="gioi_tinh" required>
                                          <option value="">Chọn giới tính</option>
-                                         <option value="0">Nữ</option>
-                                         <option value="1">Nam</option>
+                                         <option value="0" <?= sinhvien_old_value('gioi_tinh', 'add') === '0' ? 'selected' : '' ?>>Nữ</option>
+                                         <option value="1" <?= sinhvien_old_value('gioi_tinh', 'add') === '1' ? 'selected' : '' ?>>Nam</option>
                                      </select>
                                  </div>
                              </div>
                              <div class="col-6">
                                  <div class="form-group">
                                      <label class="label-sidebar">Ngày sinh <span class="color-crimson">*</span></label>
-                                     <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control" required value="<?= date('Y-m-d', strtotime('-22 years')) ?>" min="<?= date('Y-m-d', strtotime('-100 years')) ?>" max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
+                                     <input type="date" id="ngay_sinh" name="ngay_sinh" class="form-control" required value="<?= htmlspecialchars(sinhvien_old_value('ngay_sinh', 'add', date('Y-m-d', strtotime('-22 years')))) ?>" min="<?= date('Y-m-d', strtotime('-100 years')) ?>" max="<?= date('Y-m-d', strtotime('-10 years')) ?>" placeholder="Nhập ngày sinh">
                                  </div>
                              </div>
                          </div>
@@ -174,7 +174,7 @@
                                      <select class="form-control" name="id_lop_hoc" required>
                                          <option value="">Chọn Lớp học</option>
                                          <?php foreach ($lophoc__Get_All as $item) : ?>
-                                             <option value="<?= $item->id_lop_hoc ?>"><?= $item->ten_lop_hoc ?></option>
+                                             <option value="<?= $item->id_lop_hoc ?>" <?= sinhvien_old_value('id_lop_hoc', 'add') == $item->id_lop_hoc ? 'selected' : '' ?>><?= $item->ten_lop_hoc ?></option>
                                          <?php endforeach; ?>
                                      </select>
                                  </div>
@@ -185,13 +185,13 @@
                              <div class="col-6">
 <div class="form-group">
                                      <label class="label-sidebar">Số điện thoại 1 <span class="color-crimson">*</span></label>
-                                     <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1" pattern="0[0-9]{9,10}" class="form-control" required title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1" minlength="10" maxlength="11">
+                                     <input type="text" id="so_dien_thoai_1" name="so_dien_thoai_1" pattern="0[0-9]{9,10}" class="form-control" required title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 1" minlength="10" maxlength="11" value="<?= htmlspecialchars(sinhvien_old_value('so_dien_thoai_1', 'add')) ?>">
                                  </div>
                              </div>
                              <div class="col-6">
 <div class="form-group">
                                      <label class="label-sidebar">Số điện thoại 2 <span class="color-crimson">*</span></label>
-                                     <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2" pattern="0[0-9]{9,10}" class="form-control" required title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2" minlength="10" maxlength="11">
+                                     <input type="text" id="so_dien_thoai_2" name="so_dien_thoai_2" pattern="0[0-9]{9,10}" class="form-control" required title="Số điện thoại phải bắt đầu bằng số 0 và có từ 10 đến 11 chữ số" placeholder="Nhập số điện thoại 2" minlength="10" maxlength="11" value="<?= htmlspecialchars(sinhvien_old_value('so_dien_thoai_2', 'add')) ?>">
                                  </div>
                              </div>
                          </div>
@@ -248,9 +248,9 @@
                                      <label class="label-sidebar">Chức vụ <span class="color-crimson">*</span></label>
                                      <select class="form-control" name="chuc_vu" required>
                                          <option value="">Chọn Chức vụ</option>
-                                         <option value="0">Không có</option>
-                                         <option value="1">Lớp trưởng</option>
-                                         <option value="2">Bí thư</option>
+                                         <option value="0" <?= sinhvien_old_value('chuc_vu', 'add') === '0' ? 'selected' : '' ?>>Không có</option>
+                                         <option value="1" <?= sinhvien_old_value('chuc_vu', 'add') === '1' ? 'selected' : '' ?>>Lớp trưởng</option>
+                                         <option value="2" <?= sinhvien_old_value('chuc_vu', 'add') === '2' ? 'selected' : '' ?>>Bí thư</option>
                                      </select>
                                  </div>
                              </div>

@@ -36,12 +36,14 @@
     }
 
     function khoahoc_valid_nam_nhap_hoc($nam_nhap_hoc) {
+        if ($nam_nhap_hoc === '') return true;
         return filter_var($nam_nhap_hoc, FILTER_VALIDATE_INT) !== false
             && (int)$nam_nhap_hoc >= 2006
             && (int)$nam_nhap_hoc <= 2099;
     }
 
     function khoahoc_valid_he_dao_tao($he_dao_tao) {
+        if ($he_dao_tao === '') return true;
         if (!is_numeric($he_dao_tao)) {
             return false;
         }
@@ -127,7 +129,7 @@
                     khoahoc_redirect('duplicate-khoa-hoc');
                 }
 
-                $status = $khoahoc->khoahoc__Add($ten_khoa_hoc, (int)$nam_nhap_hoc, (float)$he_dao_tao, $ghi_chu);
+                $status = $khoahoc->khoahoc__Add($ten_khoa_hoc, $nam_nhap_hoc === '' ? null : (int)$nam_nhap_hoc, $he_dao_tao === '' ? null : (float)$he_dao_tao, $ghi_chu);
                 khoahoc_clear_old_input();
                 khoahoc_rotate_csrf_token();
                 khoahoc_redirect($status != 0 ? 'add-success' : 'add-failed');
@@ -178,7 +180,7 @@
                     khoahoc_redirect('duplicate-khoa-hoc');
                 }
 
-                $status = $khoahoc->khoahoc__Update($id_khoa_hoc, $ten_khoa_hoc, (int)$nam_nhap_hoc, (float)$he_dao_tao, $ghi_chu);
+                $status = $khoahoc->khoahoc__Update($id_khoa_hoc, $ten_khoa_hoc, $nam_nhap_hoc === '' ? null : (int)$nam_nhap_hoc, $he_dao_tao === '' ? null : (float)$he_dao_tao, $ghi_chu);
                 $khoahoc->connect->commit();
                 khoahoc_clear_old_input();
                 khoahoc_rotate_csrf_token();

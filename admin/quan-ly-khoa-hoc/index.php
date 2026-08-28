@@ -89,8 +89,8 @@
                                 <?php endif; ?>
                             </div>
                             <div class="col-md-6 form-group">
-                                <label class="label-sidebar">Năm nhập học <span class="color-crimson">*</span></label>
-                                <input type="number" id="nam_nhap_hoc" name="nam_nhap_hoc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-nam') ? 'is-invalid' : '' ?>" required
+                                <label class="label-sidebar">Năm nhập học</label>
+                                <input type="number" id="nam_nhap_hoc" name="nam_nhap_hoc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-nam') ? 'is-invalid' : '' ?>"
                                     min="2006" max="2099" value="<?=khoahoc_escape(khoahoc_old_value('nam_nhap_hoc', 'add'))?>" placeholder="Nhập năm nhập học">
                                 <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-nam'): ?>
                                     <small class="text-danger mt-1">Năm nhập học không hợp lệ.</small>
@@ -99,8 +99,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <label class="label-sidebar">Hệ đào tạo <span class="color-crimson">*</span></label>
-                                <input type="number" id="he_dao_tao" name="he_dao_tao" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-he') ? 'is-invalid' : '' ?>" required
+                                <label class="label-sidebar">Hệ đào tạo</label>
+                                <input type="number" id="he_dao_tao" name="he_dao_tao" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-he') ? 'is-invalid' : '' ?>"
                                     min="2" max="8" step="0.5" value="<?=khoahoc_escape(khoahoc_old_value('he_dao_tao', 'add'))?>" placeholder="Nhập số năm đào tạo">
                                 <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-he'): ?>
                                     <small class="text-danger mt-1">Hệ đào tạo không hợp lệ.</small>

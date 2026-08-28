@@ -80,8 +80,8 @@
                         <?php endif; ?>
                     </div>
                     <div class="col-md-6 form-group">
-                        <label class="label-sidebar" for="nam_nhap_hoc_update">Năm nhập học <span class="color-crimson">*</span></label>
-                        <input type="number" id="nam_nhap_hoc_update" name="nam_nhap_hoc" class="form-control <?= ($is_update_error && $status == 'invalid-nam') ? 'is-invalid' : '' ?>" required
+                        <label class="label-sidebar" for="nam_nhap_hoc_update">Năm nhập học</label>
+                        <input type="number" id="nam_nhap_hoc_update" name="nam_nhap_hoc" class="form-control <?= ($is_update_error && $status == 'invalid-nam') ? 'is-invalid' : '' ?>"
                             min="2006" max="2099" placeholder="Nhập năm nhập học"
                             value="<?=khoahoc_update_escape(khoahoc_update_old_value('nam_nhap_hoc', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->nam_nhap_hoc))?>">
                         <?php if ($is_update_error && $status == 'invalid-nam'): ?>
@@ -91,8 +91,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 form-group">
-                        <label class="label-sidebar" for="he_dao_tao_update">Hệ đào tạo <span class="color-crimson">*</span></label>
-                        <input type="number" id="he_dao_tao_update" name="he_dao_tao" class="form-control <?= ($is_update_error && $status == 'invalid-he') ? 'is-invalid' : '' ?>" required min="2"
+                        <label class="label-sidebar" for="he_dao_tao_update">Hệ đào tạo</label>
+                        <input type="number" id="he_dao_tao_update" name="he_dao_tao" class="form-control <?= ($is_update_error && $status == 'invalid-he') ? 'is-invalid' : '' ?>" min="2"
                             max="8" step="0.5" placeholder="Nhập số năm đào tạo"
                             value="<?=khoahoc_update_escape(khoahoc_update_old_value('he_dao_tao', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->he_dao_tao))?>">
                         <?php if ($is_update_error && $status == 'invalid-he'): ?>
