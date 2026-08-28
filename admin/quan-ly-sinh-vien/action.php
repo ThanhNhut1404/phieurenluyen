@@ -115,6 +115,7 @@ if (isset($_GET['req'])) {
             $file = $_FILES["file"]["tmp_name"];
             $id_lop_hoc = isset($_POST['id_lop_hoc']) ? $_POST['id_lop_hoc'] : '';
             $success_count = 0;
+            $duplicate_rows = [];
 
             try {
                 $objReader = PHPExcel_IOFactory::createReaderForFile($file);
@@ -140,6 +141,7 @@ if (isset($_GET['req'])) {
 
                     // Skip if duplicate code or email
                     if ($sinhvien->sinhvien__Exists_Ma_Sinh_Vien($ma_sinh_vien) || (!empty($email) && $sinhvien->sinhvien__Exists_Email($email))) {
+                        $duplicate_rows[] = $sheetData[$row];
                         continue;
                     }
 
@@ -153,10 +155,23 @@ if (isset($_GET['req'])) {
                 exit();
             }
 
+            if (count($duplicate_rows) > 0) {
+                $_SESSION['import_duplicate_rows'] = $duplicate_rows;
+            }
+
             if ($success_count == 0) {
-                header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                if (count($duplicate_rows) > 0) {
+                    header("location:../index.php?page=quan-ly-sinh-vien&status=import-duplicate");
+                } else {
+                    header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                }
             } else {
-                header("location:../index.php?page=quan-ly-sinh-vien&status=success");
+                $_SESSION['import_success_count'] = $success_count;
+                if (count($duplicate_rows) > 0) {
+                    header("location:../index.php?page=quan-ly-sinh-vien&status=import-partial-success");
+                } else {
+                    header("location:../index.php?page=quan-ly-sinh-vien&status=import-success");
+                }
             }
             exit();
 
@@ -207,6 +222,72 @@ if (isset($_GET['req'])) {
                     readfile($file);
                     // xóa file tạm
                     unlink($file);
+                    exit();
+                } else {
+                    header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                    exit();
+                }
+            } catch (Exception $e) {
+                header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                exit();
+            }
+        case 'export-error':
+            if (!isset($_SESSION['import_duplicate_rows']) || empty($_SESSION['import_duplicate_rows'])) {
+                header("location:../index.php?page=quan-ly-sinh-vien");
+                exit();
+            }
+
+            try {
+                $objPHPExcel = new PHPExcel();
+                $objPHPExcel->getActiveSheet()->SetCellValue('A1', 'STT');
+                $objPHPExcel->getActiveSheet()->SetCellValue('B1', 'Mã số sinh viên');
+                $objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Họ tên sinh viên');
+                $objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Giới tính (Nam: 1, nữ: 0)');
+                $objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Ngày sinh (YYYY-MM-DD)');
+                $objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Email');
+                $objPHPExcel->getActiveSheet()->SetCellValue('G1', 'Số điện thoại 1');
+                $objPHPExcel->getActiveSheet()->SetCellValue('H1', 'Số điện thoại 2');
+                $objPHPExcel->getActiveSheet()->SetCellValue('I1', 'Địa chỉ liên lạc (Số nhà, Ấp, Xã, Tỉnh phân cách bằng dấu phẩy)');
+                $objPHPExcel->getActiveSheet()->SetCellValue('J1', 'Địa chỉ thường trú (Số nhà, Ấp, Xã, Tỉnh phân cách bằng dấu phẩy)');
+                $objPHPExcel->getActiveSheet()->SetCellValue('K1', 'Chức vụ (Sinh viên: 0, Lớp trưởng: 1, Bí thư chi đoàn: 2)');
+
+                $row_num = 2;
+                foreach ($_SESSION['import_duplicate_rows'] as $row_data) {
+                    $objPHPExcel->getActiveSheet()->SetCellValue('A' . $row_num, $row_num - 1);
+                    $objPHPExcel->getActiveSheet()->SetCellValue('B' . $row_num, $row_data['B'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('C' . $row_num, $row_data['C'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('D' . $row_num, $row_data['D'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('E' . $row_num, $row_data['E'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('F' . $row_num, $row_data['F'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('G' . $row_num, $row_data['G'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('H' . $row_num, $row_data['H'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('I' . $row_num, $row_data['I'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('J' . $row_num, $row_data['J'] ?? '');
+                    $objPHPExcel->getActiveSheet()->SetCellValue('K' . $row_num, $row_data['K'] ?? '');
+                    $row_num++;
+                }
+
+                // lưu file 
+                $file = 'danh_sach_sinh_vien_loi_trung_lap.xlsx';
+                $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+                $objWriter->save($file);
+
+                if (file_exists($file)) {
+                    // download
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                    header('Content-Disposition: attachment; filename=' . basename($file));
+                    header('Content-Transfer-Encoding: binary');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($file));
+                    ob_clean();
+                    flush();
+                    readfile($file);
+                    // xóa file tạm
+                    unlink($file);
+                    unset($_SESSION['import_duplicate_rows']);
                     exit();
                 } else {
                     header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
