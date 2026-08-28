@@ -574,13 +574,14 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 value="<?= $val_lt == 0 ? '' : $val_lt ?>">
 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
+                                                    <!-- Quân sửa: Khóa cột điểm SV Tự chấm trên trang Bí thư Đoàn khoa bằng thuộc tính readonly -->
                                                     <input type="number" class="form-control kq_btdk" name="kq_btdk[]"
                 title="Điểm tối đa: <?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" max="<?= $muc->muc__Get_By_Id($item_3->id_muc)->diem_toi_da ?>" data-id-khoan="<?= $item_2->id_khoan ?>" data-khoan-max="<?= $item_2->can_tren ?>"
                 pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0"
                 style="<?= $quyen_btdk == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_btdk == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
                 <?= ($quyen_btdk == 0 || $dotchamdiem__Get_By_Id->trang_thai == 0 || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2) ? 'readonly tabindex="-1"' : '' ?>
-                value="<?= $val_btdk == 0 ? '' : $val_btdk ?>">
+                value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk) ? (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt) ? ($val_lt == 0 ? '' : $val_lt) : ($val_sv == 0 ? '' : $val_sv)) : ($val_btdk == 0 ? '' : $val_btdk) ?>">
 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
                                                     <input type="number" class="form-control kq_gv" name="kq_gv[]"

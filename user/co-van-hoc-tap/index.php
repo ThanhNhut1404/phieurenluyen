@@ -459,7 +459,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 style="<?= $quyen_gv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_gv == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
                 <?= ($quyen_gv == 0 || $dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'readonly tabindex="-1"' : '' ?>
-                value="<?= $val_gv == 0 ? '' : $val_gv ?>">
+                value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv) ? (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk) ? ($val_btdk == 0 ? '' : $val_btdk) : (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt) ? ($val_lt == 0 ? '' : $val_lt) : ($val_sv == 0 ? '' : $val_sv))) : ($val_gv == 0 ? '' : $val_gv) ?>">
 </td>
                                                     <td class="text-center align-middle" style="padding:4px;">
                                                         <?php if ($muc->muc__Get_By_Id($item_3->id_muc)->co_minh_chung == 1): ?>
