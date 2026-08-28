@@ -1,1 +1,1 @@
-<?php header('location: ./user/'); exit(); ?>
+<?php header('location: ./auth/'); exit(); ?>
