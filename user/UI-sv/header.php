@@ -18,8 +18,12 @@
     }
 
     $sv = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
+    $avatar_header = "";
     if($sv){
         $ten_sinh_vien = $sv->ten_sinh_vien;
+        if (!empty($sv->anh_dai_dien) && file_exists("../../assets/img/avatars/" . $sv->anh_dai_dien)) {
+            $avatar_header = "../../assets/img/avatars/" . $sv->anh_dai_dien;
+        }
     }
 ?>
 <nav class="top-navbar">
@@ -48,7 +52,11 @@
         <div class="user-profile dropdown">
             <a href="javascript:void(0);" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link">
                 <span style="width: 35px; height: 35px; border-radius: 50%; background: #1d4ed8; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-right: 0px;">
-                    <i class="ri-user-3-fill" style="color: rgba(255,255,255,0.9); font-size: 26px; margin-top: 5px;"></i>
+                    <?php if ($avatar_header): ?>
+                        <img src="<?php echo $avatar_header; ?>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                    <?php else: ?>
+                        <i class="ri-user-3-fill" style="color: rgba(255,255,255,0.9); font-size: 26px; margin-top: 5px;"></i>
+                    <?php endif; ?>
                 </span>
                 <span style="white-space: nowrap;"><?php echo $ten_sinh_vien; ?></span> 
                 <svg class="user-caret" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -56,7 +64,7 @@
                 </svg>
             </a>
             <div class="dropdown-menu dropdown-menu-right custom-dropdown">
-                <a href="javascript:void(0);" class="dropdown-item">
+                <a href="?page=thong-tin-ca-nhan" class="dropdown-item">
                     <i class="ri-profile-line"></i> Thông tin cá nhân
                 </a>
                 <a href="?page=doi-mat-khau" class="dropdown-item">

@@ -28,8 +28,18 @@
             <div class="custom-card">
                 <h3 class="card-title-custom">Thông tin sinh viên</h3>
                 <div class="student-info-wrapper">
-                    <div class="student-avatar">
-                        <i class="ri-user-3-fill" style="font-size: 80px; color: rgba(255,255,255,0.9); margin-top: 15px;"></i>
+                    <div class="student-avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <?php 
+                        $avatar_home = "";
+                        if (!empty($sv->anh_dai_dien) && file_exists("../../assets/img/avatars/" . $sv->anh_dai_dien)) {
+                            $avatar_home = "../../assets/img/avatars/" . $sv->anh_dai_dien;
+                        }
+                        if ($avatar_home): 
+                        ?>
+                            <img src="<?php echo $avatar_home; ?>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                        <?php else: ?>
+                            <i class="ri-user-3-fill" style="font-size: 80px; color: rgba(255,255,255,0.9); margin-top: 15px;"></i>
+                        <?php endif; ?>
                     </div>
                     <div class="student-details">
                         <div class="student-name-title"><?php echo $sv->ten_sinh_vien; ?></div>
