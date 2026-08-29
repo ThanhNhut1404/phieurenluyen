@@ -226,7 +226,14 @@ foreach($ketquaxeploai__Get_By_Id_Dot as $item){
                         <td><?=$item->ket_qua?></td>
                         <td><?=$item->xep_loai?></td>
                         <td><?=$item->ngay_xep_loai?></td>
-                        <td><?=$item->ghi_chu?></td>
+                        <td>
+                            <?php
+                            $ghi_chu_text = htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8');
+                            if (!empty($ghi_chu_text)) {
+                                echo '<span class="text-danger" style="font-style: italic; font-weight: normal !important;">' . $ghi_chu_text . '</span>';
+                            }
+                            ?>
+                        </td>
 
                     </tr>
                     <?php endforeach?>

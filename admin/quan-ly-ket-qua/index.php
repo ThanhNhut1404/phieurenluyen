@@ -50,21 +50,18 @@
 
      <?php 
         $status = isset($_GET['status']) ? $_GET['status'] : '';
-        $is_open_form = isset($_GET['id_dot']) || $status != ''; 
+        $is_open_form = true; 
      ?>
 
-     <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
-     <section class="content mb-2">
-         <button type="button" class="btn <?= $is_open_form ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
-             <i class="fas <?= $is_open_form ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_open_form ? '' : 'Xử lý Phiếu' ?>
-         </button>
-     </section>
-
-     <section class="content" id="div_add_form" <?= $is_open_form ? '' : 'style="display: none;"' ?>>
-         <div class="col-12">
-             <div class="card card-success">
-                 <div class="card-header">
+     <section class="content" id="div_add_form">
+         <div class="card card-success">
+             <div class="card-header">
                      <h3 class="card-title">Xử lý Phiếu chấm điểm</h3>
+                     <div class="card-tools">
+                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                             <i class="fas fa-minus"></i>
+                         </button>
+                     </div>
                  </div>
                  <div class="card-body">
                      <div class="row">
@@ -110,7 +107,6 @@
                      <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                  </div>
              </div>
-         </div>
      </section>
 
      <section class="content" id="div_update">
@@ -141,22 +137,20 @@
                          Yếu: <span class="text-danger"><?=$sum_5?></span> | 
                          Kém: <span class="text-danger"><?=$sum_6?></span>
                      </span>
-                      <!-- Nhựt sửa lỗi: Ẩn nút EXPORT khi chưa chọn Lớp học & Đợt chấm hợp lệ. -->
-                     <?php if ($id_lop_hoc > 0 && $id_dot > 0): ?>
-                     <form action="./quan-ly-thong-ke/action.php?req=export" method="post" class="mr-2 mb-0">
-                         <input type="hidden" name="id_lop_hoc" value="<?=$id_lop_hoc?>">
-                         <input type="hidden" name="id_dot" value="<?=$id_dot?>">
-                         <button type="submit" class="btn btn-sm btn-outline-primary bg-white font-weight-bold">
-                             <i class="fas fa-file-export"></i> EXPORT
-                         </button>
-                     </form>
-                     <?php endif; ?>
                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                          <i class="fas fa-minus"></i>
                      </button>
                  </div>
              </div>
          <!-- /.card-header -->
+         <div id="export-form-container" style="display: none;">
+             <?php if ($id_lop_hoc > 0 && $id_dot > 0): ?>
+             <form action="./quan-ly-thong-ke/action.php?req=export" method="post" id="form-export-btn">
+                 <input type="hidden" name="id_lop_hoc" value="<?=$id_lop_hoc?>">
+                 <input type="hidden" name="id_dot" value="<?=$id_dot?>">
+             </form>
+             <?php endif; ?>
+         </div>
          <div class="card-body">
              <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                   <thead>
@@ -189,7 +183,7 @@
                              <?php
                              $ghi_chu_text = htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8');
                              if (stripos($ghi_chu_text, 'hạ bậc') !== false || stripos($ghi_chu_text, 'Không tự đánh giá') !== false) {
-                                 echo '<span class="text-danger" style="font-style: italic;">' . $ghi_chu_text . '</span>';
+                                 echo '<span class="text-danger" style="font-style: italic; font-weight: normal !important;">' . $ghi_chu_text . '</span>';
                              } else {
                                  echo $ghi_chu_text;
                              }
@@ -250,7 +244,15 @@ window.addEventListener("load", function() {
                 "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
             }
         },
+        // Nhựt sửa: Thêm nút xuất dữ liệu EXPORT
         buttons: [
+            {
+                text: "<i class='fas fa-file-export'></i> EXPORT",
+                className: "btn btn-sm btn-custom-outline mr-1",
+                action: function ( e, dt, node, config ) {
+                    $('#form-export-btn').submit();
+                }
+            },
             {
                 extend: 'colvis',
                 text: '<i class="fas fa-columns"></i>',
@@ -286,6 +288,24 @@ window.addEventListener("load", function() {
         initComplete: function() {
             var filterHtml = `
             <style>
+            .dataTables_wrapper .dt-buttons .btn-custom-outline {
+                background-color: #fff !important;
+                border: 1px solid #0f2a5a !important;
+                color: #0f2a5a !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-outline:hover {
+                background-color: #0f2a5a !important;
+                border-color: #0f2a5a !important;
+                color: #fff !important;
+            }
             .dataTables_wrapper .dt-buttons .btn-custom-filter {
                 background-color: #0f2a5a !important;
                 border: 1px solid #0f2a5a !important;
@@ -435,19 +455,13 @@ window.addEventListener("load", function() {
 });
 
 function toggle_add_form() {
-    var addForm = $('#div_add_form');
-    var btn = $('#btn-toggle-add');
-    
     // Đóng form cập nhật nếu đang mở
     $("#div_update").html('');
     
-    addForm.slideToggle(300, function() {
-        if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
-        } else {
-            btn.html('<i class="fas fa-plus"></i> Xử lý phiếu chấm điểm').removeClass('btn-cancel-custom').addClass('btn-success');
-        }
-    });
+    var collapseBtn = $('#div_add_form [data-card-widget="collapse"]');
+    if (collapseBtn.length) {
+        collapseBtn.click();
+    }
 }
  </script>
 

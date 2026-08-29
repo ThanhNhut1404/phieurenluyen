@@ -73,28 +73,25 @@
 
      <?php 
         $status = isset($_GET['status']) ? $_GET['status'] : '';
-        $is_open_form = isset($_GET['id_dot']) || $status != ''; 
+        $is_open_form = true; 
      ?>
 
-     <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
-     <section class="content mb-2">
-         <button type="button" class="btn <?= $is_open_form ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
-             <i class="fas <?= $is_open_form ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_open_form ? '' : 'Xử lý Phiếu' ?>
-         </button>
-     </section>
-
-     <section class="content" id="div_add_form" <?= $is_open_form ? '' : 'style="display: none;"' ?>>
-         <form class="row form" action="quan-ly-phieu-cham-diem/action.php?req=add" method="post"
+     <section class="content" id="div_add_form">
+         <form action="quan-ly-phieu-cham-diem/action.php?req=add" method="post"
              enctype="multipart/form-data">
              <input type="hidden" name="id_dot" value="<?=$id_dot?>">
              <input type="hidden" name="id_lop_hoc" value="<?=$id_lop_hoc?>">
              <!-- Nhựt sửa lỗi: Bổ sung csrf_token chống tấn công CSRF. -->
              <input type="hidden" name="csrf_token" value="<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>">
-             <div class="col-12">
-                 <div class="card card-success">
-                     <div class="card-header">
-                         <h3 class="card-title">Xử lý Phiếu chấm điểm</h3>
+             <div class="card card-success">
+                 <div class="card-header">
+                     <h3 class="card-title">Xử lý Phiếu chấm điểm</h3>
+                     <div class="card-tools">
+                         <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                             <i class="fas fa-minus"></i>
+                         </button>
                      </div>
+                 </div>
                      <div class="card-body">
                          <div class="row">
                              <div class="col-6">
@@ -145,7 +142,6 @@
                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>
-             </div>
          </form>
      </section>
 
@@ -304,19 +300,13 @@ window.addEventListener("load", function() {
 });
 
 function toggle_add_form() {
-    var addForm = $('#div_add_form');
-    var btn = $('#btn-toggle-add');
-    
     // Đóng form cập nhật nếu đang mở
     $("#div_update").html('');
     
-    addForm.slideToggle(300, function() {
-        if (addForm.is(':visible')) {
-            btn.html('<i class="fas fa-times"></i>').removeClass('btn-success').addClass('btn-cancel-custom');
-        } else {
-            btn.html('<i class="fas fa-plus"></i> Xử lý phiếu chấm điểm').removeClass('btn-cancel-custom').addClass('btn-success');
-        }
-    });
+    var collapseBtn = $('#div_add_form [data-card-widget="collapse"]');
+    if (collapseBtn.length) {
+        collapseBtn.click();
+    }
 }
  </script>
 
