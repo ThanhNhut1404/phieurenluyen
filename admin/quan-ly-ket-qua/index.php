@@ -177,8 +177,7 @@
                      <?php $num = 0;?>
                      <?php foreach($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot as $item):?>
                       <!-- Nhựt sửa lỗi: Truyền thêm csrf_token qua GET request để bảo mật hành động hạ bậc. -->
-                     <tr
-                         ondblclick="return confirm_sweet_ha_bac('quan-ly-ket-qua/action.php?req=update&id_ket_qua=<?=$item->id_ket_qua?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>')">
+                     <tr>
                          <td><?=++$num?></td>
                          <td><?=htmlspecialchars($item->ma_sinh_vien ?? "", ENT_QUOTES, 'UTF-8')?></td>
                          <td><?=htmlspecialchars($item->ten_sinh_vien ?? "", ENT_QUOTES, 'UTF-8')?></td>
@@ -186,7 +185,16 @@
                          <td><?=htmlspecialchars($item->ket_qua ?? "", ENT_QUOTES, 'UTF-8')?></td>
                          <td><?=htmlspecialchars($item->xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
                          <td><?=htmlspecialchars($item->ngay_xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
-                         <td><?=htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td>
+                             <?php
+                             $ghi_chu_text = htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8');
+                             if (stripos($ghi_chu_text, 'hạ bậc') !== false) {
+                                 echo '<span class="text-danger" style="font-style: italic;">' . $ghi_chu_text . '</span>';
+                             } else {
+                                 echo $ghi_chu_text;
+                             }
+                             ?>
+                         </td>
 
                      </tr>
                      <?php endforeach?>

@@ -43,6 +43,12 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 $sinhvien_list = [];
 if ($id_lop_hoc != -2) {
     switch($filter) {
+        case 'chua_tu_cham':
+            $sinhvien_list = $sinhvien->sinhvien__Get_Chua_Tu_Cham($id_dot, $id_lop_hoc);
+            break;
+        case 'da_tu_cham':
+            $sinhvien_list = $sinhvien->sinhvien__Get_Da_Tu_Cham($id_dot, $id_lop_hoc);
+            break;
         case 'chua_btdk_cham':
             $sinhvien_list = $sinhvien->sinhvien__Get_Chua_BTDK_Cham($id_dot, $id_lop_hoc);
             break;
@@ -138,6 +144,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                             <label>Lọc danh sách</label>
                             <select class="form-control" name="filter" onchange="this.form.submit()">
                                 <option value="all" <?= $filter == 'all' ? 'selected' : '' ?>>Tất cả sinh viên</option>
+                                <option value="da_tu_cham" <?= $filter == 'da_tu_cham' ? 'selected' : '' ?>>Sinh viên có đánh giá</option>
+                                <option value="chua_tu_cham" <?= $filter == 'chua_tu_cham' ? 'selected' : '' ?>>Sinh viên không tự đánh giá</option>
                                 <option value="da_btdk_cham" <?= $filter == 'da_btdk_cham' ? 'selected' : '' ?>>Đã được Đoàn khoa chấm</option>
                                 <option value="chua_btdk_cham" <?= $filter == 'chua_btdk_cham' ? 'selected' : '' ?>>Chưa được Đoàn khoa chấm</option>
                                 <option value="da_cvht_cham" <?= $filter == 'da_cvht_cham' ? 'selected' : '' ?>>Đã được Cố vấn học tập chấm</option>
@@ -326,7 +334,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                             <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                            <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
+                            <div><strong>Ghi chú:</strong> <?= stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -417,9 +425,6 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         $quyen_lt = $muc_info->quyen_lt;
                                                         $quyen_btdk = $muc_info->quyen_btdk;
                                                         $quyen_gv = $muc_info->quyen_gv;
-                                                        if ($quyen_sv == 0) { $val_sv = 0; }
-                                                        if ($quyen_lt == 0) { $val_lt = $val_sv; }
-                                                        if ($quyen_btdk == 0) { $val_btdk = $val_lt; }
                                                         if ($quyen_gv == 0) { $val_gv = $val_btdk; }
 
                                                     ?>
@@ -459,7 +464,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 style="<?= $quyen_gv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_gv == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
                 <?= ($quyen_gv == 0 || $dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'readonly tabindex="-1"' : '' ?>
-                value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv) ? (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk) ? ($val_btdk == 0 ? '' : $val_btdk) : (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt) ? ($val_lt == 0 ? '' : $val_lt) : ($val_sv == 0 ? '' : $val_sv))) : ($val_gv == 0 ? '' : $val_gv) ?>">
+                value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv) ? ($val_btdk == 0 ? '' : $val_btdk) : ($val_gv == 0 ? '' : $val_gv) ?>">
 </td>
                                                     <td class="text-center align-middle" style="padding:4px;">
                                                         <?php if ($muc->muc__Get_By_Id($item_3->id_muc)->co_minh_chung == 1): ?>
@@ -521,12 +526,95 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         </div>
                     </div>
                     <div class="card-footer">
+                        <?php 
+                            // Xử lý hiển thị nút Hạ bậc / Hủy hạ bậc
+                            $show_ha_bac = false;
+                            $show_huy_ha_bac = false;
+                            
+                            // Chỉ cho phép thao tác khi đợt chấm điểm ĐÃ ĐÓNG và đã có kết quả
+                            // YÊU CẦU MỚI: Chỉ xuất hiện đối với sinh viên KHÔNG TỰ CHẤM ĐIỂM (kq_sv trống)
+                            if ($dotchamdiem__Get_By_Id->trang_thai == 0 && isset($ketquaxeploai__Get_By_Id_Phieu->id_ket_qua) && empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)) {
+                                if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false) {
+                                    $show_huy_ha_bac = true;
+                                } else {
+                                    $show_ha_bac = true;
+                                }
+                            }
+                        ?>
+                        
+                        <?php if ($show_ha_bac): ?>
+                            <button type="button" class="btn btn-danger btn-lg float-left font-weight-bold" onclick="xacNhanHaBac(<?= $ketquaxeploai__Get_By_Id_Phieu->id_ket_qua ?>)">
+                                <i class="fas fa-level-down-alt"></i> Hạ bậc
+                            </button>
+                        <?php endif; ?>
+                        
+                        <?php if ($show_huy_ha_bac): ?>
+                            <button type="button" class="btn btn-secondary btn-lg float-left font-weight-bold" onclick="xacNhanHuyHaBac(<?= $ketquaxeploai__Get_By_Id_Phieu->id_ket_qua ?>)">
+                                <i class="fas fa-undo"></i> Hủy hạ bậc
+                            </button>
+                        <?php endif; ?>
+
                         <input type="submit" value="Cập nhật" class="btn btn-success btn-lg float-right font-weight-bold" id="submit"
                             <?php // Quân sửa: Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm trên nút submit ?>
                             <?= ($dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'disabled' : '' ?>>
                     </div>
                 </div>
             </form>
+
+            <!-- Form ẩn để gửi yêu cầu hạ bậc / hủy hạ bậc -->
+            <form id="form_ha_bac" action="co-van-hoc-tap/action.php?req=ha_bac" method="post" style="display: none;">
+                <input type="hidden" name="id_ket_qua" id="ha_bac_id_ket_qua" value="">
+                <input type="hidden" name="ly_do" value="Không nộp phiếu đánh giá (Bị hạ bậc)">
+            </form>
+            
+            <form id="form_huy_ha_bac" action="co-van-hoc-tap/action.php?req=huy_ha_bac" method="post" style="display: none;">
+                <input type="hidden" name="id_ket_qua" id="huy_ha_bac_id_ket_qua" value="">
+            </form>
+
+            <script>
+                function xacNhanHaBac(id_ket_qua) {
+                    Swal.fire({
+                        title: '<span style="color: #0f2a5a !important">Xác nhận hạ bậc?</span>',
+                        html: 'Bạn có chắc chắn muốn <b class="text-danger">HẠ BẬC</b> xếp loại của sinh viên này do không tự đánh giá rèn luyện (không nộp phiếu)?<br><br><span class="text-danger"><i>Lưu ý: Thao tác này sẽ trừ điểm và lưu ghi chú hạ bậc.</i></span>',
+                        icon: 'error',
+                        width: 700,
+                        showCancelButton: true,
+                        confirmButtonText: 'Có',
+                        cancelButtonText: 'Hủy',
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'btn btn-success btn-lg font-weight-bold mx-2 px-4',
+                            cancelButton: 'btn btn-cancel-custom btn-lg font-weight-bold mx-2 px-4'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('ha_bac_id_ket_qua').value = id_ket_qua;
+                            document.getElementById('form_ha_bac').submit();
+                        }
+                    });
+                }
+                function xacNhanHuyHaBac(id_ket_qua) {
+                    Swal.fire({
+                        title: '<span style="color: #0f2a5a !important">Xác nhận hủy hạ bậc?</span>',
+                        html: 'Bạn có chắc chắn muốn <b class="text-warning">HỦY HẠ BẬC</b><br>và khôi phục lại mức xếp loại gốc cho sinh&nbsp;viên&nbsp;này?',
+                        icon: 'warning',
+                        width: 700,
+                        showCancelButton: true,
+                        confirmButtonText: 'Có',
+                        cancelButtonText: 'Hủy',
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'btn btn-success btn-lg font-weight-bold mx-2 px-4',
+                            cancelButton: 'btn btn-cancel-custom btn-lg font-weight-bold mx-2 px-4'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('huy_ha_bac_id_ket_qua').value = id_ket_qua;
+                            document.getElementById('form_huy_ha_bac').submit();
+                        }
+                    });
+                }
+            </script>
 
             <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên (dưới form) -->
             <?php if (count($sinhvien_list) > 0): ?>

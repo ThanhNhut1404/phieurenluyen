@@ -238,7 +238,7 @@ $main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                         <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                        <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
+                        <div><strong>Ghi chú:</strong> <?= stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -328,9 +328,7 @@ $main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
                                                         $quyen_btdk = $muc_info->quyen_btdk;
                                                         $quyen_gv = $muc_info->quyen_gv;
                                                         if ($quyen_sv == 0) { $val_sv = 0; }
-                                                        if ($quyen_lt == 0) { $val_lt = $val_sv; }
-                                                        if ($quyen_btdk == 0) { $val_btdk = $val_lt; }
-                                                        if ($quyen_gv == 0) { $val_gv = $val_btdk; }
+
 
                                                     ?>
 

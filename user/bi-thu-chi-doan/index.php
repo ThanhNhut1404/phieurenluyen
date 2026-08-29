@@ -535,10 +535,8 @@ $main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
                                                         $quyen_lt = $muc_info->quyen_lt;
                                                         $quyen_btdk = $muc_info->quyen_btdk;
                                                         $quyen_gv = $muc_info->quyen_gv;
-                                                        if ($quyen_sv == 0) { $val_sv = 0; }
                                                         if ($quyen_lt == 0) { $val_lt = $val_sv; }
-                                                        if ($quyen_btdk == 0) { $val_btdk = $val_lt; }
-                                                        if ($quyen_gv == 0) { $val_gv = $val_btdk; }
+
 
                                                     ?>
 

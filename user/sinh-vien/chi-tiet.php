@@ -278,7 +278,7 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['user'])) {
                             <div><strong>Ngày xếp loại:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ngay_xep_loai : "Chưa tổng kết" ?></div>
                         <div><strong>Điểm rèn luyện:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
-                            <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ghi_chu : "" ?></div>
+                            <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu && strpos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Hạ bậc') !== false ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : ($ketquaxeploai__Get_By_Id_Phieu ? $ketquaxeploai__Get_By_Id_Phieu->ghi_chu : "") ?></div>
                         </div>
                     </div>
                 </div>

@@ -450,7 +450,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                         <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                        <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
+                        <div><strong>Ghi chú:</strong> <?= stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -547,10 +547,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         $quyen_lt = $muc_info->quyen_lt;
                                                         $quyen_btdk = $muc_info->quyen_btdk;
                                                         $quyen_gv = $muc_info->quyen_gv;
-                                                        if ($quyen_sv == 0) { $val_sv = 0; }
-                                                        if ($quyen_lt == 0) { $val_lt = $val_sv; }
                                                         if ($quyen_btdk == 0) { $val_btdk = $val_lt; }
-                                                        if ($quyen_gv == 0) { $val_gv = $val_btdk; }
+
 
                                                     ?>
 
@@ -581,7 +579,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 style="<?= $quyen_btdk == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_btdk == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
                 <?= ($quyen_btdk == 0 || $dotchamdiem__Get_By_Id->trang_thai == 0 || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2) ? 'readonly tabindex="-1"' : '' ?>
-                value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk) ? (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt) ? ($val_lt == 0 ? '' : $val_lt) : ($val_sv == 0 ? '' : $val_sv)) : ($val_btdk == 0 ? '' : $val_btdk) ?>">
+                value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk) ? ($val_lt == 0 ? '' : $val_lt) : ($val_btdk == 0 ? '' : $val_btdk) ?>">
 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
                                                     <input type="number" class="form-control kq_gv" name="kq_gv[]"

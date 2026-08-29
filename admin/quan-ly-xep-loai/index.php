@@ -34,6 +34,7 @@
     }
 
     $xeploai__Get_All = $xeploai->xeploai__Get_All();
+    $has_active_dot = $dotchamdiem->dotchamdiem__Has_Dang_Dien_Ra(date('Y-m-d'));
  ?>
 
  <!-- Content Wrapper. Contains page content -->
@@ -59,7 +60,7 @@
 
      <!-- Nhựt sửa: Thêm nút bật/tắt form thêm mới -->
      <section class="content mb-2">
-         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" onclick="toggle_add_form()">
+         <button type="button" class="btn <?= $is_add_error ? 'btn-cancel-custom' : 'btn-success' ?> font-weight-bold" id="btn-toggle-add" <?= $has_active_dot ? 'disabled title="Đang có đợt chấm điểm diễn ra"' : 'onclick="toggle_add_form()"' ?>>
              <i class="fas <?= $is_add_error ? 'fa-times' : 'fa-plus' ?>"></i> <?= $is_add_error ? '' : 'Thêm mới' ?>
          </button>
      </section>
@@ -188,12 +189,12 @@
                              <td class="text-center" style="text-align: center !important;"><?=$item->ha_bac?></td>
                              <td><?=htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8')?></td>
                              <td>
-                                 <a href="javascript:void(0)" class="btn btn-warning m-2"
-                                     onclick="update_obj(<?=$item->id_xep_loai?>)">
+                                 <a href="javascript:void(0)" class="btn btn-warning m-2 <?= $has_active_dot ? 'disabled' : '' ?>"
+                                     <?= $has_active_dot ? 'title="Đang có đợt chấm điểm diễn ra" style="pointer-events: none; opacity: 0.6;"' : 'onclick="update_obj('.$item->id_xep_loai.')"' ?>>
                                      <i class="ri-edit-2-line"></i>
                                  </a>
-                                 <a href="javascript:void(0)" class="btn btn-danger m-2"
-                                     onclick="return confirm_delete_sweet('quan-ly-xep-loai/action.php?req=delete&id_xep_loai=<?=$item->id_xep_loai?>&csrf_token=<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>', 'Xếp loại')">
+                                 <a href="javascript:void(0)" class="btn btn-danger m-2 <?= $has_active_dot ? 'disabled' : '' ?>"
+                                     <?= $has_active_dot ? 'title="Đang có đợt chấm điểm diễn ra" style="pointer-events: none; opacity: 0.6;"' : 'onclick="return confirm_delete_sweet(\'quan-ly-xep-loai/action.php?req=delete&id_xep_loai='.$item->id_xep_loai.'&csrf_token='.htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8').'\', \'Xếp loại\')"' ?>>
                                      <i class="ri-delete-bin-line"></i>
                                  </a>
                              </td>
