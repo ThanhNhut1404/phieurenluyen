@@ -163,10 +163,10 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                     <label>Lọc sinh viên</label>
                                     <select class="form-control" name="filter" onchange="this.form.submit()">
                                         <option value="all" <?= $filter == 'all' ? 'selected' : '' ?>>Tất cả sinh viên</option>
-                                        <option value="da_lt_cham" <?= $filter == 'da_lt_cham' ? 'selected' : '' ?>>Đã được lớp trưởng chấm</option>
-                                        <option value="chua_lt_cham" <?= $filter == 'chua_lt_cham' ? 'selected' : '' ?>>Chưa được lớp trưởng chấm</option>
-                                        <option value="da_btdk_cham" <?= $filter == 'da_btdk_cham' ? 'selected' : '' ?>>Đã được Đoàn khoa chấm</option>
-                                        <option value="chua_btdk_cham" <?= $filter == 'chua_btdk_cham' ? 'selected' : '' ?>>Chưa được Đoàn khoa chấm</option>
+                                        <option value="da_lt_cham" <?= $filter == 'da_lt_cham' ? 'selected' : '' ?>>Đã được Lớp trưởng chấm</option>
+                                        <option value="chua_lt_cham" <?= $filter == 'chua_lt_cham' ? 'selected' : '' ?>>Chưa được Lớp trưởng chấm</option>
+                                        <option value="da_btdk_cham" <?= $filter == 'da_btdk_cham' ? 'selected' : '' ?>>Đã được Bí thư đoàn khoa chấm</option>
+                                        <option value="chua_btdk_cham" <?= $filter == 'chua_btdk_cham' ? 'selected' : '' ?>>Chưa được Bí thư đoàn khoa chấm</option>
                                     </select>
                                 </div>
                                 <div class="col-md-5">
