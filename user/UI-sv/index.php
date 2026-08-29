@@ -53,7 +53,7 @@
                             <i class="ri-arrow-down-s-line caret"></i>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="#">Thông tin sinh viên</a></li>
+                            <li><a href="?page=thong-tin-ca-nhan">Thông tin sinh viên</a></li>
                             <li><a href="?page=doi-mat-khau">Đổi mật khẩu</a></li>
                         </ul>
                     </li>
@@ -91,6 +91,8 @@
                 require "dot-cham-diem.php";
             } else if ($page == 'doi-mat-khau') {
                 require "doi-mat-khau.php";
+            } else if ($page == 'thong-tin-ca-nhan') {
+                require "thong-tin-ca-nhan.php";
             } else {
                 require "home.php";
             }

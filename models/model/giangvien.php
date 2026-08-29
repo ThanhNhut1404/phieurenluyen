@@ -105,5 +105,12 @@ class giangvien extends Database {
         $obj->execute(array($ma_giang_vien));
         return $obj->fetch();
     }
+
+    public function giangvien__Get_By_Email($email) {
+        $obj = $this->connect->prepare("SELECT * FROM giangvien WHERE email = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($email));
+        return $obj->fetch();
+    }
 }
 ?>

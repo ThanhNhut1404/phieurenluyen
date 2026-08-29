@@ -731,5 +731,62 @@ window.addEventListener('load', function() {
 });
  </script>
 
+<?php
+if (isset($_GET['status']) && in_array($_GET['status'], ['import-partial-success', 'import-duplicate']) && isset($_SESSION['import_duplicate_rows']) && !empty($_SESSION['import_duplicate_rows'])) {
+    $count_dup = count($_SESSION['import_duplicate_rows']);
+    $success_count = isset($_SESSION['import_success_count']) ? $_SESSION['import_success_count'] : 0;
+    
+    $status_msg = $_GET['status'] == 'import-partial-success' ? "Import thành công một phần!" : "Import thất bại<br>(Trùng toàn bộ)!";
+    $icon_msg = $_GET['status'] == 'import-partial-success' ? "warning" : "error";
+    
+    $text = "<div>";
+    if ($success_count > 0) {
+        $text .= "<div style=\'margin-bottom: 10px; color: #28a745;\'>Đã import thành công <b>$success_count</b> sinh viên.</div>";
+    }
+    $text .= "<div style=\'margin-bottom: 5px; white-space: nowrap; font-weight: bold; color: #dc3545;\'>Đã bỏ qua <span style=\'color: #112a46;\'>$count_dup</span> sinh viên (trùng Mã SV hoặc Email).</div>";
+    $text .= "</div>";
 
-
+    echo "<script>
+        window.addEventListener('load', function() {
+            Swal.fire({
+                title: '$status_msg',
+                html: '" . $text . "',
+                icon: '$icon_msg',
+                width: 'auto',
+                showCancelButton: true,
+                buttonsStyling: false,
+                confirmButtonText: '<i class=\"fas fa-download mr-1\"></i> Tải danh sách lỗi',
+                cancelButtonText: '<b>Đóng</b>',
+                customClass: {
+                    confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+                    cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'quan-ly-sinh-vien/action.php?req=export-error';
+                }
+            });
+            const url = new URL(window.location.href);
+            url.searchParams.delete('status');
+            history.replaceState(null, '', url.pathname + url.search + url.hash);
+        });
+    </script>";
+    
+    if (isset($_SESSION['import_success_count'])) unset($_SESSION['import_success_count']);
+} else if (isset($_GET['status']) && $_GET['status'] == 'import-success') {
+    $success_count = isset($_SESSION['import_success_count']) ? $_SESSION['import_success_count'] : 0;
+    echo "<script>
+        window.addEventListener('load', function() {
+            Toast.fire({
+                icon: 'success',
+                title: 'Import thành công!',
+                text: 'Đã thêm mới $success_count sinh viên vào hệ thống.'
+            });
+            const url = new URL(window.location.href);
+            url.searchParams.delete('status');
+            history.replaceState(null, '', url.pathname + url.search + url.hash);
+        });
+    </script>";
+    if (isset($_SESSION['import_success_count'])) unset($_SESSION['import_success_count']);
+}
+?>

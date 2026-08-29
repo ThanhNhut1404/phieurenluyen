@@ -48,17 +48,51 @@
                             </thead>
                             <tbody>
                                 <?php 
+                                // Fetch all roles to map dynamically
+                                $phanquyen_user = $phanquyen->phanquyen__Get_By_Cap_Bac(2);
+                                $ten_pq_user = $phanquyen_user ? $phanquyen_user->ten_phan_quyen : 'Không xác định';
+
+                                $arr_pn = [];
+                                foreach ($phannhom->phannhom__Get_All() as $pn) {
+                                    $arr_pn[$pn->id_phan_nhom] = $pn->ten_phan_nhom;
+                                }
+                                // Find phan nhom for Sinh vien (cap_bac = 2)
+                                $id_pn_sv = 3;
+                                $id_pn_bt = 4;
+                                $id_pn_cv = 5;
+                                foreach ($phannhom->phannhom__Get_All() as $pn) {
+                                    if ($pn->cap_bac == 2) { $id_pn_sv = $pn->id_phan_nhom; }
+                                    else if ($pn->cap_bac == 3) { $id_pn_bt = $pn->id_phan_nhom; }
+                                    else if ($pn->cap_bac == 4) { $id_pn_cv = $pn->id_phan_nhom; }
+                                }
+
                                 $num = 0; 
                                 foreach($danh_sach_yeu_cau as $item): 
                                     $sv = $sinhvien->sinhvien__Get_By_Email($item->email);
-                                    $ho_ten = $sv ? $sv->ten_sinh_vien : '<span class="text-secondary">N/A</span>';
+                                    $gv = $giangvien->giangvien__Get_By_Email($item->email);
+                                    $bt = $bithudoankhoa->bithudoankhoa__Get_By_Email($item->email);
+                                    
+                                    $ho_ten = '<span class="text-secondary">N/A</span>';
+                                    $phan_nhom = 'Không xác định';
+                                    $phan_quyen = $ten_pq_user; // Luôn là quyền User
+
+                                    if ($sv) {
+                                        $ho_ten = $sv->ten_sinh_vien;
+                                        $phan_nhom = isset($arr_pn[$id_pn_sv]) ? $arr_pn[$id_pn_sv] : 'Sinh viên';
+                                    } else if ($gv) {
+                                        $ho_ten = $gv->ten_giang_vien;
+                                        $phan_nhom = isset($arr_pn[$id_pn_cv]) ? $arr_pn[$id_pn_cv] : 'Cố vấn học tập';
+                                    } else if ($bt) {
+                                        $ho_ten = $bt->ten_bi_thu;
+                                        $phan_nhom = isset($arr_pn[$id_pn_bt]) ? $arr_pn[$id_pn_bt] : 'Bí thư đoàn khoa';
+                                    }
                                 ?>
                                 <tr>
                                     <td class="text-center"><?= ++$num ?></td>
                                     <td><b><?= $ho_ten ?></b></td>
                                     <td class="text-center"><?= $item->email ?></td>
-                                    <td class="text-center">Sinh viên</td>
-                                    <td class="text-center">Sinh viên</td>
+                                    <td class="text-center"><?= $phan_nhom ?></td>
+                                    <td class="text-center"><?= $phan_quyen ?></td>
                                     <td class="text-center">
                                         <a href="#" type="button" class="btn btn-success m-1" title="Gửi Mail"
                                            onclick="return gui_mail_kich_hoat('<?= $item->id_yeu_cau ?>', '<?= $item->email ?>')">

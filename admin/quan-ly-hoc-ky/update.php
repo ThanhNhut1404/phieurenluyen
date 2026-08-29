@@ -105,15 +105,15 @@
                 <div class="row">
                     <div class="col-md-6 form-group">
                         <label class="label-sidebar" for="ngay_bat_dau_update">Ngày bắt đầu <span class="color-crimson">*</span></label>
-                        <input type="date" id="ngay_bat_dau_update" name="ngay_bat_dau" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                        <input type="date" id="ngay_bat_dau_update" name="ngay_bat_dau" class="form-control <?= ($is_update_error && $status == 'invalid-date-range') ? 'is-invalid' : '' ?>" required
                             value="<?=hocky_update_escape(hocky_update_old_value('ngay_bat_dau', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->ngay_bat_dau))?>">
-                        <?php if ($is_update_error && $status == 'invalid-ngay'): ?>
+                        <?php if ($is_update_error && $status == 'invalid-date-range'): ?>
                             <small class="text-danger mt-1">Ngày bắt đầu phải nhỏ hơn ngày kết thúc.</small>
                         <?php endif; ?>
                     </div>
                     <div class="col-md-6 form-group">
                         <label class="label-sidebar" for="ngay_ket_thuc_update">Ngày kết thúc <span class="color-crimson">*</span></label>
-                        <input type="date" id="ngay_ket_thuc_update" name="ngay_ket_thuc" class="form-control <?= ($is_update_error && $status == 'invalid-ngay') ? 'is-invalid' : '' ?>" required
+                        <input type="date" id="ngay_ket_thuc_update" name="ngay_ket_thuc" class="form-control <?= ($is_update_error && $status == 'invalid-date-range') ? 'is-invalid' : '' ?>" required
                             value="<?=hocky_update_escape(hocky_update_old_value('ngay_ket_thuc', $hocky__Get_By_Id->id_hoc_ky, $hocky__Get_By_Id->ngay_ket_thuc))?>">
                     </div>
                 </div>

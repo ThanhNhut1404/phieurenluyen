@@ -31,7 +31,7 @@ foreach ($list_ketqua as $kq) {
         
         <div class="ketqua-content">
             <?php if (empty($grouped_ketqua)): ?>
-                <div class="alert alert-info text-center mt-3">
+                <div class="text-center mt-4 mb-4 text-danger font-weight-bold">
                     Bạn chưa có dữ liệu kết quả rèn luyện nào.
                 </div>
             <?php else: ?>

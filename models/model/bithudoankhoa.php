@@ -106,5 +106,12 @@ class bithudoankhoa extends Database {
         }
         return $obj->fetchColumn() > 0;
     }
+
+    public function bithudoankhoa__Get_By_Email($email) {
+        $obj = $this->connect->prepare("SELECT * FROM bithudoankhoa WHERE email = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($email));
+        return $obj->fetch();
+    }
 }
 ?>

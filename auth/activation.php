@@ -67,7 +67,7 @@
                             <div class="form-group-custom">
                                 <label for="inputEmail">Email</label>
                                 <div class="input-wrapper-custom">
-                                    <input type="email" id="inputEmail" name="email" class="form-control-custom" placeholder="Nhập email sinh viên của bạn" required autofocus autocomplete="email">
+                                    <input type="email" id="inputEmail" name="email" class="form-control-custom" placeholder="Nhập email của bạn" required autofocus autocomplete="email">
                                     <span class="input-icon-right">
                                         <i class="far fa-envelope"></i>
                                     </span>

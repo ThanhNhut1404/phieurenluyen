@@ -114,7 +114,7 @@ if (isset($_GET["req"])) {
                         $ten_lop = $lh->ten_lop_hoc;
                     }
                     // quân sửa: Đổi mật khẩu mặc định thành: TênViếtTắt_TênLớp#1234
-                    $mat_khau = vietTatChuCaiDau($sinhvien__Get_By_Id->ten_sinh_vien) . "_" . $ten_lop . "#1234";
+                    $mat_khau = vietTatChuCaiDau($sinhvien__Get_By_Id->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
                     $ghi_chu = date("Y-m-d H:i:s");
 
                     // Check duplicate email to avoid DB UNIQUE error

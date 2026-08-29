@@ -19,9 +19,9 @@
                     // Tách biệt session Admin và User
                     $cap_bac_check = $phanquyen->phanquyen__Get_By_Id($status->id_phan_quyen)->cap_bac;
                     if ($cap_bac_check == 0 || $cap_bac_check == 1) {
-                        unset($_SESSION['admin'], $_SESSION['super'], $_SESSION['manager']);
-                    } else {
                         unset($_SESSION['user'], $_SESSION['sv'], $_SESSION['lt'], $_SESSION['bt'], $_SESSION['btdk'], $_SESSION['gv']);
+                    } else {
+                        unset($_SESSION['admin'], $_SESSION['super'], $_SESSION['manager']);
                     }
 
                     $s = $dotchamdiem->dotchamdiem__Get_Time(date('Y-m-d'));
