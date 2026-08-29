@@ -762,7 +762,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
           </div>
       </div>
       <div class="modal-footer bg-light py-2">
-        <button type="button" class="btn btn-cancel-custom font-weight-bold" style="font-size: 1.15rem; padding: 6px 24px; font-weight: bold !important;" data-dismiss="modal">Đóng</button>
+        <button type="button" class="btn text-white font-weight-bold" style="background-color: #003366; font-size: 1.15rem; padding: 6px 24px;" onclick="if(confirm('Bạn có muốn lưu toàn bộ thay đổi (bao gồm cả điểm và minh chứng) trên phiếu này vào hệ thống không?')) document.getElementById('submit').click();"><i class="fas fa-save mr-2"></i>Lưu tất cả thay đổi</button>
+        <button type="button" class="btn btn-cancel-custom font-weight-bold" style="font-size: 1.15rem; padding: 6px 24px;" data-dismiss="modal">Đóng</button>
       </div>
     </div>
   </div>
@@ -931,9 +932,16 @@ window.addEventListener('load', function () {
         let type = $(this).data('type');
         $('#managerPreviewEmpty').addClass('d-none');
         
-        if (type === 'pdf') {
+        let isDriveUrl = url.includes('drive.google.com/uc?id=');
+        
+        if (type === 'pdf' || isDriveUrl) {
+            let previewUrl = url;
+            if (isDriveUrl) {
+                let fileId = url.split('id=')[1];
+                previewUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
+            }
             $('#managerPreviewImage').addClass('d-none');
-            $('#managerPreviewPdf').removeClass('d-none').attr('src', url);
+            $('#managerPreviewPdf').removeClass('d-none').attr('src', previewUrl);
         } else {
             $('#managerPreviewPdf').addClass('d-none');
             $('#managerPreviewImage').removeClass('d-none').attr('src', url);

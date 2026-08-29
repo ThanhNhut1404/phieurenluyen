@@ -192,9 +192,25 @@
             return;
         }
         var val = $(this).val();
+        
+        // Ép kiểu về số nguyên, chặn hoàn toàn chữ cái (do copy-paste hoặc do lỗi trình duyệt)
+        val = val.replace(/[^0-9]/g, '');
+
         // Tự động bỏ số 0 ở đầu khi nhập số khác (ví dụ: nhập 05 -> đổi thành 5)
         if (val.length > 1 && val.startsWith('0')) {
-            $(this).val(parseInt(val, 10));
+            val = parseInt(val, 10).toString();
+        }
+
+        // Tự động ép về max nếu gõ lố
+        var max = parseInt($(this).attr('max'), 10);
+        var parsed = parseInt(val, 10);
+        if (!isNaN(max) && !isNaN(parsed) && parsed > max) {
+            val = max.toString();
+        }
+
+        if ($(this).val() !== val) {
+            $(this).val(val);
+            $(this).trigger('change'); // Kích hoạt sự kiện tính tổng điểm
         }
     });
 

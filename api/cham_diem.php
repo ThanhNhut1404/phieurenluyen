@@ -72,21 +72,85 @@ $phieuchamdiem->phieuchamdiem__Update_Trang_Thai($id_phieu, 2);
 
 // Xử lý lưu minh chứng
 if (is_array($minh_chung) && count($minh_chung) > 0) {
-    // Xóa các minh chứng cũ của phiếu này để cập nhật mới (vì app sẽ gửi full danh sách)
+    // Lấy danh sách minh chứng cũ để xóa khỏi DB và Google Drive nếu không dùng nữa
     $danh_sach_mc_cu = $minhchung->minhchung__Get_By_Id_Phieu($id_phieu);
-    if (is_array($danh_sach_mc_cu)) {
-        foreach ($danh_sach_mc_cu as $mc) {
-            $minhchung->minhchung__Delete($mc->id_minh_chung);
+    $new_file_ids = [];
+
+    // Xác định tên thư mục con theo đợt chấm
+    $folder_name = "ChuaXacDinh";
+    if ($phieu) {
+        $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
+        if ($lop_ap_dung) {
+            $dot_cham = $dotchamdiem->dotchamdiem__Get_By_Id($lop_ap_dung->id_dot);
+            if ($dot_cham) {
+                $folder_name = $dot_cham->ten_hoc_ky . "_" . $dot_cham->ten_nam_hoc;
+                // Làm sạch tên thư mục (bỏ khoảng trắng, ký tự đặc biệt)
+                $folder_name = preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '_', $folder_name));
+            }
         }
     }
+
+    $order_counter = [];
+    $mssv = $tai_khoan->ten_dang_nhap; 
+
+    // Chuẩn bị danh sách upload
+    $upload_requests = [];
+    $upload_mappings = []; // map index to id_muc
 
     foreach ($minh_chung as $mc_item) {
         if (!empty($mc_item['id_muc']) && !empty($mc_item['base64'])) {
             $id_muc = $mc_item['id_muc'];
             $base64 = $mc_item['base64'];
-
-            // Lưu trực tiếp chuỗi base64 vào DB (không dùng AI)
-            $minhchung->minhchung__Add($id_phieu, $base64, date("Y-m-d H:i:s"), $id_muc, 0, null);
+            
+            if (!isset($order_counter[$id_muc])) $order_counter[$id_muc] = 0;
+            $order_counter[$id_muc]++;
+            $order = $order_counter[$id_muc];
+            
+            if (strlen($base64) < 100 || strpos($base64, 'https://') === 0) {
+                // Đã là fileId cũ hoặc link Drive cũ, lưu luôn
+                $new_file_ids[] = $base64;
+                $minhchung->minhchung__Add($id_phieu, $base64, date("Y-m-d H:i:s"), $id_muc, 0, null);
+            } else {
+                // Đưa vào hàng đợi upload đa luồng
+                $file_name = $mssv . "_Muc" . $id_muc . "_" . $order . ".jpg";
+                $upload_requests[] = [
+                    'base64' => $base64,
+                    'file_name' => $file_name,
+                    'folder_name' => $folder_name
+                ];
+                $upload_mappings[] = $id_muc;
+            }
+        }
+    }
+    
+    // Thực thi upload đa luồng siêu tốc
+    if (!empty($upload_requests)) {
+        $uploaded_fileIds = $minhchung->minhchung__Upload_Google_Drive_Multi($upload_requests);
+        foreach ($uploaded_fileIds as $idx => $fileId) {
+            if ($fileId) {
+                $id_muc = $upload_mappings[$idx];
+                $full_url = "https://drive.google.com/uc?id=" . $fileId;
+                $new_file_ids[] = $full_url;
+                $minhchung->minhchung__Add($id_phieu, $full_url, date("Y-m-d H:i:s"), $id_muc, 0, null);
+            }
+        }
+    }
+    
+    // Dọn dẹp minh chứng cũ
+    if (is_array($danh_sach_mc_cu)) {
+        foreach ($danh_sach_mc_cu as $mc) {
+            $old_fileId = $mc->hinh_anh;
+            $minhchung->minhchung__Delete($mc->id_minh_chung);
+            
+            // Nếu file cũ không nằm trong danh sách mới (tức là sinh viên đã xóa/thay thế), thì xóa trên Drive
+            if ((strlen($old_fileId) < 100 || strpos($old_fileId, 'https://') === 0) && !in_array($old_fileId, $new_file_ids)) {
+                // Extract fileId from URL if it's a URL
+                $drive_fileId = $old_fileId;
+                if (strpos($old_fileId, 'id=') !== false) {
+                    $drive_fileId = explode('id=', $old_fileId)[1];
+                }
+                $minhchung->minhchung__Delete_Google_Drive($drive_fileId);
+            }
         }
     }
 }

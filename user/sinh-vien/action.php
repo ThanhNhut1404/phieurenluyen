@@ -52,23 +52,59 @@
                     $phieuchamdiem->phieuchamdiem__Update_Trang_Thai($id_phieu, 2);
                 }
 
-                // Xử lý nén và lưu ảnh minh chứng theo từng mục
+                // Xử lý nén và lưu ảnh minh chứng lên Google Drive
                 if (isset($_FILES['minh_chung_muc'])) {
                     $files = $_FILES['minh_chung_muc'];
+                    $upload_requests = [];
+                    $upload_mappings = [];
+
                     if (isset($files['name']) && is_array($files['name'])) {
                         foreach ($files['name'] as $id_muc => $file_names) {
                             foreach ($file_names as $index => $name) {
                                 if ($files['error'][$id_muc][$index] == UPLOAD_ERR_OK && $name != "") {
                                     $tmp_name = $files['tmp_name'][$id_muc][$index];
                                     
-                                    // Gọi hàm nén ảnh (max width 800, quality 60)
-                                    $base64_img = $minhchung->minhchung__Compress_Image($tmp_name, 800, 60);
+                                    // Tạo tên file
+                                    $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                                    $mime_type = mime_content_type($tmp_name);
                                     
-                                    if ($base64_img) {
-                                        // Thêm vào database với id_muc
-                                        $minhchung->minhchung__Add($id_phieu, $base64_img, date("Y-m-d H:i:s"), $id_muc);
+                                    // Chuyển file thành base64 để gửi lên GAS
+                                    $file_content = file_get_contents($tmp_name);
+                                    $base64_file = base64_encode($file_content);
+                                    
+                                    // Nếu là ảnh, có thể nén trước khi lấy base64 (chỉ JPG, PNG)
+                                    if (in_array($ext, ['jpg', 'jpeg', 'png'])) {
+                                         // Sử dụng hàm nén (max width 1024, quality 70)
+                                         $compressed_base64 = $minhchung->minhchung__Compress_Image($tmp_name, 1024, 70);
+                                         if ($compressed_base64) {
+                                             // minhchung__Compress_Image trả về dạng data:image/jpeg;base64,...
+                                             $base64_file = explode(',', $compressed_base64)[1];
+                                             $mime_type = 'image/jpeg';
+                                             $ext = 'jpg';
+                                         }
                                     }
+
+                                    $file_name = "Dot_" . $dot->id_dot . "/" . "Phieu_" . $id_phieu . "_Muc_" . $id_muc . "_" . time() . "_" . $index . "." . $ext;
+
+                                    $upload_requests[] = [
+                                        'file_name' => $file_name,
+                                        'mime_type' => $mime_type,
+                                        'base64_data' => $base64_file
+                                    ];
+                                    $upload_mappings[] = $id_muc;
                                 }
+                            }
+                        }
+                    }
+                    
+                    // Gửi lên Google Drive
+                    if (!empty($upload_requests)) {
+                        $uploaded_fileIds = $minhchung->minhchung__Upload_Google_Drive_Multi($upload_requests);
+                        foreach ($uploaded_fileIds as $idx => $fileId) {
+                            if ($fileId) {
+                                $id_muc = $upload_mappings[$idx];
+                                $full_url = "https://drive.google.com/uc?id=" . $fileId;
+                                $minhchung->minhchung__Add($id_phieu, $full_url, date("Y-m-d H:i:s"), $id_muc);
                             }
                         }
                     }
