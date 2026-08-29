@@ -151,19 +151,22 @@ class phieuchamdiem extends Database {
     }
     
     public function phieuchamdiem__Update_Kq_Sv($id_phieu, $kq_sv) {
-        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET kq_sv=?, ngay_thuc_hien=? WHERE id_phieu=?");
-        $obj->execute(array($kq_sv, date('Y-m-d'), $id_phieu));
+        // Ánh xạ điểm tự chấm của SV sang các role khác luôn
+        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET kq_sv=?, kq_lt_bt=?, kq_btdk=?, kq_gv=?, ngay_thuc_hien=? WHERE id_phieu=?");
+        $obj->execute(array($kq_sv, $kq_sv, $kq_sv, $kq_sv, date('Y-m-d'), $id_phieu));
         return $obj->rowCount();
     }
     public function phieuchamdiem__Update_Kq_LTBT($id_phieu, $kq_lt_bt) {
-        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET kq_lt_bt=?, ngay_thuc_hien=? WHERE id_phieu=?");
-        $obj->execute(array($kq_lt_bt, date('Y-m-d'), $id_phieu));
+        // Ánh xạ điểm của BCS sang các role cấp cao hơn
+        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET kq_lt_bt=?, kq_btdk=?, kq_gv=?, ngay_thuc_hien=? WHERE id_phieu=?");
+        $obj->execute(array($kq_lt_bt, $kq_lt_bt, $kq_lt_bt, date('Y-m-d'), $id_phieu));
         return $obj->rowCount();
     }
 
     public function phieuchamdiem__Update_Kq_BTDK($id_phieu, $kq_btdk) {
-        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET kq_btdk=?, ngay_thuc_hien=? WHERE id_phieu=?");
-        $obj->execute(array($kq_btdk, date('Y-m-d'), $id_phieu));
+        // Ánh xạ điểm của Đoàn khoa sang Giảng viên
+        $obj = $this->connect->prepare("UPDATE phieuchamdiem SET kq_btdk=?, kq_gv=?, ngay_thuc_hien=? WHERE id_phieu=?");
+        $obj->execute(array($kq_btdk, $kq_btdk, date('Y-m-d'), $id_phieu));
         return $obj->rowCount();
     }
 

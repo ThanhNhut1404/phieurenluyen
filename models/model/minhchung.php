@@ -158,5 +158,140 @@ class minhchung extends Database {
         return $obj->rowCount();
     }
 
+    // Giao tiếp với Google Apps Script (GAS) để Upload ảnh lên Drive
+    public function minhchung__Upload_Google_Drive($base64_data, $file_name, $folder_name) {
+        $gas_url = "https://script.google.com/macros/s/AKfycbz68oQ-ePClCRWAzy2c9RwpXCXC_5jWQReIhNEbGuBzslQhN2igPpWN3MIO4UyXmgIB1w/exec";
+        
+        $comma_pos = strpos($base64_data, ",");
+        if ($comma_pos !== false) {
+            $mime_type = substr($base64_data, 5, $comma_pos - 12);
+            if(strpos($mime_type, ";") !== false) {
+                $mime_type = explode(";", $mime_type)[0];
+            }
+            $base64_clean = substr($base64_data, $comma_pos + 1);
+        } else {
+            $mime_type = "image/jpeg";
+            $base64_clean = $base64_data;
+        }
+
+        $post_data = [
+            "action" => "upload",
+            "folderName" => $folder_name,
+            "fileName" => $file_name,
+            "mimeType" => $mime_type,
+            "fileData" => $base64_clean
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $gas_url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $res = json_decode($response, true);
+        if ($res && isset($res["status"]) && $res["status"] == "success") {
+            return $res["fileId"];
+        }
+        return false;
+    }
+
+    // Tải lên Google Drive CÙNG LÚC NHIỀU FILE (Nhanh gấp 10 lần)
+    public function minhchung__Upload_Google_Drive_Multi($requests) {
+        if (empty($requests)) return [];
+        $gas_url = "https://script.google.com/macros/s/AKfycbz68oQ-ePClCRWAzy2c9RwpXCXC_5jWQReIhNEbGuBzslQhN2igPpWN3MIO4UyXmgIB1w/exec";
+        
+        $multi_curl = curl_multi_init();
+        $curl_handles = [];
+        
+        foreach ($requests as $idx => $req) {
+            $base64_data = $req["base64"];
+            $file_name = $req["file_name"];
+            $folder_name = $req["folder_name"];
+            
+            $comma_pos = strpos($base64_data, ",");
+            if ($comma_pos !== false) {
+                $mime_type = substr($base64_data, 5, $comma_pos - 12);
+                if(strpos($mime_type, ";") !== false) {
+                    $mime_type = explode(";", $mime_type)[0];
+                }
+                $base64_clean = substr($base64_data, $comma_pos + 1);
+            } else {
+                $mime_type = "image/jpeg";
+                $base64_clean = $base64_data;
+            }
+
+            $post_data = [
+                "action" => "upload",
+                "folderName" => $folder_name,
+                "fileName" => $file_name,
+                "mimeType" => $mime_type,
+                "fileData" => $base64_clean
+            ];
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $gas_url);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 60); 
+            
+            curl_multi_add_handle($multi_curl, $ch);
+            $curl_handles[$idx] = $ch;
+        }
+        
+        $active = null;
+        do {
+            $mrc = curl_multi_exec($multi_curl, $active);
+        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+
+        while ($active && $mrc == CURLM_OK) {
+            if (curl_multi_select($multi_curl) != -1) {
+                do {
+                    $mrc = curl_multi_exec($multi_curl, $active);
+                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
+            }
+        }
+        
+        $results = [];
+        foreach ($curl_handles as $idx => $ch) {
+            $response = curl_multi_getcontent($ch);
+            $res = json_decode($response, true);
+            if ($res && isset($res["status"]) && $res["status"] == "success") {
+                $results[$idx] = $res["fileId"];
+            } else {
+                $results[$idx] = false;
+            }
+            curl_multi_remove_handle($multi_curl, $ch);
+        }
+        
+        curl_multi_close($multi_curl);
+        return $results;
+    }
+
+    // Xóa file trên Google Drive
+    public function minhchung__Delete_Google_Drive($fileId) {
+        if(empty($fileId) || strlen($fileId) < 10) return false;
+        
+        $gas_url = "https://script.google.com/macros/s/AKfycbz68oQ-ePClCRWAzy2c9RwpXCXC_5jWQReIhNEbGuBzslQhN2igPpWN3MIO4UyXmgIB1w/exec";
+        $post_data = [
+            "action" => "delete",
+            "fileId" => $fileId
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $gas_url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        return true; 
+    }
 }
 ?>
