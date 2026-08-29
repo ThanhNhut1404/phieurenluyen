@@ -450,7 +450,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                         <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                        <div><strong>Ghi chú:</strong> <?= stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
+                        <div><strong>Ghi chú:</strong> <?= (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false) ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                         <?php endif; ?>
                     </div>
                 </div>

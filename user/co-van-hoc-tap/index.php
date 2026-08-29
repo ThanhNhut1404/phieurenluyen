@@ -334,7 +334,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                             <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                            <div><strong>Ghi chú:</strong> <?= stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
+                            <div><strong>Ghi chú:</strong> <?= (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false) ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -534,7 +534,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                             // Chỉ cho phép thao tác khi đợt chấm điểm ĐÃ ĐÓNG và đã có kết quả
                             // YÊU CẦU MỚI: Chỉ xuất hiện đối với sinh viên KHÔNG TỰ CHẤM ĐIỂM (kq_sv trống)
                             if ($dotchamdiem__Get_By_Id->trang_thai == 0 && isset($ketquaxeploai__Get_By_Id_Phieu->id_ket_qua) && empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)) {
-                                if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false) {
+                                if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false)) {
                                     $show_huy_ha_bac = true;
                                 } else {
                                     $show_ha_bac = true;
@@ -564,7 +564,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             <!-- Form ẩn để gửi yêu cầu hạ bậc / hủy hạ bậc -->
             <form id="form_ha_bac" action="co-van-hoc-tap/action.php?req=ha_bac" method="post" style="display: none;">
                 <input type="hidden" name="id_ket_qua" id="ha_bac_id_ket_qua" value="">
-                <input type="hidden" name="ly_do" value="Không nộp phiếu đánh giá (Bị hạ bậc)">
+                <input type="hidden" name="ly_do" value="Không tự đánh giá rèn luyện (Bị hạ bậc)">
             </form>
             
             <form id="form_huy_ha_bac" action="co-van-hoc-tap/action.php?req=huy_ha_bac" method="post" style="display: none;">

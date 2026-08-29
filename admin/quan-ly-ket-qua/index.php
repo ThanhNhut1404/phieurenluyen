@@ -161,16 +161,16 @@
              <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
                   <thead>
                       <tr>
-                          <th>STT</th>
+                          <th style="width: 5%">STT</th>
                           <!-- Nhựt sửa: Đổi tên cột từ Mã sinh viên thành MSSV -->
-                          <th>MSSV</th>
+                          <th style="width: 10%">MSSV</th>
                           <!-- Nhựt sửa: Đổi tên cột từ Tên sinh viên thành HỌ VÀ TÊN -->
-                          <th>HỌ VÀ TÊN</th>
-                          <th>Tên lớp</th>
-                          <th>Điểm rèn luyện</th>
-                          <th>Kết quả xếp loại</th>
-                          <th>Ngày xếp loại</th>
-                          <th>Ghi chú</th>
+                          <th style="width: 20%">HỌ VÀ TÊN</th>
+                          <th style="width: 10%">Tên lớp</th>
+                          <th style="width: 12%">Điểm rèn luyện</th>
+                          <th style="width: 13%">Kết quả xếp loại</th>
+                          <th style="width: 12%">Ngày xếp loại</th>
+                          <th style="width: 18%">Ghi chú</th>
                       </tr>
                   </thead>
                  <tbody>
@@ -188,7 +188,7 @@
                          <td>
                              <?php
                              $ghi_chu_text = htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8');
-                             if (stripos($ghi_chu_text, 'hạ bậc') !== false) {
+                             if (stripos($ghi_chu_text, 'hạ bậc') !== false || stripos($ghi_chu_text, 'Không tự đánh giá') !== false) {
                                  echo '<span class="text-danger" style="font-style: italic;">' . $ghi_chu_text . '</span>';
                              } else {
                                  echo $ghi_chu_text;

@@ -121,7 +121,7 @@
                     $objPHPExcel->getActiveSheet()->SetCellValue('D'.$row_hd, "".vnn_end_word($item->ten_sinh_vien));
                     $objPHPExcel->getActiveSheet()->SetCellValue('E'.$row_hd, "".$item->ket_qua);
                     $objPHPExcel->getActiveSheet()->SetCellValue('F'.$row_hd, "".$item->xep_loai);
-                    $objPHPExcel->getActiveSheet()->SetCellValue('G'.$row_hd, "");
+                    $objPHPExcel->getActiveSheet()->SetCellValue('G'.$row_hd, "".$item->ghi_chu);
                     $objPHPExcel->getActiveSheet()->SetCellValue('H'.$row_hd, "".$item->ten_lop_hoc);
 
                     $row_hd +=1;

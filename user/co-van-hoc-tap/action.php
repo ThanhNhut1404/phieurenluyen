@@ -97,6 +97,10 @@
                     $deduction = 11; // Xử lý đặc biệt theo quy chế (100 điểm thì trừ 11)
                 }
                 
+                if (strpos($ly_do, '(Bị hạ bậc)') !== false) {
+                    $ly_do = str_replace('(Bị hạ bậc)', '(Trừ ' . $deduction . 'đ)', $ly_do);
+                }
+                
                 $new_score = $base_score - $deduction;
                 if ($new_score < 0) $new_score = 0;
                 
