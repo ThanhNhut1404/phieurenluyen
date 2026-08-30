@@ -39,9 +39,14 @@
         $sinhvien__Get_By_Id_Lop_Hoc_Da_Cham = $sinhvien->sinhvien__Get_By_Id_Lop_Hoc_Kq_LTBT($id_dot, $lophoc__Get_By_Id->id_lop_hoc, null);
     
         $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($lophoc__Get_By_Id->id_lop_hoc, $id_dot, $id_sinh_vien);
+        if (isset($ketquaxeploai__Get_By_Id_Phieu) && isset($ketquaxeploai__Get_By_Id_Phieu->trang_thai_cong_bo) && $ketquaxeploai__Get_By_Id_Phieu->trang_thai_cong_bo == 0) {
+            unset($ketquaxeploai__Get_By_Id_Phieu);
+            if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien)) {
+                $phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv = "";
+                $phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk = "";
+            }
+        }
     }
-  
-
 ?>
 <link rel="stylesheet" href="../assets/css/user.css?v=<?=time()?>">
 <?php if(isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)):?>
@@ -156,7 +161,7 @@
 
                         <div class="col text-right">
                             <p class="card-title w-100">Ghi chú:
-                                <?=isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) ? $ketquaxeploai__Get_By_Id_Phieu->ghi_chu : ""?>
+                                <span class="text-danger" style="font-style: italic;"><?=isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) ? $ketquaxeploai__Get_By_Id_Phieu->ghi_chu : ""?></span>
                             </p>
 
                         </div>

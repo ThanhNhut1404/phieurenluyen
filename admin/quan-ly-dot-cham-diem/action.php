@@ -360,6 +360,25 @@
                 }
                 
                 break;
+        case 'toggle_gia_han':
+                $id_dot = isset($_GET['id_dot']) ? trim($_GET['id_dot']) : "";
+                $trang_thai = isset($_GET['trang_thai']) ? trim($_GET['trang_thai']) : "";
+                
+                if (!dotchamdiem__Valid_Csrf_Get()) {
+                    dotchamdiem__Redirect('csrf');
+                }
+                if (!dotchamdiem__Is_Positive_Integer($id_dot) || !$dotchamdiem->dotchamdiem__Get_By_Id($id_dot)) {
+                    dotchamdiem__Redirect('not-found');
+                }
+                
+                $status = $dotchamdiem->dotchamdiem__Update_Trang_Thai($id_dot, $trang_thai);
+                if ($status) {
+                    dotchamdiem__Rotate_Csrf_Token();
+                    dotchamdiem__Redirect('success');
+                } else {
+                    dotchamdiem__Redirect('failed');
+                }
+                break;
         }
     }
 

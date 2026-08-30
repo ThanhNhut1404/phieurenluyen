@@ -244,8 +244,60 @@ window.addEventListener("load", function() {
                 "sortDescending": ": kích hoạt để sắp xếp cột giảm dần"
             }
         },
-        // Nhựt sửa: Thêm nút xuất dữ liệu EXPORT
+        // Nhựt sửa: Thêm nút xuất dữ liệu EXPORT và nút Công bố
         buttons: [
+            <?php if ($id_lop_hoc > 0 && $id_dot > 0 && count($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot) > 0): ?>
+            <?php
+            $is_published = false;
+            $is_published = isset($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot[0]->trang_thai_cong_bo) && (int)$ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot[0]->trang_thai_cong_bo === 1;
+            ?>
+            {
+                text: "<?= $is_published ? '<i class=\'fas fa-eye-slash\'></i> Ẩn điểm với SV' : '<i class=\'fas fa-eye\'></i> Cho SV xem điểm' ?>",
+                className: "btn btn-sm <?= $is_published ? 'btn-custom-outline-danger' : 'btn-custom-outline-success' ?> mr-1",
+                action: function ( e, dt, node, config ) {
+                    Swal.fire({
+                        title: '<?= $is_published ? '<span style="white-space: nowrap;">Xác nhận Ẩn điểm?</span>' : '<span style="white-space: nowrap;">Xác nhận cho Sinh viên</span><br>xem điểm?' ?>',
+                        html: '<?= $is_published ? 'Thao tác này sẽ <b>Ẩn điểm rèn luyện</b><br>của toàn bộ sinh viên lớp này.' : 'Thao tác này sẽ <b>Hiển thị điểm rèn luyện</b><br>cho toàn bộ sinh viên lớp này.' ?>',
+                        icon: '<?= $is_published ? 'warning' : 'info' ?>',
+                        width: '36rem',
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: '<b>Đóng</b>',
+                        customClass: {
+                            confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+                            cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+                        },
+                        buttonsStyling: false,
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp animate__faster'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.post('quan-ly-ket-qua/action.php?req=toggle_cong_bo', {
+                                id_dot: <?= $id_dot ?>,
+                                id_lop_hoc: <?= $id_lop_hoc ?>,
+                                trang_thai: <?= $is_published ? 0 : 1 ?>,
+                                csrf_token: '<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>'
+                            }, function(res) {
+                                try {
+                                    var data = JSON.parse(res);
+                                    if(data.success) {
+                                        location.reload();
+                                    } else {
+                                        Swal.fire('Lỗi!', data.message || 'Có lỗi xảy ra!', 'error');
+                                    }
+                                } catch(e) {
+                                    location.reload();
+                                }
+                            });
+                        }
+                    });
+                }
+            },
+            <?php endif; ?>
             {
                 text: "<i class='fas fa-file-export'></i> EXPORT",
                 className: "btn btn-sm btn-custom-outline mr-1",
@@ -304,6 +356,42 @@ window.addEventListener("load", function() {
             .dataTables_wrapper .dt-buttons .btn-custom-outline:hover {
                 background-color: #0f2a5a !important;
                 border-color: #0f2a5a !important;
+                color: #fff !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-outline-success {
+                background-color: #fff !important;
+                border: 1px solid #28a745 !important;
+                color: #28a745 !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-outline-success:hover {
+                background-color: #28a745 !important;
+                border-color: #28a745 !important;
+                color: #fff !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-outline-danger {
+                background-color: #fff !important;
+                border: 1px solid #dc3545 !important;
+                color: #dc3545 !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-outline-danger:hover {
+                background-color: #dc3545 !important;
+                border-color: #dc3545 !important;
                 color: #fff !important;
             }
             .dataTables_wrapper .dt-buttons .btn-custom-filter {

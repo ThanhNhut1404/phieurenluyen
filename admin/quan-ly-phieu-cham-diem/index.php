@@ -17,10 +17,18 @@
     $lophoc__Get_All = $lophoc->lophoc__Get_All();
 
   
+    $can_process_dot = false;
     if(isset($_GET['id_dot'])){
         $id_dot = $_GET['id_dot'];
         // Nhựt sửa lỗi: Chỉ hiển thị Lớp áp dụng thuộc Đợt đã chọn, không hiển thị toàn bộ lớp.
         $lophoc__Get_All = $lopapdung->lopapdung__Get_Lop_Hoc_By_Id_Dot($id_dot);
+        $current_dot = $dotchamdiem->dotchamdiem__Get_By_Id($id_dot);
+        if ($current_dot) {
+            $today = date('Y-m-d');
+            if ($today > $current_dot->thoi_gian_ket_thuc) {
+                $can_process_dot = true;
+            }
+        }
     }
     if(isset($_GET['id_lop_hoc'])){
         $id_lop_hoc = $_GET['id_lop_hoc'];
@@ -127,8 +135,8 @@
                                          <small class="text-danger mt-1">Vui lòng chọn đợt và lớp học hợp lệ.</small>
                                      <?php elseif ($status == 'incomplete-xep-loai'): ?>
                                          <small class="text-danger mt-1">Hệ thống chưa cấu hình đủ xếp loại. Vui lòng cập nhật trước khi xử lý.</small>
-                                     <?php elseif ($status == 'unscored-phieu'): ?>
-                                         <small class="text-danger mt-1">Lớp này còn phiếu chưa được Cố vấn học tập chấm điểm.</small>
+                                     <?php elseif ($status == 'dot-chua-ket-thuc'): ?>
+                                         <small class="text-danger mt-1">Đợt chấm điểm chưa kết thúc. Không thể tổng kết.</small>
                                      <?php endif; ?>
                                  </div>
                                  <?php endif; ?>
@@ -137,8 +145,18 @@
                      </div>
                      <!-- /.card-body -->
                      <div class="card-footer py-2">
+                         <?php
+                            $btn_disabled = "";
+                            $btn_title = "";
+                            if (!isset($_GET['id_lop_hoc'])) {
+                                $btn_disabled = "disabled";
+                            } else if (!$can_process_dot) {
+                                $btn_disabled = "disabled";
+                                $btn_title = "title='Đợt chấm điểm chưa kết thúc, không thể xử lý'";
+                            }
+                         ?>
                          <input type="submit" value="Xử lý" class="btn btn-success float-right font-weight-bold"
-                             <?=isset($_GET['id_lop_hoc']) ? "" : "disabled"?>>
+                             <?= $btn_disabled ?> <?= $btn_title ?>>
                          <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                      </div>
                  </div>

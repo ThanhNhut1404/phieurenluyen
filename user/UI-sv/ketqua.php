@@ -59,7 +59,7 @@ foreach ($list_ketqua as $kq) {
                                         $sum_diem += $hk->ket_qua;
                                         $count_hk++;
                                         $ghi_chu = !empty($hk->ghi_chu) ? htmlspecialchars($hk->ghi_chu) : 'Không có ghi chú';
-                                        if (stripos($ghi_chu, 'hạ bậc') !== false || stripos($ghi_chu, 'Không tự đánh giá') !== false) {
+                                        if (!empty($hk->ghi_chu)) {
                                             $ghi_chu = '<span class="text-danger" style="font-style: italic;">' . $ghi_chu . '</span>';
                                         }
                                         $is_empty_note = empty($hk->ghi_chu) ? 'text-muted italic' : '';

@@ -26,6 +26,9 @@ $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
 $id_lop_ap_dung = isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung) ? $phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung : 0;
 $lopapdung__Get_By_Id = $lopapdung->lopapdung__Get_By_Id($id_lop_ap_dung);
 $dotchamdiem__Get_By_Id = $dotchamdiem->dotchamdiem__Get_By_Id($id_dot);
+
+$is_ended = (strtotime(date('Y-m-d')) > strtotime($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc));
+$is_locked_gv = ($is_ended && $dotchamdiem__Get_By_Id->trang_thai == 0);
 $id_hoc_ky = isset($dotchamdiem__Get_By_Id->id_hoc_ky) ? $dotchamdiem__Get_By_Id->id_hoc_ky : 0;
 $hocky__Get_By_Id = $hocky->hocky__Get_By_Id($id_hoc_ky);
 $id_nam_hoc = isset($hocky__Get_By_Id->id_nam_hoc) ? $hocky__Get_By_Id->id_nam_hoc : 0;
@@ -334,7 +337,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                             <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                            <div><strong>Ghi chú:</strong> <?= (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false) ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
+                            <div><strong>Ghi chú:</strong> <span class="text-danger" style="font-style: italic;"><?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></span></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -463,7 +466,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0"
                 style="<?= $quyen_gv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_gv == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
-                <?= ($quyen_gv == 0 || $dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'readonly tabindex="-1"' : '' ?>
+                <?= ($quyen_gv == 0 || $is_locked_gv || !$btdk_has_scored) ? 'readonly tabindex="-1"' : '' ?>
                 value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv) ? ($val_btdk == 0 ? '' : $val_btdk) : ($val_gv == 0 ? '' : $val_gv) ?>">
 </td>
                                                     <td class="text-center align-middle" style="padding:4px;">
@@ -531,19 +534,36 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                             $show_ha_bac = false;
                             $show_huy_ha_bac = false;
                             
-                            // Chỉ cho phép thao tác khi đợt chấm điểm ĐÃ ĐÓNG và đã có kết quả
-                            // YÊU CẦU MỚI: Chỉ xuất hiện đối với sinh viên KHÔNG TỰ CHẤM ĐIỂM (kq_sv trống)
-                            if ($dotchamdiem__Get_By_Id->trang_thai == 0 && isset($ketquaxeploai__Get_By_Id_Phieu->id_ket_qua) && empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_sv)) {
+                            // Chỉ cho phép thao tác khi thời gian sinh viên nộp phiếu ĐÃ KẾT THÚC
+                            // YÊU CẦU MỚI: Chỉ xuất hiện đối với sinh viên KHÔNG TỰ CHẤM ĐIỂM (chưa nộp phiếu, trang_thai == 1)
+                            if ($is_ended && isset($ketquaxeploai__Get_By_Id_Phieu->id_ket_qua) && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai == 1) {
                                 if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false)) {
                                     $show_huy_ha_bac = true;
                                 } else {
                                     $show_ha_bac = true;
                                 }
                             }
+                            
+                            // Tính toán mức trừ điểm và điểm dự kiến nếu hiện nút Hạ bậc
+                            $base_score = 0;
+                            $deduction = 0;
+                            $new_score = 0;
+                            if ($show_ha_bac && isset($ketquaxeploai__Get_By_Id_Phieu->sum)) {
+                                $base_score = (int)$ketquaxeploai__Get_By_Id_Phieu->sum;
+                                $original_xeploai = $xeploai->xeploai__Get_By_Kq($base_score);
+                                if ($original_xeploai) {
+                                    $deduction = $original_xeploai->ha_bac;
+                                    if ($base_score == 100) {
+                                        $deduction = 11;
+                                    }
+                                    $new_score = $base_score - $deduction;
+                                    if ($new_score < 0) $new_score = 0;
+                                }
+                            }
                         ?>
                         
                         <?php if ($show_ha_bac): ?>
-                            <button type="button" class="btn btn-danger btn-lg float-left font-weight-bold" onclick="xacNhanHaBac(<?= $ketquaxeploai__Get_By_Id_Phieu->id_ket_qua ?>)">
+                            <button type="button" class="btn btn-danger btn-lg float-left font-weight-bold" onclick="xacNhanHaBac(<?= $ketquaxeploai__Get_By_Id_Phieu->id_ket_qua ?>, <?= $base_score ?>, <?= $deduction ?>, <?= $new_score ?>)">
                                 <i class="fas fa-level-down-alt"></i> Hạ bậc
                             </button>
                         <?php endif; ?>
@@ -556,7 +576,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
                         <input type="submit" value="Cập nhật" class="btn btn-success btn-lg float-right font-weight-bold" id="submit"
                             <?php // Quân sửa: Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm trên nút submit ?>
-                            <?= ($dotchamdiem__Get_By_Id->trang_thai == 0 || !$btdk_has_scored) ? 'disabled' : '' ?>>
+                            <?= ($is_locked_gv || !$btdk_has_scored) ? 'disabled' : '' ?>>
                     </div>
                 </div>
             </form>
@@ -571,18 +591,31 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 <input type="hidden" name="id_ket_qua" id="huy_ha_bac_id_ket_qua" value="">
             </form>
 
+            <style>
+                .swal-ha-bac-custom {
+                    width: 600px !important;
+                    max-width: 90vw !important;
+                }
+            </style>
             <script>
-                function xacNhanHaBac(id_ket_qua) {
+                function xacNhanHaBac(id_ket_qua, base_score, deduction, new_score) {
                     Swal.fire({
                         title: '<span style="color: #0f2a5a !important">Xác nhận hạ bậc?</span>',
-                        html: 'Bạn có chắc chắn muốn <b class="text-danger">HẠ BẬC</b> xếp loại của sinh viên này do không tự đánh giá rèn luyện (không nộp phiếu)?<br><br><span class="text-danger"><i>Lưu ý: Thao tác này sẽ trừ điểm và lưu ghi chú hạ bậc.</i></span>',
-                        icon: 'error',
-                        width: 700,
+                        html: 'Bạn có chắc chắn muốn <b class="text-danger">HẠ BẬC</b> xếp loại của sinh viên này do không tự đánh giá rèn luyện (không nộp phiếu)?<br><br>' +
+                              '<div style="background-color: #f8f9fa; color: #333; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; font-size: 16px; border: 1px solid #dee2e6;">' +
+                              'Tổng điểm hiện tại: <b>' + base_score + ' điểm</b><br>' +
+                              'Mức điểm sẽ bị trừ phạt: <b class="text-danger">-' + deduction + ' điểm</b><br>' +
+                              '<hr style="border-top: 1px solid #dee2e6; margin: 8px 0;">' +
+                              'Điểm dự kiến sau khi hạ: <b class="text-danger" style="font-size: 18px;">' + new_score + ' điểm</b>' +
+                              '</div>' +
+                              '<span class="text-danger"><i>Lưu ý: Thao tác này sẽ trừ trực tiếp vào kết quả xếp loại.</i></span>',
+                        icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Có',
+                        confirmButtonText: 'Xác nhận',
                         cancelButtonText: 'Hủy',
                         buttonsStyling: false,
                         customClass: {
+                            popup: 'swal-ha-bac-custom',
                             confirmButton: 'btn btn-success btn-lg font-weight-bold mx-2 px-4',
                             cancelButton: 'btn btn-cancel-custom btn-lg font-weight-bold mx-2 px-4'
                         }
@@ -598,12 +631,12 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         title: '<span style="color: #0f2a5a !important">Xác nhận hủy hạ bậc?</span>',
                         html: 'Bạn có chắc chắn muốn <b class="text-warning">HỦY HẠ BẬC</b><br>và khôi phục lại mức xếp loại gốc cho sinh&nbsp;viên&nbsp;này?',
                         icon: 'warning',
-                        width: 700,
                         showCancelButton: true,
-                        confirmButtonText: 'Có',
+                        confirmButtonText: 'Xác nhận',
                         cancelButtonText: 'Hủy',
                         buttonsStyling: false,
                         customClass: {
+                            popup: 'swal-ha-bac-custom',
                             confirmButton: 'btn btn-success btn-lg font-weight-bold mx-2 px-4',
                             cancelButton: 'btn btn-cancel-custom btn-lg font-weight-bold mx-2 px-4'
                         }

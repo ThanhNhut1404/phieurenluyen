@@ -198,6 +198,28 @@ if (!isset($_SESSION['admin'])) {
         return false;
     }
 
+    function confirm_toggle_sweet(url, message) {
+        Swal.fire({
+            title: '<span style="color: #ffc107 !important">Xác nhận thao tác?</span>',
+            html: message,
+            icon: 'warning',
+            width: '36em',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Hủy',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+                cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
     function confirm_sweet_ha_bac(url) {
         Swal.fire({
             title: 'Xác nhận hạ bậc?',

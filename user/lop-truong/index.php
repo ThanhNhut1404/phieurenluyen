@@ -84,6 +84,10 @@ if (count($sinhvien_list) > 0) {
     }
 }
 
+$is_ended = false;
+$is_locked_sv = false;
+$is_locked_lt = false;
+
 if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
     $id_lop_ap_dung = isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung) ? $phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung : 0;
@@ -112,6 +116,17 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $bocauhoi__Get_By_Id_Mau_Phieu = $bocauhoi->bocauhoi__Get_By_Id_Mau_Phieu($id_mau_phieu);
 
     $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($lophoc__Get_By_Id->id_lop_hoc, $id_dot, $id_sinh_vien);
+    if (isset($ketquaxeploai__Get_By_Id_Phieu) && isset($ketquaxeploai__Get_By_Id_Phieu->trang_thai_cong_bo) && $ketquaxeploai__Get_By_Id_Phieu->trang_thai_cong_bo == 0) {
+        unset($ketquaxeploai__Get_By_Id_Phieu);
+        if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien)) {
+            $phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv = "";
+            $phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk = "";
+        }
+    }
+    
+    $is_ended = (strtotime(date('Y-m-d')) > strtotime($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc));
+    $is_locked_sv = $is_ended;
+    $is_locked_lt = ($is_ended && $dotchamdiem__Get_By_Id->trang_thai == 0);
 }
 
 
@@ -438,7 +453,7 @@ $main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                         <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                        <div><strong>Ghi chú:</strong> <?= (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false) ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
+                        <div><strong>Ghi chú:</strong> <span class="text-danger" style="font-style: italic;"><?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></span></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -547,7 +562,7 @@ $main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
                 pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0"
                 style="<?= $quyen_sv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_sv == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
-                <?= ($quyen_sv == 0 || $mode == 'lop' || $dotchamdiem__Get_By_Id->trang_thai == 0 || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1) ? 'readonly tabindex="-1"' : '' ?>
+                <?= ($quyen_sv == 0 || $mode == 'lop' || $is_locked_sv || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1) ? 'readonly tabindex="-1"' : '' ?>
                 value="<?= $val_sv == 0 ? '' : $val_sv ?>">
 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
@@ -556,7 +571,7 @@ $main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
                 pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0"
                 style="<?= $quyen_lt == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_lt == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
-                <?= ($quyen_lt == 0 || $mode == 'ban_than' || $dotchamdiem__Get_By_Id->trang_thai == 0 || ($phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2)) ? 'readonly tabindex="-1"' : '' ?>
+                <?= ($quyen_lt == 0 || $mode == 'ban_than' || $is_locked_lt || ($phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 1 && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2)) ? 'readonly tabindex="-1"' : '' ?>
                 value="<?= (empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt) && $mode == 'lop') ? ($val_sv == 0 ? '' : $val_sv) : ($val_lt == 0 ? '' : $val_lt) ?>">
 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
@@ -654,7 +669,7 @@ $main_css_path = $is_new_layout ? '../../assets/css/main.css?v=8' : '';
                     }
                 ?>
                 <input type="submit" value="<?= $btn_text ?>" data-default-text="<?= $btn_text ?>" class="<?= $btn_class ?> btn-lg font-weight-bold" <?= $btn_style ?> id="submit"
-                    <?= $dotchamdiem__Get_By_Id->trang_thai == 0 ? 'disabled' : '' ?>>
+                    <?= ($mode == 'ban_than' ? $is_locked_sv : $is_locked_lt) ? 'disabled' : '' ?>>
             </div>
         </div>
         </form>

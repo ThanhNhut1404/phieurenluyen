@@ -73,14 +73,24 @@
 
             case "print":
 
-                $id_xep_loai = isset($_GET["id_xep_loai"]) ? trim($_GET["id_xep_loai"]) : "";
-
-                if (!ketqua__Is_Positive_Integer($id_xep_loai)) {
-                    header("location: $href&status=not-found");
+            case "toggle_cong_bo":
+                // Kiểm tra Token CSRF bảo mật
+                if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+                    echo json_encode(['success' => false, 'message' => 'Lỗi bảo mật CSRF.']);
                     exit();
                 }
 
-                header("location: $href&status=not-found");
+                $id_dot = isset($_POST["id_dot"]) ? trim($_POST["id_dot"]) : "";
+                $id_lop_hoc = isset($_POST["id_lop_hoc"]) ? trim($_POST["id_lop_hoc"]) : "";
+                $trang_thai = isset($_POST["trang_thai"]) ? trim($_POST["trang_thai"]) : 0;
+
+                if (!ketqua__Is_Positive_Integer($id_dot) || !ketqua__Is_Positive_Integer($id_lop_hoc)) {
+                    echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
+                    exit();
+                }
+
+                $ketquaxeploai->ketquaxeploai__Toggle_Cong_Bo($id_dot, $id_lop_hoc, $trang_thai);
+                echo json_encode(['success' => true]);
                 exit();
                 
                 break;

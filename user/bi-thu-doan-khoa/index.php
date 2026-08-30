@@ -92,6 +92,9 @@ if (count($sinhvien_list) > 0) {
     }
 }
 
+$is_ended = false;
+$is_locked_btdk = false;
+
 if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
     $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
     $id_lop_ap_dung = isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung) ? $phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung : 0;
@@ -112,6 +115,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
 
     // Quân sửa: Lấy đúng kết quả xếp loại theo id_lop_hoc của Bí thư Đoàn khoa
     $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_hoc, $id_dot, $id_sinh_vien);
+    
+    $is_ended = (strtotime(date('Y-m-d')) > strtotime($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc));
+    $is_locked_btdk = ($is_ended && $dotchamdiem__Get_By_Id->trang_thai == 0);
 }
 
 
@@ -450,7 +456,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                         <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                        <div><strong>Ghi chú:</strong> <?= (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false) ? '<span class="text-danger" style="font-style: italic;">' . $ketquaxeploai__Get_By_Id_Phieu->ghi_chu . '</span>' : $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
+                        <div><strong>Ghi chú:</strong> <span class="text-danger" style="font-style: italic;"><?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></span></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -578,7 +584,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0"
                 style="<?= $quyen_btdk == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_btdk == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
-                <?= ($quyen_btdk == 0 || $dotchamdiem__Get_By_Id->trang_thai == 0 || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2) ? 'readonly tabindex="-1"' : '' ?>
+                <?= ($quyen_btdk == 0 || $is_locked_btdk || $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai != 2) ? 'readonly tabindex="-1"' : '' ?>
                 value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk) ? ($val_lt == 0 ? '' : $val_lt) : ($val_btdk == 0 ? '' : $val_btdk) ?>">
 </td>
                                                 <td class="text-center align-middle" style="padding:4px;">
@@ -652,7 +658,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             <div class="card-footer">
                 
                 <input type="submit" value="Cập nhật" class="btn btn-success btn-lg float-right font-weight-bold" id="submit"
-                    <?= ($dotchamdiem__Get_By_Id->trang_thai == 0 || !$lt_has_scored) ? 'disabled' : '' ?>>
+                    <?= ($is_locked_btdk || !$lt_has_scored) ? 'disabled' : '' ?>>
             </div>
 
         </form>

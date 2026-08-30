@@ -378,6 +378,18 @@ button.btn.removeall.btn-outline-secondary:before {
                              }?>
                              </td>
                              <td>
+                                 <?php
+                                    $is_ended = (strtotime(date('Y-m-d')) > strtotime($item->thoi_gian_ket_thuc));
+                                    $btn_class = $item->trang_thai == 1 ? 'btn-success' : 'btn-secondary';
+                                    $btn_icon = $item->trang_thai == 1 ? 'ri-lock-unlock-line' : 'ri-lock-2-line';
+                                    $btn_title = $item->trang_thai == 1 ? 'Đang MỞ GIA HẠN chấm điểm (Click để đóng)' : 'Đang ĐÓNG KHÓA chấm điểm trễ (Click để mở)';
+                                 ?>
+                                 <a href="#" 
+                                    class="btn <?=$btn_class?> m-2" 
+                                    title="<?=$btn_title?>"
+                                    onclick="return confirm_toggle_sweet('quan-ly-dot-cham-diem/action.php?req=toggle_gia_han&id_dot=<?=$item->id_dot?>&trang_thai=<?=$item->trang_thai == 1 ? 0 : 1?>&csrf_token=<?=dotchamdiem_escape($_SESSION['csrf_token'])?>', 'Bạn có chắc chắn muốn <b style=\'color: #0f2a5a;\'><?=$item->trang_thai == 1 ? 'ĐÓNG SỔ (không cho phép chấm trễ)' : 'MỞ GIA HẠN (cho phép cán bộ chấm trễ)'?></b> đối với đợt chấm điểm này?');">
+                                     <i class="<?=$btn_icon?>"></i>
+                                 </a>
                                  <a href="#" type="button" class="btn  btn-warning m-2"
                                      onclick="update_obj(<?=$item->id_dot?>)">
                                      <i class="ri-edit-2-line"></i>

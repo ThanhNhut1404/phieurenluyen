@@ -28,7 +28,12 @@
                 // Kiểm tra xem đợt phải đang mở
                 // Nhựt sửa: Sửa lỗi lấy id_dot từ phiếu (phiếu không có id_dot, phải lấy từ lớp áp dụng) và bỏ kiểm tra trang_thai == 4
                 $dot = $dotchamdiem->dotchamdiem__Get_By_Id($lop_ap_dung->id_dot);
-                if (!$dot || $dot->trang_thai == 0) {
+                if (!$dot) {
+                    header("location: $href&status=failed");
+                    exit();
+                }
+                $is_ended = (strtotime(date('Y-m-d')) > strtotime($dot->thoi_gian_ket_thuc));
+                if ($is_ended && $dot->trang_thai == 0) {
                     header("location: $href&status=failed");
                     exit();
                 }

@@ -188,6 +188,7 @@ class minhchung extends Database {
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Nhựt sửa: Bỏ qua kiểm tra SSL trên XAMPP
         $response = curl_exec($ch);
         curl_close($ch);
 
@@ -237,6 +238,7 @@ class minhchung extends Database {
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Nhựt sửa: Bỏ qua kiểm tra SSL trên XAMPP
             curl_setopt($ch, CURLOPT_TIMEOUT, 60); 
             
             curl_multi_add_handle($multi_curl, $ch);
@@ -288,6 +290,7 @@ class minhchung extends Database {
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Nhựt sửa: Bỏ qua kiểm tra SSL trên XAMPP
         $response = curl_exec($ch);
         curl_close($ch);
         
