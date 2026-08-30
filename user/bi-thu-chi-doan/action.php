@@ -1,5 +1,9 @@
 <?php
     session_start();
+    if (!isset($_SESSION['bt'])) {
+        header("location: ../../auth/");
+        exit();
+    }
     $href = $_SERVER["HTTP_REFERER"];
     if(strlen(strpos($href, "&status")) > 0){
         $href = explode("&status", $href)[0];

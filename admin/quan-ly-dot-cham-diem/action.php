@@ -1,6 +1,11 @@
 <?php
 
     session_start();
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
     require '../../models/getModel.php';
 
     function dotchamdiem_store_old_input($context, $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot = null) {

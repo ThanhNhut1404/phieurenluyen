@@ -1,6 +1,11 @@
 <?php
 
     session_start();
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
     require '../../models/getModel.php';
 
     // Nhựt sửa lỗi: Hàm lưu lại dữ liệu nhập khi xảy ra lỗi validation.

@@ -9,6 +9,11 @@
 
     function muc_store_old_input($context, $id_khoan, $ten_muc, $ghi_chu, $thu_tu, $diem_toi_da, $co_minh_chung, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $id_muc = null) {
         if (session_status() == PHP_SESSION_NONE) { session_start(); }
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
         $_SESSION['muc_old_input'] = array(
             'context' => $context,
             'id_khoan' => $id_khoan,

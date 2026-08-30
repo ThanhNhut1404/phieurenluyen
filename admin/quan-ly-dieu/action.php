@@ -21,6 +21,11 @@
 
     function dieu_store_old_input($context, $ten_dieu, $ghi_chu, $thu_tu, $id_dieu = null) {
         if (session_status() == PHP_SESSION_NONE) { session_start(); }
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
         $_SESSION['dieu_old_input'] = array(
             'context' => $context,
             'ten_dieu' => $ten_dieu,

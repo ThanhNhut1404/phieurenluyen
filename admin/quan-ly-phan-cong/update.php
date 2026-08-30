@@ -8,6 +8,11 @@
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
         $phancong_old_input = $_SESSION['phancong_old_input'] ?? [];
         function phancong_old_value_update($key, $default = '') {
             global $phancong_old_input;

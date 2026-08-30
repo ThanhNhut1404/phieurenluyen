@@ -16,18 +16,22 @@
                 // $status = $taikhoan->taikhoan__Check_Login($email, $mat_khau);
                 
                 if($status != "0" ){
-                    // Tách biệt session Admin và User
+                    // Tách biệt session Admin và User để có thể đăng nhập song song trên cùng 1 trình duyệt
                     $cap_bac_check = $phanquyen->phanquyen__Get_By_Id($status->id_phan_quyen)->cap_bac;
                     if ($cap_bac_check == 0 || $cap_bac_check == 1) {
-                        unset($_SESSION['user'], $_SESSION['sv'], $_SESSION['lt'], $_SESSION['bt'], $_SESSION['btdk'], $_SESSION['gv']);
-                    } else {
+                        // Chỉ xóa các session cũ thuộc nhóm Admin
                         unset($_SESSION['admin'], $_SESSION['super'], $_SESSION['manager']);
+                    } else {
+                        // Chỉ xóa các session cũ thuộc nhóm User
+                        unset($_SESSION['user'], $_SESSION['sv'], $_SESSION['lt'], $_SESSION['bt'], $_SESSION['btdk'], $_SESSION['gv']);
                     }
 
                     $s = $dotchamdiem->dotchamdiem__Get_Time(date('Y-m-d'));
                     if(count($s) > 0){
                         foreach($s as $item){
-                        $k = $dotchamdiem->dotchamdiem__Update_Trang_Thai($item->id_dot, 0);
+                            if ($item->trang_thai == 1) {
+                                $k = $dotchamdiem->dotchamdiem__Update_Trang_Thai($item->id_dot, 0);
+                            }
                         }
                     }
 

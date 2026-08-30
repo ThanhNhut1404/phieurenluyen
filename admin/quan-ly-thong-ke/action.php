@@ -1,6 +1,14 @@
 <?php
 
-    require '../../models/getModel.php';
+    if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['admin'])) {
+    header('location: ../../auth/');
+    exit();
+}
+
+require '../../models/getModel.php';
     require('../../assets/vendor/PHPOffice/PHPExcel.php');
     
     if (isset($_GET['req'])){

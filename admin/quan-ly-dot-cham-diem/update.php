@@ -1,5 +1,10 @@
     <?php 
         session_start();
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
         require '../../models/getModel.php';
 
         // Nhựt sửa lỗi: Tạo CSRF token cho form cập nhật đợt chấm điểm.

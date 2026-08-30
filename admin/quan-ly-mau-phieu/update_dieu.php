@@ -1,5 +1,10 @@
     <?php 
         session_start();
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
         $mauphieu_old_input = isset($_SESSION['mauphieu_old_input']) && is_array($_SESSION['mauphieu_old_input']) ? $_SESSION['mauphieu_old_input'] : array();
 
         if (!function_exists('mauphieu_update_dieu_escape')) {

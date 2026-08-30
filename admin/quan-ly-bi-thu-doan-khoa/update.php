@@ -3,6 +3,11 @@
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
     
     $id_bi_thu = filter_input(INPUT_POST, 'id_bi_thu', FILTER_VALIDATE_INT);
     if (!$id_bi_thu || $id_bi_thu < 1) {

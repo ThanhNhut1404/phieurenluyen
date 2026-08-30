@@ -16,6 +16,11 @@
         $dieu__Max_Thu_Tu = $dieu->dieu__Get_Max_Thu_Tu();
 
         if (session_status() == PHP_SESSION_NONE) { session_start(); }
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
         
         if (empty($_SESSION['csrf_token'])) {
             try {

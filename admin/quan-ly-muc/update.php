@@ -4,6 +4,11 @@
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
         
         $muc_old_input = isset($_SESSION['muc_old_input']) && is_array($_SESSION['muc_old_input']) ? $_SESSION['muc_old_input'] : array();
         

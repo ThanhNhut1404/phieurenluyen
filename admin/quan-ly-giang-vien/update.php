@@ -10,6 +10,11 @@
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
+
+    if (!isset($_SESSION['admin'])) {
+        header('location: ../../auth/');
+        exit();
+    }
     $giangvien_old_input = $_SESSION['giangvien_old_input'] ?? [];
     function giangvien_old_value_update($key, $default = '') {
         global $giangvien_old_input;
