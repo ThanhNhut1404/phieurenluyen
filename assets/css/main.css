@@ -601,10 +601,8 @@ table#tablejs thead th {
 }
 /* Style the main "Xuất dữ liệu" collection button and custom filter button to match the dark blue sidebar color as an outline button */
 .dataTables_wrapper .dt-buttons .buttons-collection,
-.dataTables_wrapper .dt-buttons .btn-custom-filter {
-    background-color: transparent !important;
-    border: 1px solid #0f2a5a !important;
-    color: #0f2a5a !important;
+.dataTables_wrapper .dt-buttons .btn-custom-filter,
+.dataTables_wrapper .dt-buttons .btn-custom-kich-hoat {
     border-radius: 4px !important;
     padding: 6px 12px !important;
     font-size: 14px !important;
@@ -614,6 +612,25 @@ table#tablejs thead th {
     display: inline-flex !important;
     align-items: center !important;
 }
+
+.dataTables_wrapper .dt-buttons .buttons-collection,
+.dataTables_wrapper .dt-buttons .btn-custom-filter {
+    background-color: transparent !important;
+    border: 1px solid #0f2a5a !important;
+    color: #0f2a5a !important;
+}
+
+.dataTables_wrapper .dt-buttons .btn-custom-kich-hoat {
+    background-color: #28a745 !important;
+    border: 1px solid #28a745 !important;
+    color: #fff !important;
+}
+.dataTables_wrapper .dt-buttons .btn-custom-kich-hoat:hover {
+    background-color: transparent !important;
+    border-color: #28a745 !important;
+    color: #28a745 !important;
+}
+
 .dataTables_wrapper .dt-buttons .buttons-collection:hover,
 .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
     background-color: #0f2a5a !important;

@@ -31,7 +31,7 @@ try {
     $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
     $mail->Username   = 'Lchsvhaugiang@tdu.edu.vn';                     //SMTP username
-    $mail->Password   = 'lixovuuyoerwzdwv';                               //SMTP password
+    $mail->Password   = 'xwqsfhydjgmjtiod';                               //SMTP password
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
     $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
@@ -115,9 +115,15 @@ function vietTatChuCaiDau($str) {
                 }
             }
         }
+        $ten_goi = "bạn";
+        $sv_info = $sinhvien->sinhvien__Get_By_Id($item->id_nguoi_dung);
+        if ($sv_info && trim($sv_info->ten_sinh_vien) != "") {
+            $ten_goi = trim($sv_info->ten_sinh_vien);
+        }
+
         $mail->Body    =
             "
-        <p>Thân chào bạn,</p>
+        <p>Thân chào $ten_goi,</p>
         <p>Thông tin tài khoản sử dụng tại ứng dụng <b>TDU - DRL</b> là:</p>
         <p>Email: <b>$email</b></p>
         <p>Password: <b>$password</b></p>

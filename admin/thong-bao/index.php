@@ -149,50 +149,207 @@ window.addEventListener("load", function() {
                 "orderable": false,
                 "searchable": false
             }],
-            "buttons": [{
-                "extend": "collection",
-                "text": "<i class='fas fa-file-export'></i> Xuất dữ liệu",
-                "className": "btn btn-sm btn-primary",
-                "align": "button-right",
-                "buttons": [
-                    {
-                        "extend": "copy",
-                        "text": "<i class='far fa-copy'></i> Copy",
-                        "exportOptions": {
-                            "columns": ":visible:not(:last-child)"
-                        }
-                    },
-                    {
-                        "extend": "csv",
-                        "text": "<i class='fas fa-file-csv'></i> CSV",
-                        "bom": true,
-                        "exportOptions": {
-                            "columns": ":visible:not(:last-child)"
-                        }
-                    },
-                    {
-                        "extend": "excel",
-                        "text": "<i class='far fa-file-excel'></i> Excel",
-                        "exportOptions": {
-                            "columns": ":visible:not(:last-child)"
-                        }
-                    },
-                    {
-                        "extend": "pdf",
-                        "text": "<i class='far fa-file-pdf'></i> PDF",
-                        "exportOptions": {
-                            "columns": ":visible:not(:last-child)"
-                        }
-                    },
-                    {
-                        "extend": "print",
-                        "text": "<i class='fas fa-print'></i> In",
-                        "exportOptions": {
-                            "columns": ":visible:not(:last-child)"
-                        }
+            "buttons": [
+                {
+                    "text": "<i class='fas fa-paper-plane'></i> Kích hoạt hàng loạt",
+                    "className": "btn btn-custom-kich-hoat mr-2",
+                    "action": function ( e, dt, node, config ) {
+                        kich_hoat_hang_loat();
                     }
-                ]
-            }]
+                },
+                {
+                    "extend": "collection",
+                    "text": "<i class='fas fa-file-export'></i> Xuất dữ liệu",
+                    "className": "btn btn-sm btn-primary",
+                    "align": "button-right",
+                    "buttons": [
+                        {
+                            "extend": "copy",
+                            "text": "<i class='far fa-copy'></i> Copy",
+                            "exportOptions": {
+                                "columns": ":visible:not(:last-child)"
+                            }
+                        },
+                        {
+                            "extend": "csv",
+                            "text": "<i class='fas fa-file-csv'></i> CSV",
+                            "bom": true,
+                            "exportOptions": {
+                                "columns": ":visible:not(:last-child)"
+                            }
+                        },
+                        {
+                            "extend": "excel",
+                            "text": "<i class='far fa-file-excel'></i> Excel",
+                            "exportOptions": {
+                                "columns": ":visible:not(:last-child)"
+                            }
+                        },
+                        {
+                            "extend": "pdf",
+                            "text": "<i class='far fa-file-pdf'></i> PDF",
+                            "exportOptions": {
+                                "columns": ":visible:not(:last-child)"
+                            }
+                        },
+                        {
+                            "extend": "print",
+                            "text": "<i class='fas fa-print'></i> In",
+                            "exportOptions": {
+                                "columns": ":visible:not(:last-child)"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "text": "<i class='fas fa-filter'></i>",
+                    "titleAttr": "Bộ lọc",
+                    "className": "btn btn-sm btn-custom-filter ml-1",
+                    "attr": {
+                        "id": "btn-filter-dropdown"
+                    }
+                }
+            ],
+            "initComplete": function() {
+                var filterHtml = `
+                <style>
+                .dataTables_wrapper .dt-buttons {
+                    display: flex !important;
+                    flex-wrap: nowrap !important;
+                    align-items: center !important;
+                }
+                .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                    background-color: #0f2a5a !important;
+                    border: 1px solid #0f2a5a !important;
+                    color: #fff !important;
+                    border-radius: 4px !important;
+                    padding: 6px 12px !important;
+                    font-size: 14px !important;
+                    font-weight: 500 !important;
+                    box-shadow: none !important;
+                    transition: all 0.15s ease-in-out !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    white-space: nowrap !important;
+                }
+                .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                    background-color: transparent !important;
+                    border-color: #0f2a5a !important;
+                    color: #0f2a5a !important;
+                }
+                #custom-filter-menu {
+                    display: none;
+                    position: absolute;
+                    right: 0;
+                    top: 100%;
+                    margin-top: 5px;
+                    width: 300px;
+                    background: #fff;
+                    border: 1px solid rgba(0,0,0,.15);
+                    border-radius: .25rem;
+                    box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                    z-index: 1050;
+                }
+                </style>
+                <div id="custom-filter-menu" class="p-3">
+                    <div class="form-group mb-2 text-left">
+                        <label class="label-sidebar">Phân nhóm:</label>
+                        <select id="filter_phan_nhom" class="form-control form-control-sm">
+                            <option value="">-- Tất cả phân nhóm --</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-2 text-left">
+                        <label class="label-sidebar">Phân quyền:</label>
+                        <select id="filter_phan_quyen" class="form-control form-control-sm">
+                            <option value="">-- Tất cả phân quyền --</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                        <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                    </div>
+                </div>`;
+                
+                var $btn = $('#btn-filter-dropdown');
+                $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+                $btn.parent().append(filterHtml);
+
+                var table = $('#tablejs').DataTable();
+
+                function updateCascadeDropdowns() {
+                    var selectedNhom = $('#filter_phan_nhom').val() || "";
+                    var selectedQuyen = $('#filter_phan_quyen').val() || "";
+                    
+                    var nhomOptions = [];
+                    var quyenOptions = [];
+                    
+                    table.rows().every(function() {
+                        var data = this.data();
+                        var nhom = $('<div>').html(data[3]).text().trim();
+                        var quyen = $('<div>').html(data[4]).text().trim();
+                        
+                        if (nhom !== '' && nhom !== 'Chưa xác định' && nhomOptions.indexOf(nhom) === -1) nhomOptions.push(nhom);
+                        
+                        if (selectedNhom === "" || nhom === selectedNhom) {
+                            if (quyen !== '' && quyen !== 'Chưa xác định' && quyenOptions.indexOf(quyen) === -1) quyenOptions.push(quyen);
+                        }
+                    });
+                    
+                    var selectNhom = $('#filter_phan_nhom');
+                    selectNhom.empty().append('<option value="">-- Tất cả phân nhóm --</option>');
+                    nhomOptions.sort().forEach(function(opt) {
+                        selectNhom.append('<option value="'+opt+'" '+(opt === selectedNhom ? 'selected' : '')+'>'+opt+'</option>');
+                    });
+                    
+                    var selectQuyen = $('#filter_phan_quyen');
+                    selectQuyen.empty().append('<option value="">-- Tất cả phân quyền --</option>');
+                    quyenOptions.sort().forEach(function(opt) {
+                        selectQuyen.append('<option value="'+opt+'" '+(opt === selectedQuyen ? 'selected' : '')+'>'+opt+'</option>');
+                    });
+                }
+
+                $('#filter_phan_nhom').on('change', function() {
+                    $('#filter_phan_quyen').val('');
+                    updateCascadeDropdowns();
+                });
+
+                updateCascadeDropdowns();
+
+                $btn.on('click', function(e) {
+                    e.stopPropagation();
+                    $('#custom-filter-menu').fadeToggle(200);
+                });
+
+                $('#custom-filter-menu').on('click', function(e) {
+                    e.stopPropagation();
+                });
+
+                $(document).on('click', function() {
+                    $('#custom-filter-menu').fadeOut(200);
+                });
+
+                $('#btn-apply-filter').on('click', function() {
+                    var nhomVal = $('#filter_phan_nhom').val() || "";
+                    var quyenVal = $('#filter_phan_quyen').val() || "";
+                    
+                    table.column(3).search(nhomVal ? '^' + $.fn.dataTable.util.escapeRegex(nhomVal) + '$' : '', true, false)
+                         .column(4).search(quyenVal ? '^' + $.fn.dataTable.util.escapeRegex(quyenVal) + '$' : '', true, false)
+                         .draw();
+                    $('#custom-filter-menu').fadeOut(200);
+                });
+
+                $('#btn-cancel-filter').on('click', function() {
+                    $('#filter_phan_nhom').val('');
+                    $('#filter_phan_quyen').val('');
+                    updateCascadeDropdowns();
+                    
+                    table.column(3).search('')
+                         .column(4).search('')
+                         .draw();
+                         
+                    $('#custom-filter-menu').fadeOut(200);
+                });
+            }
         });
     }
 });
@@ -202,6 +359,7 @@ function gui_mail_kich_hoat(id_yeu_cau, email) {
         title: 'Đang xử lý...',
         html: 'Hệ thống đang tạo tài khoản và chuẩn bị gửi email',
         timerProgressBar: true,
+        allowOutsideClick: false,
         didOpen: () => {
             Swal.showLoading()
         }
@@ -220,22 +378,130 @@ function gui_mail_kich_hoat(id_yeu_cau, email) {
                     'email': email,
                     'password': res.password 
                 }, function(mail_data) {
-                    Swal.fire(
-                        'Thành công!',
-                        'Đã tạo tài khoản và gửi email cho sinh viên.',
-                        'success'
-                    ).then(() => {
-                        location.reload();
+                    if (mail_data.includes('Message has been sent')) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: 'Đã tạo tài khoản và gửi email cho sinh viên.'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Lỗi!',
+                            text: 'Tạo tài khoản thành công nhưng gửi email thất bại: ' + mail_data
+                        });
+                    }
+                }).fail(function() {
+                    Toast.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Lỗi kết nối khi gửi email.'
                     });
                 });
             } else {
-                Swal.fire('Lỗi!', res.message, 'error');
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: res.message
+                });
             }
         } catch(e) {
-            Swal.fire('Lỗi!', 'Đã xảy ra lỗi từ server.', 'error');
+            Toast.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Đã xảy ra lỗi từ server.'
+            });
         }
     });
     return false;
+}
+
+var danh_sach_cho = [
+    <?php foreach($danh_sach_yeu_cau as $item): ?>
+    { id: '<?= $item->id_yeu_cau ?>', email: '<?= $item->email ?>' },
+    <?php endforeach; ?>
+];
+
+function kich_hoat_hang_loat() {
+    if (danh_sach_cho.length === 0) {
+        Swal.fire('Thông báo', 'Không có yêu cầu nào cần kích hoạt', 'info');
+        return;
+    }
+    
+    Swal.fire({
+        title: 'Xác nhận kích hoạt?',
+        html: "Bạn có chắc muốn kích hoạt hàng loạt <b>" + danh_sach_cho.length + "</b> tài khoản này?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy',
+        customClass: {
+            confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+            cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+        },
+        buttonsStyling: false,
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            tien_hanh_kich_hoat(0, 0, 0);
+        }
+    });
+}
+
+function tien_hanh_kich_hoat(index, success_count, fail_count) {
+    if (index >= danh_sach_cho.length) {
+        Toast.fire('Hoàn tất!', 'Kích hoạt thành công: ' + success_count + '<br>Thất bại: ' + fail_count, 'success').then(() => {
+            location.reload();
+        });
+        return;
+    }
+    
+    var current = danh_sach_cho[index];
+    
+    Swal.fire({
+        title: 'Đang xử lý...',
+        html: 'Đang kích hoạt tài khoản ' + (index + 1) + '/' + danh_sach_cho.length + '<br><small class="text-primary">' + current.email + '</small>',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading()
+        }
+    });
+    
+    $.post('thong-bao/action.php?req=tao_tai_khoan', {
+        'id_yeu_cau': current.id,
+        'email': current.email
+    }, function(data) {
+        try {
+            var res = JSON.parse(data);
+            if(res.status == 'success') {
+                $.post('quan-ly-tai-khoan/mail.php', {
+                    'email': current.email,
+                    'password': res.password 
+                }, function(mail_data) {
+                    if (mail_data.includes('Message has been sent')) {
+                        tien_hanh_kich_hoat(index + 1, success_count + 1, fail_count);
+                    } else {
+                        tien_hanh_kich_hoat(index + 1, success_count, fail_count + 1);
+                    }
+                }).fail(function() {
+                    tien_hanh_kich_hoat(index + 1, success_count, fail_count + 1);
+                });
+            } else {
+                tien_hanh_kich_hoat(index + 1, success_count, fail_count + 1);
+            }
+        } catch(e) {
+            tien_hanh_kich_hoat(index + 1, success_count, fail_count + 1);
+        }
+    }).fail(function() {
+        tien_hanh_kich_hoat(index + 1, success_count, fail_count + 1);
+    });
 }
 </script>
 

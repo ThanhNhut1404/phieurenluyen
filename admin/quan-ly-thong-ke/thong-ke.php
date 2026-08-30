@@ -351,17 +351,12 @@ foreach($ketquaxeploai__Get_By_Id_Dot as $item){
             "buttons": [
                 {
                     "text": "<i class='fas fa-print'></i> EXPORT",
-                    "className": "btn btn-sm btn-custom-outline mr-1",
+                    "className": "btn btn-sm btn-custom-filter mr-1",
                     "action": function ( e, dt, node, config ) {
                         $('#form-export-btn').submit();
                     }
                 },
-                {
-                    "extend": 'colvis',
-                    "text": '<i class="fas fa-columns"></i>',
-                    "titleAttr": 'Ẩn/Hiện cột',
-                    "className": 'btn btn-sm btn-custom-filter mr-1'
-                },
+
                 {
                     "extend": "collection",
                     "text": "<i class='fas fa-file-export'></i> Xuất dữ liệu",
@@ -415,10 +410,6 @@ foreach($ketquaxeploai__Get_By_Id_Dot as $item){
                     }
                 }
             ],
-            "columnDefs": [{
-                "targets": -1,
-                "visible": false
-            }],
             "initComplete": function() {
                 // Logic bộ lọc
                 var filterHtml = `

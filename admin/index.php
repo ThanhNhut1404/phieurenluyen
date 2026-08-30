@@ -42,7 +42,7 @@ if (!isset($_SESSION['admin'])) {
     <link rel="stylesheet" href="../assets/theme/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../assets/theme/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css?v=8">
+    <link rel="stylesheet" href="../assets/css/main.css?v=10">
 
     <link rel="stylesheet" href="../assets/theme/plugins/summernote/summernote-bs4.min.css">
     <link href="../assets/remixicon/fonts/remixicon.css" rel="stylesheet" />

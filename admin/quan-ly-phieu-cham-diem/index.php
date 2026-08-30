@@ -171,20 +171,7 @@
              <div class="card-header">
                  <h3 class="card-title">Danh sách Phiếu chấm điểm</h3>
                  <div class="card-tools <?=isset($_GET['id_lop_hoc']) ? 'd-flex align-items-center' : ''?>">
-                     <?php if(isset($_GET['id_lop_hoc'])):?>
-                     <a class="btn btn-tool"
-                         href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=xem-tat-ca">
-                         Tất cả (<?=count($sinhvien__Get_By_Id_Lop_Hoc_All)?>)
-                     </a> |
-                     <a class="btn btn-tool"
-                         href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=da-cham-diem">
-                         Cố vấn đã chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Da_Cham)?>)
-                     </a> |
-                     <a class="btn btn-tool mr-2"
-                         href="?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=chua-cham-diem">
-                         Cố vấn chưa chấm điểm (<?=count($sinhvien__Get_By_Id_Lop_Hoc_Chua_Cham)?>)
-                     </a>
-                     <?php endif; ?>
+
                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                          <i class="fas fa-minus"></i>
                      </button>
@@ -312,7 +299,97 @@ window.addEventListener("load", function() {
                     }
                 }
             ]
-        }]
+        }
+        <?php if(isset($_GET['id_lop_hoc'])):?>
+        ,
+        {
+            text: "<i class='fas fa-filter'></i>",
+            titleAttr: "Bộ lọc",
+            className: "btn btn-sm btn-custom-filter ml-1",
+            attr: {
+                id: "btn-filter-dropdown"
+            }
+        }
+        <?php endif; ?>
+        ],
+        initComplete: function() {
+            <?php if(isset($_GET['id_lop_hoc'])):?>
+            var filterHtml = `
+            <style>
+            .dataTables_wrapper .dt-buttons .btn-custom-filter {
+                background-color: #0f2a5a !important;
+                border: 1px solid #0f2a5a !important;
+                color: #fff !important;
+                border-radius: 4px !important;
+                padding: 6px 12px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: none !important;
+                transition: all 0.15s ease-in-out !important;
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+            .dataTables_wrapper .dt-buttons .btn-custom-filter:hover {
+                background-color: transparent !important;
+                border-color: #0f2a5a !important;
+                color: #0f2a5a !important;
+            }
+            #custom-filter-menu {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: 100%;
+                margin-top: 5px;
+                width: 250px;
+                background: #fff;
+                border: 1px solid rgba(0,0,0,.15);
+                border-radius: .25rem;
+                box-shadow: 0 .5rem 1rem rgba(0,0,0,.175);
+                z-index: 1050;
+            }
+            </style>
+            <div id="custom-filter-menu" class="p-3 text-left">
+                <div class="form-group mb-2">
+                    <label class="label-sidebar">Trạng thái:</label>
+                    <select id="filter_trang_thai" class="form-control form-control-sm">
+                        <option value="xem-tat-ca" <?= $view == 'xem-tat-ca' ? 'selected' : '' ?>>Tất cả</option>
+                        <option value="da-cham-diem" <?= $view == 'da-cham-diem' ? 'selected' : '' ?>>Cố vấn đã chấm</option>
+                        <option value="chua-cham-diem" <?= $view == 'chua-cham-diem' ? 'selected' : '' ?>>Cố vấn chưa chấm</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-cancel-custom mr-2 font-weight-bold" id="btn-cancel-filter">Hủy</button>
+                    <button type="button" class="btn btn-success font-weight-bold" id="btn-apply-filter">Áp dụng</button>
+                </div>
+            </div>`;
+            
+            var $btn = $('#btn-filter-dropdown');
+            $btn.wrap('<div style="position: relative; display: inline-block;"></div>');
+            $btn.parent().append(filterHtml);
+
+            $btn.on('click', function(e) {
+                e.stopPropagation();
+                $('#custom-filter-menu').fadeToggle(200);
+            });
+
+            $('#custom-filter-menu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            $(document).on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-cancel-filter').on('click', function() {
+                $('#custom-filter-menu').fadeOut(200);
+            });
+
+            $('#btn-apply-filter').on('click', function() {
+                var selectedView = $('#filter_trang_thai').val();
+                window.location.href = "?page=quan-ly-phieu-cham-diem&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$id_lop_hoc?>&view=" + selectedView;
+            });
+            <?php endif; ?>
+        }
     });
 
 });

@@ -877,16 +877,26 @@ function send_mail(email, password) {
     $.post('quan-ly-tai-khoan/mail.php', {
         'email': email,
         'password': password,
-    }, function(data) {
+    }, function(mail_data) {
         Swal.DismissReason.timer;
-        Swal.fire({
-            title: 'Thành công!',
-            text: 'Email đã được gửi thành công.',
-            icon: 'success',
-            confirmButtonText: 'Đóng',
-            customClass: {
-                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2'
-            }
+        if (mail_data.includes('Message has been sent')) {
+            Toast.fire({
+                title: 'Thành công!',
+                text: 'Email đã được gửi thành công.',
+                icon: 'success'
+            });
+        } else {
+            Toast.fire({
+                title: 'Lỗi!',
+                text: 'Gửi email thất bại: ' + mail_data,
+                icon: 'error'
+            });
+        }
+    }).fail(function() {
+        Toast.fire({
+            title: 'Lỗi!',
+            text: 'Không thể kết nối đến máy chủ gửi mail.',
+            icon: 'error'
         });
     });
 }
@@ -910,16 +920,26 @@ function send_mail_all(id_lop) {
     })
     $.post('quan-ly-tai-khoan/send_mail_all.php', {
         'id_lop': id_lop,
-    }, function(data) {
+    }, function(mail_data) {
         Swal.DismissReason.timer;
-        Swal.fire({
-            title: 'Thành công!',
-            text: 'Tất cả Email đã được gửi thành công.',
-            icon: 'success',
-            confirmButtonText: 'Đóng',
-            customClass: {
-                confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2'
-            }
+        if (mail_data.includes('Message has been sent')) {
+            Toast.fire({
+                title: 'Thành công!',
+                text: 'Tất cả Email đã được gửi thành công.',
+                icon: 'success'
+            });
+        } else {
+            Toast.fire({
+                title: 'Lỗi!',
+                text: 'Có lỗi trong quá trình gửi mail hàng loạt: ' + mail_data,
+                icon: 'error'
+            });
+        }
+    }).fail(function() {
+        Toast.fire({
+            title: 'Lỗi!',
+            text: 'Không thể kết nối đến máy chủ gửi mail.',
+            icon: 'error'
         });
     });
 }

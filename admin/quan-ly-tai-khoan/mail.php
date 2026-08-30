@@ -102,7 +102,7 @@ try {
     $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
     $mail->Username   = 'Lchsvhaugiang@tdu.edu.vn';                     //SMTP username
-    $mail->Password   = 'lixovuuyoerwzdwv';                               //SMTP password
+    $mail->Password   = 'xwqsfhydjgmjtiod';                               //SMTP password
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
     $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
@@ -121,11 +121,39 @@ try {
     $mail->isHTML(true);
     $mail->CharSet = PHPMailer::CHARSET_UTF8;
 
+    // Lấy tên người dùng để hiển thị "Thân chào [Tên]"
+    $ho_ten = "bạn";
+    $ten_goi = "bạn";
+    $tk_info = $taikhoan->taikhoan__Get_By_Email($email);
+    if ($tk_info) {
+        $pn_info = $phannhom->phannhom__Get_By_Id($tk_info->id_phan_nhom);
+        if ($pn_info) {
+            if ($pn_info->cap_bac == 0) {
+                $ho_ten = "Admin";
+            } elseif ($pn_info->cap_bac == 1) {
+                $ho_ten = "Manager";
+            } elseif ($pn_info->cap_bac == 2) {
+                $sv_info = $sinhvien->sinhvien__Get_By_Id($tk_info->id_nguoi_dung);
+                if ($sv_info) $ho_ten = $sv_info->ten_sinh_vien;
+            } elseif ($pn_info->cap_bac == 3) {
+                $bt_info = $bithudoankhoa->bithudoankhoa__Get_By_Id($tk_info->id_nguoi_dung);
+                if ($bt_info) $ho_ten = $bt_info->ten_bi_thu;
+            } elseif ($pn_info->cap_bac == 4) {
+                $gv_info = $giangvien->giangvien__Get_By_Id($tk_info->id_nguoi_dung);
+                if ($gv_info) $ho_ten = $gv_info->ten_giang_vien;
+            }
+        }
+    }
+
+    if ($ho_ten !== "bạn") {
+        $ten_goi = trim($ho_ten);
+    }
+
     $mail->Subject = 'Thông tin đăng nhập';
     $mail->Body    =
         "
-        <p>Thân chào bạn,</p>
-        <p>Thông tin tài khoản sử dụng tại ứng dụng <b>TDU - PRL</b> là:</p>
+        <p>Xin chào $ten_goi,</p>
+        <p>Thông tin tài khoản của bạn để sử dụng ứng dụng <b>TDU - DRL</b> là:</p>
         <p>Email: <b>$email</b></p>
         <p>Password: <b>$password</b></p>
         <hr/>
