@@ -103,12 +103,8 @@
                              <div class="col-6">
                                  <div class="form-group">
                                      <label class="label-sidebar">Email <span class="color-crimson">*</span></label>
-                                     <?php $val_email = $is_update_error && isset($sinhvien_old_input['email']) ? $sinhvien_old_input['email'] : $sinhvien__Get_By_Id->email; ?>
-                                     <input type="email" id="email" name="email" class="form-control <?= ($is_update_error && $status == 'duplicate-email-sinh-vien') ? 'is-invalid' : '' ?>" required readonly
-                                         value="<?=htmlspecialchars($val_email)?>" placeholder="Nhập email">
-                                     <?php if ($is_update_error && $status == 'duplicate-email-sinh-vien'): ?>
-                                         <small class="text-danger mt-1">Email đã tồn tại trong hệ thống.</small>
-                                     <?php endif; ?>
+                                     <input type="email" id="email" name="email" class="form-control" required readonly
+                                         value="<?=$sinhvien__Get_By_Id->email?>" placeholder="Nhập email">
                                  </div>
                              </div>
                              <div class="col-6">

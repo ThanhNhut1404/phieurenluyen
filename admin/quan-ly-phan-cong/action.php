@@ -29,9 +29,9 @@
                 $status = $phancong->phancong__Add($id_giang_vien, $id_lop_hoc, $ghi_chu);
                 if($status != 0){
                     unset($_SESSION['phancong_old_input']);
-                    header('location: ../index.php?page=quan-ly-phan-cong&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-cong&status=add-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-cong&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-cong&status=add-failed');
                 }
                 exit();
                 
@@ -52,9 +52,9 @@
                 $status = $phancong->phancong__Update($id_phan_cong, $id_giang_vien, $id_lop_hoc, $ghi_chu);
                 if($status != 0){
                     unset($_SESSION['phancong_old_input']);
-                    header('location: ../index.php?page=quan-ly-phan-cong&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-cong&status=update-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-cong&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-cong&status=update-failed');
                 }
                 exit();
 
@@ -62,9 +62,9 @@
                 $id_phan_cong = isset($_GET['id_phan_cong']) ? trim($_GET['id_phan_cong']) : '';
                 $status = $phancong->phancong__Delete($id_phan_cong);
                 if($status != 0){
-                    header('location: ../index.php?page=quan-ly-phan-cong&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-cong&status=delete-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-cong&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-cong&status=delete-failed');
                 }
                 exit();
         }

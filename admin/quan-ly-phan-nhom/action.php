@@ -20,9 +20,9 @@ require '../../models/getModel.php';
 
                 $status = $phannhom->phannhom__Add($ten_phan_nhom, $cap_bac, $ghi_chu);
                 if($status !=0 ){
-                    header('location: ../index.php?page=quan-ly-phan-nhom&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-nhom&status=add-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-nhom&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-nhom&status=add-failed');
                 }
                 
                 break;
@@ -35,9 +35,9 @@ require '../../models/getModel.php';
 
                 $status = $phannhom->phannhom__Update($id_phan_nhom, $ten_phan_nhom, $cap_bac, $ghi_chu);
                 if($status !=0 ){
-                    header('location: ../index.php?page=quan-ly-phan-nhom&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-nhom&status=update-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-nhom&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-nhom&status=update-failed');
                 }
                 
                 break;
@@ -48,9 +48,9 @@ require '../../models/getModel.php';
 
                 $status = $phannhom->phannhom__Delete($id_phan_nhom);
                 if($status !=0 ){
-                    header('location: ../index.php?page=quan-ly-phan-nhom&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-nhom&status=delete-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-nhom&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-nhom&status=delete-failed');
                 }
                 
                 break;

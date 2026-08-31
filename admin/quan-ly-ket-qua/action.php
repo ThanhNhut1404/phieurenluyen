@@ -63,10 +63,10 @@
                 $ghi_chu = "Hạ bậc";
 
                 $status = $ketquaxeploai->ketquaxeploai__Update_Ha_Bac($id_ket_qua, $ket_qua_new, $xep_loai, $ngay_xep_loai, $ghi_chu);
-                if($status !=0 ){
-                    header("location: $href&status=success");
+                if($status != 0){
+                    header("location: $href&status=update-success");
                 }else{
-                    header("location: $href&status=failed");
+                    header("location: $href&status=update-failed");
                 }
                 
                 break;

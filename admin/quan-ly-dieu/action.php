@@ -117,14 +117,14 @@
                     $dieu->connect->commit();
                     dieu_clear_old_input();
                     dieu__Rotate_Csrf_Token();
-                    dieu__Redirect('success');
+                    dieu__Redirect('add-success');
                 } catch (Exception $e) {
                     // Nhựt sửa lỗi: Có lỗi trong quá trình swap/thêm thì rollback toàn bộ.
                     if ($dieu->connect->inTransaction()) {
                         $dieu->connect->rollBack();
                     }
                     dieu_store_old_input('add', $ten_dieu, $ghi_chu, $thu_tu);
-                    dieu__Redirect(isset($error_status) ? $error_status : 'invalid');
+                    dieu__Redirect(isset($error_status) ? $error_status : 'add-failed');
                 }
                 
                 break;
@@ -204,7 +204,7 @@
                     $dieu->connect->commit();
                     dieu_clear_old_input();
                     dieu__Rotate_Csrf_Token();
-                    dieu__Redirect('success');
+                    dieu__Redirect('update-success');
                 } catch (Exception $e) {
                     // Nhựt sửa lỗi: Có lỗi trong quá trình swap/update thì rollback toàn bộ.
                     if ($dieu->connect->inTransaction()) {
@@ -272,12 +272,12 @@
 
                     $dieu->connect->commit();
                     dieu__Rotate_Csrf_Token();
-                    dieu__Redirect('copy_success');
+                    dieu__Redirect('copy-success');
                 } catch (Exception $e) {
                     if ($dieu->connect->inTransaction()) {
                         $dieu->connect->rollBack();
                     }
-                    dieu__Redirect($e->getMessage() === 'not-found' ? 'not-found' : 'failed');
+                    dieu__Redirect($e->getMessage() === 'not-found' ? 'not-found' : 'add-failed');
                 }
                 break;
 
@@ -329,7 +329,7 @@
 
                     $dieu->connect->commit();
                     dieu__Rotate_Csrf_Token();
-                    dieu__Redirect('success');
+                    dieu__Redirect('delete-success');
                 } catch (Exception $e) {
                     // Nhựt sửa lỗi: Có lỗi trong quá trình đổi thứ tự/xóa thì rollback toàn bộ.
                     if ($dieu->connect->inTransaction()) {

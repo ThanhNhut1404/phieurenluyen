@@ -377,7 +377,7 @@ window.addEventListener("load", function() {
 function gui_mail_kich_hoat(id_yeu_cau, email) {
     Swal.fire({
         title: 'Đang xử lý...',
-        html: 'Hệ thống đang tạo tài khoản và chuẩn bị gửi email',
+        html: 'Hệ thống đang kích hoạt tài khoản và chuẩn bị gửi email',
         timerProgressBar: true,
         allowOutsideClick: false,
         didOpen: () => {
@@ -402,7 +402,7 @@ function gui_mail_kich_hoat(id_yeu_cau, email) {
                         Toast.fire({
                             icon: 'success',
                             title: 'Thành công!',
-                            text: 'Đã tạo tài khoản và gửi email cho sinh viên.'
+                            text: 'Đã kích hoạt tài khoản và gửi email thành công.'
                         }).then(() => {
                             location.reload();
                         });
@@ -410,7 +410,7 @@ function gui_mail_kich_hoat(id_yeu_cau, email) {
                         Toast.fire({
                             icon: 'error',
                             title: 'Lỗi!',
-                            text: 'Tạo tài khoản thành công nhưng gửi email thất bại: ' + mail_data
+                            text: 'Kích hoạt tài khoản thành công nhưng gửi email thất bại: ' + mail_data
                         });
                     }
                 }).fail(function() {

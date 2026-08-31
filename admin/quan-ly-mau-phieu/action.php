@@ -72,24 +72,24 @@
                     $mauphieu->connect->beginTransaction();
                     $id_mau_phieu = $mauphieu->mauphieu__Add($ten_mau_phieu, $ghi_chu);
                     if (!$id_mau_phieu) {
-                        throw new Exception('failed-add-mauphieu');
+                        throw new Exception('add-failed');
                     }
                     foreach($id_dieu as $item){
                         $status = $bocauhoi->bocauhoi__Add($id_mau_phieu, $item);
                         if ($status == 0) {
-                            throw new Exception('failed-add-dieu');
+                            throw new Exception('add-failed');
                         }
                     }
                     $mauphieu->connect->commit();
                     mauphieu_clear_old_input();
                     mauphieu__Rotate_Csrf_Token();
-                    mauphieu__Redirect('success');
+                    mauphieu__Redirect('add-success');
                 } catch (Throwable $e) {
                     if ($mauphieu->connect->inTransaction()) {
                         $mauphieu->connect->rollBack();
                     }
                     mauphieu_store_old_input('add', $ten_mau_phieu, $ghi_chu, $id_dieu);
-                    mauphieu__Redirect('failed');
+                    mauphieu__Redirect('add-failed');
                 }
                 break;
             case 'update':
@@ -115,10 +115,10 @@
                 if($status != 0 ){
                     mauphieu_clear_old_input();
                     mauphieu__Rotate_Csrf_Token();
-                    mauphieu__Redirect('success');
+                    mauphieu__Redirect('update-success');
                 }else{
                     mauphieu_store_old_input('update', $ten_mau_phieu, $ghi_chu, [], $id_mau_phieu);
-                    mauphieu__Redirect('failed');
+                    mauphieu__Redirect('update-failed');
                 }
                 break;
             case 'update_dieu':
@@ -147,19 +147,19 @@
                     foreach($id_dieu as $item){
                         $status = $bocauhoi->bocauhoi__Add($id_mau_phieu, $item);
                         if ($status == 0) {
-                            throw new Exception('failed-add-dieu');
+                            throw new Exception('update-failed');
                         }
                     }
                     $mauphieu->connect->commit();
                     mauphieu_clear_old_input();
                     mauphieu__Rotate_Csrf_Token();
-                    mauphieu__Redirect('success');
+                    mauphieu__Redirect('update-success');
                 } catch (Throwable $e) {
                     if ($mauphieu->connect->inTransaction()) {
                         $mauphieu->connect->rollBack();
                     }
                     mauphieu_store_old_input('update_dieu', '', '', $id_dieu, $id_mau_phieu);
-                    mauphieu__Redirect('failed');
+                    mauphieu__Redirect('update-failed');
                 }
                 break;
 
@@ -184,7 +184,7 @@
                     if ($mauphieu->connect->inTransaction()) {
                         $mauphieu->connect->rollBack();
                     }
-                    mauphieu__Redirect('failed');
+                    mauphieu__Redirect('delete-failed');
                 }
                 break;
         }

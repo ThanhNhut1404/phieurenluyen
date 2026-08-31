@@ -131,20 +131,20 @@
 
                     $status = $muc->muc__Add($ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da, $co_minh_chung);
                     if($status == 0){
-                        throw new Exception('failed');
+                        throw new Exception('add-failed');
                     }
                     
                     $muc->connect->commit();
                     muc_clear_old_input();
                     muc__Rotate_Csrf_Token();
-                    muc__Redirect('success');
+                    muc__Redirect('add-success');
                 } catch (Exception $e) {
                     if ($muc->connect->inTransaction()) {
                         $muc->connect->rollBack();
                     }
                     muc_store_old_input('add', $id_khoan, $ten_muc, $ghi_chu, $thu_tu, $diem_toi_da, $co_minh_chung, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv);
                     $msg = $e->getMessage();
-                    muc__Redirect(in_array($msg, ['invalid-khoan', 'failed_over_limit', 'invalid-thutu']) ? $msg : 'failed');
+                    muc__Redirect(in_array($msg, ['invalid-khoan', 'failed_over_limit', 'invalid-thutu']) ? $msg : 'add-failed');
                 }
                 
                 break;
@@ -231,13 +231,13 @@
 
                     $status = $muc->muc__Update($id_muc, $ten_muc, $ghi_chu, $thu_tu, $id_khoan, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $diem_toi_da, $co_minh_chung);
                     if($status == 0){
-                        throw new Exception('failed');
+                        throw new Exception('update-failed');
                     }
 
                     $muc->connect->commit();
                     muc_clear_old_input();
                     muc__Rotate_Csrf_Token();
-                    muc__Redirect('success');
+                    muc__Redirect('update-success');
                 } catch (Exception $e) {
                     if ($muc->connect->inTransaction()) {
                         $muc->connect->rollBack();
@@ -247,7 +247,7 @@
                         muc__Redirect($msg);
                     }
                     muc_store_old_input('update', $id_khoan, $ten_muc, $ghi_chu, $thu_tu, $diem_toi_da, $co_minh_chung, $quyen_sv, $quyen_lt, $quyen_btdk, $quyen_gv, $id_muc);
-                    muc__Redirect(in_array($msg, ['invalid-khoan', 'failed_over_limit', 'invalid-thutu']) ? $msg : 'failed');
+                    muc__Redirect(in_array($msg, ['invalid-khoan', 'failed_over_limit', 'invalid-thutu']) ? $msg : 'update-failed');
                 }
                 
                 break;
@@ -294,12 +294,12 @@
                     
                     $status = $muc->muc__Add($ten_muc_moi, $ghi_chu_moi, $old_muc->thu_tu, $old_muc->id_khoan, $old_muc->quyen_sv, $old_muc->quyen_lt, $old_muc->quyen_btdk, $old_muc->quyen_gv, $old_muc->diem_toi_da, $old_muc->co_minh_chung);
                     if($status == 0){
-                        throw new Exception('failed');
+                        throw new Exception('add-failed');
                     }
 
                     $muc->connect->commit();
                     muc__Rotate_Csrf_Token();
-                    muc__Redirect('copy_success');
+                    muc__Redirect('copy-success');
                 } catch (Exception $e) {
                     if ($muc->connect->inTransaction()) {
                         $muc->connect->rollBack();
@@ -308,7 +308,7 @@
                     if (in_array($msg, ['not-found'])) {
                         muc__Redirect($msg);
                     }
-                    muc__Redirect(in_array($msg, ['failed_over_limit']) ? $msg : 'failed');
+                    muc__Redirect(in_array($msg, ['failed_over_limit']) ? $msg : 'add-failed');
                 }
                 
                 break;
@@ -339,18 +339,18 @@
 
                     $status = $muc->muc__Delete($id_muc);
                     if($status == 0){
-                        throw new Exception('failed');
+                        throw new Exception('delete-failed');
                     }
 
                     $muc->connect->commit();
                     muc__Rotate_Csrf_Token();
-                    muc__Redirect('success');
+                    muc__Redirect('delete-success');
                 } catch (Exception $e) {
                     if ($muc->connect->inTransaction()) {
                         $muc->connect->rollBack();
                     }
                     $msg = $e->getMessage();
-                    muc__Redirect(in_array($msg, ['locked_by_dotchamdiem', 'not-found']) ? $msg : 'failed');
+                    muc__Redirect(in_array($msg, ['locked_by_dotchamdiem', 'not-found']) ? $msg : 'delete-failed');
                 }
                 
                 break;

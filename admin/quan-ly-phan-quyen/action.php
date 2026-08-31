@@ -20,9 +20,9 @@ require '../../models/getModel.php';
 
                 $status = $phanquyen->phanquyen__Add($ten_phan_quyen, $cap_bac, $ghi_chu);
                 if($status !=0 ){
-                    header('location: ../index.php?page=quan-ly-phan-quyen&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-quyen&status=add-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-quyen&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-quyen&status=add-failed');
                 }
                 
                 break;
@@ -35,9 +35,9 @@ require '../../models/getModel.php';
 
                 $status = $phanquyen->phanquyen__Update($id_phan_quyen, $ten_phan_quyen, $cap_bac, $ghi_chu);
                 if($status !=0 ){
-                    header('location: ../index.php?page=quan-ly-phan-quyen&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-quyen&status=update-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-quyen&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-quyen&status=update-failed');
                 }
                 
                 break;
@@ -48,9 +48,9 @@ require '../../models/getModel.php';
 
                 $status = $phanquyen->phanquyen__Delete($id_phan_quyen);
                 if($status !=0 ){
-                    header('location: ../index.php?page=quan-ly-phan-quyen&status=success');
+                    header('location: ../index.php?page=quan-ly-phan-quyen&status=delete-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-phan-quyen&status=failed');
+                    header('location: ../index.php?page=quan-ly-phan-quyen&status=delete-failed');
                 }
                 
                 break;

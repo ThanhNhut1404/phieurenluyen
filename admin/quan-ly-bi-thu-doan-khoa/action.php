@@ -36,6 +36,17 @@
                 // Nhựt sửa: Lưu lại giá trị form để fill lại khi lỗi
                 $_SESSION['bithu_old_input'] = array_merge($_POST, ['context' => 'add']);
 
+                // Backend Validation
+                if (!preg_match('/^0[0-9]{9,10}$/', $so_dien_thoai_1) || !preg_match('/^0[0-9]{9,10}$/', $so_dien_thoai_2)) {
+                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=invalid-sdt');
+                    exit();
+                }
+                $dob = DateTime::createFromFormat('Y-m-d', $ngay_sinh);
+                if (!$dob || $dob->format('Y-m-d') !== $ngay_sinh || (new DateTime())->diff($dob)->y < 10 || (new DateTime())->diff($dob)->y > 100) {
+                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=invalid-ngay');
+                    exit();
+                }
+
                 // Check if email already exists
                 if ($bithudoankhoa->bithudoankhoa__Exists_Email($email)) {
                     header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=duplicate-bithu');
@@ -46,9 +57,9 @@
                 
                 if($status != 0){
                     unset($_SESSION['bithu_old_input']);
-                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=success');
+                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=add-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=failed');
+                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=add-failed');
                 }
                 exit();
                 
@@ -76,6 +87,17 @@
                 // Nhựt sửa: Lưu lại giá trị form để fill lại khi lỗi
                 $_SESSION['bithu_old_input'] = array_merge($_POST, ['context' => 'update']);
 
+                // Backend Validation
+                if (!preg_match('/^0[0-9]{9,10}$/', $so_dien_thoai_1) || !preg_match('/^0[0-9]{9,10}$/', $so_dien_thoai_2)) {
+                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=invalid-sdt');
+                    exit();
+                }
+                $dob = DateTime::createFromFormat('Y-m-d', $ngay_sinh);
+                if (!$dob || $dob->format('Y-m-d') !== $ngay_sinh || (new DateTime())->diff($dob)->y < 10 || (new DateTime())->diff($dob)->y > 100) {
+                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=invalid-ngay');
+                    exit();
+                }
+
                 // Check if email already exists (excluding current id_bi_thu)
                 if ($bithudoankhoa->bithudoankhoa__Exists_Email($email, $id_bi_thu)) {
                     header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=duplicate-bithu');
@@ -84,16 +106,16 @@
 
                 $bithudoankhoa->bithudoankhoa__Update($id_bi_thu, $ten_bi_thu, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $id_khoa);
                 unset($_SESSION['bithu_old_input']);
-                header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=success');
+                header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=update-success');
                 exit();
 
             case 'delete':
                 $id_bi_thu = isset($_GET['id_bi_thu']) ? $_GET['id_bi_thu'] : '';
                 $status = $bithudoankhoa->bithudoankhoa__Delete($id_bi_thu);
                 if($status != 0){
-                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=success');
+                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=delete-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=failed');
+                    header('location: ../index.php?page=quan-ly-bi-thu-doan-khoa&status=delete-failed');
                 }
                 exit();
         }

@@ -138,18 +138,18 @@
                         $xeploai->connect->commit();
                         xep_loai_clear_old_input();
                         xep_loai__Rotate_Csrf_Token();
-                        xep_loai__Redirect('success');
+                        xep_loai__Redirect('add-success');
                     }else{
                         $xeploai->connect->rollBack();
                         xep_loai_store_old_input('add', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu);
-                        xep_loai__Redirect('failed');
+                        xep_loai__Redirect('add-failed');
                     }
                 } catch (Throwable $e) {
                     if ($xeploai->connect->inTransaction()) {
                         // Nhá»±t sá»­a lá»—i: Rollback toÃ n bá»™ náº¿u Add Xáº¿p loáº¡i lá»—i giá»¯a chá»«ng.
                         $xeploai->connect->rollBack();
                     }
-                    xep_loai__Redirect('failed');
+                    xep_loai__Redirect('add-failed');
                 }
                 
                 break;
@@ -214,18 +214,18 @@
                         $xeploai->connect->commit();
                         xep_loai_clear_old_input();
                         xep_loai__Rotate_Csrf_Token();
-                        xep_loai__Redirect('success');
+                        xep_loai__Redirect('update-success');
                     }else{
                         $xeploai->connect->rollBack();
                         xep_loai_store_old_input('update', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu, $id_xep_loai);
-                        xep_loai__Redirect('failed');
+                        xep_loai__Redirect('update-failed');
                     }
                 } catch (Throwable $e) {
                     if ($xeploai->connect->inTransaction()) {
                         // Nhá»±t sá»­a lá»—i: Rollback toÃ n bá»™ náº¿u Update Xáº¿p loáº¡i lá»—i giá»¯a chá»«ng.
                         $xeploai->connect->rollBack();
                     }
-                    xep_loai__Redirect('failed');
+                    xep_loai__Redirect('update-failed');
                 }
                 
                 break;
@@ -262,17 +262,17 @@
                     if($status !=0 ){
                         $xeploai->connect->commit();
                         xep_loai__Rotate_Csrf_Token();
-                        xep_loai__Redirect('success');
+                        xep_loai__Redirect('delete-success');
                     }else{
                         $xeploai->connect->rollBack();
-                        xep_loai__Redirect('failed');
+                        xep_loai__Redirect('delete-failed');
                     }
                 } catch (Throwable $e) {
                     if ($xeploai->connect->inTransaction()) {
                         // Nhá»±t sá»­a lá»—i: Rollback toÃ n bá»™ náº¿u Delete Xáº¿p loáº¡i lá»—i giá»¯a chá»«ng.
                         $xeploai->connect->rollBack();
                     }
-                    xep_loai__Redirect('failed');
+                    xep_loai__Redirect('delete-failed');
                 }
                 
                 break;

@@ -53,9 +53,9 @@ if (isset($_GET['req'])) {
             $status = $sinhvien->sinhvien__Add($ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
             if ($status != 0) {
                 unset($_SESSION['sinhvien_old_input']);
-                header('location: ../index.php?page=quan-ly-sinh-vien&status=success');
+                header('location: ../index.php?page=quan-ly-sinh-vien&status=add-success');
             } else {
-                header('location: ../index.php?page=quan-ly-sinh-vien&status=failed');
+                header('location: ../index.php?page=quan-ly-sinh-vien&status=add-failed');
             }
             exit();
 
@@ -98,22 +98,22 @@ if (isset($_GET['req'])) {
 
             $sinhvien->sinhvien__Update($id_sinh_vien, $ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
             unset($_SESSION['sinhvien_old_input']);
-            header('location: ../index.php?page=quan-ly-sinh-vien&status=success');
+            header('location: ../index.php?page=quan-ly-sinh-vien&status=update-success');
             exit();
 
         case 'delete':
             $id_sinh_vien = isset($_GET['id_sinh_vien']) ? $_GET['id_sinh_vien'] : '';
             $status = $sinhvien->sinhvien__Delete($id_sinh_vien);
             if ($status != 0) {
-                header('location: ../index.php?page=quan-ly-sinh-vien&status=success');
+                header('location: ../index.php?page=quan-ly-sinh-vien&status=delete-success');
             } else {
-                header('location: ../index.php?page=quan-ly-sinh-vien&status=failed');
+                header('location: ../index.php?page=quan-ly-sinh-vien&status=delete-failed');
             }
             exit();
 
         case "import":
             if (!isset($_FILES["file"]["tmp_name"]) || empty($_FILES["file"]["tmp_name"])) {
-                header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                header("location:../index.php?page=quan-ly-sinh-vien&status=delete-failed");
                 exit();
             }
             
@@ -123,6 +123,18 @@ if (isset($_GET['req'])) {
             $duplicate_rows = [];
 
             try {
+                // Nhựt sửa: Tối ưu hiệu năng Import bằng cách lấy sẵn mảng MSSV và Email
+                $all_mas = [];
+                $all_emails = [];
+                $stmt_all = $sinhvien->connect->prepare("SELECT ma_sinh_vien, email FROM sinhvien");
+                $stmt_all->execute();
+                while ($r = $stmt_all->fetch(PDO::FETCH_ASSOC)) {
+                    $all_mas[] = $r['ma_sinh_vien'];
+                    if (!empty($r['email'])) {
+                        $all_emails[] = $r['email'];
+                    }
+                }
+
                 $objReader = PHPExcel_IOFactory::createReaderForFile($file);
                 $objExcel = $objReader->load($file);
                 $sheetData = $objExcel->getActiveSheet()->toArray(null, true, true, true);
@@ -144,10 +156,33 @@ if (isset($_GET['req'])) {
                         continue;
                     }
 
-                    // Skip if duplicate code or email
-                    if ($sinhvien->sinhvien__Exists_Ma_Sinh_Vien($ma_sinh_vien) || (!empty($email) && $sinhvien->sinhvien__Exists_Email($email))) {
+                    // Xử lý Date parsing chuẩn cho PHPExcel (Lỗi ngày sinh 0000-00-00)
+                    if (!empty($ngay_sinh)) {
+                        if (is_numeric($ngay_sinh)) {
+                            // Excel serial date to YYYY-MM-DD
+                            $unix_date = ($ngay_sinh - 25569) * 86400;
+                            $ngay_sinh = gmdate("Y-m-d", $unix_date);
+                        } else {
+                            $ngay_sinh = str_replace('/', '-', $ngay_sinh);
+                            $timestamp = strtotime($ngay_sinh);
+                            if ($timestamp !== false) {
+                                $ngay_sinh = date('Y-m-d', $timestamp);
+                            } else {
+                                $ngay_sinh = ''; 
+                            }
+                        }
+                    }
+
+                    // Nhựt sửa: Kiểm tra bằng in_array thay vì gọi query DB mỗi vòng lặp
+                    if (in_array($ma_sinh_vien, $all_mas) || (!empty($email) && in_array($email, $all_emails))) {
                         $duplicate_rows[] = $sheetData[$row];
                         continue;
+                    }
+
+                    // Cập nhật mảng cache để phát hiện trùng lặp ngay trong file
+                    $all_mas[] = $ma_sinh_vien;
+                    if (!empty($email)) {
+                        $all_emails[] = $email;
                     }
 
                     $add_status = $sinhvien->sinhvien__Add($ma_sinh_vien, $ten_sinh_vien, $gioi_tinh, $ngay_sinh, $email, $so_dien_thoai_1, $so_dien_thoai_2, $dia_chi_lien_lac, $dia_chi_thuong_tru, $chuc_vu, $id_lop_hoc);
@@ -229,11 +264,11 @@ if (isset($_GET['req'])) {
                     unlink($file);
                     exit();
                 } else {
-                    header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                    header("location:../index.php?page=quan-ly-sinh-vien&status=export-failed");
                     exit();
                 }
             } catch (Exception $e) {
-                header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                header("location:../index.php?page=quan-ly-sinh-vien&status=export-failed");
                 exit();
             }
         case 'export-error':
@@ -295,11 +330,11 @@ if (isset($_GET['req'])) {
                     unset($_SESSION['import_duplicate_rows']);
                     exit();
                 } else {
-                    header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                    header("location:../index.php?page=quan-ly-sinh-vien&status=export-failed");
                     exit();
                 }
             } catch (Exception $e) {
-                header("location:../index.php?page=quan-ly-sinh-vien&status=failed");
+                header("location:../index.php?page=quan-ly-sinh-vien&status=export-failed");
                 exit();
             }
     }

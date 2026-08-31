@@ -203,14 +203,14 @@
                     $dotchamdiem->connect->commit();
                     dotchamdiem_clear_old_input();
                     dotchamdiem__Rotate_Csrf_Token();
-                    dotchamdiem__Redirect('success');
+                    dotchamdiem__Redirect('add-success');
                 } catch (Throwable $e) {
                     if ($dotchamdiem->connect->inTransaction()) {
                         // Nhựt sửa lỗi: Rollback toàn bộ khi Add lỗi giữa chừng.
                         $dotchamdiem->connect->rollBack();
                     }
                     dotchamdiem_store_old_input('add', $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc);
-                    dotchamdiem__Redirect('failed');
+                    dotchamdiem__Redirect('add-failed');
                 }
                 
                 break;
@@ -323,7 +323,7 @@
                     dotchamdiem_clear_old_input();
                     dotchamdiem__Rotate_Csrf_Token();
                     
-                    dotchamdiem__Redirect('success');
+                    dotchamdiem__Redirect('update-success');
 
                 } catch (Throwable $e) {
                     if ($dotchamdiem->connect->inTransaction()) {
@@ -335,7 +335,7 @@
                     if ($msg === 'cannot-remove-class-with-data') {
                         dotchamdiem__Redirect($msg);
                     } else {
-                        dotchamdiem__Redirect('failed');
+                        dotchamdiem__Redirect('update-failed');
                     }
                 }
                 
@@ -359,9 +359,9 @@
                 
                 if ($status) {
                     dotchamdiem__Rotate_Csrf_Token();
-                    dotchamdiem__Redirect('success');
+                    dotchamdiem__Redirect('delete-success');
                 } else {
-                    dotchamdiem__Redirect('failed');
+                    dotchamdiem__Redirect('delete-failed');
                 }
                 
                 break;
@@ -379,9 +379,9 @@
                 $status = $dotchamdiem->dotchamdiem__Update_Trang_Thai($id_dot, $trang_thai);
                 if ($status) {
                     dotchamdiem__Rotate_Csrf_Token();
-                    dotchamdiem__Redirect('success');
+                    dotchamdiem__Redirect('update-success');
                 } else {
-                    dotchamdiem__Redirect('failed');
+                    dotchamdiem__Redirect('update-failed');
                 }
                 break;
         }

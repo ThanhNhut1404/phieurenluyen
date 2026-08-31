@@ -337,10 +337,28 @@ if (!isset($_SESSION['admin'])) {
             "related-dieu" => array("Không thể xóa!", "Điều này đang được sử dụng trong Mẫu phiếu nên không thể xóa.", "error"),
             "related-dieu-khoan" => array("Không thể xóa!", "Điều này đang có Khoản nên không thể xóa.", "error"),
             "duplicate-ma-sinh-vien" => array("Dữ liệu bị trùng!", "Mã sinh viên đã tồn tại trong hệ thống.", "error"),
-            "duplicate-email-sinh-vien" => array("Dữ liệu bị trùng!", "Email sinh viên đã tồn tại trong hệ thống.", "error"),
+            "duplicate-email-sinh-vien" => array("Dữ liệu bị trùng!", "Email đã tồn tại trong hệ thống.", "error"),
             "invalid-import-file" => array("Định dạng file không hợp lệ!", "Vui lòng tải lên file Excel đúng mẫu.", "error"),
             "csrf" => array("Phiên thao tác không hợp lệ!", "Vui lòng tải lại trang rồi thực hiện lại.", "error"),
-            "system" => array("Lỗi hệ thống!", "Có lỗi phát sinh khi xử lý dữ liệu.", "error")
+            "system" => array("Lỗi hệ thống!", "Có lỗi phát sinh khi xử lý dữ liệu.", "error"),
+            
+            // Các trạng thái CRUD chi tiết
+            "add-success" => array("Thêm mới thành công!", "Bản ghi đã được lưu vào hệ thống.", "success"),
+            "add-failed" => array("Thêm mới thất bại", "Có lỗi xảy ra, vui lòng thử lại.", "error"),
+            "update-success" => array("Cập nhật thành công!", "Dữ liệu đã được cập nhật.", "success"),
+            "update-failed" => array("Cập nhật thất bại", "Có lỗi xảy ra, vui lòng thử lại.", "error"),
+            "delete-success" => array("Xóa thành công!", "Bản ghi đã bị xóa khỏi hệ thống.", "success"),
+            "delete-failed" => array("Xóa thất bại", "Không thể xóa bản ghi này.", "error"),
+            "reset-success" => array("Khôi phục thành công", "Mật khẩu đã được reset về mặc định.", "success"),
+            "reset-failed" => array("Khôi phục thất bại", "Có lỗi xảy ra khi khôi phục.", "error"),
+            "active-success" => array("Đổi trạng thái thành công", "Trạng thái tài khoản đã được cập nhật.", "success"),
+            "active-failed" => array("Đổi trạng thái thất bại", "Có lỗi xảy ra khi cập nhật trạng thái.", "error"),
+            "import-success" => array("Nhập dữ liệu thành công!", "Dữ liệu từ Excel đã được lưu.", "success"),
+            "import-failed" => array("Nhập dữ liệu thất bại", "Có lỗi xảy ra khi đọc file Excel.", "error"),
+            "export-success" => array("Xuất dữ liệu thành công!", "File Excel đã được tải xuống.", "success"),
+            "export-failed" => array("Xuất dữ liệu thất bại", "Có lỗi xảy ra khi tạo file Excel.", "error"),
+            "copy-success" => array("Nhân bản thành công!", "Bản sao đã được tạo ra.", "success"),
+            "copy-failed" => array("Nhân bản thất bại", "Có lỗi xảy ra khi nhân bản dữ liệu.", "error")
         );
 
         if ($_GET['status'] == "locked-dot") {
@@ -440,6 +458,18 @@ if (!isset($_SESSION['admin'])) {
         }
         if ($_GET['status'] == "export-failed") {
             echo "<script>Toast.fire('Thất bại!', 'Xuất dữ liệu " . $entity_name . " thất bại!', 'error')</script>";
+        }
+        if ($_GET['status'] == "reset-success") {
+            echo "<script>Toast.fire('Thành công!', 'Khôi phục mật khẩu " . $entity_name . " thành công!', 'success')</script>";
+        }
+        if ($_GET['status'] == "reset-failed") {
+            echo "<script>Toast.fire('Thất bại!', 'Khôi phục mật khẩu " . $entity_name . " thất bại!', 'error')</script>";
+        }
+        if ($_GET['status'] == "active-success") {
+            echo "<script>Toast.fire('Thành công!', 'Đổi trạng thái " . $entity_name . " thành công!', 'success')</script>";
+        }
+        if ($_GET['status'] == "active-failed") {
+            echo "<script>Toast.fire('Thất bại!', 'Đổi trạng thái " . $entity_name . " thất bại!', 'error')</script>";
         }
         // Nhựt sửa lỗi: Sau khi hiển thị thông báo thì xóa riêng tham số status khỏi URL để refresh không hiện lại alert.
         echo "<script>

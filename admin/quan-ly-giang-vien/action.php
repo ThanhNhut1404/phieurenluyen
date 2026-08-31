@@ -42,6 +42,17 @@
                 
                 $_SESSION['giangvien_old_input'] = array_merge($_POST, ['context' => 'add']);
 
+                // Backend Validation
+                if (!preg_match('/^0[0-9]{9,10}$/', $so_dien_thoai_1) || !preg_match('/^0[0-9]{9,10}$/', $so_dien_thoai_2)) {
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=invalid-sdt');
+                    exit();
+                }
+                $dob = DateTime::createFromFormat('Y-m-d', $ngay_sinh);
+                if (!$dob || $dob->format('Y-m-d') !== $ngay_sinh || (new DateTime())->diff($dob)->y < 20 || (new DateTime())->diff($dob)->y > 100) {
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=invalid-ngay');
+                    exit();
+                }
+
                 if (!giangvien_trinhdo_exists($trinhdo, $id_trinh_do)) {
                     header('location: ../index.php?page=quan-ly-giang-vien&status=invalid');
                     exit();
@@ -62,9 +73,9 @@
                         }
                     }
                     unset($_SESSION['giangvien_old_input']);
-                    header('location: ../index.php?page=quan-ly-giang-vien&status=success');
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=add-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-giang-vien&status=failed');
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=add-failed');
                 }
                 exit();
                 
@@ -93,6 +104,17 @@
                 
                 $_SESSION['giangvien_old_input'] = array_merge($_POST, ['context' => 'update']);
 
+                // Backend Validation
+                if (!preg_match('/^0[0-9]{9,10}$/', $so_dien_thoai_1) || !preg_match('/^0[0-9]{9,10}$/', $so_dien_thoai_2)) {
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=invalid-sdt');
+                    exit();
+                }
+                $dob = DateTime::createFromFormat('Y-m-d', $ngay_sinh);
+                if (!$dob || $dob->format('Y-m-d') !== $ngay_sinh || (new DateTime())->diff($dob)->y < 20 || (new DateTime())->diff($dob)->y > 100) {
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=invalid-ngay');
+                    exit();
+                }
+
                 if (!giangvien_trinhdo_exists($trinhdo, $id_trinh_do)) {
                     header('location: ../index.php?page=quan-ly-giang-vien&status=invalid');
                     exit();
@@ -120,16 +142,16 @@
                 }
                 
                 unset($_SESSION['giangvien_old_input']);
-                header('location: ../index.php?page=quan-ly-giang-vien&status=success');
+                header('location: ../index.php?page=quan-ly-giang-vien&status=update-success');
                 exit();
 
             case 'delete':
                 $id_giang_vien = isset($_GET['id_giang_vien']) ? $_GET['id_giang_vien'] : '';
                 $status = $giangvien->giangvien__Delete($id_giang_vien);
                 if($status != 0){
-                    header('location: ../index.php?page=quan-ly-giang-vien&status=success');
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=delete-success');
                 }else{
-                    header('location: ../index.php?page=quan-ly-giang-vien&status=failed');
+                    header('location: ../index.php?page=quan-ly-giang-vien&status=delete-failed');
                 }
                 exit();
         }

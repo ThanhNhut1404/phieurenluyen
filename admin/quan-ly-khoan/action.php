@@ -102,18 +102,18 @@
                         $khoan->connect->commit();
                         khoan_clear_old_input();
                         khoan__Rotate_Csrf_Token();
-                        khoan__Redirect('success');
+                        khoan__Redirect('add-success');
                     }else{
                         $khoan->connect->rollBack();
                         khoan_store_old_input('add', $id_dieu, $ten_khoan, $ghi_chu, $can_tren, $so_luong_muc);
-                        khoan__Redirect('failed');
+                        khoan__Redirect('add-failed');
                     }
                 } catch (Throwable $e) {
                     if ($khoan->connect->inTransaction()) {
                         $khoan->connect->rollBack();
                     }
                     khoan_store_old_input('add', $id_dieu, $ten_khoan, $ghi_chu, $can_tren, $so_luong_muc);
-                    khoan__Redirect('failed');
+                    khoan__Redirect('add-failed');
                 }
                 
                 break;
@@ -161,18 +161,18 @@
                         $khoan->connect->commit();
                         khoan_clear_old_input();
                         khoan__Rotate_Csrf_Token();
-                        khoan__Redirect('success');
+                        khoan__Redirect('update-success');
                     }else{
                         $khoan->connect->rollBack();
                         khoan_store_old_input('update', $id_dieu, $ten_khoan, $ghi_chu, $can_tren, $so_luong_muc, $id_khoan);
-                        khoan__Redirect('failed');
+                        khoan__Redirect('update-failed');
                     }
                 } catch (Throwable $e) {
                     if ($khoan->connect->inTransaction()) {
                         $khoan->connect->rollBack();
                     }
                     khoan_store_old_input('update', $id_dieu, $ten_khoan, $ghi_chu, $can_tren, $so_luong_muc, $id_khoan);
-                    khoan__Redirect('failed');
+                    khoan__Redirect('update-failed');
                 }
                 
                 break;
@@ -221,12 +221,12 @@
 
                     $khoan->connect->commit();
                     khoan__Rotate_Csrf_Token();
-                    khoan__Redirect('copy_success');
+                    khoan__Redirect('copy-success');
                 } catch (Exception $e) {
                     if ($khoan->connect->inTransaction()) {
                         $khoan->connect->rollBack();
                     }
-                    khoan__Redirect($e->getMessage() === 'not-found' ? 'not-found' : 'failed');
+                    khoan__Redirect($e->getMessage() === 'not-found' ? 'not-found' : 'add-failed');
                 }
                 break;
 
@@ -257,16 +257,16 @@
                     if($status !=0 ){
                         $khoan->connect->commit();
                         khoan__Rotate_Csrf_Token();
-                        khoan__Redirect('success');
+                        khoan__Redirect('delete-success');
                     }else{
                         $khoan->connect->rollBack();
-                        khoan__Redirect('failed');
+                        khoan__Redirect('delete-failed');
                     }
                 } catch (Throwable $e) {
                     if ($khoan->connect->inTransaction()) {
                         $khoan->connect->rollBack();
                     }
-                    khoan__Redirect('failed');
+                    khoan__Redirect('delete-failed');
                 }
                 
                 break;

@@ -54,14 +54,24 @@ class bithudoankhoa extends Database {
     
 
     public function bithudoankhoa__Delete($id_bi_thu) {
-        // 1. Delete associated user account (id_phan_nhom = 4 is Faculty Union Secretary)
-        $stmt_tk = $this->connect->prepare("DELETE FROM taikhoan WHERE id_nguoi_dung = ? AND id_phan_nhom = 4");
-        $stmt_tk->execute(array($id_bi_thu));
+        try {
+            $this->connect->beginTransaction();
 
-        // 2. Delete bithudoankhoa record
-        $obj = $this->connect->prepare("DELETE FROM bithudoankhoa WHERE id_bi_thu = ?");
-        $obj->execute(array($id_bi_thu));
-        return $obj->rowCount();
+            // 1. Delete associated user account (id_phan_nhom = 4 is Faculty Union Secretary)
+            $stmt_tk = $this->connect->prepare("DELETE FROM taikhoan WHERE id_nguoi_dung = ? AND id_phan_nhom = 4");
+            $stmt_tk->execute(array($id_bi_thu));
+
+            // 2. Delete bithudoankhoa record
+            $obj = $this->connect->prepare("DELETE FROM bithudoankhoa WHERE id_bi_thu = ?");
+            $obj->execute(array($id_bi_thu));
+            $rowCount = $obj->rowCount();
+
+            $this->connect->commit();
+            return $rowCount;
+        } catch (Exception $e) {
+            $this->connect->rollBack();
+            return 0;
+        }
     }
 
   

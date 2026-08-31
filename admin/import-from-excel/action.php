@@ -33,9 +33,9 @@ require '../../models/getModel.php';
                 }
                
                 if($status == 0){
-                    header("location:../index.php?page=import-from-excel&status=fail");
+                    header("location:../index.php?page=import-from-excel&status=import-failed");
                 }else{
-                    header("location:../index.php?page=import-from-excel&status=success");
+                    header("location:../index.php?page=import-from-excel&status=import-success");
                 }
             break;  
             
@@ -82,9 +82,9 @@ require '../../models/getModel.php';
                 $status .= unlink($file);
 
                 if($status == 0){
-                    header("location:../index.php?page=import-from-excel&status=fail");
+                    header("location:../index.php?page=import-from-excel&status=export-failed");
                 }else{
-                    header("location:../index.php?page=import-from-excel&status=success");
+                    header("location:../index.php?page=import-from-excel&status=export-success");
                 }
                 break; 
         }

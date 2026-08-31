@@ -159,14 +159,14 @@
                     }
 
                     $ketquaxeploai->connect->commit();
-                    header("location: ../index.php?page=quan-ly-ket-qua&id_dot=$id_dot&id_lop_hoc=$id_lop_hoc&status=success");
+                    header("location: ../index.php?page=quan-ly-ket-qua&id_dot=$id_dot&id_lop_hoc=$id_lop_hoc&status=update-success");
                     exit();
                 } catch (Throwable $e) {
                     if ($ketquaxeploai->connect->inTransaction()) {
                         // Nhựt sửa lỗi: Rollback toàn bộ nếu sinh kết quả bị lỗi SQL giữa chừng.
                         $ketquaxeploai->connect->rollBack();
                     }
-                    header("location: $href&status=failed");
+                    header("location: $href&status=update-failed");
                     exit();
                 }
 
