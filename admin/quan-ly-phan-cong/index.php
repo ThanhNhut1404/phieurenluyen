@@ -341,6 +341,17 @@ window.addEventListener("load", function() {
 
             updateCascadeDropdowns();
 
+            var pendingLopHoc = sessionStorage.getItem('phancong_filter_lophoc');
+            
+            if (pendingLopHoc !== null) {
+                if (pendingLopHoc) $('#filter_lop_hoc').val(pendingLopHoc);
+                
+                updateCascadeDropdowns();
+                
+                table.column(2).search(pendingLopHoc ? '^' + $.fn.dataTable.util.escapeRegex(pendingLopHoc) + '$' : '', true, false)
+                     .draw();
+            }
+
             $btn.on('click', function(e) {
                 e.stopPropagation();
                 $('#custom-filter-menu').fadeToggle(200);
@@ -357,6 +368,8 @@ window.addEventListener("load", function() {
             $('#btn-apply-filter').on('click', function() {
                 var lopVal = $('#filter_lop_hoc').val();
                 
+                sessionStorage.setItem('phancong_filter_lophoc', lopVal);
+                
                 table.column(2).search(lopVal ? '^' + $.fn.dataTable.util.escapeRegex(lopVal) + '$' : '', true, false)
                      .draw();
                 $('#custom-filter-menu').fadeOut(200);
@@ -365,6 +378,9 @@ window.addEventListener("load", function() {
             $('#btn-cancel-filter').on('click', function() {
                 $('#filter_lop_hoc').val('');
                 updateCascadeDropdowns();
+                
+                sessionStorage.removeItem('phancong_filter_lophoc');
+                
                 table.column(2).search('').draw();
                 $('#custom-filter-menu').fadeOut(200);
             });

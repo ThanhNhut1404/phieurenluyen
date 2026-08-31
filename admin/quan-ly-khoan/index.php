@@ -436,6 +436,10 @@ window.addEventListener("load", function() {
                 var dieuVal = $('#filter_dieu').val();
                 var khoanVal = $('#filter_khoan').val();
                 
+                // Nhựt sửa: Lưu trạng thái filter vào sessionStorage
+                sessionStorage.setItem('filter_khoan_dieu', dieuVal);
+                sessionStorage.setItem('filter_khoan_khoan', khoanVal);
+                
                 table.column(1).search(dieuVal ? '^' + $.fn.dataTable.util.escapeRegex(dieuVal) + '$' : '', true, false)
                      .column(2).search(khoanVal ? '^' + $.fn.dataTable.util.escapeRegex(khoanVal) + '$' : '', true, false)
                      .draw();
@@ -445,12 +449,28 @@ window.addEventListener("load", function() {
             $('#btn-cancel-filter').on('click', function() {
                 $('#filter_dieu').val('');
                 $('#filter_khoan').val('');
+                
+                // Nhựt sửa: Xóa trạng thái filter khỏi sessionStorage
+                sessionStorage.removeItem('filter_khoan_dieu');
+                sessionStorage.removeItem('filter_khoan_khoan');
+                
                 updateCascadeDropdowns();
                 table.column(1).search('')
                      .column(2).search('')
                      .draw();
                 $('#custom-filter-menu').fadeOut(200);
             });
+
+            // Nhựt sửa: Khôi phục trạng thái filter
+            var savedDieu = sessionStorage.getItem('filter_khoan_dieu');
+            var savedKhoan = sessionStorage.getItem('filter_khoan_khoan');
+            if (savedDieu || savedKhoan) {
+                if (savedDieu) $('#filter_dieu').val(savedDieu);
+                if (savedKhoan) $('#filter_khoan').val(savedKhoan);
+                
+                table.column(1).search(savedDieu ? '^' + $.fn.dataTable.util.escapeRegex(savedDieu) + '$' : '', true, false)
+                     .column(2).search(savedKhoan ? '^' + $.fn.dataTable.util.escapeRegex(savedKhoan) + '$' : '', true, false);
+            }
         }
     });
 });

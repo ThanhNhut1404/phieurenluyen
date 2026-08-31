@@ -663,6 +663,12 @@ window.addEventListener("load", function() {
                 var mauPhieuVal = $('#filter_mau_phieu').val();
                 var trangThaiVal = $('#filter_trang_thai').val();
                 
+                // Nhựt sửa: Lưu trạng thái filter vào sessionStorage
+                sessionStorage.setItem('filter_dot_nam_hoc', namHocVal);
+                sessionStorage.setItem('filter_dot_hoc_ky', hocKyVal);
+                sessionStorage.setItem('filter_dot_mau_phieu', mauPhieuVal);
+                sessionStorage.setItem('filter_dot_trang_thai', trangThaiVal);
+                
                 table.column(2).search(namHocVal ? '^' + $.fn.dataTable.util.escapeRegex(namHocVal) + '$' : '', true, false)
                      .column(3).search(hocKyVal ? '^' + $.fn.dataTable.util.escapeRegex(hocKyVal) + '$' : '', true, false)
                      .column(8).search(mauPhieuVal ? '^' + $.fn.dataTable.util.escapeRegex(mauPhieuVal) + '$' : '', true, false)
@@ -676,6 +682,13 @@ window.addEventListener("load", function() {
                 $('#filter_hoc_ky').val('');
                 $('#filter_mau_phieu').val('');
                 $('#filter_trang_thai').val('');
+                
+                // Nhựt sửa: Xóa trạng thái filter khỏi sessionStorage
+                sessionStorage.removeItem('filter_dot_nam_hoc');
+                sessionStorage.removeItem('filter_dot_hoc_ky');
+                sessionStorage.removeItem('filter_dot_mau_phieu');
+                sessionStorage.removeItem('filter_dot_trang_thai');
+                
                 updateCascadeDropdowns();
                 table.column(2).search('')
                      .column(3).search('')
@@ -684,6 +697,24 @@ window.addEventListener("load", function() {
                      .draw();
                 $('#custom-filter-menu').fadeOut(200);
             });
+
+            // Nhựt sửa: Khôi phục trạng thái filter
+            var savedNamHoc = sessionStorage.getItem('filter_dot_nam_hoc');
+            var savedHocKy = sessionStorage.getItem('filter_dot_hoc_ky');
+            var savedMauPhieu = sessionStorage.getItem('filter_dot_mau_phieu');
+            var savedTrangThai = sessionStorage.getItem('filter_dot_trang_thai');
+            
+            if (savedNamHoc || savedHocKy || savedMauPhieu || savedTrangThai) {
+                if (savedNamHoc) $('#filter_nam_hoc').val(savedNamHoc);
+                if (savedHocKy) $('#filter_hoc_ky').val(savedHocKy);
+                if (savedMauPhieu) $('#filter_mau_phieu').val(savedMauPhieu);
+                if (savedTrangThai) $('#filter_trang_thai').val(savedTrangThai);
+                
+                table.column(2).search(savedNamHoc ? '^' + $.fn.dataTable.util.escapeRegex(savedNamHoc) + '$' : '', true, false)
+                     .column(3).search(savedHocKy ? '^' + $.fn.dataTable.util.escapeRegex(savedHocKy) + '$' : '', true, false)
+                     .column(8).search(savedMauPhieu ? '^' + $.fn.dataTable.util.escapeRegex(savedMauPhieu) + '$' : '', true, false)
+                     .column(6).search(savedTrangThai ? $.fn.dataTable.util.escapeRegex(savedTrangThai) : '', true, false);
+            }
         }
     });
 

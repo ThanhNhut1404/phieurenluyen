@@ -444,6 +444,20 @@ window.addEventListener("load", function() {
 
             updateCascadeDropdowns();
 
+            var pendingKhoa = sessionStorage.getItem('bithu_filter_khoa');
+            var pendingGioiTinh = sessionStorage.getItem('bithu_filter_gioitinh');
+            
+            if (pendingKhoa !== null || pendingGioiTinh !== null) {
+                if (pendingKhoa) $('#filter_khoa').val(pendingKhoa);
+                if (pendingGioiTinh) $('#filter_gioi_tinh').val(pendingGioiTinh);
+                
+                updateCascadeDropdowns();
+                
+                table.column(2).search(pendingKhoa ? '^' + $.fn.dataTable.util.escapeRegex(pendingKhoa) + '$' : '', true, false)
+                     .column(3).search(pendingGioiTinh ? '^' + $.fn.dataTable.util.escapeRegex(pendingGioiTinh) + '$' : '', true, false)
+                     .draw();
+            }
+
             // Custom dropdown toggle logic
             $btn.on('click', function(e) {
                 e.stopPropagation();
@@ -462,6 +476,9 @@ window.addEventListener("load", function() {
                 var khoaVal = $('#filter_khoa').val();
                 var gioiTinhVal = $('#filter_gioi_tinh').val();
                 
+                sessionStorage.setItem('bithu_filter_khoa', khoaVal);
+                sessionStorage.setItem('bithu_filter_gioitinh', gioiTinhVal);
+                
                 table.column(2).search(khoaVal ? '^' + $.fn.dataTable.util.escapeRegex(khoaVal) + '$' : '', true, false)
                      .column(3).search(gioiTinhVal ? '^' + $.fn.dataTable.util.escapeRegex(gioiTinhVal) + '$' : '', true, false)
                      .draw();
@@ -472,6 +489,10 @@ window.addEventListener("load", function() {
                 $('#filter_khoa').val('');
                 $('#filter_gioi_tinh').val('');
                 updateCascadeDropdowns();
+                
+                sessionStorage.removeItem('bithu_filter_khoa');
+                sessionStorage.removeItem('bithu_filter_gioitinh');
+                
                 table.column(2).search('')
                      .column(3).search('')
                      .draw();

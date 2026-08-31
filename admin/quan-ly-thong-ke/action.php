@@ -32,21 +32,21 @@ require '../../models/getModel.php';
                             $rs .= " ".$word[$i];
                         }
                     } // lấy từ cuối cùng
-
                 return ucwords(trim($rs), " ");
                 }
-
 
                 $status = 0;
                 $id_dot = $_POST['id_dot'];
                 $id_lop_hoc = $_POST['id_lop_hoc'];
-                $res = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
-                
+                if ($id_lop_hoc == -1) {
+                    $res = $ketquaxeploai->ketquaxeploai__Get_By_Id_Dot_For_All_Lop($id_dot);
+                } else {
+                    $res = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
+                }
 
                 $objPHPExcel = new PHPExcel(); 
                 $objDrawing = new PHPExcel_Worksheet_Drawing();    //create object for Worksheet drawing
               
-
                 $row_hd = 11;
     
                 $objPHPExcel->getActiveSheet()->getStyle('C1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -68,12 +68,13 @@ require '../../models/getModel.php';
 
                 $objPHPExcel->getActiveSheet()->SetCellValue('A5', "Học kỳ: " . $res[0]->ten_hoc_ky);
                 $objPHPExcel->getActiveSheet()->SetCellValue('A6', "Bậc đào tạo: Đại học");
-                $objPHPExcel->getActiveSheet()->SetCellValue('A7', "Khoa: ".$res[0]->ten_khoa);
+                if ($id_lop_hoc == -1) {
+                    $objPHPExcel->getActiveSheet()->SetCellValue('A7', "Khoa: Tất cả");
+                } else {
+                    $objPHPExcel->getActiveSheet()->SetCellValue('A7', "Khoa: ".$res[0]->ten_khoa);
+                }
 
                 $objPHPExcel->getActiveSheet()->SetCellValue('F7', "Hệ đào tạo: Chính quy");
-      
-
-            
 
                 $objDrawing->setPath('../../assets/img/logo.jpg');
                 $objDrawing->setCoordinates('A1');  

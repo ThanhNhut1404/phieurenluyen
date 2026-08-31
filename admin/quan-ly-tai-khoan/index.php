@@ -746,10 +746,6 @@ window.addEventListener("load", function() {
                      .column(4).search(pendingQuyen ? '^' + $.fn.dataTable.util.escapeRegex(pendingQuyen) + '$' : '', true, false)
                      .column(5).search(pendingTrangThai ? pendingTrangThai : '', true, false)
                      .draw();
-                     
-                sessionStorage.removeItem('pending_filter_nhom');
-                sessionStorage.removeItem('pending_filter_quyen');
-                sessionStorage.removeItem('pending_filter_trangthai');
             }
 
             $btn.on('click', function(e) {
@@ -774,10 +770,11 @@ window.addEventListener("load", function() {
                 var selectedLopHoc = new URLSearchParams(lopHocUrl.split('?')[1]).get('view_by_lop');
                 var currentLopHoc = new URLSearchParams(window.location.search).get('view_by_lop');
                 
+                sessionStorage.setItem('pending_filter_nhom', nhomVal);
+                sessionStorage.setItem('pending_filter_quyen', quyenVal);
+                sessionStorage.setItem('pending_filter_trangthai', trangThaiVal);
+                
                 if (selectedLopHoc !== currentLopHoc) {
-                    sessionStorage.setItem('pending_filter_nhom', nhomVal);
-                    sessionStorage.setItem('pending_filter_quyen', quyenVal);
-                    sessionStorage.setItem('pending_filter_trangthai', trangThaiVal);
                     window.location.href = lopHocUrl;
                     return;
                 }
@@ -791,6 +788,10 @@ window.addEventListener("load", function() {
 
             $('#btn-cancel-filter').on('click', function() {
                 var urlParams = new URLSearchParams(window.location.search);
+                sessionStorage.removeItem('pending_filter_nhom');
+                sessionStorage.removeItem('pending_filter_quyen');
+                sessionStorage.removeItem('pending_filter_trangthai');
+                
                 if (urlParams.has('view_by_lop')) {
                     window.location.href = '?page=quan-ly-tai-khoan';
                     return;

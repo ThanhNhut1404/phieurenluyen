@@ -462,6 +462,9 @@
               $('#btn-apply-filter').on('click', function() {
                   var dieuVal = $('#filter_dieu').val();
                   
+                  // Nhựt sửa: Lưu trạng thái filter vào sessionStorage
+                  sessionStorage.setItem('filter_muc_dieu', dieuVal);
+                  
                   table.column(1).search(dieuVal ? '^' + $.fn.dataTable.util.escapeRegex(dieuVal) + '$' : '', true, false)
                        .draw();
                   $('#custom-filter-menu').fadeOut(200);
@@ -469,11 +472,22 @@
 
               $('#btn-cancel-filter').on('click', function() {
                   $('#filter_dieu').val('');
+                  
+                  // Nhựt sửa: Xóa trạng thái filter khỏi sessionStorage
+                  sessionStorage.removeItem('filter_muc_dieu');
+                  
                   updateCascadeDropdowns();
                   table.column(1).search('')
                        .draw();
                   $('#custom-filter-menu').fadeOut(200);
               });
+
+              // Nhựt sửa: Khôi phục trạng thái filter
+              var savedDieu = sessionStorage.getItem('filter_muc_dieu');
+              if (savedDieu) {
+                  $('#filter_dieu').val(savedDieu);
+                  table.column(1).search(savedDieu ? '^' + $.fn.dataTable.util.escapeRegex(savedDieu) + '$' : '', true, false);
+              }
           }
       });
   });

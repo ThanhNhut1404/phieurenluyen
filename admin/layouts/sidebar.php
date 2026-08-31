@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 // Auth check is handled globally in admin/index.php
 
-require "../models/getModel.php";
+require_once __DIR__ . "/../../models/getModel.php";
 
 // Nhựt sửa lỗi: tránh warning khi session admin thiếu phân quyền hoặc phân quyền không còn tồn tại.
 $ten_phan_quyen = 'Admin';

@@ -464,6 +464,20 @@ window.addEventListener("load", function() {
 
             updateCascadeDropdowns();
 
+            var pendingTrinhDo = sessionStorage.getItem('giangvien_filter_trinhdo');
+            var pendingGioiTinh = sessionStorage.getItem('giangvien_filter_gioitinh');
+            
+            if (pendingTrinhDo !== null || pendingGioiTinh !== null) {
+                if (pendingTrinhDo) $('#filter_trinh_do').val(pendingTrinhDo);
+                if (pendingGioiTinh) $('#filter_gioi_tinh').val(pendingGioiTinh);
+                
+                updateCascadeDropdowns();
+                
+                table.column(7).search(pendingTrinhDo ? '^' + $.fn.dataTable.util.escapeRegex(pendingTrinhDo) + '$' : '', true, false)
+                     .column(3).search(pendingGioiTinh ? '^' + $.fn.dataTable.util.escapeRegex(pendingGioiTinh) + '$' : '', true, false)
+                     .draw();
+            }
+
             $btn.on('click', function(e) {
                 e.stopPropagation();
                 $('#custom-filter-menu').fadeToggle(200);
@@ -481,6 +495,9 @@ window.addEventListener("load", function() {
                 var trinhDoVal = $('#filter_trinh_do').val();
                 var gioiTinhVal = $('#filter_gioi_tinh').val();
                 
+                sessionStorage.setItem('giangvien_filter_trinhdo', trinhDoVal);
+                sessionStorage.setItem('giangvien_filter_gioitinh', gioiTinhVal);
+                
                 table.column(7).search(trinhDoVal ? '^' + $.fn.dataTable.util.escapeRegex(trinhDoVal) + '$' : '', true, false)
                      .column(3).search(gioiTinhVal ? '^' + $.fn.dataTable.util.escapeRegex(gioiTinhVal) + '$' : '', true, false)
                      .draw();
@@ -491,6 +508,10 @@ window.addEventListener("load", function() {
                 $('#filter_trinh_do').val('');
                 $('#filter_gioi_tinh').val('');
                 updateCascadeDropdowns();
+                
+                sessionStorage.removeItem('giangvien_filter_trinhdo');
+                sessionStorage.removeItem('giangvien_filter_gioitinh');
+                
                 table.column(7).search('')
                      .column(3).search('')
                      .draw();

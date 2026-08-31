@@ -134,6 +134,13 @@ class phieuchamdiem extends Database {
         return $obj->fetchAll();
     }
 
+    public function phieuchamdiem__Get_By_Id_Dot_For_All_Lop($id_dot) {
+        $obj = $this->connect->prepare("SELECT phieuchamdiem.* FROM phieuchamdiem, lopapdung WHERE phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung AND lopapdung.id_dot = ? GROUP BY phieuchamdiem.id_phieu");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot));
+        return $obj->fetchAll();
+    }
+
     public function phieuchamdiem__Get_Ket_Qua($req) {
         $kq = [];
         $res = explode('|', $req);

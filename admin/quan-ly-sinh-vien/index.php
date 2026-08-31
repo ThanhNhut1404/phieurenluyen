@@ -537,6 +537,20 @@
 
                   updateCascadeDropdowns();
 
+                  var pendingLop = sessionStorage.getItem('sinhvien_filter_lop_hoc');
+                  var pendingGioiTinh = sessionStorage.getItem('sinhvien_filter_gioi_tinh');
+                  
+                  if (pendingLop !== null || pendingGioiTinh !== null) {
+                      if (pendingLop) $('#filter_lop_hoc').val(pendingLop);
+                      if (pendingGioiTinh) $('#filter_gioi_tinh').val(pendingGioiTinh);
+                      
+                      updateCascadeDropdowns(); // Re-run to cascade
+                      
+                      table.column(7).search(pendingLop ? '^' + $.fn.dataTable.util.escapeRegex(pendingLop) + '$' : '', true, false)
+                           .column(4).search(pendingGioiTinh ? '^' + $.fn.dataTable.util.escapeRegex(pendingGioiTinh) + '$' : '', true, false)
+                           .draw();
+                  }
+
                   // Custom dropdown toggle logic
                   $btn.on('click', function(e) {
                       e.stopPropagation();
@@ -555,6 +569,9 @@
                       var lopVal = $('#filter_lop_hoc').val();
                       var gioiTinhVal = $('#filter_gioi_tinh').val();
                       
+                      sessionStorage.setItem('sinhvien_filter_lop_hoc', lopVal);
+                      sessionStorage.setItem('sinhvien_filter_gioi_tinh', gioiTinhVal);
+                      
                       table.column(7).search(lopVal ? '^' + $.fn.dataTable.util.escapeRegex(lopVal) + '$' : '', true, false)
                            .column(4).search(gioiTinhVal ? '^' + $.fn.dataTable.util.escapeRegex(gioiTinhVal) + '$' : '', true, false)
                            .draw();
@@ -565,6 +582,10 @@
                       $('#filter_lop_hoc').val('');
                       $('#filter_gioi_tinh').val('');
                       updateCascadeDropdowns();
+                      
+                      sessionStorage.removeItem('sinhvien_filter_lop_hoc');
+                      sessionStorage.removeItem('sinhvien_filter_gioi_tinh');
+                      
                       table.column(7).search('')
                            .column(4).search('')
                            .draw();

@@ -332,6 +332,10 @@ window.addEventListener("load", function() {
                     var nhomVal = $('#filter_phan_nhom').val() || "";
                     var quyenVal = $('#filter_phan_quyen').val() || "";
                     
+                    // Nhựt sửa: Lưu trạng thái filter vào sessionStorage
+                    sessionStorage.setItem('filter_thongbao_nhom', nhomVal);
+                    sessionStorage.setItem('filter_thongbao_quyen', quyenVal);
+                    
                     table.column(3).search(nhomVal ? '^' + $.fn.dataTable.util.escapeRegex(nhomVal) + '$' : '', true, false)
                          .column(4).search(quyenVal ? '^' + $.fn.dataTable.util.escapeRegex(quyenVal) + '$' : '', true, false)
                          .draw();
@@ -341,6 +345,11 @@ window.addEventListener("load", function() {
                 $('#btn-cancel-filter').on('click', function() {
                     $('#filter_phan_nhom').val('');
                     $('#filter_phan_quyen').val('');
+                    
+                    // Nhựt sửa: Xóa trạng thái filter khỏi sessionStorage
+                    sessionStorage.removeItem('filter_thongbao_nhom');
+                    sessionStorage.removeItem('filter_thongbao_quyen');
+                    
                     updateCascadeDropdowns();
                     
                     table.column(3).search('')
@@ -349,6 +358,17 @@ window.addEventListener("load", function() {
                          
                     $('#custom-filter-menu').fadeOut(200);
                 });
+
+                // Nhựt sửa: Khôi phục trạng thái filter
+                var savedNhom = sessionStorage.getItem('filter_thongbao_nhom');
+                var savedQuyen = sessionStorage.getItem('filter_thongbao_quyen');
+                if (savedNhom || savedQuyen) {
+                    if (savedNhom) $('#filter_phan_nhom').val(savedNhom);
+                    if (savedQuyen) $('#filter_phan_quyen').val(savedQuyen);
+                    
+                    table.column(3).search(savedNhom ? '^' + $.fn.dataTable.util.escapeRegex(savedNhom) + '$' : '', true, false)
+                         .column(4).search(savedQuyen ? '^' + $.fn.dataTable.util.escapeRegex(savedQuyen) + '$' : '', true, false);
+                }
             }
         });
     }

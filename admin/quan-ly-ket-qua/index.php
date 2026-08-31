@@ -513,6 +513,10 @@ window.addEventListener("load", function() {
                 var lopVal = $('#filter_lop').val();
                 var xepLoaiVal = $('#filter_xep_loai').val();
                 
+                // Nhựt sửa: Lưu trạng thái filter vào sessionStorage
+                sessionStorage.setItem('filter_ketqua_lop', lopVal);
+                sessionStorage.setItem('filter_ketqua_xeploai', xepLoaiVal);
+                
                 table.column(3).search(lopVal ? '^' + $.fn.dataTable.util.escapeRegex(lopVal) + '$' : '', true, false)
                      .column(5).search(xepLoaiVal ? '^' + $.fn.dataTable.util.escapeRegex(xepLoaiVal) + '$' : '', true, false)
                      .draw();
@@ -522,12 +526,28 @@ window.addEventListener("load", function() {
             $('#btn-cancel-filter').on('click', function() {
                 $('#filter_lop').val('');
                 $('#filter_xep_loai').val('');
+                
+                // Nhựt sửa: Xóa trạng thái filter khỏi sessionStorage
+                sessionStorage.removeItem('filter_ketqua_lop');
+                sessionStorage.removeItem('filter_ketqua_xeploai');
+                
                 updateCascadeDropdowns();
                 table.column(3).search('')
                      .column(5).search('')
                      .draw();
                 $('#custom-filter-menu').fadeOut(200);
             });
+
+            // Nhựt sửa: Khôi phục trạng thái filter
+            var savedLop = sessionStorage.getItem('filter_ketqua_lop');
+            var savedXepLoai = sessionStorage.getItem('filter_ketqua_xeploai');
+            if (savedLop || savedXepLoai) {
+                if (savedLop) $('#filter_lop').val(savedLop);
+                if (savedXepLoai) $('#filter_xep_loai').val(savedXepLoai);
+                
+                table.column(3).search(savedLop ? '^' + $.fn.dataTable.util.escapeRegex(savedLop) + '$' : '', true, false)
+                     .column(5).search(savedXepLoai ? '^' + $.fn.dataTable.util.escapeRegex(savedXepLoai) + '$' : '', true, false);
+            }
         }
     });
 

@@ -407,6 +407,23 @@ window.addEventListener("load", function() {
 
             updateCascadeDropdowns();
 
+            var pendingKhoa = sessionStorage.getItem('lophoc_filter_khoa_hoc');
+            var pendingNganh = sessionStorage.getItem('lophoc_filter_nganh_hoc');
+            var pendingLop = sessionStorage.getItem('lophoc_filter_lop_hoc');
+            
+            if (pendingKhoa !== null || pendingNganh !== null || pendingLop !== null) {
+                if (pendingKhoa) $('#filter_khoa_hoc').val(pendingKhoa);
+                if (pendingNganh) $('#filter_nganh_hoc').val(pendingNganh);
+                if (pendingLop) $('#filter_lop_hoc').val(pendingLop);
+                
+                updateCascadeDropdowns(); // Re-run to cascade
+                
+                table.column(1).search(pendingKhoa ? '^' + $.fn.dataTable.util.escapeRegex(pendingKhoa) + '$' : '', true, false)
+                     .column(2).search(pendingNganh ? '^' + $.fn.dataTable.util.escapeRegex(pendingNganh) + '$' : '', true, false)
+                     .column(3).search(pendingLop ? '^' + $.fn.dataTable.util.escapeRegex(pendingLop) + '$' : '', true, false)
+                     .draw();
+            }
+
             $btn.on('click', function(e) {
                 e.stopPropagation();
                 $('#custom-filter-menu').fadeToggle(200);
@@ -425,6 +442,10 @@ window.addEventListener("load", function() {
                 var nganhVal = $('#filter_nganh_hoc').val();
                 var lopVal = $('#filter_lop_hoc').val();
                 
+                sessionStorage.setItem('lophoc_filter_khoa_hoc', khoaHocVal);
+                sessionStorage.setItem('lophoc_filter_nganh_hoc', nganhVal);
+                sessionStorage.setItem('lophoc_filter_lop_hoc', lopVal);
+                
                 table.column(1).search(khoaHocVal ? '^' + $.fn.dataTable.util.escapeRegex(khoaHocVal) + '$' : '', true, false)
                      .column(2).search(nganhVal ? '^' + $.fn.dataTable.util.escapeRegex(nganhVal) + '$' : '', true, false)
                      .column(3).search(lopVal ? '^' + $.fn.dataTable.util.escapeRegex(lopVal) + '$' : '', true, false)
@@ -437,6 +458,11 @@ window.addEventListener("load", function() {
                 $('#filter_nganh_hoc').val('');
                 $('#filter_lop_hoc').val('');
                 updateCascadeDropdowns();
+                
+                sessionStorage.removeItem('lophoc_filter_khoa_hoc');
+                sessionStorage.removeItem('lophoc_filter_nganh_hoc');
+                sessionStorage.removeItem('lophoc_filter_lop_hoc');
+                
                 table.column(1).search('')
                      .column(2).search('')
                      .column(3).search('')

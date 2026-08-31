@@ -415,6 +415,20 @@ window.addEventListener("load", function() {
             // Initial population
             updateCascadeDropdowns();
 
+            var pendingNam = sessionStorage.getItem('hocky_filter_nam');
+            var pendingHocKy = sessionStorage.getItem('hocky_filter_hocky');
+            
+            if (pendingNam !== null || pendingHocKy !== null) {
+                if (pendingNam) $('#filter_nam_hoc').val(pendingNam);
+                if (pendingHocKy) $('#filter_hoc_ky').val(pendingHocKy);
+                
+                updateCascadeDropdowns();
+                
+                table.column(2).search(pendingNam ? '^' + $.fn.dataTable.util.escapeRegex(pendingNam) + '$' : '', true, false)
+                     .column(1).search(pendingHocKy ? '^' + $.fn.dataTable.util.escapeRegex(pendingHocKy) + '$' : '', true, false)
+                     .draw();
+            }
+
             // Custom dropdown toggle logic
             $btn.on('click', function(e) {
                 e.stopPropagation();
@@ -433,6 +447,9 @@ window.addEventListener("load", function() {
                 var namVal = $('#filter_nam_hoc').val();
                 var hocKyVal = $('#filter_hoc_ky').val();
                 
+                sessionStorage.setItem('hocky_filter_nam', namVal);
+                sessionStorage.setItem('hocky_filter_hocky', hocKyVal);
+                
                 table.column(2).search(namVal ? '^' + $.fn.dataTable.util.escapeRegex(namVal) + '$' : '', true, false)
                      .column(1).search(hocKyVal ? '^' + $.fn.dataTable.util.escapeRegex(hocKyVal) + '$' : '', true, false)
                      .draw();
@@ -443,6 +460,10 @@ window.addEventListener("load", function() {
                 $('#filter_nam_hoc').val('');
                 $('#filter_hoc_ky').val('');
                 updateCascadeDropdowns();
+                
+                sessionStorage.removeItem('hocky_filter_nam');
+                sessionStorage.removeItem('hocky_filter_hocky');
+                
                 table.column(2).search('')
                      .column(1).search('')
                      .draw();

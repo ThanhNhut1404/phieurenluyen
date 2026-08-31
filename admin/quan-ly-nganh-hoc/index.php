@@ -378,6 +378,20 @@ window.addEventListener("load", function() {
 
             updateCascadeDropdowns();
 
+            var pendingKhoa = sessionStorage.getItem('nganhhoc_filter_khoa');
+            var pendingNganh = sessionStorage.getItem('nganhhoc_filter_nganh');
+            
+            if (pendingKhoa !== null || pendingNganh !== null) {
+                if (pendingKhoa) $('#filter_khoa').val(pendingKhoa);
+                if (pendingNganh) $('#filter_nganh_hoc').val(pendingNganh);
+                
+                updateCascadeDropdowns();
+                
+                table.column(1).search(pendingKhoa ? '^' + $.fn.dataTable.util.escapeRegex(pendingKhoa) + '$' : '', true, false)
+                     .column(2).search(pendingNganh ? '^' + $.fn.dataTable.util.escapeRegex(pendingNganh) + '$' : '', true, false)
+                     .draw();
+            }
+
             // Custom dropdown toggle logic
             $btn.on('click', function(e) {
                 e.stopPropagation();
@@ -396,6 +410,9 @@ window.addEventListener("load", function() {
                 var khoaVal = $('#filter_khoa').val();
                 var nganhVal = $('#filter_nganh_hoc').val();
                 
+                sessionStorage.setItem('nganhhoc_filter_khoa', khoaVal);
+                sessionStorage.setItem('nganhhoc_filter_nganh', nganhVal);
+                
                 table.column(1).search(khoaVal ? '^' + $.fn.dataTable.util.escapeRegex(khoaVal) + '$' : '', true, false)
                      .column(2).search(nganhVal ? '^' + $.fn.dataTable.util.escapeRegex(nganhVal) + '$' : '', true, false)
                      .draw();
@@ -406,6 +423,10 @@ window.addEventListener("load", function() {
                 $('#filter_khoa').val('');
                 $('#filter_nganh_hoc').val('');
                 updateCascadeDropdowns();
+                
+                sessionStorage.removeItem('nganhhoc_filter_khoa');
+                sessionStorage.removeItem('nganhhoc_filter_nganh');
+                
                 table.column(1).search('').column(2).search('').draw();
                 $('#custom-filter-menu').fadeOut(200);
             });

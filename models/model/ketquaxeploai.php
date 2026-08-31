@@ -139,5 +139,40 @@ class ketquaxeploai extends Database {
         $obj->execute(array($trang_thai_cong_bo, $id_dot, $id_lop_hoc));
         return $obj->rowCount();
     }
+
+    public function ketquaxeploai__Get_By_Id_Dot_For_All_Lop($id_dot) {
+        $obj = $this->connect->prepare("SELECT ketquaxeploai.*, ten_hoc_ky, ten_khoa FROM ketquaxeploai, dotchamdiem, nganhhoc, khoa, lophoc, hocky WHERE dotchamdiem.id_hoc_ky = hocky.id_hoc_ky AND ketquaxeploai.id_dot = dotchamdiem.id_dot AND ketquaxeploai.id_lop_hoc = lophoc.id_lop_hoc AND lophoc.id_nganh_hoc = nganhhoc.id_nganh_hoc AND nganhhoc.id_khoa = khoa.id_khoa AND ketquaxeploai.id_dot = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot));
+        return $obj->fetchAll();
+    }
+
+    public function ketquaxeploai__Get_By_Id_Dot_Summary_For_All_Lop($id_dot) {
+        $obj = $this->connect->prepare("SELECT count(*) as sum_so_luong, xep_loai FROM ketquaxeploai WHERE id_dot=? GROUP BY xep_loai");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot));
+        return $obj->fetchAll();
+    }
+
+    public function ketquaxeploai__Get_By_Id_Dot_All_For_All_Lop($id_dot) {
+        $obj = $this->connect->prepare("SELECT COUNT(*) as sum FROM ketquaxeploai WHERE id_dot=?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot));
+        return $obj->fetch();
+    }
+
+    public function ketquaxeploai__Get_Average_Score_By_Dot_For_All_Lop() {
+        $obj = $this->connect->prepare("SELECT ketquaxeploai.id_dot, dotchamdiem.ten_dot, hocky.ten_hoc_ky, namhoc.ten_nam_hoc, AVG(ketquaxeploai.ket_qua) as avg_score FROM ketquaxeploai JOIN dotchamdiem ON ketquaxeploai.id_dot = dotchamdiem.id_dot JOIN hocky ON dotchamdiem.id_hoc_ky = hocky.id_hoc_ky JOIN namhoc ON hocky.id_nam_hoc = namhoc.id_nam_hoc GROUP BY ketquaxeploai.id_dot ORDER BY namhoc.ngay_bat_dau ASC, hocky.ngay_bat_dau ASC");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute();
+        return $obj->fetchAll();
+    }
+
+    public function ketquaxeploai__Get_Average_Score_By_Dot($id_lop_hoc) {
+        $obj = $this->connect->prepare("SELECT ketquaxeploai.id_dot, dotchamdiem.ten_dot, hocky.ten_hoc_ky, namhoc.ten_nam_hoc, AVG(ketquaxeploai.ket_qua) as avg_score FROM ketquaxeploai JOIN dotchamdiem ON ketquaxeploai.id_dot = dotchamdiem.id_dot JOIN hocky ON dotchamdiem.id_hoc_ky = hocky.id_hoc_ky JOIN namhoc ON hocky.id_nam_hoc = namhoc.id_nam_hoc WHERE ketquaxeploai.id_lop_hoc=? GROUP BY ketquaxeploai.id_dot ORDER BY namhoc.ngay_bat_dau ASC, hocky.ngay_bat_dau ASC");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_lop_hoc));
+        return $obj->fetchAll();
+    }
 }
 ?>
