@@ -373,13 +373,10 @@ if (!isset($_SESSION['admin'])) {
         if (isset($_GET['page']) && $_GET['page'] == "quan-ly-dot-cham-diem" && $_GET['status'] == "not-found") {
             // Nhựt sửa lỗi: Thông báo riêng khi đợt chấm điểm không tồn tại hoặc request sai.
             echo "<script>Toast.fire(" . json_encode("Không tìm thấy dữ liệu") . ", " . json_encode("Đợt chấm điểm không tồn tại hoặc dữ liệu yêu cầu không hợp lệ.") . ", " . json_encode("error") . ")</script>";
-        } else if (isset($_GET['page']) && $_GET['page'] == "quan-ly-xep-loai" && $_GET['status'] == "duplicate-name") {
-            // Nhựt sửa lỗi: Thông báo riêng khi tên xếp loại bị trùng.
-            echo "<script>Toast.fire(" . json_encode("Trùng tên xếp loại") . ", " . json_encode("Tên xếp loại đã tồn tại. Vui lòng nhập tên khác.") . ", " . json_encode("error") . ")</script>";
         }
         
-        $inline_error_pages = ['quan-ly-khoa', 'quan-ly-hoc-ky', 'quan-ly-nam-hoc', 'quan-ly-khoa-hoc', 'quan-ly-nganh-hoc', 'quan-ly-trinh-do', 'quan-ly-lop-hoc', 'quan-ly-sinh-vien', 'quan-ly-bi-thu-doan-khoa', 'quan-ly-giang-vien', 'quan-ly-phan-cong', 'quan-ly-tai-khoan'];
-        $inline_error_statuses = ['duplicate', 'duplicate-nganh-hoc', 'invalid', 'invalid-ten-khoa', 'invalid-ghichu', 'invalid-ten-hoc-ky', 'invalid-ngay', 'invalid-ten-nam-hoc', 'invalid-ten-khoa-hoc', 'invalid-ten-nganh-hoc', 'invalid-ten-trinh-do', 'invalid-ten-lop-hoc', 'invalid-khoa', 'invalid-nganh-hoc', 'invalid-khoa-hoc', 'invalid-trinh-do', 'invalid-sdt', 'duplicate-bithu', 'duplicate-giangvien', 'duplicate-phancong', 'duplicate-ma-sinh-vien', 'duplicate-email-sinh-vien'];
+        $inline_error_pages = ['quan-ly-xep-loai', 'quan-ly-khoa', 'quan-ly-hoc-ky', 'quan-ly-nam-hoc', 'quan-ly-khoa-hoc', 'quan-ly-nganh-hoc', 'quan-ly-trinh-do', 'quan-ly-lop-hoc', 'quan-ly-sinh-vien', 'quan-ly-bi-thu-doan-khoa', 'quan-ly-giang-vien', 'quan-ly-phan-cong', 'quan-ly-tai-khoan', 'quan-ly-dieu', 'quan-ly-muc', 'quan-ly-khoan', 'quan-ly-mau-phieu', 'quan-ly-dot-cham-diem', 'quan-ly-phieu-cham-diem', 'quan-ly-ket-qua'];
+        $inline_error_statuses = ['duplicate-name', 'overlap-xep-loai', 'duplicate', 'duplicate-nganh-hoc', 'invalid', 'invalid-ten-khoa', 'invalid-ghichu', 'invalid-ten-hoc-ky', 'invalid-ngay', 'invalid-ten-nam-hoc', 'invalid-ten-khoa-hoc', 'invalid-ten-nganh-hoc', 'invalid-ten-trinh-do', 'invalid-ten-lop-hoc', 'invalid-khoa', 'invalid-nganh-hoc', 'invalid-khoa-hoc', 'invalid-trinh-do', 'invalid-sdt', 'duplicate-bithu', 'duplicate-giangvien', 'duplicate-phancong', 'duplicate-ma-sinh-vien', 'duplicate-email-sinh-vien', 'incomplete-xep-loai', 'duplicate-ket-qua'];
         $is_inline_error = (isset($_GET['page']) && in_array($_GET['page'], $inline_error_pages) && (in_array($_GET['status'], $inline_error_statuses) || (strpos($_GET['status'], 'invalid-') === 0 && $_GET['status'] != 'invalid-import-file')));
 
         if (!$is_inline_error) {

@@ -112,8 +112,10 @@
                 $ten_xep_loai = $xeploai->xeploai__Normalize_Name($ten_xep_loai);
 
                 // Nhá»±t sá»­a lá»—i: KhÃ´ng lÆ°u xáº¿p loáº¡i khi tÃªn/Ä‘iá»ƒm/háº¡ báº­c khÃ´ng há»£p lá»‡.
-                if (!xep_loai__Validate_Data($ten_xep_loai, $can_duoi, $can_tren, $ha_bac)) {
-                    xep_loai__Redirect('invalid');
+                $validation = xep_loai__Validate_Data($ten_xep_loai, $can_duoi, $can_tren, $ha_bac);
+                if ($validation !== 'valid') {
+                    xep_loai_store_old_input('add', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu);
+                    xep_loai__Redirect($validation);
                 }
 
                 try {
@@ -124,12 +126,14 @@
                     // Nhá»±t sá»­a lá»—i: KhÃ´ng cho thÃªm xáº¿p loáº¡i trÃ¹ng tÃªn.
                     if ($xeploai->xeploai__Check_Name($ten_xep_loai)) {
                         $xeploai->connect->rollBack();
+                        xep_loai_store_old_input('add', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu);
                         xep_loai__Redirect('duplicate-name');
                     }
 
                     // Nhá»±t sá»­a lá»—i: KhÃ´ng cho thÃªm khoáº£ng Ä‘iá»ƒm chá»“ng lÃªn xáº¿p loáº¡i khÃ¡c.
                     if ($xeploai->xeploai__Check_Khoang_Diem_Ton_Tai($can_duoi, $can_tren)) {
                         $xeploai->connect->rollBack();
+                        xep_loai_store_old_input('add', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu);
                         xep_loai__Redirect('overlap-xep-loai');
                     }
 
@@ -182,8 +186,10 @@
                 // Nhựt sửa lỗi: Kết quả cũ trong ketquaxeploai là snapshot nên sau khi Đợt kết thúc vẫn cho phép cập nhật Xếp loại.
 
                 // Nhá»±t sá»­a lá»—i: KhÃ´ng cáº­p nháº­t xáº¿p loáº¡i khi tÃªn/Ä‘iá»ƒm/háº¡ báº­c khÃ´ng há»£p lá»‡.
-                if (!xep_loai__Validate_Data($ten_xep_loai, $can_duoi, $can_tren, $ha_bac)) {
-                    xep_loai__Redirect('invalid');
+                $validation = xep_loai__Validate_Data($ten_xep_loai, $can_duoi, $can_tren, $ha_bac);
+                if ($validation !== 'valid') {
+                    xep_loai_store_old_input('update', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu, $id_xep_loai);
+                    xep_loai__Redirect($validation);
                 }
 
                 try {
@@ -200,12 +206,14 @@
                     // Nhá»±t sá»­a lá»—i: KhÃ´ng cho cáº­p nháº­t tÃªn xáº¿p loáº¡i trÃ¹ng vá»›i báº£n ghi khÃ¡c.
                     if ($xeploai->xeploai__Check_Name_Update($id_xep_loai, $ten_xep_loai)) {
                         $xeploai->connect->rollBack();
+                        xep_loai_store_old_input('update', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu, $id_xep_loai);
                         xep_loai__Redirect('duplicate-name');
                     }
 
                     // Nhá»±t sá»­a lá»—i: Khi update pháº£i loáº¡i trá»« chÃ­nh báº£n ghi Ä‘ang sá»­a lÃºc kiá»ƒm tra chá»“ng khoáº£ng Ä‘iá»ƒm.
                     if ($xeploai->xeploai__Check_Khoang_Diem_Ton_Tai($can_duoi, $can_tren, $id_xep_loai)) {
                         $xeploai->connect->rollBack();
+                        xep_loai_store_old_input('update', $ten_xep_loai, $can_duoi, $can_tren, $ha_bac, $ghi_chu, $id_xep_loai);
                         xep_loai__Redirect('overlap-xep-loai');
                     }
 
