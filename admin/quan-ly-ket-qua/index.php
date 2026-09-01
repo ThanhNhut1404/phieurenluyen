@@ -152,19 +152,19 @@
              <?php endif; ?>
          </div>
          <div class="card-body">
-             <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%">
+             <table id="tablejs" class="table table-bordered table-striped display responsive nowrap" width="100%" style="font-size: 14px;">
                   <thead>
                       <tr>
-                          <th style="width: 5%">STT</th>
+                          <th style="width: 3%">STT</th>
                           <!-- Nhựt sửa: Đổi tên cột từ Mã sinh viên thành MSSV -->
-                          <th style="width: 10%">MSSV</th>
+                          <th style="width: 9%">MSSV</th>
                           <!-- Nhựt sửa: Đổi tên cột từ Tên sinh viên thành HỌ VÀ TÊN -->
-                          <th style="width: 20%">HỌ VÀ TÊN</th>
-                          <th style="width: 10%">Tên lớp</th>
-                          <th style="width: 12%">Điểm rèn luyện</th>
-                          <th style="width: 13%">Kết quả xếp loại</th>
-                          <th style="width: 12%">Ngày xếp loại</th>
-                          <th style="width: 18%">Ghi chú</th>
+                          <th style="width: 18%">HỌ VÀ TÊN</th>
+                          <th style="width: 8%">Tên lớp</th>
+                          <th class="text-center" style="width: 9%">Điểm rèn luyện</th>
+                          <th class="text-center" style="width: 11%">Kết quả xếp loại</th>
+                          <th class="text-center" style="width: 9%">Ngày xếp loại</th>
+                          <th style="width: 33%">Ghi chú</th>
                       </tr>
                   </thead>
                  <tbody>
@@ -176,9 +176,9 @@
                          <td><?=htmlspecialchars($item->ma_sinh_vien ?? "", ENT_QUOTES, 'UTF-8')?></td>
                          <td><?=htmlspecialchars($item->ten_sinh_vien ?? "", ENT_QUOTES, 'UTF-8')?></td>
                          <td><?=htmlspecialchars($item->ten_lop_hoc ?? "", ENT_QUOTES, 'UTF-8')?></td>
-                         <td><?=htmlspecialchars($item->ket_qua ?? "", ENT_QUOTES, 'UTF-8')?></td>
-                         <td><?=htmlspecialchars($item->xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
-                         <td><?=htmlspecialchars($item->ngay_xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td class="text-center"><?=htmlspecialchars($item->ket_qua ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td class="text-center"><?=htmlspecialchars($item->xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td class="text-center"><?= $item->ngay_xep_loai ? date('d/m/Y', strtotime($item->ngay_xep_loai)) : "" ?></td>
                          <td>
                              <?php
                              $ghi_chu_text = htmlspecialchars($item->ghi_chu ?? "", ENT_QUOTES, 'UTF-8');

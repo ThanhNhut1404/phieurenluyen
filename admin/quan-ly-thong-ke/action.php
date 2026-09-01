@@ -44,6 +44,11 @@ require '../../models/getModel.php';
                     $res = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
                 }
 
+                if (empty($res)) {
+                    header("location:../index.php?page=quan-ly-thong-ke&status=export-failed");
+                    exit();
+                }
+
                 $objPHPExcel = new PHPExcel(); 
                 $objDrawing = new PHPExcel_Worksheet_Drawing();    //create object for Worksheet drawing
               

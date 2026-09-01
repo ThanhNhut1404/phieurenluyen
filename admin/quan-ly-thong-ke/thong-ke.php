@@ -144,6 +144,22 @@ foreach ($trend_data_raw as $t) {
 }
 // ========================================================
 
+// === TÍNH TOÁN DỮ LIỆU THẺ KPI ===
+$kpi_tong_sv = array_sum($data_tiendo);
+$kpi_hoan_thanh = $kpi_tong_sv > 0 ? round(($tien_do_4 / $kpi_tong_sv) * 100, 1) : 0;
+
+$sum_diem = 0;
+$count_diem = 0;
+foreach($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot as $item) {
+    if (isset($item->ket_qua) && is_numeric($item->ket_qua)) {
+        $sum_diem += (float)$item->ket_qua;
+        $count_diem++;
+    }
+}
+$kpi_diem_tb = $count_diem > 0 ? round($sum_diem / $count_diem, 2) : 0;
+$kpi_yeu_kem = (isset($chart_map['Yếu']) ? $chart_map['Yếu'] : 0) + (isset($chart_map['Kém']) ? $chart_map['Kém'] : 0);
+// ===================================
+
 ?>
 
 
@@ -201,12 +217,76 @@ foreach ($trend_data_raw as $t) {
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
+            <!-- Thẻ KPI -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon" style="background-color: rgba(23, 162, 184, 0.1); color: #17a2b8; border: 1px solid rgba(23, 162, 184, 0.3);"><i class="ri-group-line"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text" style="font-weight: bold; color: #17a2b8;">Tổng số Sinh viên</span>
+                            <span class="info-box-number"><?=$kpi_tong_sv?></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon" style="background-color: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.3);"><i class="ri-checkbox-circle-line"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text" style="font-weight: bold; color: #28a745;">Đã duyệt (Hoàn thành)</span>
+                            <span class="info-box-number"><?=$kpi_hoan_thanh?> <small>%</small></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix hidden-md-up"></div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon" style="background-color: rgba(0, 123, 255, 0.1); color: #007bff; border: 1px solid rgba(0, 123, 255, 0.3);"><i class="ri-star-line"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text" style="font-weight: bold; color: #007bff;">Điểm Trung Bình</span>
+                            <span class="info-box-number"><?=$kpi_diem_tb?></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon" style="background-color: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.3);"><i class="ri-error-warning-line"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text" style="font-weight: bold; color: #dc3545;">Sinh viên Yếu/Kém</span>
+                            <span class="info-box-number"><?=$kpi_yeu_kem?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row (Thẻ KPI) -->
 
+            <!-- BENTO BOX LAYOUT (Idea 1) -->
+            <div class="row mb-3">
+                <!-- Cột trái (8 phần): Biểu đồ xu hướng (Quan trọng nhất) -->
+                <div class="col-md-8">
+                    <!-- TREND LINE CHART -->
+                    <div class="card card-navy card-outline h-100 mb-3">
+                        <div class="card-header" style="background-color: #e9ecef; padding: 8px 15px;">
+                            <h3 class="card-title" style="color: #001f3f; font-weight: bold;">Xu hướng điểm rèn luyện qua các Đợt / Học kỳ</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn-chart-download navy" onclick="downloadChart('trendChart', 'Xu_huong_diem_ren_luyen')" title="Tải hình ảnh biểu đồ">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex align-items-center">
+                            <div class="chart w-100">
+                                <canvas id="trendChart"
+                                    style="min-height: 300px; height: 300px; max-height: 300px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cột phải (4 phần): Biểu đồ tròn Tỷ lệ (Quan trọng nhì) -->
+                <div class="col-md-4">
                     <!-- DONUT CHART -->
-                    <div class="card card-danger card-outline">
-                        <div class="card-header" style="background-color: #e9ecef;">
+                    <div class="card card-danger card-outline h-100 mb-3">
+                        <div class="card-header" style="background-color: #e9ecef; padding: 8px 15px;">
                             <h3 class="card-title" style="color: #001f3f; font-weight: bold;">Tỷ lệ xếp loại</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn-chart-download danger" onclick="downloadChart('donutChart', 'Ty_le_xep_loai')" title="Tải hình ảnh biểu đồ">
@@ -214,18 +294,21 @@ foreach ($trend_data_raw as $t) {
                                 </button>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body d-flex justify-content-center align-items-center">
                             <canvas id="donutChart"
-                                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                                style="min-height: 300px; height: 300px; max-height: 300px; max-width: 100%;"></canvas>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
+                </div>
+            </div>
 
+            <!-- Hàng 2: Các biểu đồ phụ trợ (4-4-4) -->
+            <div class="row">
+                <div class="col-md-4">
                     <!-- PROGRESS BAR CHART -->
-                    <div class="card card-primary card-outline">
-                        <div class="card-header" style="background-color: #e9ecef;">
-                            <h3 class="card-title" style="color: #001f3f; font-weight: bold;">Tiến độ chấm điểm <span style="font-size: 0.9rem; font-weight: normal; color: #001f3f;">(Tổng cộng: <?=array_sum($data_tiendo)?> phiếu)</span></h3>
+                    <div class="card card-primary card-outline mb-3">
+                        <div class="card-header" style="background-color: #e9ecef; padding: 8px 15px;">
+                            <h3 class="card-title" style="color: #001f3f; font-weight: bold; font-size: 1rem;">Tiến độ chấm <span style="font-size: 0.85rem; font-weight: normal; color: #001f3f;">(Σ <?=array_sum($data_tiendo)?>)</span></h3>
                             <div class="card-tools">
                                 <button type="button" class="btn-chart-download primary" onclick="downloadChart('progressChart', 'Tien_do_cham_diem')" title="Tải hình ảnh biểu đồ">
                                     <i class="fas fa-image"></i>
@@ -236,17 +319,14 @@ foreach ($trend_data_raw as $t) {
                             <canvas id="progressChart"
                                 style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
-
                 </div>
-                <!-- /.col (LEFT) -->
-                <div class="col-md-6">
+
+                <div class="col-md-4">
                     <!-- BAR CHART -->
-                    <div class="card card-success card-outline">
-                        <div class="card-header" style="background-color: #e9ecef;">
-                            <h3 class="card-title" style="color: #001f3f; font-weight: bold;">Phân bố số lượng</h3>
+                    <div class="card card-success card-outline mb-3">
+                        <div class="card-header" style="background-color: #e9ecef; padding: 8px 15px;">
+                            <h3 class="card-title" style="color: #001f3f; font-weight: bold; font-size: 1rem;">Phân bố số lượng</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn-chart-download success" onclick="downloadChart('barChart', 'Phan_bo_so_luong')" title="Tải hình ảnh biểu đồ">
                                     <i class="fas fa-image"></i>
@@ -259,14 +339,14 @@ foreach ($trend_data_raw as $t) {
                                     style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                             </div>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
+                </div>
 
+                <div class="col-md-4">
                     <!-- HISTOGRAM CHART -->
-                    <div class="card card-info card-outline">
-                        <div class="card-header" style="background-color: #e9ecef;">
-                            <h3 class="card-title" style="color: #001f3f; font-weight: bold;">Phổ điểm rèn luyện</h3>
+                    <div class="card card-info card-outline mb-3">
+                        <div class="card-header" style="background-color: #e9ecef; padding: 8px 15px;">
+                            <h3 class="card-title" style="color: #001f3f; font-weight: bold; font-size: 1rem;">Phổ điểm rèn luyện</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn-chart-download info" onclick="downloadChart('histogramChart', 'Pho_diem_ren_luyen')" title="Tải hình ảnh biểu đồ">
                                     <i class="fas fa-image"></i>
@@ -279,35 +359,7 @@ foreach ($trend_data_raw as $t) {
                                     style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                             </div>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
-
-                </div>
-                <!-- /.col (RIGHT) -->
-            </div>
-            <!-- /.row -->
-            
-            <div class="row">
-                <div class="col-12">
-                    <!-- TREND LINE CHART -->
-                    <div class="card card-navy card-outline">
-                        <div class="card-header" style="background-color: #e9ecef;">
-                            <h3 class="card-title" style="color: #001f3f; font-weight: bold;">Xu hướng điểm rèn luyện qua các Đợt / Học kỳ</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn-chart-download navy" onclick="downloadChart('trendChart', 'Xu_huong_diem_ren_luyen')" title="Tải hình ảnh biểu đồ">
-                                    <i class="fas fa-image"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart">
-                                <canvas id="trendChart"
-                                    style="min-height: 250px; height: 300px; max-height: 300px; max-width: 100%;"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.card -->
                 </div>
             </div>
 
@@ -754,18 +806,26 @@ foreach ($trend_data_raw as $t) {
         responsive: true,
         // Đưa bảng chú giải (Legend) xuống dưới cùng
         legend: {
-            position: 'bottom'
+            position: 'bottom',
+            labels: {
+                padding: 25,
+                boxWidth: 30
+            }
         },
         // Tùy chỉnh Tooltip để hiện cả Số lượng và %
         tooltips: {
             callbacks: {
                 label: function(tooltipItem, data) {
                     var label = data.labels[tooltipItem.index] || '';
-                    var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
                     var dataset = data.datasets[tooltipItem.datasetIndex];
-                    var total = dataset.data.reduce(function(acc, current) {
-                        return acc + current;
-                    }, 0);
+                    var value = dataset.data[tooltipItem.index];
+                    var meta = this._chart.getDatasetMeta(tooltipItem.datasetIndex);
+                    var total = 0;
+                    meta.data.forEach(function(arc, index) {
+                        if (!arc.hidden) {
+                            total += dataset.data[index];
+                        }
+                    });
                     var percentage = total > 0 ? Math.round((value / total) * 100) : 0;
                     return label + ': ' + value + ' Sinh viên (' + percentage + '%)';
                 }
@@ -784,16 +844,18 @@ foreach ($trend_data_raw as $t) {
             var height = chart.chart.height;
             var ctx = chart.chart.ctx;
 
-            // Tính tổng
-            var total = 0;
-            chart.data.datasets[0].data.forEach(function(value) {
-                total += value;
-            });
-
             ctx.restore();
             
             var meta = chart.getDatasetMeta(0);
             if (!meta.data || meta.data.length === 0) return;
+
+            // Tính tổng (chỉ lấy những phần đang bật)
+            var total = 0;
+            meta.data.forEach(function(arc, index) {
+                if (!arc.hidden) {
+                    total += chart.data.datasets[0].data[index];
+                }
+            });
             
             // Lấy tọa độ tâm chính xác của vòng tròn Donut
             var centerX = meta.data[0]._model.x;
@@ -820,6 +882,8 @@ foreach ($trend_data_raw as $t) {
             ctx.textBaseline = "middle";
 
             meta.data.forEach(function(arc, index) {
+                if (arc.hidden) return; // Nếu màu bị tắt thì không vẽ %
+
                 var value = dataset.data[index];
                 if (value > 0) {
                     var percentage = Math.round((value / total) * 100) + "%";
