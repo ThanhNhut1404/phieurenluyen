@@ -215,6 +215,7 @@
         const labels = ['Học kỳ 1', 'Học kỳ 2', 'Học kỳ 3'];
         const scores = [null, null, null];
         const bgColors = [null, null, null];
+        const classifications = [null, null, null];
         
         yearData.forEach(d => {
             let idx = labels.indexOf(d.ten_hoc_ky);
@@ -228,11 +229,15 @@
                 const score = parseFloat(d.ket_qua);
                 scores[idx] = score;
                 
-                if(score >= 90) bgColors[idx] = 'rgba(40, 167, 69, 0.7)'; // Xuất sắc (green)
-                else if(score >= 80) bgColors[idx] = 'rgba(0, 123, 255, 0.7)'; // Tốt (blue)
-                else if(score >= 65) bgColors[idx] = 'rgba(23, 162, 184, 0.7)'; // Khá (info)
-                else if(score >= 50) bgColors[idx] = 'rgba(255, 193, 7, 0.7)'; // TB (yellow)
-                else bgColors[idx] = 'rgba(220, 53, 69, 0.7)'; // Yếu/Kém (red)
+                const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
+                classifications[idx] = xepLoai;
+                const xlLower = xepLoai.toLowerCase();
+                
+                if(xlLower.includes('xuất sắc')) bgColors[idx] = 'rgba(40, 167, 69, 0.7)';
+                else if(xlLower.includes('tốt')) bgColors[idx] = 'rgba(0, 123, 255, 0.7)';
+                else if(xlLower.includes('khá')) bgColors[idx] = 'rgba(23, 162, 184, 0.7)';
+                else if(xlLower.includes('trung bình')) bgColors[idx] = 'rgba(255, 193, 7, 0.7)';
+                else bgColors[idx] = 'rgba(220, 53, 69, 0.7)';
             }
         });
 
@@ -240,6 +245,7 @@
             myBarChart.data.labels = labels;
             myBarChart.data.datasets[0].data = scores;
             myBarChart.data.datasets[0].backgroundColor = bgColors;
+            myBarChart.data.datasets[0].classifications = classifications;
             myBarChart.update();
         } else {
             const ctx = document.getElementById('chartKetQua');
@@ -259,10 +265,16 @@
                         data: scores,
                         backgroundColor: bgColors,
                         borderWidth: 0,
-                        borderRadius: 4
+                        borderRadius: 4,
+                        classifications: classifications
                     }]
                 },
                 options: {
+                    layout: {
+                        padding: {
+                            top: 20
+                        }
+                    },
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
@@ -271,13 +283,57 @@
                             max: 100,
                             ticks: {
                                 stepSize: 20
+                            },
+                            title: {
+                                display: true,
+                                text: 'Điểm số',
+                                font: { weight: 'bold' }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Học kỳ',
+                                font: { weight: 'bold' }
                             }
                         }
                     },
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const score = context.raw;
+                                    const classification = context.dataset.classifications[context.dataIndex];
+                                    let lines = ['Điểm rèn luyện: ' + score];
+                                    if(classification) lines.push('Xếp loại: ' + classification);
+                                    return lines;
+                                }
+                            }
+                        }
                     }
-                }
+                },
+                plugins: [{
+                    id: 'barLabels',
+                    afterDatasetsDraw(chart) {
+                        const { ctx } = chart;
+                        chart.data.datasets.forEach((dataset, i) => {
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach((bar, index) => {
+                                const data = dataset.data[index];
+                                if (data !== null && data !== undefined) {
+                                    ctx.save();
+                                    ctx.font = 'bold 13px Arial';
+                                    ctx.fillStyle = '#333';
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'bottom';
+                                    ctx.fillText(data, bar.x, bar.y - 5);
+                                    ctx.restore();
+                                }
+                            });
+                        });
+                    }
+                }]
             });
         }
     }
@@ -315,20 +371,23 @@
         if(!d) return;
         
         const score = parseFloat(d.ket_qua);
-        const remainScore = 100 - score;
+        const remainScore = 100 - score > 0 ? 100 - score : 0;
+        
+        const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
+        const xlLower = xepLoai.toLowerCase();
         
         let color = '#28a745';
-        if(score >= 90) color = 'rgba(40, 167, 69, 0.9)';
-        else if(score >= 80) color = 'rgba(0, 123, 255, 0.9)';
-        else if(score >= 65) color = 'rgba(23, 162, 184, 0.9)';
-        else if(score >= 50) color = 'rgba(255, 193, 7, 0.9)';
-        else color = 'rgba(220, 53, 69, 0.9)';
+        if(xlLower.includes('xuất sắc')) color = 'rgba(40, 167, 69, 0.9)';
+        else if(xlLower.includes('tốt')) color = 'rgba(0, 123, 255, 0.9)';
+        else if(xlLower.includes('khá')) color = 'rgba(23, 162, 184, 0.9)';
+        else if(xlLower.includes('trung bình')) color = 'rgba(255, 193, 7, 0.9)';
+        else color = 'rgba(220, 53, 69, 0.9)'; // Yếu/Kém
 
         const textEl = document.getElementById('chartTienDoCenterText');
         const labelEl = document.getElementById('chartTienDoLabel');
         if(textEl) textEl.innerText = score + '/100';
         if(textEl) textEl.style.color = color;
-        if(labelEl) labelEl.innerText = 'Tiến độ: HK ' + hk + ' (' + year + ')';
+        if(labelEl) labelEl.innerHTML = 'Tiến độ: ' + hk + ' (' + year + ') <br><span style="color:' + color + '; font-size: 15px;">Xếp loại: ' + xepLoai + '</span>';
 
         if(myDoughnutChart) {
             myDoughnutChart.data.datasets[0].data = [score, remainScore];

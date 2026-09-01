@@ -98,7 +98,7 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
                 <a href="#" class="nav-link">
                     <i class="nav-icon ri-team-line"></i>
                     <p>
-                        Quản lý tài khoản
+                        Quản lý người dùng
                         <i class="right ri-arrow-left-s-line"></i>
                     </p>
                 </a>
