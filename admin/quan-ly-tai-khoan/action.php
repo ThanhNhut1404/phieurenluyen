@@ -225,6 +225,33 @@ if (isset($_GET["req"])) {
             }
             exit();
 
+        case "reset_ajax":
+            $id_tai_khoan = isset($_POST["id_tai_khoan"]) ? $_POST["id_tai_khoan"] : '';
+            
+            if (!$id_tai_khoan) {
+                echo json_encode(["status" => "error", "message" => "Thiếu thông tin."]);
+                exit();
+            }
+            
+            // Sinh mật khẩu ngẫu nhiên 8 ký tự
+            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#';
+            $mat_khau = '';
+            for ($i = 0; $i < 8; $i++) {
+                $mat_khau .= $characters[rand(0, strlen($characters) - 1)];
+            }
+
+            $status = $taikhoan->taikhoan__Reset($id_tai_khoan, password_hash($mat_khau, PASSWORD_BCRYPT));
+
+            if ($status != 0) {
+                echo json_encode([
+                    "status" => "success",
+                    "password" => $hashpassword->Encryption($mat_khau)
+                ]);
+            } else {
+                echo json_encode(["status" => "error", "message" => "Không thể khôi phục mật khẩu."]);
+            }
+            exit();
+
         case "active":
             $status = 0;
             $id_tai_khoan = isset($_GET["id_tai_khoan"]) ? $_GET["id_tai_khoan"] : '';

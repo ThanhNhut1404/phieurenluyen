@@ -43,6 +43,12 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 $sinhvien_list = [];
 if ($id_lop_hoc != -2) {
     switch($filter) {
+        case 'chua_tu_cham':
+            $sinhvien_list = $sinhvien->sinhvien__Get_Chua_Tu_Cham($id_dot, $id_lop_hoc);
+            break;
+        case 'da_tu_cham':
+            $sinhvien_list = $sinhvien->sinhvien__Get_Da_Tu_Cham($id_dot, $id_lop_hoc);
+            break;
         case 'chua_btdk_cham':
             $sinhvien_list = $sinhvien->sinhvien__Get_Chua_BTDK_Cham($id_dot, $id_lop_hoc);
             break;
@@ -153,6 +159,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                             <label>Lọc danh sách</label>
                             <select class="form-control" name="filter" onchange="this.form.submit()">
                                 <option value="all" <?= $filter == 'all' ? 'selected' : '' ?>>Tất cả sinh viên</option>
+                                <option value="da_tu_cham" <?= $filter == 'da_tu_cham' ? 'selected' : '' ?>>Sinh viên có đánh giá</option>
+                                <option value="chua_tu_cham" <?= $filter == 'chua_tu_cham' ? 'selected' : '' ?>>Sinh viên không tự đánh giá</option>
                                 <option value="da_btdk_cham" <?= $filter == 'da_btdk_cham' ? 'selected' : '' ?>>Đã được Đoàn khoa chấm</option>
                                 <option value="chua_btdk_cham" <?= $filter == 'chua_btdk_cham' ? 'selected' : '' ?>>Chưa được Đoàn khoa chấm</option>
                                 <option value="da_cvht_cham" <?= $filter == 'da_cvht_cham' ? 'selected' : '' ?>>Đã được Cố vấn học tập chấm</option>
@@ -536,12 +544,150 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         </div>
                     </div>
                     <div class="card-footer">
+                        <?php 
+                            // Xử lý hiển thị nút Hạ bậc / Hủy hạ bậc
+                            $show_ha_bac = false;
+                            $show_huy_ha_bac = false;
+                            $admin_has_processed = isset($ketquaxeploai__Get_By_Id_Phieu->id_ket_qua);
+                            
+                            // Chỉ cho phép thao tác khi thời gian sinh viên nộp phiếu ĐÃ KẾT THÚC
+                            // YÊU CẦU MỚI: Chỉ xuất hiện đối với sinh viên KHÔNG TỰ CHẤM ĐIỂM (chưa nộp phiếu, trang_thai == 1)
+                            if ($dot_expired && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai == 1) {
+                                if ($admin_has_processed && isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false)) {
+                                    $show_huy_ha_bac = true;
+                                } else {
+                                    $show_ha_bac = true;
+                                }
+                            }
+                            
+                            // Tính toán mức trừ điểm và điểm dự kiến nếu hiện nút Hạ bậc
+                            $base_score = 0;
+                            $deduction = 0;
+                            $new_score = 0;
+                            if ($show_ha_bac && $admin_has_processed) {
+                                // Lấy điểm gốc trực tiếp từ cột kq_gv của phiếu (đảm bảo đồng bộ với khi xử lý action hạ bậc)
+                                $kq_gv_arr = [];
+                                if (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv)) {
+                                    $kq_gv_arr = $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv);
+                                }
+                                $base_score = $phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($kq_gv_arr);
+                                
+                                $original_xeploai = $xeploai->xeploai__Get_By_Kq($base_score);
+                                if ($original_xeploai) {
+                                    $deduction = $original_xeploai->ha_bac;
+                                    if ($base_score == 100) {
+                                        $deduction = 11;
+                                    }
+                                    $new_score = $base_score - $deduction;
+                                    if ($new_score < 0) $new_score = 0;
+                                }
+                            }
+                        ?>
+                        
+                        <?php if ($show_ha_bac): ?>
+                            <?php if ($admin_has_processed): ?>
+                                <button type="button" class="btn btn-danger btn-lg float-left font-weight-bold" onclick="xacNhanHaBac(<?= $ketquaxeploai__Get_By_Id_Phieu->id_ket_qua ?>, <?= $base_score ?>, <?= $deduction ?>, <?= $new_score ?>)">
+                                    <i class="fas fa-level-down-alt"></i> Hạ bậc
+                                </button>
+                            <?php else: ?>
+                                <button type="button" class="btn btn-danger btn-lg float-left font-weight-bold" onclick="Swal.fire('Chú ý', 'Quản trị viên cần chạy Tổng kết đợt chấm điểm này trước khi có thể Hạ bậc!', 'warning')">
+                                    <i class="fas fa-level-down-alt"></i> Hạ bậc
+                                </button>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        
+                        <?php if ($show_huy_ha_bac && $admin_has_processed): ?>
+                            <button type="button" class="btn btn-secondary btn-lg float-left font-weight-bold" onclick="xacNhanHuyHaBac(<?= $ketquaxeploai__Get_By_Id_Phieu->id_ket_qua ?>)">
+                                <i class="fas fa-undo"></i> Hủy hạ bậc
+                            </button>
+                        <?php endif; ?>
+
                         <input type="submit" value="Cập nhật" class="btn btn-success btn-lg float-right font-weight-bold" id="submit"
                             <?php // Quân sửa: Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm trên nút submit ?>
                             <?= (!$btdk_has_scored) ? 'disabled' : '' ?>>
                     </div>
                 </div>
             </form>
+
+            <!-- Form ẩn để gửi yêu cầu hạ bậc / hủy hạ bậc -->
+            <form id="form_ha_bac" action="../co-van-hoc-tap/action.php?req=ha_bac" method="post" style="display: none;">
+                <input type="hidden" name="id_ket_qua" id="ha_bac_id_ket_qua" value="">
+                <input type="hidden" name="ly_do" value="Không tự đánh giá rèn luyện (Bị hạ bậc)">
+            </form>
+            
+            <form id="form_huy_ha_bac" action="../co-van-hoc-tap/action.php?req=huy_ha_bac" method="post" style="display: none;">
+                <input type="hidden" name="id_ket_qua" id="huy_ha_bac_id_ket_qua" value="">
+            </form>
+
+            <style>
+                .swal-ha-bac-custom {
+                    width: 600px !important;
+                    max-width: 90vw !important;
+                }
+            </style>
+            <script>
+                function xacNhanHaBac(id_ket_qua, base_score, deduction, new_score) {
+                    let current_ui_score = parseInt(document.getElementById('sum_gv').value) || 0;
+                    
+                    if (current_ui_score !== base_score) {
+                        Swal.fire({
+                            title: 'Cần cập nhật điểm!',
+                            html: 'Điểm trên giao diện hiện tại là <b>' + current_ui_score + '</b> nhưng điểm đã lưu trên hệ thống là <b>' + base_score + '</b>.<br><br>Vui lòng bấm nút <b>Cập nhật</b> để lưu lại điểm chính thức trước khi tiến hành Hạ bậc.',
+                            icon: 'warning',
+                            confirmButtonText: 'Đã hiểu'
+                        });
+                        return;
+                    }
+                    
+                    Swal.fire({
+                        title: '<span style="color: #0f2a5a !important">Xác nhận hạ bậc?</span>',
+                        html: 'Bạn có chắc chắn muốn <b class="text-danger">HẠ BẬC</b> xếp loại của sinh viên này do không tự đánh giá rèn luyện (không nộp phiếu)?<br><br>' +
+                              '<div style="background-color: #f8f9fa; color: #333; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; font-size: 16px; border: 1px solid #dee2e6;">' +
+                              'Tổng điểm hiện tại: <b>' + base_score + ' điểm</b><br>' +
+                              'Mức điểm sẽ bị trừ phạt: <b class="text-danger">-' + deduction + ' điểm</b><br>' +
+                              '<hr style="border-top: 1px solid #dee2e6; margin: 8px 0;">' +
+                              'Điểm dự kiến sau khi hạ: <b class="text-danger" style="font-size: 18px;">' + new_score + ' điểm</b>' +
+                              '</div>' +
+                              '<span class="text-danger"><i>Lưu ý: Thao tác này sẽ trừ trực tiếp vào kết quả xếp loại.</i></span>',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: 'Hủy',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'swal-ha-bac-custom',
+                            confirmButton: 'btn btn-success btn-lg font-weight-bold mx-2 px-4',
+                            cancelButton: 'btn btn-cancel-custom btn-lg font-weight-bold mx-2 px-4'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('ha_bac_id_ket_qua').value = id_ket_qua;
+                            document.getElementById('form_ha_bac').submit();
+                        }
+                    });
+                }
+                function xacNhanHuyHaBac(id_ket_qua) {
+                    Swal.fire({
+                        title: '<span style="color: #0f2a5a !important">Xác nhận hủy hạ bậc?</span>',
+                        html: 'Bạn có chắc chắn muốn <b class="text-warning">HỦY HẠ BẬC</b><br>và khôi phục lại mức xếp loại gốc cho sinh&nbsp;viên&nbsp;này?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Xác nhận',
+                        cancelButtonText: 'Hủy',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'swal-ha-bac-custom',
+                            confirmButton: 'btn btn-success btn-lg font-weight-bold mx-2 px-4',
+                            cancelButton: 'btn btn-cancel-custom btn-lg font-weight-bold mx-2 px-4'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('huy_ha_bac_id_ket_qua').value = id_ket_qua;
+                            document.getElementById('form_huy_ha_bac').submit();
+                        }
+                    });
+                }
+            </script>
 
             <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên (dưới form) -->
             <?php if (count($sinhvien_list) > 0): ?>

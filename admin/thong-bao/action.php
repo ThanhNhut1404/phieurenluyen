@@ -100,7 +100,7 @@ if (isset($_GET["req"]) && $_GET["req"] == 'tao_tai_khoan') {
         if ($lh) {
             $ten_lop = $lh->ten_lop_hoc;
         }
-        $mat_khau_goc = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
+        $mat_khau_goc = "#TDU1234";
     } else {
         // Cố vấn học tập (giảng viên) hoặc Bí thư đoàn khoa
         $id_phan_quyen = $phanquyen->phanquyen__Get_By_Cap_Bac(2)->id_phan_quyen; 
@@ -122,7 +122,7 @@ if (isset($_GET["req"]) && $_GET["req"] == 'tao_tai_khoan') {
                 }
             }
         }
-        $mat_khau_goc = "#TDU123";
+        $mat_khau_goc = "#TDU1234";
     }
 
     $ghi_chu = date("Y-m-d H:i:s");

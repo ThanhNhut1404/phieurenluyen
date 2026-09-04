@@ -152,7 +152,8 @@ if (isset($_GET['req'])) {
                     $dia_chi_thuong_tru = isset($sheetData[$row]['J']) ? trim($sheetData[$row]['J']) : '';
                     $chuc_vu = isset($sheetData[$row]['K']) ? trim($sheetData[$row]['K']) : '';
 
-                    if (empty($ma_sinh_vien)) {
+                    // Bỏ qua im lặng chỉ khi dòng trống hoàn toàn (không có mã, tên và email)
+                    if (empty($ma_sinh_vien) && empty($ten_sinh_vien) && empty($email)) {
                         continue;
                     }
 
@@ -174,7 +175,8 @@ if (isset($_GET['req'])) {
                     }
 
                     // Nhựt sửa: Kiểm tra bằng in_array thay vì gọi query DB mỗi vòng lặp
-                    if (in_array($ma_sinh_vien, $all_mas) || (!empty($email) && in_array($email, $all_emails))) {
+                    // Chặn luôn trường hợp bỏ trống Mã SV hoặc Email để không lỗi hệ thống sau này
+                    if (empty($ma_sinh_vien) || empty($email) || in_array($ma_sinh_vien, $all_mas) || in_array($email, $all_emails)) {
                         $duplicate_rows[] = $sheetData[$row];
                         continue;
                     }

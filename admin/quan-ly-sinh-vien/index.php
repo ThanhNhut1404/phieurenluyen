@@ -764,7 +764,7 @@ if (isset($_GET['status']) && in_array($_GET['status'], ['import-partial-success
     if ($success_count > 0) {
         $text .= "<div style=\'margin-bottom: 10px; color: #28a745;\'>Đã import thành công <b>$success_count</b> sinh viên.</div>";
     }
-    $text .= "<div style=\'margin-bottom: 5px; white-space: nowrap; font-weight: bold; color: #dc3545;\'>Đã bỏ qua <span style=\'color: #112a46;\'>$count_dup</span> sinh viên (trùng Mã SV hoặc Email).</div>";
+    $text .= "<div style=\'margin-bottom: 5px; font-weight: bold; color: #dc3545;\'>Đã bỏ qua <span style=\'color: #112a46;\'>$count_dup</span> sinh viên.<br><small>(trùng lặp hoặc thiếu MSSV/Email)</small></div>";
     $text .= "</div>";
 
     echo "<script>

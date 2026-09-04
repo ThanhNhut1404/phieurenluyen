@@ -67,6 +67,24 @@
             $taikhoan__Get_All = $filtered;
         }
     }
+
+    // Nếu người dùng hiện tại là Manager, ẩn tất cả các tài khoản Admin (cap_bac = 0)
+    if (isset($_SESSION['manager'])) {
+        $arr_phan_nhom_check = [];
+        foreach ($phannhom__Get_All as $pn_item) {
+            $arr_phan_nhom_check[$pn_item->id_phan_nhom] = $pn_item;
+        }
+
+        $filtered = [];
+        foreach ($taikhoan__Get_All as $item) {
+            $pn = isset($arr_phan_nhom_check[$item->id_phan_nhom]) ? $arr_phan_nhom_check[$item->id_phan_nhom] : null;
+            if ($pn && $pn->cap_bac == 0) {
+                continue; // Bỏ qua tài khoản Admin
+            }
+            $filtered[] = $item;
+        }
+        $taikhoan__Get_All = $filtered;
+    }
     ?>
 
 
@@ -316,11 +334,16 @@ button.btn.removeall.btn-outline-secondary:before {
                      <span class="mr-2">
                          <a href="?page=quan-ly-tai-khoan&view=view_all" type="button" class="btn btn-tool">
                              Tất cả <?= count($taikhoan__Get_All_All) ?>
+                         <?php if (!isset($_SESSION['manager'])) : ?>
                          </a> |
                          <a href="?page=quan-ly-tai-khoan&view=view_admin" type="button" class="btn btn-tool">
                              Admin <?= count($taikhoan__Get_All_Admin) ?>
                          </a> |
                          <a href="?page=quan-ly-tai-khoan&view=view_manager" type="button" class="btn btn-tool">
+                         <?php else : ?>
+                         </a> |
+                         <a href="?page=quan-ly-tai-khoan&view=view_manager" type="button" class="btn btn-tool">
+                         <?php endif; ?>
                              Manager <?= count($taikhoan__Get_All_Manager) ?>
                          </a> |
                          <a href="?page=quan-ly-tai-khoan&view=view_btdk" type="button" class="btn btn-tool">
@@ -454,7 +477,7 @@ button.btn.removeall.btn-outline-secondary:before {
                              <td class="text-center" style="text-align: center !important;">
                                  <?php if ($item->email !== 'admin@gmail.com'): ?>
                                  <a href="#" type="button" class="btn btn-sm btn-info"
-                                     onclick="return confirm_sweet('quan-ly-tai-khoan/action.php?req=reset&id_tai_khoan=<?= $item->id_tai_khoan ?>', 'Khôi phục mật khẩu tài khoản này về mặc định?', 'reset')">
+                                     onclick="return reset_password_ajax('<?= $item->id_tai_khoan ?>', '<?= $item->email ?>')">
                                      <i class="ri-key-2-line"></i>
                                  </a>
                                  <?php endif; ?>
@@ -856,6 +879,91 @@ function update_obj(id_tai_khoan) {
 
 function cancel_update() {
     $("#div_update").html('');
+}
+
+function reset_password_ajax(id_tai_khoan, email) {
+    Swal.fire({
+        title: '<span style="color: #ffc107 !important">Xác nhận thao tác?</span>',
+        html: "Bạn có chắc chắn muốn <b style='color: #0f2a5a;'>khôi phục mật khẩu ngẫu nhiên</b> cho tài khoản này và <b style='color: #0f2a5a;'>gửi qua email</b>?",
+        icon: 'warning',
+        width: '36em',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        buttonsStyling: false,
+        customClass: {
+            confirmButton: 'btn btn-success font-weight-bold mx-2 px-4 py-2',
+            cancelButton: 'btn btn-cancel-custom font-weight-bold mx-2 px-4 py-2'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Đang xử lý...',
+                html: 'Vui lòng chờ trong giây lát.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            $.post('quan-ly-tai-khoan/action.php?req=reset_ajax', {
+                'id_tai_khoan': id_tai_khoan,
+                'email': email
+            }, function(response) {
+                try {
+                    let res = JSON.parse(response);
+                    if (res.status === 'success') {
+                        $.post('quan-ly-tai-khoan/mail.php', {
+                            'email': email,
+                            'password': res.password
+                        }, function(mail_data) {
+                            Swal.close();
+                            if (mail_data.includes('Message has been sent')) {
+                                Toast.fire({
+                                    title: 'Thành công!',
+                                    text: 'Đã khôi phục và gửi mật khẩu mới qua email.',
+                                    icon: 'success'
+                                });
+                            } else {
+                                Toast.fire({
+                                    title: 'Cảnh báo!',
+                                    text: 'Khôi phục thành công nhưng gửi email thất bại.',
+                                    icon: 'warning'
+                                });
+                            }
+                        }).fail(function() {
+                            Swal.close();
+                            Toast.fire({
+                                title: 'Lỗi!',
+                                text: 'Không thể kết nối đến máy chủ gửi mail.',
+                                icon: 'error'
+                            });
+                        });
+                    } else {
+                        Swal.close();
+                        Toast.fire({
+                            title: 'Lỗi!',
+                            text: res.message || 'Lỗi khi khôi phục mật khẩu.',
+                            icon: 'error'
+                        });
+                    }
+                } catch(e) {
+                    Swal.close();
+                    Toast.fire({
+                        title: 'Lỗi!',
+                        text: 'Lỗi phản hồi từ máy chủ.',
+                        icon: 'error'
+                    });
+                }
+            }).fail(function() {
+                Swal.close();
+                Toast.fire({
+                    title: 'Lỗi!',
+                    text: 'Không thể kết nối đến máy chủ.',
+                    icon: 'error'
+                });
+            });
+        }
+    });
 }
 
 function send_mail(email, password) {
