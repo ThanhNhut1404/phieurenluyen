@@ -97,38 +97,99 @@
                     $kq .= $val."|";
                 }
                 
-                // Xử lý nén và lưu ảnh minh chứng theo từng mục khi lớp trưởng chấm hộ
+                // BẮT ĐẦU XỬ LÝ UPLOAD/DELETE (Đồng bộ với sinh viên)
                 if (isset($_FILES['minh_chung_muc'])) {
+                    $sv_target = $sinhvien->sinhvien__Get_By_Id($phieu->id_sinh_vien);
+                    $ten_sv = $sv_target ? $sv_target->ten_sinh_vien : "";
+                    $mssv = $sv_target ? $sv_target->ma_sinh_vien : "Unknown";
+                    $base_folder = preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '_', $dot->ten_hoc_ky . "_" . $dot->ten_nam_hoc));
+                    $ten_sv_clean = preg_replace('/[^A-Za-z0-9\-\_\s]/', '', $ten_sv);
+                    $folder_name = $base_folder . "/" . $mssv . "_" . str_replace(' ', '', $ten_sv_clean);
+
                     $files = $_FILES['minh_chung_muc'];
+                    $upload_requests = [];
+                    $upload_mappings = [];
+                    
+                    $order_counter = [];
+                    require_once '../../models/model/muc.php';
+                    $muc = new muc();
+
                     if (isset($files['name']) && is_array($files['name'])) {
                         foreach ($files['name'] as $id_muc => $file_names) {
+                            if (!isset($order_counter[$id_muc])) $order_counter[$id_muc] = 0;
                             foreach ($file_names as $index => $name) {
                                 if ($files['error'][$id_muc][$index] == UPLOAD_ERR_OK && $name != "") {
+                                    $order_counter[$id_muc]++;
+                                    $order = $order_counter[$id_muc];
+                                    
                                     $tmp_name = $files['tmp_name'][$id_muc][$index];
+                                    $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
                                     
-                                    // Gọi hàm nén ảnh (max width 800, quality 60)
-                                    $base64_img = $minhchung->minhchung__Compress_Image($tmp_name, 800, 60);
+                                    $file_content = file_get_contents($tmp_name);
+                                    $base64_file = base64_encode($file_content);
                                     
-                                    if ($base64_img) {
-                                        // Thêm vào database với id_muc
-                                        $minhchung->minhchung__Add($id_phieu, $base64_img, date("Y-m-d H:i:s"), $id_muc);
+                                    if (in_array($ext, ['jpg', 'jpeg', 'png'])) {
+                                         $compressed_base64 = $minhchung->minhchung__Compress_Image($tmp_name, 1024, 70);
+                                         if ($compressed_base64) {
+                                             $base64_file = $compressed_base64;
+                                         } else {
+                                             $base64_file = "data:image/" . $ext . ";base64," . $base64_file;
+                                         }
+                                    } else {
+                                         $base64_file = "data:application/pdf;base64," . $base64_file;
                                     }
+
+                                    $muc_info = $muc->muc__Get_By_Id($id_muc);
+                                    $ten_muc_clean = "Muc" . $id_muc;
+                                    if ($muc_info) {
+                                        $cleaned = preg_replace('/[^A-Za-z0-9\-\_\s]/', '', $muc_info->ten_muc);
+                                        if (!empty(trim($cleaned))) {
+                                            $ten_muc_clean = trim($cleaned);
+                                        }
+                                    }
+                                    $file_name = $mssv . "_" . $ten_muc_clean . "_" . $order . "_" . time() . ".jpg";
+                                    if ($ext == 'pdf') $file_name = str_replace('.jpg', '.pdf', $file_name);
+
+                                    $upload_requests[] = [
+                                        'file_name' => $file_name,
+                                        'folder_name' => $folder_name,
+                                        'base64' => $base64_file
+                                    ];
+                                    $upload_mappings[] = $id_muc;
                                 }
+                            }
+                        }
+                    }
+                    
+                    if (!empty($upload_requests)) {
+                        $uploaded_fileIds = $minhchung->minhchung__Upload_Google_Drive_Multi($upload_requests);
+                        foreach ($uploaded_fileIds as $idx => $fileId) {
+                            if ($fileId) {
+                                $id_muc = $upload_mappings[$idx];
+                                $full_url = "https://drive.google.com/uc?id=" . $fileId;
+                                $minhchung->minhchung__Add($id_phieu, $full_url, date("Y-m-d H:i:s"), $id_muc, 0, null);
                             }
                         }
                     }
                 }
 
-                // Xử lý xóa các minh chứng đã đánh dấu
                 if (isset($_POST['delete_minhchung']) && is_array($_POST['delete_minhchung'])) {
                     foreach ($_POST['delete_minhchung'] as $id_minh_chung_to_delete) {
-                        // Xác minh bảo mật: minh chứng này phải thuộc về phiếu đang chấm
                         $mc = $minhchung->minhchung__Get_By_Id($id_minh_chung_to_delete);
                         if ($mc && $mc->id_phieu == $id_phieu) {
+                            $old_fileId = $mc->hinh_anh;
+                            if (strlen($old_fileId) < 100 || strpos($old_fileId, 'https://') === 0) {
+                                $drive_fileId = $old_fileId;
+                                if (strpos($old_fileId, 'id=') !== false) {
+                                    $drive_fileId = explode('id=', $old_fileId)[1];
+                                }
+                                $minhchung->minhchung__Delete_Google_Drive($drive_fileId);
+                            }
                             $minhchung->minhchung__Delete($id_minh_chung_to_delete);
                         }
                     }
                 }
+                // KẾT THÚC XỬ LÝ UPLOAD/DELETE
 
                 // Chỉ cập nhật điểm nếu phiếu chưa được nộp (trạng thái = 1)
                 // Nếu phiếu đã nộp, sinh viên (lớp trưởng) chỉ được cập nhật minh chứng

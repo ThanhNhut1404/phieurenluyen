@@ -26,6 +26,7 @@ require_once "model/trinhdo.php";
 require_once "model/xeploai.php";
 require_once "model/hashpassword.php";
 require_once "model/yeucaukichhoat.php";
+require_once "model/thongbao.php";
 
 $bithudoankhoa = new bithudoankhoa();
 $bocauhoi = new bocauhoi();
@@ -54,3 +55,7 @@ $trinhdo = new trinhdo();
 $xeploai = new xeploai();
 $hashpassword = new hashpassword();
 $yeucaukichhoat = new yeucaukichhoat();
+$thongbao = new thongbao();
+
+// Chạy cron_jobs giả lập (Pseudo-Cron)
+require_once __DIR__ . '/../api/cron_jobs.php';

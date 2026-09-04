@@ -1,7 +1,7 @@
 <?php
-ob_start();
-error_reporting(0);
-ini_set('display_errors', 0);
+//ob_start();
+//error_reporting(0);
+//ini_set('display_errors', 0);
 require_once 'core.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -54,62 +54,106 @@ if ($active_dot) {
     if (!$active_phieu) {
         if ($so_ngay_con_lai > 0 && $so_ngay_con_lai <= 3) {
             $thong_bao[] = [
+                'id' => 0,
                 'type' => 'warning',
                 'title' => 'Sắp hết hạn chấm điểm!',
                 'message' => 'Chỉ còn ' . $so_ngay_con_lai . ' ngày để hoàn thành phiếu rèn luyện ' . $active_dot->ten_hoc_ky . ' - ' . $active_dot->ten_nam_hoc . '. Hãy nộp ngay!',
-                'time' => date('d/m/Y')
+                'time' => date('d/m/Y'),
+                'sender' => 'Hệ thống',
+                'is_read' => true
             ];
         } else {
             $thong_bao[] = [
+                'id' => 0,
                 'type' => 'info',
                 'title' => 'Đợt chấm điểm đang mở',
                 'message' => 'Đợt chấm điểm ' . $active_dot->ten_hoc_ky . ' - ' . $active_dot->ten_nam_hoc . ' đang diễn ra. Hạn chót: ' . date('d/m/Y', $han_chot) . '.',
-                'time' => date('d/m/Y')
+                'time' => date('d/m/Y'),
+                'sender' => 'Hệ thống',
+                'is_read' => true
             ];
         }
     } else {
         // Đã nộp
         if (empty($active_phieu->kq_gv) && empty($active_phieu->kq_lt_bt)) {
             $thong_bao[] = [
+                'id' => 0,
                 'type' => 'warning',
                 'title' => 'Đã nộp phiếu tự đánh giá',
                 'message' => 'Bạn đã nộp phiếu ' . $active_dot->ten_hoc_ky . '. Vui lòng chờ Ban cán sự lớp duyệt.',
-                'time' => date('d/m/Y')
+                'time' => date('d/m/Y'),
+                'sender' => 'Hệ thống',
+                'is_read' => true
             ];
         } else if (empty($active_phieu->kq_gv) && !empty($active_phieu->kq_lt_bt)) {
             $thong_bao[] = [
+                'id' => 0,
                 'type' => 'info',
                 'title' => 'Lớp trưởng đã duyệt',
                 'message' => 'Phiếu rèn luyện ' . $active_dot->ten_hoc_ky . ' đã được duyệt bởi Ban cán sự. Đang chờ Cố vấn học tập duyệt cuối.',
-                'time' => date('d/m/Y')
+                'time' => date('d/m/Y'),
+                'sender' => 'Hệ thống',
+                'is_read' => true
             ];
         } else if (!empty($active_phieu->kq_gv)) {
             $diem = $phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua(explode('|', $active_phieu->kq_gv));
             $thong_bao[] = [
+                'id' => 0,
                 'type' => 'success',
                 'title' => 'Phiếu đã được duyệt!',
                 'message' => 'Phiếu rèn luyện ' . $active_dot->ten_hoc_ky . ' của bạn đã hoàn tất. Điểm tổng: ' . $diem . ' điểm.',
-                'time' => date('d/m/Y')
+                'time' => date('d/m/Y'),
+                'sender' => 'Hệ thống',
+                'is_read' => true
             ];
         }
     }
 } else {
     // Không có đợt nào đang mở
     $thong_bao[] = [
+        'id' => 0,
         'type' => 'info',
         'title' => 'Chưa có đợt đánh giá mới',
         'message' => 'Hiện tại nhà trường chưa mở đợt chấm điểm rèn luyện nào cho lớp của bạn.',
-        'time' => date('d/m/Y')
+        'time' => date('d/m/Y'),
+        'sender' => 'Hệ thống',
+        'is_read' => true
     ];
+}
+
+// Lấy thông báo từ Database
+try {
+    $db_thong_bao = $thongbao->thongbao__Get_By_Sinh_Vien($id_sinh_vien);
+    if ($db_thong_bao) {
+        foreach ($db_thong_bao as $tb) {
+            $type = 'info';
+            if ($tb->loai_thong_bao == 1) $type = 'info';
+            if ($tb->loai_thong_bao == 2) $type = 'primary';
+            
+            $thong_bao[] = [
+                'id' => $tb->id_thong_bao,
+                'type' => $type,
+                'title' => $tb->tieu_de,
+                'message' => $tb->noi_dung,
+                'time' => date('d/m/Y', strtotime($tb->ngay_tao)),
+                'sender' => $tb->nguoi_gui,
+                'is_read' => $tb->is_read == 1
+            ];
+        }
+    }
+} catch (PDOException $e) {
+    // Bảng chưa được tạo
 }
 
 // 2. Có thể thêm thông báo chung nếu muốn
 if (count($thong_bao) == 0) {
     $thong_bao[] = [
+        'id' => 0,
         'type' => 'info',
         'title' => 'Chào mừng bạn quay lại',
         'message' => 'Chúc bạn một ngày học tập và làm việc hiệu quả. Đừng quên theo dõi điểm rèn luyện thường xuyên nhé!',
-        'time' => date('d/m/Y')
+        'time' => date('d/m/Y'),
+        'is_read' => true
     ];
 }
 

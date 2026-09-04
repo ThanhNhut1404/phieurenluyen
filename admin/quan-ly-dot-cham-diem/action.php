@@ -8,6 +8,44 @@
     }
     require '../../models/getModel.php';
 
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
+    use PHPMailer\PHPMailer\Exception;
+    require "../../assets/vendor/PHPMailer/src/PHPMailer.php";
+    require "../../assets/vendor/PHPMailer/src/Exception.php";
+    require "../../assets/vendor/PHPMailer/src/SMTP.php";
+
+    function send_dot_email($taikhoan_model, $id_lop, $ten_dot, $han_chot) {
+        $taikhoan_list = $taikhoan_model->taikhoan__Get_By_Lop_Hoc($id_lop);
+        if (count($taikhoan_list) == 0) return;
+        try {
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'Lchsvhaugiang@tdu.edu.vn';
+            $mail->Password   = 'xwqsfhydjgmjtiod';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+            $mail->CharSet    = 'UTF-8';
+            $mail->setFrom('Lchsvhaugiang@tdu.edu.vn', 'TDU - PRL');
+            $mail->Subject = 'Thông báo: Mở đợt đánh giá rèn luyện ' . $ten_dot;
+            $mail->isHTML(true);
+            $mail->Body = "<h3>Xin chào sinh viên,</h3><p>Hệ thống vừa mở đợt chấm điểm rèn luyện: <b>$ten_dot</b>.</p><p>Hạn chót tự đánh giá: <b>" . date('d/m/Y', strtotime($han_chot)) . "</b>.</p><p>Vui lòng đăng nhập vào App hoặc Website để hoàn thành phiếu đánh giá đúng hạn.</p>";
+            
+            foreach ($taikhoan_list as $tk) {
+                if (!empty($tk->email)) { 
+                    $mail->addBCC($tk->email);
+                }
+            }
+            // add a dummy recipient so BCC works properly in some SMTP servers
+            $mail->addAddress('Lchsvhaugiang@tdu.edu.vn');
+            $mail->send();
+        } catch (Exception $e) {
+            // Ignore error
+        }
+    }
+
     function dotchamdiem_store_old_input($context, $ten_dot, $ghi_chu, $thoi_gian_bat_dau, $thoi_gian_ket_thuc, $id_nam_hoc, $id_hoc_ky, $id_mau_phieu, $id_lop_hoc, $id_dot = null) {
         $_SESSION['dotchamdiem_old_input'] = array(
             'context' => $context,
@@ -181,6 +219,12 @@
                         throw new Exception('invalid-dot-id');
                     }
 
+                    $folder_paths = [];
+                    $hocky_obj = $hocky->hocky__Get_By_Id($id_hoc_ky);
+                    $namhoc_obj = $namhoc->namhoc__Get_By_Id($id_nam_hoc);
+                    $base_folder = $hocky_obj->ten_hoc_ky . "_" . $namhoc_obj->ten_nam_hoc;
+                    $base_folder = preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '_', $base_folder));
+
                     foreach($id_lop_hoc_valid as $item_1){
                         $id_lop_ap_dung = $lopapdung->lopapdung__Add($id_dot, $id_mau_phieu, $item_1);
                         // Nhựt sửa lỗi: Nếu thêm lớp áp dụng không trả về id hợp lệ thì rollback.
@@ -196,11 +240,24 @@
                             if ($status_phieu == 0) {
                                 throw new Exception('insert-phieu-failed');
                             }
+                            $mssv = $item->ma_sinh_vien;
+                            $ten_sv_clean = preg_replace('/[^A-Za-z0-9\-\_\s]/', '', $item->ten_sinh_vien);
+                            $ten_sv_clean = str_replace(' ', '', $ten_sv_clean);
+                            $folder_paths[] = $base_folder . "/" . $mssv . "_" . $ten_sv_clean;
                         }
+                        
+                        // Gửi email cho lớp mới thêm
+                        send_dot_email($taikhoan, $item_1, $ten_dot, $thoi_gian_ket_thuc);
                     }
 
                     // Nhựt sửa lỗi: Chỉ commit khi thêm đủ đợt, lớp áp dụng và phiếu chấm điểm.
                     $dotchamdiem->connect->commit();
+                    
+                    // Gửi request ngầm tạo sẵn folder cho toàn bộ sinh viên trên Google Drive (tránh chậm lúc nộp bài)
+                    if (count($folder_paths) > 0) {
+                        $minhchung->minhchung__Create_Folders_Google_Drive($folder_paths);
+                    }
+                    
                     dotchamdiem_clear_old_input();
                     dotchamdiem__Rotate_Csrf_Token();
                     dotchamdiem__Redirect('add-success');
@@ -297,6 +354,12 @@
                         }
                     }
 
+                    $folder_paths = [];
+                    $hocky_obj = $hocky->hocky__Get_By_Id($id_hoc_ky);
+                    $namhoc_obj = $namhoc->namhoc__Get_By_Id($id_nam_hoc);
+                    $base_folder = $hocky_obj->ten_hoc_ky . "_" . $namhoc_obj->ten_nam_hoc;
+                    $base_folder = preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '_', $base_folder));
+
                     foreach ($id_lop_hoc_valid as $id_lop_moi) {
                         if (!in_array($id_lop_moi, $arr_id_lop_hoc_hien_tai)) {
                             $id_lop_ap_dung = $lopapdung->lopapdung__Add($id_dot, $id_mau_phieu, $id_lop_moi);
@@ -309,7 +372,15 @@
                                 if ($status_phieu == 0) {
                                     throw new Exception('insert-phieu-failed');
                                 }
+                                
+                                $mssv = $item->ma_sinh_vien;
+                                $ten_sv_clean = preg_replace('/[^A-Za-z0-9\-\_\s]/', '', $item->ten_sinh_vien);
+                                $ten_sv_clean = str_replace(' ', '', $ten_sv_clean);
+                                $folder_paths[] = $base_folder . "/" . $mssv . "_" . $ten_sv_clean;
                             }
+                            
+                            // Gửi email cho lớp mới thêm
+                            send_dot_email($taikhoan, $id_lop_moi, $ten_dot, $thoi_gian_ket_thuc);
                         }
                     }
 
@@ -320,6 +391,11 @@
                     $dotchamdiem->dotchamdiem__Update_Trang_Thai($id_dot, $new_trang_thai);
                     
                     $dotchamdiem->connect->commit();
+                    
+                    if (count($folder_paths) > 0) {
+                        $minhchung->minhchung__Create_Folders_Google_Drive($folder_paths);
+                    }
+                    
                     dotchamdiem_clear_old_input();
                     dotchamdiem__Rotate_Csrf_Token();
                     

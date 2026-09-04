@@ -160,7 +160,7 @@ class minhchung extends Database {
 
     // Giao tiếp với Google Apps Script (GAS) để Upload ảnh lên Drive
     public function minhchung__Upload_Google_Drive($base64_data, $file_name, $folder_name) {
-        $gas_url = "https://script.google.com/macros/s/AKfycbz68oQ-ePClCRWAzy2c9RwpXCXC_5jWQReIhNEbGuBzslQhN2igPpWN3MIO4UyXmgIB1w/exec";
+        $gas_url = "https://script.google.com/macros/s/AKfycbwzSljBn37NfhCtFOoSGe_Xqj4QE_D5D2gEJlyMbuZfiN5SnCwseK06sdoEZj6XNxgMFw/exec";
         
         $comma_pos = strpos($base64_data, ",");
         if ($comma_pos !== false) {
@@ -202,7 +202,7 @@ class minhchung extends Database {
     // Tải lên Google Drive CÙNG LÚC NHIỀU FILE (Nhanh gấp 10 lần)
     public function minhchung__Upload_Google_Drive_Multi($requests) {
         if (empty($requests)) return [];
-        $gas_url = "https://script.google.com/macros/s/AKfycbz68oQ-ePClCRWAzy2c9RwpXCXC_5jWQReIhNEbGuBzslQhN2igPpWN3MIO4UyXmgIB1w/exec";
+        $gas_url = "https://script.google.com/macros/s/AKfycbwzSljBn37NfhCtFOoSGe_Xqj4QE_D5D2gEJlyMbuZfiN5SnCwseK06sdoEZj6XNxgMFw/exec";
         
         $multi_curl = curl_multi_init();
         $curl_handles = [];
@@ -278,7 +278,7 @@ class minhchung extends Database {
     public function minhchung__Delete_Google_Drive($fileId) {
         if(empty($fileId) || strlen($fileId) < 10) return false;
         
-        $gas_url = "https://script.google.com/macros/s/AKfycbz68oQ-ePClCRWAzy2c9RwpXCXC_5jWQReIhNEbGuBzslQhN2igPpWN3MIO4UyXmgIB1w/exec";
+        $gas_url = "https://script.google.com/macros/s/AKfycbwzSljBn37NfhCtFOoSGe_Xqj4QE_D5D2gEJlyMbuZfiN5SnCwseK06sdoEZj6XNxgMFw/exec";
         $post_data = [
             "action" => "delete",
             "fileId" => $fileId
@@ -295,6 +295,29 @@ class minhchung extends Database {
         curl_close($ch);
         
         return true; 
+    }
+
+    // Tự động khởi tạo cấu trúc thư mục lồng nhau hàng loạt (Fire and Forget)
+    public function minhchung__Create_Folders_Google_Drive($folder_paths) {
+        if (empty($folder_paths)) return false;
+        
+        $gas_url = "https://script.google.com/macros/s/AKfycbwzSljBn37NfhCtFOoSGe_Xqj4QE_D5D2gEJlyMbuZfiN5SnCwseK06sdoEZj6XNxgMFw/exec";
+        $post_data = [
+            "action" => "create_folders",
+            "paths" => json_encode($folder_paths)
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $gas_url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2); // Chỉ chờ 2 giây để tránh treo PHP, script GAS vẫn chạy ngầm trên server Google
+        curl_exec($ch);
+        curl_close($ch);
+        
+        return true;
     }
 }
 ?>

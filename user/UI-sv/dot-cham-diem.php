@@ -13,7 +13,15 @@ $sv = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
 
 if (!isset($_GET['id_dot'])) {
     // Hiển thị danh sách các đợt chấm điểm để chọn
-    $dots = $dotchamdiem->dotchamdiem__Get_By_Id_Lop_Hoc($sv->id_lop_hoc);
+    $all_dots = $dotchamdiem->dotchamdiem__Get_By_Id_Lop_Hoc($sv->id_lop_hoc);
+    $dots = [];
+    $current_date = date('Y-m-d');
+    foreach($all_dots as $dot) {
+        // Chỉ hiện các đợt đang mở (trạng thái = 1) và chưa quá hạn
+        if ($dot->trang_thai == 1 && $dot->thoi_gian_ket_thuc >= $current_date) {
+            $dots[] = $dot;
+        }
+    }
 ?>
 <div class="dashboard-container">
     <div class="ketqua-card custom-card">

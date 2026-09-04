@@ -22,7 +22,14 @@
                     if ($lop_ap_dung) {
                         $dot_cham = $dotchamdiem->dotchamdiem__Get_By_Id($lop_ap_dung->id_dot);
                         if ($dot_cham) {
-                            $folder_name = preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '_', $dot_cham->ten_hoc_ky . "_" . $dot_cham->ten_nam_hoc));
+                            $sv = $sinhvien->sinhvien__Get_By_Id($phieu->id_sinh_vien);
+                            $ten_sv = $sv ? $sv->ten_sinh_vien : "";
+                            $mssv = $sv ? $sv->ma_sinh_vien : "Unknown";
+                            
+                            $base_folder = preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '_', $dot_cham->ten_hoc_ky . "_" . $dot_cham->ten_nam_hoc));
+                            $ten_sv_clean = preg_replace('/[^A-Za-z0-9\-\_\s]/', '', $ten_sv);
+                            
+                            $folder_name = $base_folder . "/" . $mssv . "_" . str_replace(' ', '', $ten_sv_clean);
                         }
                     }
                 }

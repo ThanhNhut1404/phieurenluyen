@@ -83,9 +83,17 @@ if (is_array($minh_chung) && count($minh_chung) > 0) {
         if ($lop_ap_dung) {
             $dot_cham = $dotchamdiem->dotchamdiem__Get_By_Id($lop_ap_dung->id_dot);
             if ($dot_cham) {
-                $folder_name = $dot_cham->ten_hoc_ky . "_" . $dot_cham->ten_nam_hoc;
-                // Làm sạch tên thư mục (bỏ khoảng trắng, ký tự đặc biệt)
-                $folder_name = preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '_', $folder_name));
+                // Lấy thông tin sinh viên
+                $sv = $sinhvien->sinhvien__Get_By_Id($phieu->id_sinh_vien);
+                $ten_sv = $sv ? $sv->ten_sinh_vien : "";
+                
+                $base_folder = $dot_cham->ten_hoc_ky . "_" . $dot_cham->ten_nam_hoc;
+                // Làm sạch tên thư mục đợt chấm
+                $base_folder = preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '_', $base_folder));
+                
+                // Làm sạch tên sinh viên và nối vào tên thư mục
+                $ten_sv_clean = preg_replace('/[^A-Za-z0-9\-\_\s]/', '', $ten_sv);
+                $folder_name = $base_folder . "/" . $tai_khoan->ten_dang_nhap . "_" . str_replace(' ', '', $ten_sv_clean);
             }
         }
     }
@@ -112,7 +120,17 @@ if (is_array($minh_chung) && count($minh_chung) > 0) {
                 $minhchung->minhchung__Add($id_phieu, $base64, date("Y-m-d H:i:s"), $id_muc, 0, null);
             } else {
                 // Đưa vào hàng đợi upload đa luồng
-                $file_name = $mssv . "_Muc" . $id_muc . "_" . $order . ".jpg";
+                $muc_info = $muc->muc__Get_By_Id($id_muc);
+                $ten_muc_clean = "Muc" . $id_muc;
+                if ($muc_info) {
+                    $cleaned = preg_replace('/[^A-Za-z0-9\-\_\s]/', '', $muc_info->ten_muc);
+                    if (!empty(trim($cleaned))) {
+                        $ten_muc_clean = trim($cleaned);
+                    }
+                }
+                
+                $file_name = $mssv . "_" . $ten_muc_clean . "_" . $order . ".jpg";
+                
                 $upload_requests[] = [
                     'base64' => $base64,
                     'file_name' => $file_name,
@@ -140,8 +158,8 @@ if (is_array($minh_chung) && count($minh_chung) > 0) {
     if (is_array($danh_sach_mc_cu)) {
         foreach ($danh_sach_mc_cu as $mc) {
             $old_fileId = $mc->hinh_anh;
-            $minhchung->minhchung__Delete($mc->id_minh_chung);
             
+            // Xóa file trên Google Drive TRƯỚC
             // Nếu file cũ không nằm trong danh sách mới (tức là sinh viên đã xóa/thay thế), thì xóa trên Drive
             if ((strlen($old_fileId) < 100 || strpos($old_fileId, 'https://') === 0) && !in_array($old_fileId, $new_file_ids)) {
                 // Extract fileId from URL if it's a URL
@@ -151,6 +169,9 @@ if (is_array($minh_chung) && count($minh_chung) > 0) {
                 }
                 $minhchung->minhchung__Delete_Google_Drive($drive_fileId);
             }
+            
+            // Xóa trên Database SAU
+            $minhchung->minhchung__Delete($mc->id_minh_chung);
         }
     }
 }

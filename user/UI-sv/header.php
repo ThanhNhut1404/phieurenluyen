@@ -41,11 +41,28 @@
             </svg>
             <span>Trang chủ</span>
         </a>
-        <a href="#" class="nav-link">
+
+        <a href="?page=diemlop" class="nav-link">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Điểm lớp</span>
+        </a>
+        <?php
+            require_once 'fetch_notifications.php';
+            $unread_count = 0;
+            foreach ($list_thong_bao as $tb) {
+                if (isset($tb->is_read) && !$tb->is_read) $unread_count++;
+            }
+        ?>
+        <a href="?page=thong-bao" class="nav-link" style="position: relative;">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke-width="2" stroke-linecap="round"/>
                 <path d="M10 21a2 2 0 0 0 4 0" stroke-width="2" stroke-linecap="round"/>
             </svg>
+            <?php if ($unread_count > 0): ?>
+                <span style="position: absolute; top: 12px; right: 8px; width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 0 2px white;"></span>
+            <?php endif; ?>
             <span>Thông báo</span>
         </a>
         

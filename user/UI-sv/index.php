@@ -43,7 +43,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="sidebar-link">
+                        <a href="?page=thong-bao" class="sidebar-link">
                             <i class="ri-notification-3-line"></i> Thông báo
                         </a>
                     </li>
@@ -66,6 +66,7 @@
                         <ul class="sidebar-submenu">
                             <li><a href="?page=dot-cham-diem">Phiếu đánh giá</a></li>
                             <li><a href="?page=ket-qua">Kết quả rèn luyện</a></li>
+                            <li><a href="?page=diemlop">Điểm lớp</a></li>
                         </ul>
                     </li>
                     <li>
@@ -93,6 +94,10 @@
                 require "doi-mat-khau.php";
             } else if ($page == 'thong-tin-ca-nhan') {
                 require "thong-tin-ca-nhan.php";
+            } else if ($page == 'thong-bao') {
+                require "thong-bao.php";
+            } else if ($page == 'diemlop') {
+                require "diemlop.php";
             } else {
                 require "home.php";
             }

@@ -77,7 +77,7 @@
                         }
                         if($phannhom->phannhom__Get_By_Id($status->id_phan_nhom)->cap_bac == 4){
                             $_SESSION['gv'] = $status;
-                            header('location: ../user/index.php?page=thong-ke');
+                            header('location: ../user/UI-gv/index.php');
                             break;
                         }
                 }
@@ -94,7 +94,14 @@
                 $mat_khau_moi = $_POST['mat_khau_moi'];
                 $xac_nhan_mat_khau = $_POST['xac_nhan_mat_khau'];
 
-                $redirect = isset($_POST['redirect_to']) && $_POST['redirect_to'] == 'UI-sv' ? '../user/UI-sv/index.php?page=doi-mat-khau' : '../user/index.php?page=quan-ly-tai-khoan';
+                $redirect = '../user/index.php?page=quan-ly-tai-khoan';
+                if (isset($_POST['redirect_to'])) {
+                    if ($_POST['redirect_to'] == 'UI-sv') {
+                        $redirect = '../user/UI-sv/index.php?page=doi-mat-khau';
+                    } else if ($_POST['redirect_to'] == 'UI-gv') {
+                        $redirect = '../user/UI-gv/index.php?page=doi-mat-khau';
+                    }
+                }
 
                 if ($mat_khau_moi !== $xac_nhan_mat_khau) {
                     header('location: ' . $redirect . '&status=password_mismatch');

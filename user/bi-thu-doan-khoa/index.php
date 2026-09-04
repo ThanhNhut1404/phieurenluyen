@@ -612,11 +612,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         <!-- Hidden State Container for this Muc -->
                                                         <div id="evidence-state-<?= $item_3->id_muc ?>" class="d-none">
                                                             <!-- Existing Evidences -->
-                                                            <?php foreach($minh_chung_cua_muc as $mc): ?>
+                                                            <?php $mc_idx = 1; foreach($minh_chung_cua_muc as $mc): ?>
                                                                 <?php
                                                                     $isPdf = strpos($mc->hinh_anh, 'application/pdf') !== false;
                                                                     $ext = $isPdf ? '.pdf' : '.jpg';
-                                                                    $displayName = "Minh_chung_" . $mc->id_minh_chung . "_" . date("d-m-Y", strtotime($mc->ghi_chu)) . $ext;
+                                                                    $displayName = $mc_idx++ . ". " . $item_3->ten_muc;
                                                                 ?>
                                                                 <div class="existing-evidence" data-id="<?= $mc->id_minh_chung ?>" data-url="<?= $mc->hinh_anh ?>" data-name="<?= htmlspecialchars($displayName) ?>"></div>
                                                             <?php endforeach; ?>
@@ -767,7 +767,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
           </div>
       </div>
       <div class="modal-footer bg-light py-2">
-        <button type="button" class="btn text-white font-weight-bold" style="background-color: #003366; font-size: 1.15rem; padding: 6px 24px;" onclick="if(confirm('Bạn có muốn lưu toàn bộ thay đổi (bao gồm cả điểm và minh chứng) trên phiếu này vào hệ thống không?')) document.getElementById('submit').click();"><i class="fas fa-save mr-2"></i>Lưu tất cả thay đổi</button>
+        
         <button type="button" class="btn btn-cancel-custom font-weight-bold" style="font-size: 1.15rem; padding: 6px 24px;" data-dismiss="modal">Đóng</button>
       </div>
     </div>

@@ -77,23 +77,40 @@
                         </svg>
                         Thông báo
                     </span>
-                    <a href="#" style="font-size: 0.85rem; font-weight: normal; color: #1d4ed8; text-decoration: none;">Xem chi tiết <i class="ri-arrow-right-s-line"></i></a>
+                    <a href="?page=thong-bao" style="font-size: 0.85rem; font-weight: normal; color: #1d4ed8; text-decoration: none;">Xem chi tiết <i class="ri-arrow-right-s-line"></i></a>
                 </h3>
                 <div class="notification-list">
-                    <a href="#" class="notification-item">
-                        <div class="notif-date">Th4<span>24</span></div>
-                        <div class="notif-content">
-                            <p class="notif-title">Thông báo cập nhật điểm rèn luyện học kỳ I</p>
-                            <p class="notif-meta">Phòng CTSV &bull; 08:30</p>
+                    <?php if (count($list_thong_bao) > 0): ?>
+                        <?php 
+                        $count = 0;
+                        foreach ($list_thong_bao as $tb): 
+                            if ($count >= 4) break; // Chỉ hiển thị 4 thông báo mới nhất
+                            $time = strtotime($tb->ngay_tao);
+                            $month = "Th" . date('n', $time);
+                            $day = date('d', $time);
+                            $hour = date('H:i', $time);
+                        ?>
+                        <a href="?page=thong-bao" class="notification-item" style="<?php echo $tb->is_read ? 'opacity: 0.7;' : ''; ?>">
+                            <div class="notif-date"><?php echo $month; ?><span><?php echo $day; ?></span></div>
+                            <div class="notif-content">
+                                <p class="notif-title" style="<?php echo !$tb->is_read ? 'font-weight: bold; color: #111827;' : ''; ?>">
+                                    <?php echo htmlspecialchars($tb->tieu_de); ?>
+                                </p>
+                                <p class="notif-desc" style="font-size: 13px; color: #4b5563; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;">
+                                    <?php echo htmlspecialchars($tb->noi_dung); ?>
+                                </p>
+                                <p class="notif-meta"><?php echo htmlspecialchars($tb->nguoi_gui); ?> &bull; <?php echo $hour; ?></p>
+                            </div>
+                        </a>
+                        <?php 
+                            $count++;
+                        endforeach; 
+                        ?>
+                    <?php else: ?>
+                        <div class="text-center p-3 text-muted" style="font-size: 14px;">
+                            Bạn không có thông báo nào.
                         </div>
-                    </a>
-                    <a href="#" class="notification-item">
-                        <div class="notif-date">Th4<span>22</span></div>
-                        <div class="notif-content">
-                            <p class="notif-title">Hướng dẫn đăng ký hoạt động ngoại khóa</p>
-                            <p class="notif-meta">Đoàn - Hội &bull; 14:10</p>
-                        </div>
-                    </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -110,36 +127,15 @@
             <i class="ri-bar-chart-2-line"></i>
             <span>Kết quả rèn luyện</span>
         </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
-            <i class="ri-survey-line"></i>
-            <span>Đăng ký hoạt động</span>
-        </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
-            <i class="ri-calendar-event-line"></i>
-            <span>Lịch hoạt động</span>
-        </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
-            <i class="ri-add-box-line"></i>
-            <span>Hoạt động đã đăng ký</span>
-        </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
-            <i class="ri-user-follow-line"></i>
-            <span>Điểm danh</span>
+        <a href="?page=diemlop" class="action-btn">
+            <i class="ri-group-line"></i>
+            <span>Điểm lớp</span>
         </a>
     </div>
 
     <!-- Charts Row -->
     <div class="row">
-        <div class="col-md-4">
-            <div class="custom-card disabled-card" title="Chức năng sẽ phát triển trong tương lai" style="height: calc(100% - 10px);">
-                <h3 class="card-title-custom">Hoạt động đã đăng ký</h3>
-                <div class="chart-placeholder" style="height: calc(100% - 45px);">
-                    <i class="ri-bar-chart-box-line"></i>
-                    <p>Chưa có dữ liệu thống kê</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="custom-card" style="height: calc(100% - 10px);">
                 <div class="card-title-custom d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e8ecf3;">
                     <span class="mb-0">Tiến độ rèn luyện</span>
@@ -161,7 +157,7 @@
                 <?php if(empty($grouped_ketqua)): ?>
                 <div class="chart-placeholder" style="height: calc(100% - 45px);">
                     <i class="ri-pie-chart-line"></i>
-                    <p>Chưa có dữ liệu thống kê</p>
+                    <p>Đang đợi kết quả cuối...</p>
                 </div>
                 <?php else: ?>
                 <div style="position: relative; height: 170px; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10px;">
@@ -172,7 +168,7 @@
                 <?php endif; ?>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="custom-card" style="height: calc(100% - 10px);">
                 <div class="card-title-custom d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e8ecf3;">
                     <span class="mb-0">Kết quả rèn luyện</span>
@@ -180,6 +176,7 @@
                     <div class="d-flex align-items-center">
                         <span class="mr-2 text-muted" style="font-size: 13px; white-space: nowrap;">Năm học:</span>
                         <select id="yearSelect" class="form-control form-control-sm" style="width: auto; max-width: 130px; font-size: 13px;" onchange="updateChart()">
+                            <option value="all">Tất cả</option>
                             <?php foreach(array_keys($grouped_ketqua) as $nam_hoc): ?>
                                 <option value="<?= htmlspecialchars($nam_hoc) ?>"><?= htmlspecialchars($nam_hoc) ?></option>
                             <?php endforeach; ?>
@@ -191,7 +188,7 @@
                 <?php if(empty($grouped_ketqua)): ?>
                 <div class="chart-placeholder" style="height: calc(100% - 45px);">
                     <i class="ri-bar-chart-grouped-line"></i>
-                    <p>Chưa có dữ liệu thống kê</p>
+                    <p>Đang đợi kết quả cuối...</p>
                 </div>
                 <?php else: ?>
                 <div style="position: relative; height: 200px; width: 100%;">
@@ -210,42 +207,57 @@
 
     function updateChart() {
         const year = document.getElementById('yearSelect').value;
-        const yearData = chartKetQuaData[year] || [];
         
-        const labels = ['Học kỳ 1', 'Học kỳ 2', 'Học kỳ 3'];
-        const scores = [null, null, null];
-        const bgColors = [null, null, null];
-        const classifications = [null, null, null];
-        
-        yearData.forEach(d => {
-            let idx = labels.indexOf(d.ten_hoc_ky);
-            if(idx === -1) {
-                 if(String(d.ten_hoc_ky).includes('1')) idx = 0;
-                 else if(String(d.ten_hoc_ky).includes('2')) idx = 1;
-                 else if(String(d.ten_hoc_ky).includes('3') || String(d.ten_hoc_ky).toLowerCase().includes('hè') || String(d.ten_hoc_ky).toLowerCase().includes('phụ')) idx = 2;
-            }
+        let labels = [];
+        let scores = [];
+        let bgColors = [];
+
+        function getColor(score) {
+            if(score >= 90) return 'rgba(40, 167, 69, 0.7)'; // Xuất sắc (green)
+            if(score >= 80) return 'rgba(0, 123, 255, 0.7)'; // Tốt (blue)
+            if(score >= 65) return 'rgba(23, 162, 184, 0.7)'; // Khá (info)
+            if(score >= 50) return 'rgba(255, 193, 7, 0.7)'; // TB (yellow)
+            return 'rgba(220, 53, 69, 0.7)'; // Yếu/Kém (red)
+        }
+
+        if (year === 'all') {
+            const years = Object.keys(chartKetQuaData).reverse(); // oldest first
+            years.forEach(y => {
+                const yearData = chartKetQuaData[y] || [];
+                // Sort ascending by hoc ky? They are already sorted by SQL
+                yearData.forEach(d => {
+                    labels.push(d.ten_hoc_ky + ' (' + y + ')');
+                    const score = parseFloat(d.ket_qua);
+                    scores.push(score);
+                    bgColors.push(getColor(score));
+                });
+            });
+        } else {
+            const yearData = chartKetQuaData[year] || [];
+            labels = ['Học kỳ 1', 'Học kỳ 2', 'Học kỳ 3'];
+            scores = [null, null, null];
+            bgColors = [null, null, null];
             
-            if (idx !== -1) {
-                const score = parseFloat(d.ket_qua);
-                scores[idx] = score;
+            yearData.forEach(d => {
+                let idx = labels.indexOf(d.ten_hoc_ky);
+                if(idx === -1) {
+                     if(String(d.ten_hoc_ky).includes('1')) idx = 0;
+                     else if(String(d.ten_hoc_ky).includes('2')) idx = 1;
+                     else if(String(d.ten_hoc_ky).includes('3') || String(d.ten_hoc_ky).toLowerCase().includes('hè') || String(d.ten_hoc_ky).toLowerCase().includes('phụ')) idx = 2;
+                }
                 
-                const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
-                classifications[idx] = xepLoai;
-                const xlLower = xepLoai.toLowerCase();
-                
-                if(xlLower.includes('xuất sắc')) bgColors[idx] = 'rgba(40, 167, 69, 0.7)';
-                else if(xlLower.includes('tốt')) bgColors[idx] = 'rgba(0, 123, 255, 0.7)';
-                else if(xlLower.includes('khá')) bgColors[idx] = 'rgba(23, 162, 184, 0.7)';
-                else if(xlLower.includes('trung bình')) bgColors[idx] = 'rgba(255, 193, 7, 0.7)';
-                else bgColors[idx] = 'rgba(220, 53, 69, 0.7)';
-            }
-        });
+                if (idx !== -1) {
+                    const score = parseFloat(d.ket_qua);
+                    scores[idx] = score;
+                    bgColors[idx] = getColor(score);
+                }
+            });
+        }
 
         if(myBarChart) {
             myBarChart.data.labels = labels;
             myBarChart.data.datasets[0].data = scores;
             myBarChart.data.datasets[0].backgroundColor = bgColors;
-            myBarChart.data.datasets[0].classifications = classifications;
             myBarChart.update();
         } else {
             const ctx = document.getElementById('chartKetQua');
@@ -265,16 +277,10 @@
                         data: scores,
                         backgroundColor: bgColors,
                         borderWidth: 0,
-                        borderRadius: 4,
-                        classifications: classifications
+                        borderRadius: 4
                     }]
                 },
                 options: {
-                    layout: {
-                        padding: {
-                            top: 20
-                        }
-                    },
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
@@ -283,57 +289,13 @@
                             max: 100,
                             ticks: {
                                 stepSize: 20
-                            },
-                            title: {
-                                display: true,
-                                text: 'Điểm số',
-                                font: { weight: 'bold' }
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Học kỳ',
-                                font: { weight: 'bold' }
                             }
                         }
                     },
                     plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const score = context.raw;
-                                    const classification = context.dataset.classifications[context.dataIndex];
-                                    let lines = ['Điểm rèn luyện: ' + score];
-                                    if(classification) lines.push('Xếp loại: ' + classification);
-                                    return lines;
-                                }
-                            }
-                        }
+                        legend: { display: false }
                     }
-                },
-                plugins: [{
-                    id: 'barLabels',
-                    afterDatasetsDraw(chart) {
-                        const { ctx } = chart;
-                        chart.data.datasets.forEach((dataset, i) => {
-                            const meta = chart.getDatasetMeta(i);
-                            meta.data.forEach((bar, index) => {
-                                const data = dataset.data[index];
-                                if (data !== null && data !== undefined) {
-                                    ctx.save();
-                                    ctx.font = 'bold 13px Arial';
-                                    ctx.fillStyle = '#333';
-                                    ctx.textAlign = 'center';
-                                    ctx.textBaseline = 'bottom';
-                                    ctx.fillText(data, bar.x, bar.y - 5);
-                                    ctx.restore();
-                                }
-                            });
-                        });
-                    }
-                }]
+                }
             });
         }
     }
@@ -371,23 +333,20 @@
         if(!d) return;
         
         const score = parseFloat(d.ket_qua);
-        const remainScore = 100 - score > 0 ? 100 - score : 0;
-        
-        const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
-        const xlLower = xepLoai.toLowerCase();
+        const remainScore = 100 - score;
         
         let color = '#28a745';
-        if(xlLower.includes('xuất sắc')) color = 'rgba(40, 167, 69, 0.9)';
-        else if(xlLower.includes('tốt')) color = 'rgba(0, 123, 255, 0.9)';
-        else if(xlLower.includes('khá')) color = 'rgba(23, 162, 184, 0.9)';
-        else if(xlLower.includes('trung bình')) color = 'rgba(255, 193, 7, 0.9)';
-        else color = 'rgba(220, 53, 69, 0.9)'; // Yếu/Kém
+        if(score >= 90) color = 'rgba(40, 167, 69, 0.9)';
+        else if(score >= 80) color = 'rgba(0, 123, 255, 0.9)';
+        else if(score >= 65) color = 'rgba(23, 162, 184, 0.9)';
+        else if(score >= 50) color = 'rgba(255, 193, 7, 0.9)';
+        else color = 'rgba(220, 53, 69, 0.9)';
 
         const textEl = document.getElementById('chartTienDoCenterText');
         const labelEl = document.getElementById('chartTienDoLabel');
         if(textEl) textEl.innerText = score + '/100';
         if(textEl) textEl.style.color = color;
-        if(labelEl) labelEl.innerHTML = 'Tiến độ: ' + hk + ' (' + year + ') <br><span style="color:' + color + '; font-size: 15px;">Xếp loại: ' + xepLoai + '</span>';
+        if(labelEl) labelEl.innerText = 'Tiến độ: HK ' + hk + ' (' + year + ')';
 
         if(myDoughnutChart) {
             myDoughnutChart.data.datasets[0].data = [score, remainScore];
