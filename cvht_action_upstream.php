@@ -1,5 +1,9 @@
-<?php
+﻿<?php
     session_start();
+    if (!isset($_SESSION['gv'])) {
+        header("location: ../../auth/");
+        exit();
+    }
     $href = $_SERVER["HTTP_REFERER"];
     if(strlen(strpos($href, "&status")) > 0){
         $href = explode("&status", $href)[0];
@@ -12,37 +16,34 @@
                 $status = 0;
                 $id_phieu = $_POST["id_phieu"];
                 
-                // Nhựt sửa: Thêm ràng buộc bảo mật backend cho Cố vấn học tập
+                // Nhß╗▒t sß╗¡a: Th├¬m r├áng buß╗Öc bß║úo mß║¡t backend cho Cß╗æ vß║Ñn hß╗ìc tß║¡p
                 $phieu = $phieuchamdiem->phieuchamdiem__Get_By_Id($id_phieu);
                 if (!$phieu) {
                     header("location: $href&status=failed");
                     exit();
                 }
-                // Kiểm tra lớp áp dụng của phiếu
+                // Kiß╗âm tra lß╗¢p ├íp dß╗Ñng cß╗ºa phiß║┐u
                 $lop_ap_dung = $lopapdung->lopapdung__Get_By_Id($phieu->id_lop_ap_dung);
                 if (!$lop_ap_dung) {
                     header("location: $href&status=failed");
                     exit();
                 }
 
-                // Kiểm tra xem đợt phải đang mở
-                // Nhựt sửa: Sửa lỗi lấy id_dot từ phiếu (phiếu không có id_dot, phải lấy từ lớp áp dụng) và bỏ kiểm tra trang_thai == 4
+                // Kiß╗âm tra xem ─æß╗út phß║úi ─æang mß╗ƒ
+                // Nhß╗▒t sß╗¡a: Sß╗¡a lß╗ùi lß║Ñy id_dot tß╗½ phiß║┐u (phiß║┐u kh├┤ng c├│ id_dot, phß║úi lß║Ñy tß╗½ lß╗¢p ├íp dß╗Ñng) v├á bß╗Å kiß╗âm tra trang_thai == 4
                 $dot = $dotchamdiem->dotchamdiem__Get_By_Id($lop_ap_dung->id_dot);
                 if (!$dot) {
                     header("location: $href&status=failed");
                     exit();
                 }
-
-                // Nhất sửa: Kiểm tra xem Ban chấp hành Đoàn khoa đã chấm điểm chưa
-                // Cho phép GV chấm nếu đợt chấm đã kết thúc
-                $dot_expired = false;
-                if (isset($dot->thoi_gian_ket_thuc)) {
-                    if ($dot->thoi_gian_ket_thuc <= date('Y-m-d') || $dot->trang_thai == 0) {
-                        $dot_expired = true;
-                    }
+                $is_ended = (strtotime(date('Y-m-d')) > strtotime($dot->thoi_gian_ket_thuc));
+                if ($is_ended && $dot->trang_thai == 0) {
+                    header("location: $href&status=failed");
+                    exit();
                 }
-                
-                if (empty($phieu->kq_btdk) && !$dot_expired) {
+
+                // Nhß╗▒t sß╗¡a: Kiß╗âm tra xem Ban chß║Ñp h├ánh ─Éo├án khoa ─æ├ú chß║Ñm ─æiß╗âm ch╞░a
+                if (empty($phieu->kq_btdk)) {
                     header("location: $href&status=failed");
                     exit();
                 }
@@ -68,14 +69,14 @@
                     $val = ($item === "") ? "0" : $item; $kq .= $val."|";
                 }
                 
-                // Quân sửa: Thực hiện cập nhật điểm của cố vấn học tập và chuyển hướng thành công
+                // Qu├ón sß╗¡a: Thß╗▒c hiß╗çn cß║¡p nhß║¡t ─æiß╗âm cß╗ºa cß╗æ vß║Ñn hß╗ìc tß║¡p v├á chuyß╗ân h╞░ß╗¢ng th├ánh c├┤ng
                 $phieuchamdiem->phieuchamdiem__Update_Kq_Gv($id_phieu, rtrim($kq, "|"));
-                header("location: $href&status=success&msg=" . urlencode("Cập nhật điểm đánh giá thành công!"));
-                break;
+                header("location: $href&status=success&msg=" . urlencode("Cß║¡p nhß║¡t ─æiß╗âm ─æ├ính gi├í th├ánh c├┤ng!"));
+                break; 
 
             case "ha_bac":
                 $id_ket_qua = $_POST["id_ket_qua"];
-                $ly_do = isset($_POST["ly_do"]) ? $_POST["ly_do"] : "Không nộp phiếu đánh giá (Bị hạ bậc)";
+                $ly_do = isset($_POST["ly_do"]) ? $_POST["ly_do"] : "Kh├┤ng nß╗Öp phiß║┐u ─æ├ính gi├í (Bß╗ï hß║í bß║¡c)";
                 
                 $kq_xl = $ketquaxeploai->ketquaxeploai__Get_By_Id($id_ket_qua);
                 if (!$kq_xl) {
@@ -89,7 +90,7 @@
                     exit();
                 }
                 
-                // Điểm gốc dựa vào điểm của Cố vấn
+                // ─Éiß╗âm gß╗æc dß╗▒a v├áo ─æiß╗âm cß╗ºa Cß╗æ vß║Ñn
                 $kq_gv_arr = $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieu->kq_gv);
                 $base_score = $phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($kq_gv_arr);
                 
@@ -99,14 +100,14 @@
                     exit();
                 }
                 
-                // Xử lý trừ điểm hạ bậc
+                // Xß╗¡ l├╜ trß╗½ ─æiß╗âm hß║í bß║¡c
                 $deduction = $original_xeploai->ha_bac;
                 if ($base_score == 100) {
-                    $deduction = 11; // Xử lý đặc biệt theo quy chế (100 điểm thì trừ 11)
+                    $deduction = 11; // Xß╗¡ l├╜ ─æß║╖c biß╗çt theo quy chß║┐ (100 ─æiß╗âm th├¼ trß╗½ 11)
                 }
                 
-                if (strpos($ly_do, '(Bị hạ bậc)') !== false) {
-                    $ly_do = str_replace('(Bị hạ bậc)', '(Trừ ' . $deduction . 'đ)', $ly_do);
+                if (strpos($ly_do, '(Bß╗ï hß║í bß║¡c)') !== false) {
+                    $ly_do = str_replace('(Bß╗ï hß║í bß║¡c)', '(Trß╗½ ' . $deduction . '─æ)', $ly_do);
                 }
                 
                 $new_score = $base_score - $deduction;
@@ -115,7 +116,7 @@
                 $new_xeploai = $xeploai->xeploai__Get_By_Kq($new_score);
                 
                 $ketquaxeploai->ketquaxeploai__Update_Ha_Bac($id_ket_qua, $new_score, $new_xeploai->ten_xep_loai, date('Y-m-d'), $ly_do);
-                header("location: $href&status=success&msg=" . urlencode("Hạ bậc thành công!"));
+                header("location: $href&status=success&msg=" . urlencode("Hß║í bß║¡c th├ánh c├┤ng!"));
                 break;
                 
             case "huy_ha_bac":
@@ -133,14 +134,14 @@
                     exit();
                 }
                 
-                // Khôi phục lại điểm gốc
+                // Kh├┤i phß╗Ñc lß║íi ─æiß╗âm gß╗æc
                 $kq_gv_arr = $phieuchamdiem->phieuchamdiem__Get_Ket_Qua($phieu->kq_gv);
                 $base_score = $phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua($kq_gv_arr);
                 
                 $original_xeploai = $xeploai->xeploai__Get_By_Kq($base_score);
                 
                 $ketquaxeploai->ketquaxeploai__Update_Ha_Bac($id_ket_qua, $base_score, $original_xeploai->ten_xep_loai, date('Y-m-d'), "");
-                header("location: $href&status=success&msg=" . urlencode("Hủy hạ bậc thành công!"));
+                header("location: $href&status=success&msg=" . urlencode("Hß╗ºy hß║í bß║¡c th├ánh c├┤ng!"));
                 break;
         }
     }

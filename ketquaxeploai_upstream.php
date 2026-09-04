@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 $a = "./models/configs/config.php";
 $b = "../models/configs/config.php";
@@ -40,14 +40,14 @@ class ketquaxeploai extends Database {
     }
 
     public function ketquaxeploai__Update($id_ket_qua, $id_phieu, $id_xep_loai, $id_sinh_vien, $id_lop_hoc, $id_dot, $ma_sinh_vien, $ten_sinh_vien, $ten_lop_hoc, $ket_qua, $xep_loai, $ngay_xep_loai) {
-        // Nhựt sửa lỗi: Update kết quả xếp loại phải theo khóa chính id_ket_qua, không phải id_xep_loai.
+        // Nhß╗▒t sß╗¡a lß╗ùi: Update kß║┐t quß║ú xß║┐p loß║íi phß║úi theo kh├│a ch├¡nh id_ket_qua, kh├┤ng phß║úi id_xep_loai.
         $obj = $this->connect->prepare("UPDATE ketquaxeploai SET id_phieu=?, id_xep_loai=?, id_sinh_vien=?, id_lop_hoc=?, id_dot=?, ma_sinh_vien=?, ten_sinh_vien=?, ten_lop_hoc=?, ket_qua=?,  xep_loai=?, ngay_xep_loai=? WHERE id_ket_qua=?");
         $obj->execute(array($id_phieu, $id_xep_loai, $id_sinh_vien, $id_lop_hoc, $id_dot, $ma_sinh_vien, $ten_sinh_vien, $ten_lop_hoc, $ket_qua, $xep_loai, $ngay_xep_loai, $id_ket_qua));
         return $obj->rowCount();
     }
 
     public function ketquaxeploai__Exists_By_Id_Phieu($id_phieu) {
-        // Nhựt sửa lỗi: Một Phiếu chấm điểm chỉ được có một Kết quả xếp loại.
+        // Nhß╗▒t sß╗¡a lß╗ùi: Mß╗Öt Phiß║┐u chß║Ñm ─æiß╗âm chß╗ë ─æ╞░ß╗úc c├│ mß╗Öt Kß║┐t quß║ú xß║┐p loß║íi.
         $obj = $this->connect->prepare("SELECT COUNT(*) FROM ketquaxeploai WHERE id_phieu = ?");
         $obj->execute(array($id_phieu));
         return (int)$obj->fetchColumn() > 0;
@@ -103,14 +103,14 @@ class ketquaxeploai extends Database {
     }
 
     public function ketquaxeploai__Has_By_Id_Dot($id_dot) {
-        // Nhựt sửa lỗi: Không cho xóa Đợt chấm điểm nếu đã phát sinh Kết quả xếp loại.
+        // Nhß╗▒t sß╗¡a lß╗ùi: Kh├┤ng cho x├│a ─Éß╗út chß║Ñm ─æiß╗âm nß║┐u ─æ├ú ph├ít sinh Kß║┐t quß║ú xß║┐p loß║íi.
         $obj = $this->connect->prepare("SELECT COUNT(*) FROM ketquaxeploai WHERE id_dot = ?");
         $obj->execute(array($id_dot));
         return (int)$obj->fetchColumn() > 0;
     }
 
     public function ketquaxeploai__Delete_By_Id_Dot($id_dot) {
-        // Nhựt sửa lỗi: Khi cho phép xóa Đợt thì phải xóa Kết quả xếp loại thuộc Đợt trước để tránh dữ liệu mồ côi.
+        // Nhß╗▒t sß╗¡a lß╗ùi: Khi cho ph├⌐p x├│a ─Éß╗út th├¼ phß║úi x├│a Kß║┐t quß║ú xß║┐p loß║íi thuß╗Öc ─Éß╗út tr╞░ß╗¢c ─æß╗â tr├ính dß╗» liß╗çu mß╗ô c├┤i.
         $obj = $this->connect->prepare("DELETE FROM ketquaxeploai WHERE id_dot = ?");
         $obj->execute(array($id_dot));
         return $obj->rowCount();
@@ -126,29 +126,11 @@ class ketquaxeploai extends Database {
             JOIN dotchamdiem ON ketquaxeploai.id_dot = dotchamdiem.id_dot
             JOIN hocky ON dotchamdiem.id_hoc_ky = hocky.id_hoc_ky
             JOIN namhoc ON hocky.id_nam_hoc = namhoc.id_nam_hoc
-            WHERE ketquaxeploai.id_sinh_vien = ?
+            WHERE ketquaxeploai.id_sinh_vien = ? AND ketquaxeploai.trang_thai_cong_bo = 1
             ORDER BY namhoc.ngay_bat_dau DESC, hocky.ngay_bat_dau ASC
         ");
         $obj->setFetchMode(PDO::FETCH_OBJ);
         $obj->execute(array($id_sinh_vien));
-        return $obj->fetchAll();
-    }
-
-    public function ketquaxeploai__Get_By_Id_Lop_Hoc_With_HocKy_NamHoc($id_lop_hoc) {
-        $obj = $this->connect->prepare("
-            SELECT 
-                ketquaxeploai.*, dotchamdiem.ten_dot,
-                hocky.ten_hoc_ky, hocky.ngay_bat_dau as hocky_ngay_bat_dau,
-                namhoc.ten_nam_hoc, namhoc.ngay_bat_dau as namhoc_ngay_bat_dau
-            FROM ketquaxeploai
-            JOIN dotchamdiem ON ketquaxeploai.id_dot = dotchamdiem.id_dot
-            JOIN hocky ON dotchamdiem.id_hoc_ky = hocky.id_hoc_ky
-            JOIN namhoc ON hocky.id_nam_hoc = namhoc.id_nam_hoc
-            WHERE ketquaxeploai.id_lop_hoc = ?
-            ORDER BY namhoc.ngay_bat_dau DESC, hocky.ngay_bat_dau DESC, ketquaxeploai.ten_sinh_vien ASC
-        ");
-        $obj->setFetchMode(PDO::FETCH_OBJ);
-        $obj->execute(array($id_lop_hoc));
         return $obj->fetchAll();
     }
 

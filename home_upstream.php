@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     $id_sinh_vien = "";
     if(isset($_SESSION['sv'])){
         $id_sinh_vien = $_SESSION['sv']->id_nguoi_dung;
@@ -23,10 +23,10 @@
 <div class="dashboard-container">
     
     <div class="row">
-        <!-- Thông tin sinh viên -->
+        <!-- Th├┤ng tin sinh vi├¬n -->
         <div class="col-md-8">
             <div class="custom-card">
-                <h3 class="card-title-custom">Thông tin sinh viên</h3>
+                <h3 class="card-title-custom">Th├┤ng tin sinh vi├¬n</h3>
                 <div class="student-info-wrapper">
                     <div class="student-avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
                         <?php 
@@ -45,28 +45,28 @@
                         <div class="student-name-title"><?php echo $sv->ten_sinh_vien; ?></div>
                         
                         <p><span class="lbl">MSSV:</span> <span class="val"><?php echo $sv->ma_sinh_vien; ?></span></p>
-                        <p><span class="lbl">Họ tên:</span> <span class="val"><?php echo $sv->ten_sinh_vien; ?></span></p>
+                        <p><span class="lbl">Hß╗ì t├¬n:</span> <span class="val"><?php echo $sv->ten_sinh_vien; ?></span></p>
                         
-                        <p><span class="lbl">Giới tính:</span> <span class="val"><?php echo $sv->gioi_tinh == 1 ? "Nam" : "Nữ"; ?></span></p>
-                        <p><span class="lbl">Ngày sinh:</span> <span class="val"><?php echo $sv->ngay_sinh; ?></span></p>
+                        <p><span class="lbl">Giß╗¢i t├¡nh:</span> <span class="val"><?php echo $sv->gioi_tinh == 1 ? "Nam" : "Nß╗»"; ?></span></p>
+                        <p><span class="lbl">Ng├áy sinh:</span> <span class="val"><?php echo $sv->ngay_sinh; ?></span></p>
                         
-                        <p><span class="lbl">Địa chỉ:</span> <span class="val"><?php echo $sv->dia_chi_thuong_tru; ?></span></p>
-                        <p><span class="lbl">Trạng thái:</span> <span class="val">Đang học</span></p>
+                        <p><span class="lbl">─Éß╗ïa chß╗ë:</span> <span class="val"><?php echo $sv->dia_chi_thuong_tru; ?></span></p>
+                        <p><span class="lbl">Trß║íng th├íi:</span> <span class="val">─Éang hß╗ìc</span></p>
                         
-                        <p><span class="lbl">Sinh viên năm thứ:</span> <span class="val"></span></p>
-                        <p><span class="lbl">Lớp học:</span> <span class="val"><?php echo $lop->ten_lop_hoc; ?></span></p>
+                        <p><span class="lbl">Sinh vi├¬n n─âm thß╗⌐:</span> <span class="val"></span></p>
+                        <p><span class="lbl">Lß╗¢p hß╗ìc:</span> <span class="val"><?php echo $lop->ten_lop_hoc; ?></span></p>
                         
-                        <p><span class="lbl">Khóa học:</span> <span class="val"><?php echo $khoa->ten_khoa_hoc; ?></span></p>
-                        <p><span class="lbl">Bậc đào tạo:</span> <span class="val"></span></p>
+                        <p><span class="lbl">Kh├│a hß╗ìc:</span> <span class="val"><?php echo $khoa->ten_khoa_hoc; ?></span></p>
+                        <p><span class="lbl">Bß║¡c ─æ├áo tß║ío:</span> <span class="val"></span></p>
                         
-                        <p><span class="lbl">Loại hình đào tạo:</span> <span class="val"></span></p>
-                        <p><span class="lbl">Ngành:</span> <span class="val"><?php echo $nganh->ten_nganh_hoc; ?></span></p>
+                        <p><span class="lbl">Loß║íi h├¼nh ─æ├áo tß║ío:</span> <span class="val"></span></p>
+                        <p><span class="lbl">Ng├ánh:</span> <span class="val"><?php echo $nganh->ten_nganh_hoc; ?></span></p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Thông báo -->
+        <!-- Th├┤ng b├ío -->
         <div class="col-md-4">
             <div class="custom-card" style="height: calc(100% - 10px);">
                 <h3 class="card-title-custom d-flex justify-content-between align-items-center w-100">
@@ -75,23 +75,23 @@
                             <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7Z" stroke-width="2" stroke-linecap="round"/>
                             <path d="M10 21a2 2 0 0 0 4 0" stroke-width="2" stroke-linecap="round"/>
                         </svg>
-                        Thông báo
+                        Th├┤ng b├ío
                     </span>
-                    <a href="#" style="font-size: 0.85rem; font-weight: normal; color: #1d4ed8; text-decoration: none;">Xem chi tiết <i class="ri-arrow-right-s-line"></i></a>
+                    <a href="#" style="font-size: 0.85rem; font-weight: normal; color: #1d4ed8; text-decoration: none;">Xem chi tiß║┐t <i class="ri-arrow-right-s-line"></i></a>
                 </h3>
                 <div class="notification-list">
                     <a href="#" class="notification-item">
                         <div class="notif-date">Th4<span>24</span></div>
                         <div class="notif-content">
-                            <p class="notif-title">Thông báo cập nhật điểm rèn luyện học kỳ I</p>
-                            <p class="notif-meta">Phòng CTSV &bull; 08:30</p>
+                            <p class="notif-title">Th├┤ng b├ío cß║¡p nhß║¡t ─æiß╗âm r├¿n luyß╗çn hß╗ìc kß╗│ I</p>
+                            <p class="notif-meta">Ph├▓ng CTSV &bull; 08:30</p>
                         </div>
                     </a>
                     <a href="#" class="notification-item">
                         <div class="notif-date">Th4<span>22</span></div>
                         <div class="notif-content">
-                            <p class="notif-title">Hướng dẫn đăng ký hoạt động ngoại khóa</p>
-                            <p class="notif-meta">Đoàn - Hội &bull; 14:10</p>
+                            <p class="notif-title">H╞░ß╗¢ng dß║½n ─æ─âng k├╜ hoß║ít ─æß╗Öng ngoß║íi kh├│a</p>
+                            <p class="notif-meta">─Éo├án - Hß╗Öi &bull; 14:10</p>
                         </div>
                     </a>
                 </div>
@@ -104,54 +104,54 @@
         <!-- LINK TO EVALUATION FORM -->
         <a href="?page=dot-cham-diem" class="action-btn">
             <i class="ri-survey-line"></i>
-            <span>Phiếu đánh giá</span>
+            <span>Phiß║┐u ─æ├ính gi├í</span>
         </a>
         <a href="index.php?page=ket-qua" class="action-btn">
             <i class="ri-bar-chart-2-line"></i>
-            <span>Kết quả rèn luyện</span>
+            <span>Kß║┐t quß║ú r├¿n luyß╗çn</span>
         </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
+        <a href="#" class="action-btn disabled-btn" title="Chß╗⌐c n─âng sß║╜ ph├ít triß╗ân trong t╞░╞íng lai" onclick="return false;">
             <i class="ri-survey-line"></i>
-            <span>Đăng ký hoạt động</span>
+            <span>─É─âng k├╜ hoß║ít ─æß╗Öng</span>
         </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
+        <a href="#" class="action-btn disabled-btn" title="Chß╗⌐c n─âng sß║╜ ph├ít triß╗ân trong t╞░╞íng lai" onclick="return false;">
             <i class="ri-calendar-event-line"></i>
-            <span>Lịch hoạt động</span>
+            <span>Lß╗ïch hoß║ít ─æß╗Öng</span>
         </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
+        <a href="#" class="action-btn disabled-btn" title="Chß╗⌐c n─âng sß║╜ ph├ít triß╗ân trong t╞░╞íng lai" onclick="return false;">
             <i class="ri-add-box-line"></i>
-            <span>Hoạt động đã đăng ký</span>
+            <span>Hoß║ít ─æß╗Öng ─æ├ú ─æ─âng k├╜</span>
         </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
+        <a href="#" class="action-btn disabled-btn" title="Chß╗⌐c n─âng sß║╜ ph├ít triß╗ân trong t╞░╞íng lai" onclick="return false;">
             <i class="ri-user-follow-line"></i>
-            <span>Điểm danh</span>
+            <span>─Éiß╗âm danh</span>
         </a>
     </div>
 
     <!-- Charts Row -->
     <div class="row">
         <div class="col-md-4">
-            <div class="custom-card disabled-card" title="Chức năng sẽ phát triển trong tương lai" style="height: calc(100% - 10px);">
-                <h3 class="card-title-custom">Hoạt động đã đăng ký</h3>
+            <div class="custom-card disabled-card" title="Chß╗⌐c n─âng sß║╜ ph├ít triß╗ân trong t╞░╞íng lai" style="height: calc(100% - 10px);">
+                <h3 class="card-title-custom">Hoß║ít ─æß╗Öng ─æ├ú ─æ─âng k├╜</h3>
                 <div class="chart-placeholder" style="height: calc(100% - 45px);">
                     <i class="ri-bar-chart-box-line"></i>
-                    <p>Chưa có dữ liệu thống kê</p>
+                    <p>Ch╞░a c├│ dß╗» liß╗çu thß╗æng k├¬</p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="custom-card" style="height: calc(100% - 10px);">
                 <div class="card-title-custom d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e8ecf3;">
-                    <span class="mb-0">Tiến độ rèn luyện</span>
+                    <span class="mb-0">Tiß║┐n ─æß╗Ö r├¿n luyß╗çn</span>
                     <?php if(!empty($grouped_ketqua)): ?>
                     <div class="d-flex align-items-center">
-                        <span class="mr-1 text-muted" style="font-size: 12px; white-space: nowrap;">Năm học:</span>
+                        <span class="mr-1 text-muted" style="font-size: 12px; white-space: nowrap;">N─âm hß╗ìc:</span>
                         <select id="tdYearSelect" class="form-control form-control-sm mr-2" style="width: auto; max-width: 110px; font-size: 12px;" onchange="updateTdSemesterOptions()">
                             <?php foreach(array_keys($grouped_ketqua) as $nam_hoc): ?>
                                 <option value="<?= htmlspecialchars($nam_hoc) ?>"><?= htmlspecialchars($nam_hoc) ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <span class="mr-1 text-muted" style="font-size: 12px; white-space: nowrap;">Học kỳ:</span>
+                        <span class="mr-1 text-muted" style="font-size: 12px; white-space: nowrap;">Hß╗ìc kß╗│:</span>
                         <select id="tdHkSelect" class="form-control form-control-sm" style="width: auto; max-width: 85px; font-size: 12px;" onchange="updateDoughnutChartStandalone()">
                         </select>
                     </div>
@@ -161,7 +161,7 @@
                 <?php if(empty($grouped_ketqua)): ?>
                 <div class="chart-placeholder" style="height: calc(100% - 45px);">
                     <i class="ri-pie-chart-line"></i>
-                    <p>Chưa có dữ liệu thống kê</p>
+                    <p>Ch╞░a c├│ dß╗» liß╗çu thß╗æng k├¬</p>
                 </div>
                 <?php else: ?>
                 <div style="position: relative; height: 170px; width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 10px;">
@@ -175,10 +175,10 @@
         <div class="col-md-4">
             <div class="custom-card" style="height: calc(100% - 10px);">
                 <div class="card-title-custom d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e8ecf3;">
-                    <span class="mb-0">Kết quả rèn luyện</span>
+                    <span class="mb-0">Kß║┐t quß║ú r├¿n luyß╗çn</span>
                     <?php if(!empty($grouped_ketqua)): ?>
                     <div class="d-flex align-items-center">
-                        <span class="mr-2 text-muted" style="font-size: 13px; white-space: nowrap;">Năm học:</span>
+                        <span class="mr-2 text-muted" style="font-size: 13px; white-space: nowrap;">N─âm hß╗ìc:</span>
                         <select id="yearSelect" class="form-control form-control-sm" style="width: auto; max-width: 130px; font-size: 13px;" onchange="updateChart()">
                             <?php foreach(array_keys($grouped_ketqua) as $nam_hoc): ?>
                                 <option value="<?= htmlspecialchars($nam_hoc) ?>"><?= htmlspecialchars($nam_hoc) ?></option>
@@ -191,7 +191,7 @@
                 <?php if(empty($grouped_ketqua)): ?>
                 <div class="chart-placeholder" style="height: calc(100% - 45px);">
                     <i class="ri-bar-chart-grouped-line"></i>
-                    <p>Chưa có dữ liệu thống kê</p>
+                    <p>Ch╞░a c├│ dß╗» liß╗çu thß╗æng k├¬</p>
                 </div>
                 <?php else: ?>
                 <div style="position: relative; height: 200px; width: 100%;">
@@ -212,7 +212,7 @@
         const year = document.getElementById('yearSelect').value;
         const yearData = chartKetQuaData[year] || [];
         
-        const labels = ['Học kỳ 1', 'Học kỳ 2', 'Học kỳ 3'];
+        const labels = ['Hß╗ìc kß╗│ 1', 'Hß╗ìc kß╗│ 2', 'Hß╗ìc kß╗│ 3'];
         const scores = [null, null, null];
         const bgColors = [null, null, null];
         const classifications = [null, null, null];
@@ -222,21 +222,21 @@
             if(idx === -1) {
                  if(String(d.ten_hoc_ky).includes('1')) idx = 0;
                  else if(String(d.ten_hoc_ky).includes('2')) idx = 1;
-                 else if(String(d.ten_hoc_ky).includes('3') || String(d.ten_hoc_ky).toLowerCase().includes('hè') || String(d.ten_hoc_ky).toLowerCase().includes('phụ')) idx = 2;
+                 else if(String(d.ten_hoc_ky).includes('3') || String(d.ten_hoc_ky).toLowerCase().includes('h├¿') || String(d.ten_hoc_ky).toLowerCase().includes('phß╗Ñ')) idx = 2;
             }
             
             if (idx !== -1) {
                 const score = parseFloat(d.ket_qua);
                 scores[idx] = score;
                 
-                const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
+                const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Ch╞░a xß║┐p loß║íi';
                 classifications[idx] = xepLoai;
                 const xlLower = xepLoai.toLowerCase();
                 
-                if(xlLower.includes('xuất sắc')) bgColors[idx] = 'rgba(40, 167, 69, 0.7)';
-                else if(xlLower.includes('tốt')) bgColors[idx] = 'rgba(0, 123, 255, 0.7)';
-                else if(xlLower.includes('khá')) bgColors[idx] = 'rgba(23, 162, 184, 0.7)';
-                else if(xlLower.includes('trung bình')) bgColors[idx] = 'rgba(255, 193, 7, 0.7)';
+                if(xlLower.includes('xuß║Ñt sß║»c')) bgColors[idx] = 'rgba(40, 167, 69, 0.7)';
+                else if(xlLower.includes('tß╗æt')) bgColors[idx] = 'rgba(0, 123, 255, 0.7)';
+                else if(xlLower.includes('kh├í')) bgColors[idx] = 'rgba(23, 162, 184, 0.7)';
+                else if(xlLower.includes('trung b├¼nh')) bgColors[idx] = 'rgba(255, 193, 7, 0.7)';
                 else bgColors[idx] = 'rgba(220, 53, 69, 0.7)';
             }
         });
@@ -261,7 +261,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Điểm rèn luyện',
+                        label: '─Éiß╗âm r├¿n luyß╗çn',
                         data: scores,
                         backgroundColor: bgColors,
                         borderWidth: 0,
@@ -286,14 +286,14 @@
                             },
                             title: {
                                 display: true,
-                                text: 'Điểm số',
+                                text: '─Éiß╗âm sß╗æ',
                                 font: { weight: 'bold' }
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: 'Học kỳ',
+                                text: 'Hß╗ìc kß╗│',
                                 font: { weight: 'bold' }
                             }
                         }
@@ -305,8 +305,8 @@
                                 label: function(context) {
                                     const score = context.raw;
                                     const classification = context.dataset.classifications[context.dataIndex];
-                                    let lines = ['Điểm rèn luyện: ' + score];
-                                    if(classification) lines.push('Xếp loại: ' + classification);
+                                    let lines = ['─Éiß╗âm r├¿n luyß╗çn: ' + score];
+                                    if(classification) lines.push('Xß║┐p loß║íi: ' + classification);
                                     return lines;
                                 }
                             }
@@ -373,21 +373,21 @@
         const score = parseFloat(d.ket_qua);
         const remainScore = 100 - score > 0 ? 100 - score : 0;
         
-        const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
+        const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Ch╞░a xß║┐p loß║íi';
         const xlLower = xepLoai.toLowerCase();
         
         let color = '#28a745';
-        if(xlLower.includes('xuất sắc')) color = 'rgba(40, 167, 69, 0.9)';
-        else if(xlLower.includes('tốt')) color = 'rgba(0, 123, 255, 0.9)';
-        else if(xlLower.includes('khá')) color = 'rgba(23, 162, 184, 0.9)';
-        else if(xlLower.includes('trung bình')) color = 'rgba(255, 193, 7, 0.9)';
-        else color = 'rgba(220, 53, 69, 0.9)'; // Yếu/Kém
+        if(xlLower.includes('xuß║Ñt sß║»c')) color = 'rgba(40, 167, 69, 0.9)';
+        else if(xlLower.includes('tß╗æt')) color = 'rgba(0, 123, 255, 0.9)';
+        else if(xlLower.includes('kh├í')) color = 'rgba(23, 162, 184, 0.9)';
+        else if(xlLower.includes('trung b├¼nh')) color = 'rgba(255, 193, 7, 0.9)';
+        else color = 'rgba(220, 53, 69, 0.9)'; // Yß║┐u/K├⌐m
 
         const textEl = document.getElementById('chartTienDoCenterText');
         const labelEl = document.getElementById('chartTienDoLabel');
         if(textEl) textEl.innerText = score + '/100';
         if(textEl) textEl.style.color = color;
-        if(labelEl) labelEl.innerHTML = 'Tiến độ: ' + hk + ' (' + year + ') <br><span style="color:' + color + '; font-size: 15px;">Xếp loại: ' + xepLoai + '</span>';
+        if(labelEl) labelEl.innerHTML = 'Tiß║┐n ─æß╗Ö: ' + hk + ' (' + year + ') <br><span style="color:' + color + '; font-size: 15px;">Xß║┐p loß║íi: ' + xepLoai + '</span>';
 
         if(myDoughnutChart) {
             myDoughnutChart.data.datasets[0].data = [score, remainScore];
@@ -405,7 +405,7 @@
             myDoughnutChart = new Chart(ctxDo, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Đạt được', 'Còn lại'],
+                    labels: ['─Éß║ít ─æ╞░ß╗úc', 'C├▓n lß║íi'],
                     datasets: [{
                         data: [score, remainScore],
                         backgroundColor: [color, '#e8ecf3'],

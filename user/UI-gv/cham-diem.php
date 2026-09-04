@@ -26,9 +26,6 @@ $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($id_sinh_vien);
 $id_lop_ap_dung = isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung) ? $phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung : 0;
 $lopapdung__Get_By_Id = $lopapdung->lopapdung__Get_By_Id($id_lop_ap_dung);
 $dotchamdiem__Get_By_Id = $dotchamdiem->dotchamdiem__Get_By_Id($id_dot);
-
-$is_ended = (strtotime(date('Y-m-d')) >= strtotime($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc));
-$is_locked_gv = false; // Luôn cho phép GV chấm điểm kể cả khi đợt đã khóa
 $id_hoc_ky = isset($dotchamdiem__Get_By_Id->id_hoc_ky) ? $dotchamdiem__Get_By_Id->id_hoc_ky : 0;
 $hocky__Get_By_Id = $hocky->hocky__Get_By_Id($id_hoc_ky);
 $id_nam_hoc = isset($hocky__Get_By_Id->id_nam_hoc) ? $hocky__Get_By_Id->id_nam_hoc : 0;
@@ -46,12 +43,6 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 $sinhvien_list = [];
 if ($id_lop_hoc != -2) {
     switch($filter) {
-        case 'chua_tu_cham':
-            $sinhvien_list = $sinhvien->sinhvien__Get_Chua_Tu_Cham($id_dot, $id_lop_hoc);
-            break;
-        case 'da_tu_cham':
-            $sinhvien_list = $sinhvien->sinhvien__Get_Da_Tu_Cham($id_dot, $id_lop_hoc);
-            break;
         case 'chua_btdk_cham':
             $sinhvien_list = $sinhvien->sinhvien__Get_Chua_BTDK_Cham($id_dot, $id_lop_hoc);
             break;
@@ -107,7 +98,13 @@ if (count($sinhvien_list) > 0) {
 $ketquaxeploai__Get_By_Id_Phieu = $ketquaxeploai->ketquaxeploai__Get_By_Id_Phieu($id_lop_hoc, $id_dot, $id_sinh_vien);
 $btdk_has_scored = false;
 if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
-    $btdk_has_scored = (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk));
+    $dot_expired = false;
+    if (isset($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc)) {
+        if ($dotchamdiem__Get_By_Id->thoi_gian_ket_thuc <= date('Y-m-d') || $dotchamdiem__Get_By_Id->trang_thai == 0) {
+            $dot_expired = true;
+        }
+    }
+    $btdk_has_scored = (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk) || $dot_expired);
 }
 ?>
 <link rel="stylesheet" href="../assets/css/user.css">
@@ -119,19 +116,28 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
         margin-right: 0 !important;
     }
 </style>
-<!-- Content Wrapper. Contains page content -->
-
-
-<div class="content-wrapper student-evaluation-wrapper">
+<div class="dashboard-container mt-4">
     <!-- Content Header (Page header) -->
 <div class="row mb-3">
     <div class="col-12">
         <div class="card card-outline card-primary">
             <div class="card-body">
                 <form method="get" action="">
-                    <input type="hidden" name="page" value="co-van-hoc-tap">
-                    <input type="hidden" name="id_dot" value="<?= $id_dot ?>">
+                    <input type="hidden" name="page" value="cham-diem">
                     <div class="row align-items-end">
+                        <div class="col-md-3 mb-2">
+                            <label>Chọn đợt chấm</label>
+                            <select class="form-control" name="id_dot" onchange="this.form.submit()">
+                                <?php 
+                                $all_dots = $dotchamdiem->dotchamdiem__Get_All();
+                                foreach ($all_dots as $d): 
+                                ?>
+                                    <option value="<?= $d->id_dot ?>" <?= $id_dot == $d->id_dot ? "selected" : "" ?>>
+                                        <?= $d->ten_dot ?> (HK <?= $d->ten_hoc_ky ?> - <?= $d->ten_nam_hoc ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <div class="col-md-3 mb-2">
                             <label>Chọn lớp (<?= count($phancong__Get_By_Id_Giang_Vien_All) ?>)</label>
                             <select class="form-control" name="id_lop_hoc" onchange="this.form.submit()">
@@ -143,19 +149,17 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label>Lọc danh sách</label>
                             <select class="form-control" name="filter" onchange="this.form.submit()">
                                 <option value="all" <?= $filter == 'all' ? 'selected' : '' ?>>Tất cả sinh viên</option>
-                                <option value="da_tu_cham" <?= $filter == 'da_tu_cham' ? 'selected' : '' ?>>Sinh viên có đánh giá</option>
-                                <option value="chua_tu_cham" <?= $filter == 'chua_tu_cham' ? 'selected' : '' ?>>Sinh viên không tự đánh giá</option>
                                 <option value="da_btdk_cham" <?= $filter == 'da_btdk_cham' ? 'selected' : '' ?>>Đã được Đoàn khoa chấm</option>
                                 <option value="chua_btdk_cham" <?= $filter == 'chua_btdk_cham' ? 'selected' : '' ?>>Chưa được Đoàn khoa chấm</option>
                                 <option value="da_cvht_cham" <?= $filter == 'da_cvht_cham' ? 'selected' : '' ?>>Đã được Cố vấn học tập chấm</option>
                                 <option value="chua_cvht_cham" <?= $filter == 'chua_cvht_cham' ? 'selected' : '' ?>>Chưa được Cố vấn học tập chấm</option>
                             </select>
                         </div>
-                        <div class="col-md-5 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label>Chọn sinh viên (<?= count($sinhvien_list) ?>)</label>
                             <select class="form-control" name="id_sinh_vien" onchange="this.form.submit()">
                                 <option value="-2">-- Chọn sinh viên --</option>
@@ -180,11 +184,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             <div class="row mb-2">
                 <div class="col-12 d-flex justify-content-between align-items-center">
                     <div>
-                        <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $first_id ?>" 
+                        <a href="?page=cham-diem&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $first_id ?>" 
                            class="btn btn-outline-custom-blue <?= ($current_index === 0 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             <i class="fas fa-angle-double-left"></i> Đầu
                         </a>
-                        <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $prev_id ?>" 
+                        <a href="?page=cham-diem&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $prev_id ?>" 
                            class="btn btn-outline-custom-blue <?= ($prev_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             <i class="fas fa-angle-left"></i> Trước
                         </a>
@@ -193,11 +197,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?><?= ($current_index !== false && isset($sinhvien_list[$current_index])) ? ' - ' . htmlspecialchars($sinhvien_list[$current_index]->ten_sinh_vien) : '' ?>
                     </div>
                     <div>
-                        <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $next_id ?>" 
+                        <a href="?page=cham-diem&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $next_id ?>" 
                            class="btn btn-outline-custom-blue <?= ($next_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             Sau <i class="fas fa-angle-right"></i>
                         </a>
-                        <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $last_id ?>" 
+                        <a href="?page=cham-diem&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $last_id ?>" 
                            class="btn btn-outline-custom-blue <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             Cuối <i class="fas fa-angle-double-right"></i>
                         </a>
@@ -206,7 +210,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
             </div>
             <?php endif; ?>
 
-            <form class="form" action="co-van-hoc-tap/action.php?req=add" method="post" enctype="multipart/form-data">
+            <form class="form" action="../co-van-hoc-tap/action.php?req=add" method="post" enctype="multipart/form-data">
 
                 <input type="hidden" name="id_phieu" value="<?= $phieuchamdiem__Get_By_Id_Sinh_Vien->id_phieu ?>">
                 <!-- Quân sửa: Thêm cảnh báo nếu sinh viên chưa được BCH Đoàn khoa chấm điểm -->
@@ -337,7 +341,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <div><strong>Điểm rèn luyện:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua) ? $ketquaxeploai__Get_By_Id_Phieu->ket_qua : "Chưa tổng kết" ?></div>
                         <div><strong>Xếp loại:</strong> <?= isset($ketquaxeploai__Get_By_Id_Phieu->xep_loai) ? $ketquaxeploai__Get_By_Id_Phieu->xep_loai : "Chưa tổng kết" ?></div>
                             <?php if (isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && $ketquaxeploai__Get_By_Id_Phieu->ghi_chu != ""): ?>
-                            <div><strong>Ghi chú:</strong> <span class="text-danger" style="font-style: italic;"><?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></span></div>
+                            <div><strong>Ghi chú:</strong> <?= $ketquaxeploai__Get_By_Id_Phieu->ghi_chu ?></div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -428,6 +432,9 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                                                         $quyen_lt = $muc_info->quyen_lt;
                                                         $quyen_btdk = $muc_info->quyen_btdk;
                                                         $quyen_gv = $muc_info->quyen_gv;
+                                                        if ($quyen_sv == 0) { $val_sv = 0; }
+                                                        if ($quyen_lt == 0) { $val_lt = $val_sv; }
+                                                        if ($quyen_btdk == 0) { $val_btdk = $val_lt; }
                                                         if ($quyen_gv == 0) { $val_gv = $val_btdk; }
 
                                                     ?>
@@ -466,8 +473,8 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 pattern="[-+]?[0-9]{1,2}" placeholder="0" min="0"
                 style="<?= $quyen_gv == 0 ? 'background: linear-gradient(to bottom right, transparent 48%, #ccc 49%, #ccc 51%, transparent 52%) #e9ecef; pointer-events: none; opacity: 0.8;' . ($val_gv == 0 ? ' color: transparent !important; -webkit-text-fill-color: transparent !important;' : '') : '' ?> width:46px;max-width:46px;text-align:center;padding:3px 4px;margin:0 auto;"
                 
-                <?= ($quyen_gv == 0 || $is_locked_gv || !$btdk_has_scored) ? 'readonly tabindex="-1"' : '' ?>
-                value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv) ? ($val_btdk == 0 ? '' : $val_btdk) : ($val_gv == 0 ? '' : $val_gv) ?>">
+                <?= ($quyen_gv == 0 || !$btdk_has_scored) ? 'readonly tabindex="-1"' : '' ?>
+                value="<?= empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_gv) ? (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_btdk) ? ($val_btdk == 0 ? '' : $val_btdk) : (!empty($phieuchamdiem__Get_By_Id_Sinh_Vien->kq_lt_bt) ? ($val_lt == 0 ? '' : $val_lt) : ($val_sv == 0 ? '' : $val_sv))) : ($val_gv == 0 ? '' : $val_gv) ?>">
 </td>
                                                     <td class="text-center align-middle" style="padding:4px;">
                                                         <?php if ($muc->muc__Get_By_Id($item_3->id_muc)->co_minh_chung == 1): ?>
@@ -529,143 +536,23 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         </div>
                     </div>
                     <div class="card-footer">
-                        <?php 
-                            // Xử lý hiển thị nút Hạ bậc / Hủy hạ bậc
-                            $show_ha_bac = false;
-                            $show_huy_ha_bac = false;
-                            $admin_has_processed = isset($ketquaxeploai__Get_By_Id_Phieu->id_ket_qua);
-                            
-                            // Chỉ cho phép thao tác khi thời gian sinh viên nộp phiếu ĐÃ KẾT THÚC
-                            // YÊU CẦU MỚI: Chỉ xuất hiện đối với sinh viên KHÔNG TỰ CHẤM ĐIỂM (chưa nộp phiếu, trang_thai == 1)
-                            if ($is_ended && $phieuchamdiem__Get_By_Id_Sinh_Vien->trang_thai == 1) {
-                                if ($admin_has_processed && isset($ketquaxeploai__Get_By_Id_Phieu->ghi_chu) && (stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'hạ bậc') !== false || stripos($ketquaxeploai__Get_By_Id_Phieu->ghi_chu, 'Không tự đánh giá') !== false)) {
-                                    $show_huy_ha_bac = true;
-                                } else {
-                                    $show_ha_bac = true;
-                                }
-                            }
-                            
-                            // Tính toán mức trừ điểm và điểm dự kiến nếu hiện nút Hạ bậc
-                            $base_score = 0;
-                            $deduction = 0;
-                            $new_score = 0;
-                            if ($show_ha_bac && $admin_has_processed && isset($ketquaxeploai__Get_By_Id_Phieu->ket_qua)) {
-                                $base_score = (int)$ketquaxeploai__Get_By_Id_Phieu->ket_qua;
-                                $original_xeploai = $xeploai->xeploai__Get_By_Kq($base_score);
-                                if ($original_xeploai) {
-                                    $deduction = $original_xeploai->ha_bac;
-                                    if ($base_score == 100) {
-                                        $deduction = 11;
-                                    }
-                                    $new_score = $base_score - $deduction;
-                                    if ($new_score < 0) $new_score = 0;
-                                }
-                            }
-                        ?>
-                        
-                        <?php if ($show_ha_bac): ?>
-                            <?php if ($admin_has_processed): ?>
-                                <button type="button" class="btn btn-danger btn-lg float-left font-weight-bold" onclick="xacNhanHaBac(<?= $ketquaxeploai__Get_By_Id_Phieu->id_ket_qua ?>, <?= $base_score ?>, <?= $deduction ?>, <?= $new_score ?>)">
-                                    <i class="fas fa-level-down-alt"></i> Hạ bậc
-                                </button>
-                            <?php else: ?>
-                                <button type="button" class="btn btn-danger btn-lg float-left font-weight-bold" onclick="Swal.fire('Chú ý', 'Quản trị viên cần chạy Tổng kết đợt chấm điểm này trước khi có thể Hạ bậc!', 'warning')">
-                                    <i class="fas fa-level-down-alt"></i> Hạ bậc
-                                </button>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                        
-                        <?php if ($show_huy_ha_bac && $admin_has_processed): ?>
-                            <button type="button" class="btn btn-secondary btn-lg float-left font-weight-bold" onclick="xacNhanHuyHaBac(<?= $ketquaxeploai__Get_By_Id_Phieu->id_ket_qua ?>)">
-                                <i class="fas fa-undo"></i> Hủy hạ bậc
-                            </button>
-                        <?php endif; ?>
-
                         <input type="submit" value="Cập nhật" class="btn btn-success btn-lg float-right font-weight-bold" id="submit"
                             <?php // Quân sửa: Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm trên nút submit ?>
-                            <?= ($is_locked_gv || !$btdk_has_scored) ? 'disabled' : '' ?>>
+                            <?= (!$btdk_has_scored) ? 'disabled' : '' ?>>
                     </div>
                 </div>
             </form>
-
-            <!-- Form ẩn để gửi yêu cầu hạ bậc / hủy hạ bậc -->
-            <form id="form_ha_bac" action="co-van-hoc-tap/action.php?req=ha_bac" method="post" style="display: none;">
-                <input type="hidden" name="id_ket_qua" id="ha_bac_id_ket_qua" value="">
-                <input type="hidden" name="ly_do" value="Không tự đánh giá rèn luyện (Bị hạ bậc)">
-            </form>
-            
-            <form id="form_huy_ha_bac" action="co-van-hoc-tap/action.php?req=huy_ha_bac" method="post" style="display: none;">
-                <input type="hidden" name="id_ket_qua" id="huy_ha_bac_id_ket_qua" value="">
-            </form>
-
-            <style>
-                .swal-ha-bac-custom {
-                    width: 600px !important;
-                    max-width: 90vw !important;
-                }
-            </style>
-            <script>
-                function xacNhanHaBac(id_ket_qua, base_score, deduction, new_score) {
-                    Swal.fire({
-                        title: '<span style="color: #0f2a5a !important">Xác nhận hạ bậc?</span>',
-                        html: 'Bạn có chắc chắn muốn <b class="text-danger">HẠ BẬC</b> xếp loại của sinh viên này do không tự đánh giá rèn luyện (không nộp phiếu)?<br><br>' +
-                              '<div style="background-color: #f8f9fa; color: #333; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; font-size: 16px; border: 1px solid #dee2e6;">' +
-                              'Tổng điểm hiện tại: <b>' + base_score + ' điểm</b><br>' +
-                              'Mức điểm sẽ bị trừ phạt: <b class="text-danger">-' + deduction + ' điểm</b><br>' +
-                              '<hr style="border-top: 1px solid #dee2e6; margin: 8px 0;">' +
-                              'Điểm dự kiến sau khi hạ: <b class="text-danger" style="font-size: 18px;">' + new_score + ' điểm</b>' +
-                              '</div>' +
-                              '<span class="text-danger"><i>Lưu ý: Thao tác này sẽ trừ trực tiếp vào kết quả xếp loại.</i></span>',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Xác nhận',
-                        cancelButtonText: 'Hủy',
-                        buttonsStyling: false,
-                        customClass: {
-                            popup: 'swal-ha-bac-custom',
-                            confirmButton: 'btn btn-success btn-lg font-weight-bold mx-2 px-4',
-                            cancelButton: 'btn btn-cancel-custom btn-lg font-weight-bold mx-2 px-4'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('ha_bac_id_ket_qua').value = id_ket_qua;
-                            document.getElementById('form_ha_bac').submit();
-                        }
-                    });
-                }
-                function xacNhanHuyHaBac(id_ket_qua) {
-                    Swal.fire({
-                        title: '<span style="color: #0f2a5a !important">Xác nhận hủy hạ bậc?</span>',
-                        html: 'Bạn có chắc chắn muốn <b class="text-warning">HỦY HẠ BẬC</b><br>và khôi phục lại mức xếp loại gốc cho sinh&nbsp;viên&nbsp;này?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Xác nhận',
-                        cancelButtonText: 'Hủy',
-                        buttonsStyling: false,
-                        customClass: {
-                            popup: 'swal-ha-bac-custom',
-                            confirmButton: 'btn btn-success btn-lg font-weight-bold mx-2 px-4',
-                            cancelButton: 'btn btn-cancel-custom btn-lg font-weight-bold mx-2 px-4'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('huy_ha_bac_id_ket_qua').value = id_ket_qua;
-                            document.getElementById('form_huy_ha_bac').submit();
-                        }
-                    });
-                }
-            </script>
 
             <!-- Quân sửa: Thêm nút phân trang chuyển nhanh giữa các sinh viên (dưới form) -->
             <?php if (count($sinhvien_list) > 0): ?>
             <div class="row mt-3 mb-3">
                 <div class="col-12 d-flex justify-content-between align-items-center">
                     <div>
-                        <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $first_id ?>" 
+                        <a href="?page=cham-diem&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $first_id ?>" 
                            class="btn btn-outline-custom-blue <?= ($current_index === 0 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             <i class="fas fa-angle-double-left"></i> Đầu
                         </a>
-                        <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $prev_id ?>" 
+                        <a href="?page=cham-diem&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $prev_id ?>" 
                            class="btn btn-outline-custom-blue <?= ($prev_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             <i class="fas fa-angle-left"></i> Trước
                         </a>
@@ -674,11 +561,11 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         Sinh viên <?= ($current_index !== false) ? ($current_index + 1) : 0 ?> / <?= count($sinhvien_list) ?><?= ($current_index !== false && isset($sinhvien_list[$current_index])) ? ' - ' . htmlspecialchars($sinhvien_list[$current_index]->ten_sinh_vien) : '' ?>
                     </div>
                     <div>
-                        <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $next_id ?>" 
+                        <a href="?page=cham-diem&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $next_id ?>" 
                            class="btn btn-outline-custom-blue <?= ($next_id === null || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             Sau <i class="fas fa-angle-right"></i>
                         </a>
-                        <a href="?page=co-van-hoc-tap&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $last_id ?>" 
+                        <a href="?page=cham-diem&id_lop_hoc=<?= $id_lop_hoc ?>&id_dot=<?= $id_dot ?>&id_sinh_vien=<?= $last_id ?>" 
                            class="btn btn-outline-custom-blue <?= ($current_index === count($sinhvien_list) - 1 || $id_sinh_vien == -2) ? 'disabled' : '' ?>">
                             Cuối <i class="fas fa-angle-double-right"></i>
                         </a>
