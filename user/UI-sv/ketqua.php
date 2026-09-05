@@ -56,21 +56,33 @@ foreach ($list_ketqua as $kq) {
                             <tbody>
                                 <?php foreach ($hoc_kys as $hk): ?>
                                     <?php
-                                        $sum_diem += $hk->ket_qua;
-                                        $count_hk++;
+                                        $is_published = isset($hk->trang_thai_cong_bo) && $hk->trang_thai_cong_bo == 1;
+                                        if ($is_published) {
+                                            $sum_diem += $hk->ket_qua;
+                                            $count_hk++;
+                                        }
                                         $ghi_chu = !empty($hk->ghi_chu) ? htmlspecialchars($hk->ghi_chu) : 'Không có ghi chú';
                                         if (!empty($hk->ghi_chu)) {
                                             $ghi_chu = '<span class="text-danger" style="font-style: italic;">' . $ghi_chu . '</span>';
                                         }
-                                        $is_empty_note = empty($hk->ghi_chu) ? 'text-muted italic' : '';
+                                        if (!$is_published) {
+                                            $ghi_chu = '<span class="text-warning" style="font-style: italic;">Chưa công bố</span>';
+                                        }
+                                        $is_empty_note = (empty($hk->ghi_chu) && $is_published) ? 'text-muted italic' : '';
                                     ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($hk->ten_hoc_ky); ?></td>
-                                        <td class="text-center font-weight-bold"><?php echo number_format($hk->ket_qua, 2, ',', '.'); ?></td>
+                                        <td class="text-center font-weight-bold">
+                                            <?php echo $is_published ? number_format($hk->ket_qua, 2, ',', '.') : '?'; ?>
+                                        </td>
                                         <td class="text-center">
-                                            <span class="<?php echo getBadgeClass($hk->xep_loai); ?>">
-                                                <?php echo htmlspecialchars($hk->xep_loai); ?>
-                                            </span>
+                                            <?php if ($is_published): ?>
+                                                <span class="<?php echo getBadgeClass($hk->xep_loai); ?>">
+                                                    <?php echo htmlspecialchars($hk->xep_loai); ?>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="badge badge-secondary" style="background-color: #6c757d; color: white; padding: 5px 10px; border-radius: 4px;">Đang xử lý</span>
+                                            <?php endif; ?>
                                         </td>
                                         <td class="<?php echo $is_empty_note; ?>"><?php echo $ghi_chu; ?></td>
                                     </tr>

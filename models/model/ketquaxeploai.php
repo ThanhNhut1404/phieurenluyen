@@ -126,7 +126,7 @@ class ketquaxeploai extends Database {
             JOIN dotchamdiem ON ketquaxeploai.id_dot = dotchamdiem.id_dot
             JOIN hocky ON dotchamdiem.id_hoc_ky = hocky.id_hoc_ky
             JOIN namhoc ON hocky.id_nam_hoc = namhoc.id_nam_hoc
-            WHERE ketquaxeploai.id_sinh_vien = ? AND ketquaxeploai.trang_thai_cong_bo = 1
+            WHERE ketquaxeploai.id_sinh_vien = ?
             ORDER BY namhoc.ngay_bat_dau DESC, hocky.ngay_bat_dau ASC
         ");
         $obj->setFetchMode(PDO::FETCH_OBJ);

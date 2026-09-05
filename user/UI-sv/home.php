@@ -226,18 +226,24 @@
             }
             
             if (idx !== -1) {
-                const score = parseFloat(d.ket_qua);
-                scores[idx] = score;
-                
-                const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
-                classifications[idx] = xepLoai;
-                const xlLower = xepLoai.toLowerCase();
-                
-                if(xlLower.includes('xuất sắc')) bgColors[idx] = 'rgba(40, 167, 69, 0.7)';
-                else if(xlLower.includes('tốt')) bgColors[idx] = 'rgba(0, 123, 255, 0.7)';
-                else if(xlLower.includes('khá')) bgColors[idx] = 'rgba(23, 162, 184, 0.7)';
-                else if(xlLower.includes('trung bình')) bgColors[idx] = 'rgba(255, 193, 7, 0.7)';
-                else bgColors[idx] = 'rgba(220, 53, 69, 0.7)';
+                if (d.trang_thai_cong_bo == 1) {
+                    const score = parseFloat(d.ket_qua);
+                    scores[idx] = score;
+                    
+                    const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
+                    classifications[idx] = xepLoai;
+                    const xlLower = xepLoai.toLowerCase();
+                    
+                    if(xlLower.includes('xuất sắc')) bgColors[idx] = 'rgba(40, 167, 69, 0.7)';
+                    else if(xlLower.includes('tốt')) bgColors[idx] = 'rgba(0, 123, 255, 0.7)';
+                    else if(xlLower.includes('khá')) bgColors[idx] = 'rgba(23, 162, 184, 0.7)';
+                    else if(xlLower.includes('trung bình')) bgColors[idx] = 'rgba(255, 193, 7, 0.7)';
+                    else bgColors[idx] = 'rgba(220, 53, 69, 0.7)';
+                } else {
+                    scores[idx] = 0;
+                    classifications[idx] = 'Đang xử lý';
+                    bgColors[idx] = 'rgba(108, 117, 125, 0.7)';
+                }
             }
         });
 
@@ -370,22 +376,31 @@
         const d = yearData.find(item => item.ten_hoc_ky == hk);
         if(!d) return;
         
-        const score = parseFloat(d.ket_qua);
-        const remainScore = 100 - score > 0 ? 100 - score : 0;
-        
-        const xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
-        const xlLower = xepLoai.toLowerCase();
-        
-        let color = '#28a745';
-        if(xlLower.includes('xuất sắc')) color = 'rgba(40, 167, 69, 0.9)';
-        else if(xlLower.includes('tốt')) color = 'rgba(0, 123, 255, 0.9)';
-        else if(xlLower.includes('khá')) color = 'rgba(23, 162, 184, 0.9)';
-        else if(xlLower.includes('trung bình')) color = 'rgba(255, 193, 7, 0.9)';
-        else color = 'rgba(220, 53, 69, 0.9)'; // Yếu/Kém
+        let score = 0;
+        let remainScore = 100;
+        let xepLoai = 'Đang xử lý';
+        let color = 'rgba(108, 117, 125, 0.9)';
+        let textScore = '?/100';
+
+        if (d.trang_thai_cong_bo == 1) {
+            score = parseFloat(d.ket_qua);
+            remainScore = 100 - score > 0 ? 100 - score : 0;
+            
+            xepLoai = d.xep_loai ? d.xep_loai.trim() : 'Chưa xếp loại';
+            const xlLower = xepLoai.toLowerCase();
+            
+            color = '#28a745';
+            if(xlLower.includes('xuất sắc')) color = 'rgba(40, 167, 69, 0.9)';
+            else if(xlLower.includes('tốt')) color = 'rgba(0, 123, 255, 0.9)';
+            else if(xlLower.includes('khá')) color = 'rgba(23, 162, 184, 0.9)';
+            else if(xlLower.includes('trung bình')) color = 'rgba(255, 193, 7, 0.9)';
+            else color = 'rgba(220, 53, 69, 0.9)'; // Yếu/Kém
+            textScore = score + '/100';
+        }
 
         const textEl = document.getElementById('chartTienDoCenterText');
         const labelEl = document.getElementById('chartTienDoLabel');
-        if(textEl) textEl.innerText = score + '/100';
+        if(textEl) textEl.innerText = textScore;
         if(textEl) textEl.style.color = color;
         if(labelEl) labelEl.innerHTML = 'Tiến độ: ' + hk + ' (' + year + ') <br><span style="color:' + color + '; font-size: 15px;">Xếp loại: ' + xepLoai + '</span>';
 
