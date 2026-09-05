@@ -158,15 +158,20 @@ foreach ($list_ketqua as $kq) {
                 </thead>
                 <tbody>
                     <?php $stt = 1; foreach ($filtered_data as $kq): ?>
+                        <?php $is_published = isset($kq->trang_thai_cong_bo) && $kq->trang_thai_cong_bo == 1; ?>
                         <tr>
                             <td><?= $stt++ ?></td>
                             <td><?= htmlspecialchars($kq->ma_sinh_vien) ?></td>
                             <td class="student-name"><?= htmlspecialchars($kq->ten_sinh_vien) ?></td>
-                            <td class="point-value"><?= floatval($kq->ket_qua) ?></td>
+                            <td class="point-value"><?= $is_published ? floatval($kq->ket_qua) : '?' ?></td>
                             <td>
-                                <span class="badge-xeploai <?= getBadgeClass($kq->xep_loai) ?>">
-                                    <?= htmlspecialchars($kq->xep_loai) ?>
-                                </span>
+                                <?php if ($is_published): ?>
+                                    <span class="badge-xeploai <?= getBadgeClass($kq->xep_loai) ?>">
+                                        <?= htmlspecialchars($kq->xep_loai) ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="badge badge-secondary" style="background-color: #6c757d; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Đang xử lý</span>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
