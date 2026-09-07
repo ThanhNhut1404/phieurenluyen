@@ -23,7 +23,11 @@
     }
     if(isset($_GET['id_lop_hoc'])){
         $id_lop_hoc = $_GET['id_lop_hoc'];
-        $ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
+        if ($id_lop_hoc === 'all') {
+            $ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Dot_Only($id_dot);
+        } else {
+            $ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot = $ketquaxeploai->ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot($id_lop_hoc, $id_dot);
+        }
     }
   
  ?>
@@ -56,7 +60,7 @@
      <section class="content" id="div_add_form">
          <div class="card card-success">
              <div class="card-header">
-                     <h3 class="card-title">Xử lý Phiếu chấm điểm</h3>
+                     <h3 class="card-title">Bộ lọc Kết quả xếp loại</h3>
                      <div class="card-tools">
                          <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                              <i class="fas fa-minus"></i>
@@ -86,6 +90,7 @@
                                  <label class="label-sidebar" for="id_lop_hoc_select">Chọn lớp học (<?=count($lophoc__Get_All)?>) <span class="color-crimson">*</span></label>
                                  <select class="form-control <?= ($status == 'duplicate-ket-qua') ? 'is-invalid' : '' ?>" id="id_lop_hoc_select" name="" required onchange="location.href=this.value">
                                      <option value="">Chọn lớp học</option>
+                                     <option value="?page=quan-ly-ket-qua&id_dot=<?=$id_dot?>&id_lop_hoc=all" <?=$id_lop_hoc === 'all' ? "selected" : ""?>>Tất cả lớp</option>
                                      <?php foreach ($lophoc__Get_All as $item):?>
                                      <option
                                          value="?page=quan-ly-ket-qua&id_dot=<?=$id_dot?>&id_lop_hoc=<?=$item->id_lop_hoc?>"
@@ -101,10 +106,6 @@
                              <?php endif; ?>
                          </div>
                      </div>
-                 </div>
-                 <!-- /.card-body -->
-                 <div class="card-footer py-2">
-                     <button type="button" class="btn btn-cancel-custom float-right mr-2 font-weight-bold" onclick="toggle_add_form()">Hủy</button>
                  </div>
              </div>
      </section>
@@ -163,8 +164,9 @@
                           <th style="width: 8%">Tên lớp</th>
                           <th class="text-center" style="width: 9%">Điểm rèn luyện</th>
                           <th class="text-center" style="width: 11%">Kết quả xếp loại</th>
+                          <th class="text-center" style="width: 10%">Trạng thái</th>
                           <th class="text-center" style="width: 9%">Ngày xếp loại</th>
-                          <th style="width: 33%">Ghi chú</th>
+                          <th style="width: 23%">Ghi chú</th>
                       </tr>
                   </thead>
                  <tbody>
@@ -178,6 +180,13 @@
                          <td><?=htmlspecialchars($item->ten_lop_hoc ?? "", ENT_QUOTES, 'UTF-8')?></td>
                          <td class="text-center"><?=htmlspecialchars($item->ket_qua ?? "", ENT_QUOTES, 'UTF-8')?></td>
                          <td class="text-center"><?=htmlspecialchars($item->xep_loai ?? "", ENT_QUOTES, 'UTF-8')?></td>
+                         <td class="text-center">
+                             <?php if(isset($item->trang_thai_cong_bo) && $item->trang_thai_cong_bo == 1): ?>
+                                 <span class="badge badge-success">Đã hiển thị</span>
+                             <?php else: ?>
+                                 <span class="badge badge-secondary">Đang ẩn</span>
+                             <?php endif; ?>
+                         </td>
                          <td class="text-center"><?= $item->ngay_xep_loai ? date('d/m/Y', strtotime($item->ngay_xep_loai)) : "" ?></td>
                          <td>
                              <?php
@@ -246,7 +255,7 @@ window.addEventListener("load", function() {
         },
         // Nhựt sửa: Thêm nút xuất dữ liệu EXPORT và nút Công bố
         buttons: [
-            <?php if ($id_lop_hoc > 0 && $id_dot > 0 && count($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot) > 0): ?>
+            <?php if ($id_lop_hoc !== -2 && $id_dot > 0 && count($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot) > 0): ?>
             <?php
             $is_published = false;
             $is_published = isset($ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot[0]->trang_thai_cong_bo) && (int)$ketquaxeploai__Get_By_Id_Lop_Hoc_And_Id_Dot[0]->trang_thai_cong_bo === 1;
@@ -278,7 +287,7 @@ window.addEventListener("load", function() {
                         if (result.isConfirmed) {
                             $.post('quan-ly-ket-qua/action.php?req=toggle_cong_bo', {
                                 id_dot: <?= $id_dot ?>,
-                                id_lop_hoc: <?= $id_lop_hoc ?>,
+                                id_lop_hoc: '<?= $id_lop_hoc ?>',
                                 trang_thai: <?= $is_published ? 0 : 1 ?>,
                                 csrf_token: '<?=htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8')?>'
                             }, function(res) {

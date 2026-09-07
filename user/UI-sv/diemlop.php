@@ -3,6 +3,7 @@
 function getBadgeClass($xeploai) {
     switch (strtolower(trim($xeploai))) {
         case 'xuất sắc': return 'badge-xuatsac';
+        case 'giỏi':
         case 'tốt': return 'badge-tot';
         case 'khá': return 'badge-kha';
         case 'trung bình': return 'badge-trungbinh';
@@ -158,21 +159,24 @@ foreach ($list_ketqua as $kq) {
                 </thead>
                 <tbody>
                     <?php $stt = 1; foreach ($filtered_data as $kq): ?>
-                        <?php $is_published = isset($kq->trang_thai_cong_bo) && $kq->trang_thai_cong_bo == 1; ?>
+                        <?php $is_published = (isset($kq->trang_thai_cong_bo) && $kq->trang_thai_cong_bo == 1); ?>
                         <tr>
                             <td><?= $stt++ ?></td>
                             <td><?= htmlspecialchars($kq->ma_sinh_vien) ?></td>
                             <td class="student-name"><?= htmlspecialchars($kq->ten_sinh_vien) ?></td>
-                            <td class="point-value"><?= $is_published ? floatval($kq->ket_qua) : '?' ?></td>
-                            <td>
-                                <?php if ($is_published): ?>
+                            <?php if ($is_published): ?>
+                                <td class="point-value"><?= floatval($kq->ket_qua) ?></td>
+                                <td>
                                     <span class="badge-xeploai <?= getBadgeClass($kq->xep_loai) ?>">
                                         <?= htmlspecialchars($kq->xep_loai) ?>
                                     </span>
-                                <?php else: ?>
-                                    <span class="badge badge-secondary" style="background-color: #6c757d; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Đang xử lý</span>
-                                <?php endif; ?>
-                            </td>
+                                </td>
+                            <?php else: ?>
+                                <td class="point-value" style="color:#6c757d;">--</td>
+                                <td>
+                                    <span class="badge-xeploai" style="background-color:#6c757d; color:#fff;">Đang xử lý</span>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

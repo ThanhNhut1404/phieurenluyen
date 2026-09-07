@@ -159,7 +159,7 @@
                     }
 
                     $ketquaxeploai->connect->commit();
-                    header("location: ../index.php?page=quan-ly-ket-qua&id_dot=$id_dot&id_lop_hoc=$id_lop_hoc&status=update-success");
+                    header("location: $href&status=update-success");
                     exit();
                 } catch (Throwable $e) {
                     if ($ketquaxeploai->connect->inTransaction()) {

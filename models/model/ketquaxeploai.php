@@ -81,6 +81,13 @@ class ketquaxeploai extends Database {
         return $obj->fetchAll();
     }
 
+    public function ketquaxeploai__Get_By_Id_Dot_Only($id_dot) {
+        $obj = $this->connect->prepare("SELECT ketquaxeploai.*, ten_hoc_ky, ten_khoa FROM ketquaxeploai, dotchamdiem, nganhhoc, khoa, lophoc, hocky WHERE dotchamdiem.id_hoc_ky = hocky.id_hoc_ky AND ketquaxeploai.id_dot = dotchamdiem.id_dot AND ketquaxeploai.id_lop_hoc = lophoc.id_lop_hoc AND lophoc.id_nganh_hoc = nganhhoc.id_nganh_hoc AND nganhhoc.id_khoa = khoa.id_khoa AND ketquaxeploai.id_dot = ?");
+        $obj->setFetchMode(PDO::FETCH_OBJ);
+        $obj->execute(array($id_dot));
+        return $obj->fetchAll();
+    }
+
     public function ketquaxeploai__Get_By_Id_Phieu($id_lop_hoc, $id_dot, $id_sinh_vien) {
         $obj = $this->connect->prepare("SELECT * FROM ketquaxeploai WHERE id_lop_hoc=? AND id_dot=? AND id_sinh_vien=?");
         $obj->setFetchMode(PDO::FETCH_OBJ);
@@ -155,6 +162,12 @@ class ketquaxeploai extends Database {
     public function ketquaxeploai__Toggle_Cong_Bo($id_dot, $id_lop_hoc, $trang_thai_cong_bo) {
         $obj = $this->connect->prepare("UPDATE ketquaxeploai SET trang_thai_cong_bo=? WHERE id_dot=? AND id_lop_hoc=?");
         $obj->execute(array($trang_thai_cong_bo, $id_dot, $id_lop_hoc));
+        return $obj->rowCount();
+    }
+
+    public function ketquaxeploai__Toggle_Cong_Bo_All($id_dot, $trang_thai_cong_bo) {
+        $obj = $this->connect->prepare("UPDATE ketquaxeploai SET trang_thai_cong_bo=? WHERE id_dot=?");
+        $obj->execute(array($trang_thai_cong_bo, $id_dot));
         return $obj->rowCount();
     }
 

@@ -80,6 +80,13 @@ if (isset($_GET["req"])) {
 
             $id_phan_quyen = isset($_POST["id_phan_quyen"]) ? $_POST["id_phan_quyen"] : '';
             $id_phan_nhom = isset($_POST["id_phan_nhom"]) ? $_POST["id_phan_nhom"] : '';
+            
+            // KHÔNG CHO PHÉP THÊM ADMIN MỚI
+            if ($id_phan_nhom == 1) {
+                header("location: $href&status=add-failed");
+                exit();
+            }
+            
             $id_nguoi_dung = 0;
             $email = isset($_POST["email"]) ? trim($_POST["email"]) : '';
             $mat_khau = isset($_POST["mat_khau"]) ? $_POST["mat_khau"] : '';

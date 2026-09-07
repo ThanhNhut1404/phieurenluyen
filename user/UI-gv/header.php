@@ -21,6 +21,9 @@
     $giangvien_info = $giangvien->giangvien__Get_By_Id($id_nguoi_dung);
     if($giangvien_info){
         $ten_nguoi_dung = $giangvien_info->ten_giang_vien;
+        if (!empty($giangvien_info->anh_dai_dien) && file_exists("../../assets/img/avatars/" . $giangvien_info->anh_dai_dien)) {
+            $avatar_header = "../../assets/img/avatars/" . $giangvien_info->anh_dai_dien;
+        }
     }
 ?>
 <nav class="top-navbar">

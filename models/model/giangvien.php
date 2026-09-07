@@ -121,5 +121,10 @@ class giangvien extends Database {
         $obj->execute(array($email));
         return $obj->fetch();
     }
+
+    public function giangvien__Update_Avatar($id_giang_vien, $anh_dai_dien) {
+        $obj = $this->connect->prepare("UPDATE giangvien SET anh_dai_dien=? WHERE id_giang_vien=?");
+        $obj->execute(array($anh_dai_dien, $id_giang_vien));
+    }
 }
 ?>

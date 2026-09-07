@@ -84,12 +84,16 @@
                 $id_lop_hoc = isset($_POST["id_lop_hoc"]) ? trim($_POST["id_lop_hoc"]) : "";
                 $trang_thai = isset($_POST["trang_thai"]) ? trim($_POST["trang_thai"]) : 0;
 
-                if (!ketqua__Is_Positive_Integer($id_dot) || !ketqua__Is_Positive_Integer($id_lop_hoc)) {
+                if (!ketqua__Is_Positive_Integer($id_dot) || (!ketqua__Is_Positive_Integer($id_lop_hoc) && $id_lop_hoc !== 'all')) {
                     echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
                     exit();
                 }
 
-                $ketquaxeploai->ketquaxeploai__Toggle_Cong_Bo($id_dot, $id_lop_hoc, $trang_thai);
+                if ($id_lop_hoc === 'all') {
+                    $ketquaxeploai->ketquaxeploai__Toggle_Cong_Bo_All($id_dot, $trang_thai);
+                } else {
+                    $ketquaxeploai->ketquaxeploai__Toggle_Cong_Bo($id_dot, $id_lop_hoc, $trang_thai);
+                }
                 echo json_encode(['success' => true]);
                 exit();
                 

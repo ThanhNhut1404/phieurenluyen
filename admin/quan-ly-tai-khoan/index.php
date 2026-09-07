@@ -233,6 +233,7 @@ button.btn.removeall.btn-outline-secondary:before {
                                              <label class="label-sidebar" for="">Phân nhóm <span class="color-crimson">*</span></label>
                                              <select class="form-control" name="id_phan_nhom" id="id_phan_nhom_select" required>
                                                  <?php foreach ($phannhom__Get_All as $item) : ?>
+                                                 <?php if ($item->cap_bac == 0) continue; // KHÔNG CHO PHÉP THÊM ADMIN MỚI ?>
                                                  <option value="<?= $item->id_phan_nhom ?>" data-capbac="<?= $item->cap_bac ?>" <?= ($item->cap_bac == 0) ? 'selected' : '' ?>>
                                                      <?= $item->ten_phan_nhom ?>
                                                  </option>

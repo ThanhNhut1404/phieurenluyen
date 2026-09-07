@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 ob_start();
 error_reporting(0);
 ini_set("display_errors", 0);
@@ -33,6 +33,7 @@ try {
     // Format the response
     $data = [];
     foreach ($ket_qua_lop as $item) {
+        $is_published = (isset($item->trang_thai_cong_bo) && $item->trang_thai_cong_bo == 1);
         $data[] = [
             "id_dot" => $item->id_dot,
             "ten_dot" => $item->ten_dot,
@@ -40,8 +41,8 @@ try {
             "ten_nam_hoc" => $item->ten_nam_hoc,
             "ma_sinh_vien" => $item->ma_sinh_vien,
             "ten_sinh_vien" => $item->ten_sinh_vien,
-            "ket_qua" => floatval($item->ket_qua),
-            "xep_loai" => $item->xep_loai
+            "ket_qua" => $is_published ? floatval($item->ket_qua) : null,
+            "xep_loai" => $is_published ? $item->xep_loai : "Đang xử lý"
         ];
     }
     

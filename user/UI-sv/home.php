@@ -77,23 +77,34 @@
                         </svg>
                         Thông báo
                     </span>
-                    <a href="#" style="font-size: 0.85rem; font-weight: normal; color: #1d4ed8; text-decoration: none;">Xem chi tiết <i class="ri-arrow-right-s-line"></i></a>
+                    <a href="index.php?page=thong-bao" style="font-size: 0.85rem; font-weight: normal; color: #1d4ed8; text-decoration: none;">Xem chi tiết <i class="ri-arrow-right-s-line"></i></a>
                 </h3>
                 <div class="notification-list">
-                    <a href="#" class="notification-item">
-                        <div class="notif-date">Th4<span>24</span></div>
-                        <div class="notif-content">
-                            <p class="notif-title">Thông báo cập nhật điểm rèn luyện học kỳ I</p>
-                            <p class="notif-meta">Phòng CTSV &bull; 08:30</p>
-                        </div>
-                    </a>
-                    <a href="#" class="notification-item">
-                        <div class="notif-date">Th4<span>22</span></div>
-                        <div class="notif-content">
-                            <p class="notif-title">Hướng dẫn đăng ký hoạt động ngoại khóa</p>
-                            <p class="notif-meta">Đoàn - Hội &bull; 14:10</p>
-                        </div>
-                    </a>
+                    <?php
+                    require_once 'fetch_notifications.php';
+                    if (!empty($list_thong_bao)) {
+                        $count = 0;
+                        foreach ($list_thong_bao as $tb) {
+                            if ($count >= 3) break; // Chỉ hiển thị tối đa 3 thông báo mới nhất
+                            $date = strtotime($tb->ngay_tao);
+                            $month = "Th" . date('n', $date);
+                            $day = date('d', $date);
+                            $time = date('H:i', $date);
+                            ?>
+                            <a href="index.php?page=thong-bao" class="notification-item">
+                                <div class="notif-date"><?= $month ?><span><?= $day ?></span></div>
+                                <div class="notif-content">
+                                    <p class="notif-title"><?= htmlspecialchars($tb->tieu_de) ?></p>
+                                    <p class="notif-meta"><?= htmlspecialchars($tb->nguoi_gui) ?> &bull; <?= $time ?></p>
+                                </div>
+                            </a>
+                            <?php
+                            $count++;
+                        }
+                    } else {
+                        echo '<p class="text-muted text-center" style="font-size: 13px; margin-top: 20px;">Không có thông báo mới.</p>';
+                    }
+                    ?>
                 </div>
             </div>
         </div>
@@ -110,36 +121,15 @@
             <i class="ri-bar-chart-2-line"></i>
             <span>Kết quả rèn luyện</span>
         </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
-            <i class="ri-survey-line"></i>
-            <span>Đăng ký hoạt động</span>
-        </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
-            <i class="ri-calendar-event-line"></i>
-            <span>Lịch hoạt động</span>
-        </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
-            <i class="ri-add-box-line"></i>
-            <span>Hoạt động đã đăng ký</span>
-        </a>
-        <a href="#" class="action-btn disabled-btn" title="Chức năng sẽ phát triển trong tương lai" onclick="return false;">
-            <i class="ri-user-follow-line"></i>
-            <span>Điểm danh</span>
+        <a href="index.php?page=diemlop" class="action-btn">
+            <i class="ri-team-line"></i>
+            <span>Xem điểm lớp</span>
         </a>
     </div>
 
     <!-- Charts Row -->
     <div class="row">
-        <div class="col-md-4">
-            <div class="custom-card disabled-card" title="Chức năng sẽ phát triển trong tương lai" style="height: calc(100% - 10px);">
-                <h3 class="card-title-custom">Hoạt động đã đăng ký</h3>
-                <div class="chart-placeholder" style="height: calc(100% - 45px);">
-                    <i class="ri-bar-chart-box-line"></i>
-                    <p>Chưa có dữ liệu thống kê</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="custom-card" style="height: calc(100% - 10px);">
                 <div class="card-title-custom d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e8ecf3;">
                     <span class="mb-0">Tiến độ rèn luyện</span>
@@ -172,7 +162,7 @@
                 <?php endif; ?>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="custom-card" style="height: calc(100% - 10px);">
                 <div class="card-title-custom d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e8ecf3;">
                     <span class="mb-0">Kết quả rèn luyện</span>
@@ -235,7 +225,7 @@
                     const xlLower = xepLoai.toLowerCase();
                     
                     if(xlLower.includes('xuất sắc')) bgColors[idx] = 'rgba(40, 167, 69, 0.7)';
-                    else if(xlLower.includes('tốt')) bgColors[idx] = 'rgba(0, 123, 255, 0.7)';
+                    else if(xlLower.includes('tốt') || xlLower.includes('giỏi')) bgColors[idx] = 'rgba(0, 123, 255, 0.7)';
                     else if(xlLower.includes('khá')) bgColors[idx] = 'rgba(23, 162, 184, 0.7)';
                     else if(xlLower.includes('trung bình')) bgColors[idx] = 'rgba(255, 193, 7, 0.7)';
                     else bgColors[idx] = 'rgba(220, 53, 69, 0.7)';
@@ -391,7 +381,7 @@
             
             color = '#28a745';
             if(xlLower.includes('xuất sắc')) color = 'rgba(40, 167, 69, 0.9)';
-            else if(xlLower.includes('tốt')) color = 'rgba(0, 123, 255, 0.9)';
+            else if(xlLower.includes('tốt') || xlLower.includes('giỏi')) color = 'rgba(0, 123, 255, 0.9)';
             else if(xlLower.includes('khá')) color = 'rgba(23, 162, 184, 0.9)';
             else if(xlLower.includes('trung bình')) color = 'rgba(255, 193, 7, 0.9)';
             else color = 'rgba(220, 53, 69, 0.9)'; // Yếu/Kém

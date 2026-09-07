@@ -93,10 +93,10 @@ class hocky extends Database {
         // Nhựt sửa lỗi: kiểm tra trùng tên học kỳ trong cùng năm học không phân biệt hoa thường.
         $ten_hoc_ky = $this->hocky__Normalize_Name($ten_hoc_ky);
         if ($exclude_id_hoc_ky === null) {
-            $obj = $this->connect->prepare("SELECT COUNT(*) FROM hocky WHERE id_nam_hoc = ? AND ten_hoc_ky COLLATE utf8mb4_general_ci = ?");
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM hocky WHERE id_nam_hoc = ? AND ten_hoc_ky COLLATE utf8_general_ci = ?");
             $obj->execute(array($id_nam_hoc, $ten_hoc_ky));
         } else {
-            $obj = $this->connect->prepare("SELECT COUNT(*) FROM hocky WHERE id_nam_hoc = ? AND ten_hoc_ky COLLATE utf8mb4_general_ci = ? AND id_hoc_ky != ?");
+            $obj = $this->connect->prepare("SELECT COUNT(*) FROM hocky WHERE id_nam_hoc = ? AND ten_hoc_ky COLLATE utf8_general_ci = ? AND id_hoc_ky != ?");
             $obj->execute(array($id_nam_hoc, $ten_hoc_ky, $exclude_id_hoc_ky));
         }
         return (int)$obj->fetchColumn() > 0;

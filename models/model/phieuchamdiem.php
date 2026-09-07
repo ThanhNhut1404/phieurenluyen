@@ -230,7 +230,8 @@ class phieuchamdiem extends Database {
                 hocky.ten_hoc_ky, 
                 namhoc.ten_nam_hoc,
                 ketquaxeploai.ket_qua as tong_diem_xep_loai,
-                ketquaxeploai.xep_loai
+                ketquaxeploai.xep_loai,
+                ketquaxeploai.trang_thai_cong_bo
             FROM phieuchamdiem
             INNER JOIN lopapdung ON phieuchamdiem.id_lop_ap_dung = lopapdung.id_lop_ap_dung
             INNER JOIN dotchamdiem ON lopapdung.id_dot = dotchamdiem.id_dot

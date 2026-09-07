@@ -3,6 +3,7 @@
 function getBadgeClass($xeploai) {
     switch (strtolower(trim($xeploai))) {
         case 'xuất sắc': return 'badge-xuatsac';
+        case 'giỏi':
         case 'tốt': return 'badge-tot';
         case 'khá': return 'badge-kha';
         case 'trung bình': return 'badge-trungbinh';

@@ -69,6 +69,12 @@
                 
                 // Quân sửa: Thực hiện cập nhật điểm và chuyển hướng thành công
                 $phieuchamdiem->phieuchamdiem__Update_Kq_BTDK($id_phieu, rtrim($kq, "|"));
+                
+                // Tự động scan điểm BTĐK vào cột GV nếu GV chưa tự chấm
+                if (empty($phieu->kq_gv)) {
+                    $phieuchamdiem->phieuchamdiem__Update_Kq_Gv($id_phieu, rtrim($kq, "|"));
+                }
+                
                 header("location: $href&status=success&msg=" . urlencode("Cập nhật điểm đánh giá thành công!"));
                 break; 
         }

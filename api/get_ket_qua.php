@@ -35,6 +35,8 @@ foreach ($lich_su as $item) {
         $diem_gv = $phieuchamdiem->phieuchamdiem__Get_Sum_Ket_Qua(explode('|', $item->kq_gv));
     }
 
+    $is_published = (isset($item->trang_thai_cong_bo) && $item->trang_thai_cong_bo == 1);
+
     $data[] = [
         'id_phieu' => $item->id_phieu,
         'ten_dot' => $item->ten_dot,
@@ -42,8 +44,8 @@ foreach ($lich_su as $item) {
         'ten_nam_hoc' => $item->ten_nam_hoc,
         'diem_sv' => $diem_sv,
         'diem_gv' => $diem_gv,
-        'tong_diem_xep_loai' => $item->tong_diem_xep_loai ?? null,
-        'xep_loai' => $item->xep_loai ?? "Chưa xét",
+        'tong_diem_xep_loai' => $is_published ? ($item->tong_diem_xep_loai ?? null) : null,
+        'xep_loai' => $is_published ? ($item->xep_loai ?? "Chưa xét") : "Đang xử lý",
         'ngay_thuc_hien' => $item->ngay_thuc_hien
     ];
 }

@@ -603,7 +603,7 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                         <?php endif; ?>
 
                         <input type="submit" value="Cập nhật" class="btn btn-success btn-lg float-right font-weight-bold" id="submit"
-                            <?php // Quân sửa: Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm trên nút submit ?>
+                            <?php // Bỏ kiểm tra trang_thai != 4 của phiếu chấm điểm trên nút submit ?>
                             <?= (!$btdk_has_scored) ? 'disabled' : '' ?>>
                     </div>
                 </div>
@@ -806,6 +806,50 @@ if (isset($phieuchamdiem__Get_By_Id_Sinh_Vien->id_lop_ap_dung)) {
                 $("#sum_gv").removeClass("bg-danger");
             }
         });
+
+        // Hàm scan điểm từ cột Bí thư Đoàn khoa sang cột Cố vấn học tập
+        window.scanDiemTuBiThu = function() {
+            var kq_btdk_inputs = document.getElementsByClassName('kq_btdk');
+            var kq_gv_inputs   = document.getElementsByClassName('kq_gv');
+
+            if (kq_btdk_inputs.length === 0) {
+                Swal.fire('Thông báo', 'Không tìm thấy dữ liệu điểm từ Bí thư Đoàn khoa.', 'warning');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Xác nhận scan điểm?',
+                html: 'Thao tác này sẽ <b>sao chép toàn bộ điểm</b> từ cột <b>BCH Đoàn khoa</b> sang cột <b>Cố vấn học tập</b>.<br><br>Điểm ở cột Cố vấn học tập <b>có thể chỉnh sửa lại</b> sau khi scan.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-sync-alt"></i> Scan ngay',
+                cancelButtonText: 'Hủy',
+                confirmButtonColor: '#17a2b8',
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    var count = Math.min(kq_btdk_inputs.length, kq_gv_inputs.length);
+                    for (var i = 0; i < count; i++) {
+                        // Chỉ copy vào ô GV nếu ô đó không bị readonly vĩnh viễn (quyen_gv != 0)
+                        var gvInput = kq_gv_inputs[i];
+                        if (!gvInput.hasAttribute('readonly') || gvInput.getAttribute('tabindex') !== '-1') {
+                            gvInput.value = kq_btdk_inputs[i].value;
+                        }
+                        // Ô GV có quyen_gv=1 không có readonly cứng
+                        var style = gvInput.getAttribute('style') || '';
+                        if (style.indexOf('pointer-events: none') === -1) {
+                            gvInput.value = kq_btdk_inputs[i].value;
+                        }
+                    }
+                    // Trigger change để cập nhật tổng điểm
+                    $('.kq_gv').trigger('change');
+                    // Cập nhật ô tổng khoản
+                    if (typeof calculateKhoanTotals === 'function') {
+                        calculateKhoanTotals('kq_gv');
+                    }
+                    Toast.fire({ icon: 'success', title: 'Đã scan điểm từ Bí thư Đoàn khoa thành công!' });
+                }
+            });
+        };
 
 
     
