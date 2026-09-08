@@ -138,8 +138,8 @@ if ($id_lop_hoc > 0) {
 $trend_labels = [];
 $trend_data = [];
 foreach ($trend_data_raw as $t) {
-    // Chỉ lấy tên đợt và học kỳ cho ngắn gọn để vẽ trục X
-    $trend_labels[] = $t->ten_dot . ' - ' . $t->ten_hoc_ky . ' (' . $t->ten_nam_hoc . ')';
+    // Chỉ lấy học kỳ và năm học cho ngắn gọn để vẽ trục X
+    $trend_labels[] = $t->ten_hoc_ky . ' (' . $t->ten_nam_hoc . ')';
     $trend_data[] = round($t->avg_score, 2);
 }
 // ========================================================
