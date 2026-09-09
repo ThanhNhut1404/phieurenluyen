@@ -118,13 +118,13 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
-                                <label class="label-sidebar" for="ha_bac_up">Hạ bậc <span class="color-crimson">*</span></label>
+                                <label class="label-sidebar" for="ha_bac_up">Điểm trừ hạ bậc <span class="color-crimson">*</span></label>
                                 <!-- Nhựt sửa lỗi: Đổi id form cập nhật để tránh trùng id HTML với form thêm. -->
                                 <input type="number" id="ha_bac_up" name="ha_bac" min="10" max="15" step="1" class="form-control <?= ($is_update_error && $status == 'invalid-habac') ? 'is-invalid' : '' ?>"
-                                    required title="Thấp nhất là 10, lớn nhất là 15" placeholder="Nhập điểm hạ bậc"
+                                    required title="Thấp nhất là 10, lớn nhất là 15" placeholder="Nhập điểm trừ hạ bậc (10 - 15)"
                                     value="<?=xep_loai_update_escape(xep_loai_update_old_value('ha_bac', $xeploai__Get_By_Id->id_xep_loai, abs($xeploai__Get_By_Id->ha_bac)))?>">
                                 <?php if ($is_update_error && $status == 'invalid-habac'): ?>
-                                    <small class="text-danger mt-1">Điểm hạ bậc không hợp lệ (từ 10 đến 15).</small>
+                                    <small class="text-danger mt-1">Điểm trừ hạ bậc không hợp lệ (từ 10 đến 15).</small>
                                 <?php endif; ?>
                             </div>
                         </div>
