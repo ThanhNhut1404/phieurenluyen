@@ -46,7 +46,7 @@
         return preg_match('/^[0-9]+$/', trim($value));
     }
 
-    // Nhựt sửa lỗi: Validate server cho tên, thang điểm 0-100 và điểm hạ bậc 10-15.
+    // Nhựt sửa lỗi: Validate server cho tên, thang điểm 0-100 và điểm hạ bậc chỉ là 10 hoặc 15.
     function xep_loai__Validate_Data($ten_xep_loai, $can_duoi, $can_tren, $ha_bac) {
         if (trim($ten_xep_loai) == "") {
             return 'invalid-ten';
@@ -61,7 +61,7 @@
         if (!($can_duoi >= 0 && $can_duoi <= $can_tren && $can_tren <= 100)) {
             return 'invalid-diem';
         }
-        if (!($ha_bac >= 10 && $ha_bac <= 15)) {
+        if (!in_array((int)$ha_bac, [10, 15], true)) {
             return 'invalid-habac';
         }
         return 'valid';

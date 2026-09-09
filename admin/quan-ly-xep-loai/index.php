@@ -124,10 +124,10 @@
                                  <div class="form-group">
                                      <label class="label-sidebar" for="ha_bac">Điểm trừ hạ bậc <span class="color-crimson">*</span></label>
                                      <input type="number" id="ha_bac" name="ha_bac" min="10" max="15" step="1"
-                                         class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-habac') ? 'is-invalid' : '' ?>" required title="Thấp nhất là 10, lớn nhất là 15"
-                                         placeholder="Nhập điểm trừ hạ bậc (10 - 15)" value="<?=xep_loai_escape(xep_loai_old_value('ha_bac', 'add'))?>">
+                                         class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-habac') ? 'is-invalid' : '' ?>" required title="Chỉ là 10 hoặc 15"
+                                         placeholder="Nhập điểm trừ hạ bậc (10 hoặc 15)" value="<?=xep_loai_escape(xep_loai_old_value('ha_bac', 'add'))?>">
                                      <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-habac'): ?>
-                                         <small class="text-danger mt-1">Điểm trừ hạ bậc không hợp lệ (từ 10 đến 15).</small>
+                                         <small class="text-danger mt-1">Điểm trừ hạ bậc không hợp lệ (chỉ là 10 hoặc 15).</small>
                                      <?php endif; ?>
                                  </div>
                              </div>

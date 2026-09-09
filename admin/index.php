@@ -323,6 +323,7 @@ if (!isset($_SESSION['admin'])) {
             "active-dot-xep-loai" => array("Không thể thay đổi Xếp loại!", "Đang có Đợt chấm điểm diễn ra nên không thể thay đổi cấu hình Xếp loại.", "error"),
             "related-xep-loai" => array("Không thể xóa!", "Xếp loại này đang được sử dụng trong kết quả xếp loại.", "error"),
             "locked-xep-loai" => array("Không thể cập nhật!", "Xếp loại này đã được sử dụng trong kết quả xếp loại nên không thể cập nhật.", "error"),
+            "invalid-habac" => array("Điểm trừ hạ bậc không hợp lệ!", "Điểm trừ hạ bậc chỉ là 10 hoặc 15.", "error"),
             "duplicate-name" => array("Không thể thực hiện!", "Điều này đã tồn tại nên không thể lưu.", "error"),
             // Nhựt sửa lỗi: Thông báo riêng khi đã tồn tại kết quả xếp loại cho cùng một đợt/lớp.
             "duplicate-ket-qua" => array("Không thể thực hiện!", "Kết quả xếp loại đã tồn tại cho đợt/lớp này.", "error"),
