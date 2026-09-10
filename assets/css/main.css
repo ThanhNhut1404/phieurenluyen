@@ -319,14 +319,26 @@ body.sidebar-collapse .main-sidebar:not(:hover) .btn-sidebar-toggle i {
     color: #fff !important;
 }
 
-.nav-sidebar .nav-item.menu-open > .nav-link,
-.nav-sidebar .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.15) !important;
+.nav-sidebar .nav-item.menu-open > .nav-link {
+    background-color: transparent !important;
+    color: #fff !important;
+}
+
+.nav-sidebar > .nav-item > .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.12) !important;
     color: #fff !important;
 }
 
 .nav-sidebar .nav-link.active .nav-icon {
     color: #fff !important;
+}
+
+/* Submenu active item highlight */
+.nav-sidebar .nav-treeview .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    border-radius: 4px;
 }
 
 /* Darker blue background overlay for submenus */

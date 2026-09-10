@@ -9,6 +9,10 @@
     }
 
     $mauphieu_old_input = isset($_SESSION['mauphieu_old_input']) && is_array($_SESSION['mauphieu_old_input']) ? $_SESSION['mauphieu_old_input'] : array();
+    // Nhựt sửa lỗi: dữ liệu lỗi chỉ hiển thị lại một lần rồi xóa để không bị dính form khi chuyển trang khác rồi quay lại.
+    if (isset($mauphieu_old_input['context']) && $mauphieu_old_input['context'] === 'add') {
+        unset($_SESSION['mauphieu_old_input']);
+    }
 
     if (!function_exists('mauphieu_escape')) {
         function mauphieu_escape($value) {

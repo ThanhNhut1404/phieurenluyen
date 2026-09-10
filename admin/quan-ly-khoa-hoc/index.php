@@ -78,32 +78,14 @@
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label class="label-sidebar">Tên khóa học <span class="color-crimson">*</span></label>
-                                <input type="text" id="ten_khoa_hoc" name="ten_khoa_hoc" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'invalid-ten-khoa-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
+                                <input type="text" id="ten_khoa_hoc" name="ten_khoa_hoc" class="form-control <?= ($is_add_error && in_array($_GET['status'] ?? '', ['duplicate', 'duplicate-khoa-hoc', 'invalid-ten-khoa-hoc', 'invalid-ten-khoahoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
                                     value="<?=khoahoc_escape(khoahoc_old_value('ten_khoa_hoc', 'add'))?>" placeholder="Nhập tên khóa học">
                                 <?php if ($is_add_error && isset($_GET['status'])): ?>
-                                    <?php if ($_GET['status'] == 'duplicate'): ?>
+                                    <?php if ($_GET['status'] == 'duplicate' || $_GET['status'] == 'duplicate-khoa-hoc'): ?>
                                         <small class="text-danger mt-1">Tên khóa học đã tồn tại trong hệ thống.</small>
-                                    <?php elseif ($_GET['status'] == 'invalid-ten-khoa-hoc'): ?>
+                                    <?php elseif ($_GET['status'] == 'invalid-ten-khoa-hoc' || $_GET['status'] == 'invalid-ten-khoahoc'): ?>
                                         <small class="text-danger mt-1">Tên khóa học không được để trống và tối đa 50 ký tự.</small>
                                     <?php endif; ?>
-                                <?php endif; ?>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label class="label-sidebar">Năm nhập học</label>
-                                <input type="number" id="nam_nhap_hoc" name="nam_nhap_hoc" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-nam') ? 'is-invalid' : '' ?>"
-                                    min="2006" max="2099" value="<?=khoahoc_escape(khoahoc_old_value('nam_nhap_hoc', 'add'))?>" placeholder="Nhập năm nhập học">
-                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-nam'): ?>
-                                    <small class="text-danger mt-1">Năm nhập học không hợp lệ.</small>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label class="label-sidebar">Hệ đào tạo</label>
-                                <input type="number" id="he_dao_tao" name="he_dao_tao" class="form-control <?= ($is_add_error && ($_GET['status'] ?? '') == 'invalid-he') ? 'is-invalid' : '' ?>"
-                                    min="2" max="8" step="0.5" value="<?=khoahoc_escape(khoahoc_old_value('he_dao_tao', 'add'))?>" placeholder="Nhập số năm đào tạo">
-                                <?php if ($is_add_error && isset($_GET['status']) && $_GET['status'] == 'invalid-he'): ?>
-                                    <small class="text-danger mt-1">Hệ đào tạo không hợp lệ.</small>
                                 <?php endif; ?>
                             </div>
                             <div class="col-md-6 form-group">

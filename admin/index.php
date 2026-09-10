@@ -42,7 +42,7 @@ if (!isset($_SESSION['admin'])) {
     <link rel="stylesheet" href="../assets/theme/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../assets/theme/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="../assets/css/main.css?v=10">
+    <link rel="stylesheet" href="../assets/css/main.css?v=11">
 
     <link rel="stylesheet" href="../assets/theme/plugins/summernote/summernote-bs4.min.css">
     <link href="../assets/remixicon/fonts/remixicon.css" rel="stylesheet" />
@@ -553,6 +553,23 @@ if (!isset($_SESSION['admin'])) {
             } else {
                 searchContainer.hide();
             }
+        });
+
+        // Nhựt sửa lỗi: Ngăn chặn click liên tục (double click) khi submit form gây lỗi CSRF token hoặc trùng lặp dữ liệu
+        $(document).on('submit', 'form', function(e) {
+            var $form = $(this);
+            if ($form.data('is-submitting')) {
+                e.preventDefault();
+                return false;
+            }
+            $form.data('is-submitting', true);
+            var $submitBtn = $form.find('input[type="submit"], button[type="submit"]');
+            $submitBtn.addClass('disabled').css('pointer-events', 'none');
+
+            setTimeout(function() {
+                $form.data('is-submitting', false);
+                $submitBtn.removeClass('disabled').css('pointer-events', '');
+            }, 3000);
         });
     </script>
 </body>

@@ -9,6 +9,10 @@
     }
 
     $lophoc_old_input = isset($_SESSION['lophoc_old_input']) && is_array($_SESSION['lophoc_old_input']) ? $_SESSION['lophoc_old_input'] : array();
+    // Nhựt sửa lỗi: dữ liệu lỗi chỉ hiển thị lại một lần rồi xóa để không bị dính form khi chuyển trang khác rồi quay lại.
+    if (isset($lophoc_old_input['context']) && $lophoc_old_input['context'] === 'add') {
+        unset($_SESSION['lophoc_old_input']);
+    }
 
     if (!function_exists('lophoc_escape')) {
         function lophoc_escape($value) {

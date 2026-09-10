@@ -56,6 +56,8 @@ if (strpos($pass, '$2y$') === 0) {
         $password = "123456";
     } else if (password_verify("#TDU123", $pass)) {
         $password = "#TDU123";
+    } else if (password_verify("#TDU1234", $pass)) {
+        $password = "#TDU1234";
     } else {
         $password = "123456"; // Fallback mặc định
         $tk = $taikhoan->taikhoan__Get_By_Email($email);
@@ -78,6 +80,8 @@ if (strpos($pass, '$2y$') === 0) {
             $password = "123456";
         } else if (password_verify("#TDU123", $pass)) {
             $password = "#TDU123";
+        } else if (password_verify("#TDU1234", $pass)) {
+            $password = "#TDU1234";
         } else {
             $password = "123456"; // Fallback mặc định
             $tk = $taikhoan->taikhoan__Get_By_Email($email);

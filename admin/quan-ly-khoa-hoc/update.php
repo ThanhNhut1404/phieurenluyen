@@ -66,37 +66,19 @@
                 <h3 class="card-title">Cập nhật Khóa học</h3>
             </div>
             <div class="card-body">
+                <input type="hidden" name="nam_nhap_hoc" value="<?=khoahoc_update_escape(khoahoc_update_old_value('nam_nhap_hoc', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->nam_nhap_hoc))?>">
+                <input type="hidden" name="he_dao_tao" value="<?=khoahoc_update_escape(khoahoc_update_old_value('he_dao_tao', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->he_dao_tao))?>">
                 <div class="row">
                     <div class="col-md-6 form-group">
                         <label class="label-sidebar" for="ten_khoa_hoc_update">Tên khóa học <span class="color-crimson">*</span></label>
-                        <input type="text" id="ten_khoa_hoc_update" name="ten_khoa_hoc" class="form-control <?= ($is_update_error && in_array($status, ['duplicate', 'invalid-ten-khoa-hoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
+                        <input type="text" id="ten_khoa_hoc_update" name="ten_khoa_hoc" class="form-control <?= ($is_update_error && in_array($status, ['duplicate', 'duplicate-khoa-hoc', 'invalid-ten-khoa-hoc', 'invalid-ten-khoahoc'])) ? 'is-invalid' : '' ?>" required maxlength="50"
                             placeholder="Nhập tên khóa học" value="<?=khoahoc_update_escape(khoahoc_update_old_value('ten_khoa_hoc', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->ten_khoa_hoc))?>">
                         <?php if ($is_update_error): ?>
-                            <?php if ($status == 'duplicate'): ?>
+                            <?php if ($status == 'duplicate' || $status == 'duplicate-khoa-hoc'): ?>
                                 <small class="text-danger mt-1">Tên khóa học đã tồn tại trong hệ thống.</small>
-                            <?php elseif ($status == 'invalid-ten-khoa-hoc'): ?>
+                            <?php elseif ($status == 'invalid-ten-khoa-hoc' || $status == 'invalid-ten-khoahoc'): ?>
                                 <small class="text-danger mt-1">Tên khóa học không được để trống và tối đa 50 ký tự.</small>
                             <?php endif; ?>
-                        <?php endif; ?>
-                    </div>
-                    <div class="col-md-6 form-group">
-                        <label class="label-sidebar" for="nam_nhap_hoc_update">Năm nhập học</label>
-                        <input type="number" id="nam_nhap_hoc_update" name="nam_nhap_hoc" class="form-control <?= ($is_update_error && $status == 'invalid-nam') ? 'is-invalid' : '' ?>"
-                            min="2006" max="2099" placeholder="Nhập năm nhập học"
-                            value="<?=khoahoc_update_escape(khoahoc_update_old_value('nam_nhap_hoc', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->nam_nhap_hoc))?>">
-                        <?php if ($is_update_error && $status == 'invalid-nam'): ?>
-                            <small class="text-danger mt-1">Năm nhập học không hợp lệ.</small>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 form-group">
-                        <label class="label-sidebar" for="he_dao_tao_update">Hệ đào tạo</label>
-                        <input type="number" id="he_dao_tao_update" name="he_dao_tao" class="form-control <?= ($is_update_error && $status == 'invalid-he') ? 'is-invalid' : '' ?>" min="2"
-                            max="8" step="0.5" placeholder="Nhập số năm đào tạo"
-                            value="<?=khoahoc_update_escape(khoahoc_update_old_value('he_dao_tao', $khoahoc__Get_By_Id->id_khoa_hoc, $khoahoc__Get_By_Id->he_dao_tao))?>">
-                        <?php if ($is_update_error && $status == 'invalid-he'): ?>
-                            <small class="text-danger mt-1">Hệ đào tạo không hợp lệ.</small>
                         <?php endif; ?>
                     </div>
                     <div class="col-md-6 form-group">
