@@ -15,7 +15,7 @@ use PHPMailer\PHPMailer\Exception;
 //Create an instance; passing `true` enables exceptions
 $mail = new PHPMailer(true);
 
-$href = $_SERVER["HTTP_REFERER"];
+$href = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : '';
 if (strlen(strpos($href, '&status')) > 0) {
     $href = explode('&status', $href)[0];
 }
@@ -48,57 +48,69 @@ function vietTatChuCaiDau($str) {
 }
 
 $status = 0;
-$email = $_POST["email"];
-$pass = $_POST["password"];
+$email = isset($_POST["email"]) ? trim($_POST["email"]) : '';
+$pass = isset($_POST["password"]) ? trim($_POST["password"]) : '';
 
-if (strpos($pass, '$2y$') === 0) {
-    if (password_verify("123456", $pass)) {
-        $password = "123456";
-    } else if (password_verify("#TDU123", $pass)) {
-        $password = "#TDU123";
-    } else if (password_verify("#TDU1234", $pass)) {
-        $password = "#TDU1234";
-    } else {
-        $password = "123456"; // Fallback mặc định
-        $tk = $taikhoan->taikhoan__Get_By_Email($email);
-        if ($tk && $tk->id_phan_nhom == 3) {
-            $sv = $sinhvien->sinhvien__Get_By_Id($tk->id_nguoi_dung);
-            if ($sv) {
-                $lh = $lophoc->lophoc__Get_By_Id($sv->id_lop_hoc);
-                $ten_lop = $lh ? $lh->ten_lop_hoc : '';
-                $default_pass = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
-                if (password_verify($default_pass, $pass)) {
-                    $password = $default_pass;
-                }
-            }
-        }
+if (empty($email)) {
+    echo "Thiếu địa chỉ email.";
+    exit;
+}
+
+$tk = $taikhoan->taikhoan__Get_By_Email($email);
+if (!$tk) {
+    echo "Không tìm thấy tài khoản với email: $email";
+    exit;
+}
+
+$password = '';
+
+// 1. Kiểm tra nếu password được gửi qua từ reset_ajax (chuỗi mã hóa AES)
+if (!empty($pass) && strpos($pass, '$2y$') !== 0) {
+    $dec = $hashpassword->Decryption($pass);
+    if ($dec && password_verify($dec, $tk->mat_khau)) {
+        $password = $dec;
     }
-} else {
-    $password = $hashpassword->Decryption($pass);
-    if (!$password || strlen($password) > 100) {
-        if (password_verify("123456", $pass)) {
-            $password = "123456";
-        } else if (password_verify("#TDU123", $pass)) {
-            $password = "#TDU123";
-        } else if (password_verify("#TDU1234", $pass)) {
-            $password = "#TDU1234";
-        } else {
-            $password = "123456"; // Fallback mặc định
-            $tk = $taikhoan->taikhoan__Get_By_Email($email);
-            if ($tk && $tk->id_phan_nhom == 3) {
-                $sv = $sinhvien->sinhvien__Get_By_Id($tk->id_nguoi_dung);
-                if ($sv) {
-                    $lh = $lophoc->lophoc__Get_By_Id($sv->id_lop_hoc);
-                    $ten_lop = $lh ? $lh->ten_lop_hoc : '';
-                    $default_pass = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
-                    if (password_verify($default_pass, $pass)) {
-                        $password = $default_pass;
-                    }
-                }
-            }
+}
+
+// 2. Kiểm tra mật khẩu khởi tạo ngẫu nhiên trong ghi_chu (INIT:AES_PAYLOAD)
+if (empty($password) && !empty($tk->ghi_chu) && strpos($tk->ghi_chu, 'INIT:') === 0) {
+    $enc_init = substr($tk->ghi_chu, 5);
+    $dec_init = $hashpassword->Decryption($enc_init);
+    if ($dec_init && password_verify($dec_init, $tk->mat_khau)) {
+        $password = $dec_init;
+    }
+}
+
+// 3. Kiểm tra các mật khẩu mặc định khác (#TDU1234, #TDU123, 123456)
+if (empty($password)) {
+    if (password_verify("#TDU1234", $tk->mat_khau)) {
+        $password = "#TDU1234";
+    } elseif (password_verify("#TDU123", $tk->mat_khau)) {
+        $password = "#TDU123";
+    } elseif (password_verify("123456", $tk->mat_khau)) {
+        $password = "123456";
+    }
+}
+
+// 4. Kiểm tra mật khẩu theo định dạng cũ của sinh viên (Ten_Lop#1234)
+if (empty($password) && $tk->id_phan_nhom == 3) {
+    $sv = $sinhvien->sinhvien__Get_By_Id($tk->id_nguoi_dung);
+    if ($sv) {
+        $lh = $lophoc->lophoc__Get_By_Id($sv->id_lop_hoc);
+        $ten_lop = $lh ? $lh->ten_lop_hoc : '';
+        $legacy_pass = vietTatChuCaiDau($sv->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
+        if (password_verify($legacy_pass, $tk->mat_khau)) {
+            $password = $legacy_pass;
         }
     }
 }
+
+// Nếu người dùng đã đổi mật khẩu cá nhân và không khớp với mật khẩu ban đầu
+if (empty($password)) {
+    echo "Tài khoản đã đổi mật khẩu cá nhân, không thể gửi lại mật khẩu ban đầu.";
+    exit;
+}
+
 try {
     //Server settings
     $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Disable verbose debug output
@@ -128,24 +140,21 @@ try {
     // Lấy tên người dùng để hiển thị "Thân chào [Tên]"
     $ho_ten = "bạn";
     $ten_goi = "bạn";
-    $tk_info = $taikhoan->taikhoan__Get_By_Email($email);
-    if ($tk_info) {
-        $pn_info = $phannhom->phannhom__Get_By_Id($tk_info->id_phan_nhom);
-        if ($pn_info) {
-            if ($pn_info->cap_bac == 0) {
-                $ho_ten = "Admin";
-            } elseif ($pn_info->cap_bac == 1) {
-                $ho_ten = "Manager";
-            } elseif ($pn_info->cap_bac == 2) {
-                $sv_info = $sinhvien->sinhvien__Get_By_Id($tk_info->id_nguoi_dung);
-                if ($sv_info) $ho_ten = $sv_info->ten_sinh_vien;
-            } elseif ($pn_info->cap_bac == 3) {
-                $bt_info = $bithudoankhoa->bithudoankhoa__Get_By_Id($tk_info->id_nguoi_dung);
-                if ($bt_info) $ho_ten = $bt_info->ten_bi_thu;
-            } elseif ($pn_info->cap_bac == 4) {
-                $gv_info = $giangvien->giangvien__Get_By_Id($tk_info->id_nguoi_dung);
-                if ($gv_info) $ho_ten = $gv_info->ten_giang_vien;
-            }
+    $pn_info = $phannhom->phannhom__Get_By_Id($tk->id_phan_nhom);
+    if ($pn_info) {
+        if ($pn_info->cap_bac == 0) {
+            $ho_ten = "Admin";
+        } elseif ($pn_info->cap_bac == 1) {
+            $ho_ten = "Manager";
+        } elseif ($pn_info->cap_bac == 2) {
+            $sv_info = $sinhvien->sinhvien__Get_By_Id($tk->id_nguoi_dung);
+            if ($sv_info) $ho_ten = $sv_info->ten_sinh_vien;
+        } elseif ($pn_info->cap_bac == 3) {
+            $bt_info = $bithudoankhoa->bithudoankhoa__Get_By_Id($tk->id_nguoi_dung);
+            if ($bt_info) $ho_ten = $bt_info->ten_bi_thu;
+        } elseif ($pn_info->cap_bac == 4) {
+            $gv_info = $giangvien->giangvien__Get_By_Id($tk->id_nguoi_dung);
+            if ($gv_info) $ho_ten = $gv_info->ten_giang_vien;
         }
     }
 
@@ -167,13 +176,7 @@ try {
         <p>Bước 3: Đăng nhập theo tài khoản đã được cấp</p>
     ";
     $status = $mail->send();
-    // if ($status != 0) {
-    //     header("location: $href&status=success");
-    // } else {
-    //     header("location: $href&status=failed");
-    // }
     echo 'Message has been sent';
 } catch (Exception $e) {
     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-    // header("location: $href&status=failed");
 }

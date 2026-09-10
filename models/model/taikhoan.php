@@ -6,6 +6,7 @@ $c = "../../models/configs/config.php";
 $d = "../../../models/configs/config.php";
 $e = "../../../../models/configs/config.php";
 
+$des = $a;
 if (file_exists($a)) {
     $des = $a;
 }
@@ -67,8 +68,12 @@ class taikhoan extends Database
 
 
     // Quân sửa: Trả về kết quả thực thi truy vấn (true/false) thay vì rowCount để tránh báo lỗi thất bại khi reset trùng mật khẩu cũ
-    public function taikhoan__Reset($id_tai_khoan, $mat_khau)
+    public function taikhoan__Reset($id_tai_khoan, $mat_khau, $ghi_chu = null)
     {
+        if ($ghi_chu !== null) {
+            $obj = $this->connect->prepare("UPDATE taikhoan SET mat_khau=?, ghi_chu=? WHERE id_tai_khoan=?");
+            return $obj->execute(array($mat_khau, $ghi_chu, $id_tai_khoan));
+        }
         $obj = $this->connect->prepare("UPDATE taikhoan SET mat_khau=? WHERE id_tai_khoan=?");
         return $obj->execute(array($mat_khau, $id_tai_khoan));
     }

@@ -72,6 +72,16 @@ function vietTatChuCaiDau($str) {
     return strtoupper($acronym);
 }
 
+function generate_random_password($length = 8) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#';
+    $password = '';
+    $max = strlen($characters) - 1;
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $characters[rand(0, $max)];
+    }
+    return $password;
+}
+
 if (isset($_GET["req"])) {
     switch ($_GET["req"]) {
 
@@ -89,8 +99,8 @@ if (isset($_GET["req"])) {
             
             $id_nguoi_dung = 0;
             $email = isset($_POST["email"]) ? trim($_POST["email"]) : '';
-            $mat_khau = isset($_POST["mat_khau"]) ? $_POST["mat_khau"] : '';
-            $ghi_chu = date("Y-m-d H:i:s");
+            $mat_khau = isset($_POST["mat_khau"]) && trim($_POST["mat_khau"]) !== '' ? trim($_POST["mat_khau"]) : generate_random_password(8);
+            $ghi_chu = "INIT:" . $hashpassword->Encryption($mat_khau);
             
             $_SESSION['taikhoan_old_input'] = array_merge($_POST, ['context' => 'add']);
 
@@ -120,14 +130,9 @@ if (isset($_GET["req"])) {
                 $sinhvien__Get_By_Id = $sinhvien->sinhvien__Get_By_Id($item);
                 if ($sinhvien__Get_By_Id) {
                     $email = $sinhvien__Get_By_Id->email;
-                    $ten_lop = '';
-                    $lh = $lophoc->lophoc__Get_By_Id($sinhvien__Get_By_Id->id_lop_hoc);
-                    if ($lh) {
-                        $ten_lop = $lh->ten_lop_hoc;
-                    }
-                    // quân sửa: Đổi mật khẩu mặc định thành: TênViếtTắt_TênLớp#1234
-                    $mat_khau = vietTatChuCaiDau($sinhvien__Get_By_Id->ten_sinh_vien) . "_" . vietTatChuCaiDau($ten_lop) . "#1234";
-                    $ghi_chu = date("Y-m-d H:i:s");
+                    // Sinh mật khẩu random 8 ký tự an toàn
+                    $mat_khau = generate_random_password(8);
+                    $ghi_chu = "INIT:" . $hashpassword->Encryption($mat_khau);
 
                     // Check duplicate email to avoid DB UNIQUE error
                     if (!$taikhoan->taikhoan__Exists_Email($email)) {
@@ -155,8 +160,9 @@ if (isset($_GET["req"])) {
                 $bithudoankhoa__Get_By_Id = $bithudoankhoa->bithudoankhoa__Get_By_Id($item);
                 if ($bithudoankhoa__Get_By_Id) {
                     $email = $bithudoankhoa__Get_By_Id->email;
-                    $mat_khau = locDau($bithudoankhoa__Get_By_Id->ten_bi_thu) . date("@is");
-                    $ghi_chu = date("Y-m-d H:i:s");
+                    // Sinh mật khẩu random 8 ký tự an toàn
+                    $mat_khau = generate_random_password(8);
+                    $ghi_chu = "INIT:" . $hashpassword->Encryption($mat_khau);
 
                     if (!$taikhoan->taikhoan__Exists_Email($email)) {
                         $status += $taikhoan->taikhoan__Add($email, password_hash($mat_khau, PASSWORD_BCRYPT), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
@@ -179,19 +185,14 @@ if (isset($_GET["req"])) {
             $id_phan_quyen = isset($_POST["id_phan_quyen"]) ? $_POST["id_phan_quyen"] : '';
             $id_phan_nhom = isset($_POST["id_phan_nhom"]) ? $_POST["id_phan_nhom"] : '';
             $id_nguoi_dung = isset($_POST["id_nguoi_dung"]) ? $_POST["id_nguoi_dung"] : array();
-            $id_lop_hoc = isset($_POST["id_lop_hoc"]) ? $_POST["id_lop_hoc"] : '';
-            $ten_lop = '';
-            $lh = $lophoc->lophoc__Get_By_Id($id_lop_hoc);
-            if ($lh) {
-                $ten_lop = $lh->ten_lop_hoc;
-            }
 
             foreach ($id_nguoi_dung as $item) {
                 $giangvien__Get_By_Id = $giangvien->giangvien__Get_By_Id($item);
                 if ($giangvien__Get_By_Id) {
                     $email = $giangvien__Get_By_Id->email;
-                    $mat_khau = vietTatChuCaiDau($giangvien__Get_By_Id->ten_giang_vien) . "_" . $ten_lop . "#1234";
-                    $ghi_chu = date("Y-m-d H:i:s");
+                    // Sinh mật khẩu random 8 ký tự an toàn
+                    $mat_khau = generate_random_password(8);
+                    $ghi_chu = "INIT:" . $hashpassword->Encryption($mat_khau);
 
                     if (!$taikhoan->taikhoan__Exists_Email($email)) {
                         $status += $taikhoan->taikhoan__Add($email, password_hash($mat_khau, PASSWORD_BCRYPT), $ghi_chu, $id_phan_quyen, $id_phan_nhom, $item);
@@ -222,8 +223,9 @@ if (isset($_GET["req"])) {
         case "reset":
             $status = 0;
             $id_tai_khoan = isset($_GET["id_tai_khoan"]) ? $_GET["id_tai_khoan"] : '';
-            $mat_khau = '123456';
-            $status = $taikhoan->taikhoan__Reset($id_tai_khoan, password_hash($mat_khau, PASSWORD_BCRYPT));
+            $mat_khau = generate_random_password(8);
+            $ghi_chu = "INIT:" . $hashpassword->Encryption($mat_khau);
+            $status = $taikhoan->taikhoan__Reset($id_tai_khoan, password_hash($mat_khau, PASSWORD_BCRYPT), $ghi_chu);
 
             if ($status != 0) {
                 header("location: $href&status=reset-success");
@@ -241,13 +243,10 @@ if (isset($_GET["req"])) {
             }
             
             // Sinh mật khẩu ngẫu nhiên 8 ký tự
-            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#';
-            $mat_khau = '';
-            for ($i = 0; $i < 8; $i++) {
-                $mat_khau .= $characters[rand(0, strlen($characters) - 1)];
-            }
+            $mat_khau = generate_random_password(8);
+            $ghi_chu = "INIT:" . $hashpassword->Encryption($mat_khau);
 
-            $status = $taikhoan->taikhoan__Reset($id_tai_khoan, password_hash($mat_khau, PASSWORD_BCRYPT));
+            $status = $taikhoan->taikhoan__Reset($id_tai_khoan, password_hash($mat_khau, PASSWORD_BCRYPT), $ghi_chu);
 
             if ($status != 0) {
                 echo json_encode([
