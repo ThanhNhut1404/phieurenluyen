@@ -50,12 +50,6 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="?page=quan-ly-mau-phieu" class="nav-link">
-                            <i class="ri-file-copy-2-line nav-icon"></i>
-                            <p>Mẫu phiếu</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="?page=quan-ly-dieu" class="nav-link">
                             <i class="ri-article-line nav-icon"></i>
                             <p>Điều</p>
@@ -71,6 +65,12 @@ if (isset($_SESSION['admin']->id_phan_quyen)) {
                         <a href="?page=quan-ly-muc" class="nav-link">
                             <i class="ri-task-line nav-icon"></i>
                             <p>Mục</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?page=quan-ly-mau-phieu" class="nav-link">
+                            <i class="ri-file-copy-2-line nav-icon"></i>
+                            <p>Mẫu phiếu</p>
                         </a>
                     </li>
                     <li class="nav-item">
