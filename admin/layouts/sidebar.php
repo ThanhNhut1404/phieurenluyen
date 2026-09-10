@@ -88,12 +88,6 @@ $is_thong_ke_active = ($current_page === 'thong-ke' || empty($current_page));
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="?page=quan-ly-mau-phieu" class="nav-link <?= $current_page === 'quan-ly-mau-phieu' ? 'active' : '' ?>">
-                            <i class="ri-file-copy-2-line nav-icon"></i>
-                            <p>Mẫu phiếu</p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="?page=quan-ly-dieu" class="nav-link <?= $current_page === 'quan-ly-dieu' ? 'active' : '' ?>">
                             <i class="ri-article-line nav-icon"></i>
                             <p>Điều</p>
@@ -109,6 +103,12 @@ $is_thong_ke_active = ($current_page === 'thong-ke' || empty($current_page));
                         <a href="?page=quan-ly-muc" class="nav-link <?= $current_page === 'quan-ly-muc' ? 'active' : '' ?>">
                             <i class="ri-task-line nav-icon"></i>
                             <p>Mục</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="?page=quan-ly-mau-phieu" class="nav-link <?= $current_page === 'quan-ly-mau-phieu' ? 'active' : '' ?>">
+                            <i class="ri-file-copy-2-line nav-icon"></i>
+                            <p>Mẫu phiếu</p>
                         </a>
                     </li>
                     <li class="nav-item">
